@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+# -*- mode: python; python-indent-offset: 2 -*-
+
+import argparse
+import os
+import sys
+
+from grafanalib.gen import (
+  DashboardError, load_dashboard, print_dashboard, write_dashboard,
+)
+
+
+
+def main(args):
+  parser = argparse.ArgumentParser(prog='generate-dashboard')
+  parser.add_argument(
+    '--output', '-o', type=os.path.abspath,
+    help='Where to write the dashboard JSON'
+  )
+  parser.add_argument(
+    'dashboard', metavar='DASHBOARD', type=os.path.abspath,
+    help='Path to dashboard definition',
+  )
+  opts = parser.parse_args(args)
+  try:
+    dashboard = load_dashboard(opts.dashboard)
+    if not opts.output:
+      print_dashboard(dashboard)
+    else:
+      with open(opts.output, 'w') as output:
+        write_dashboard(dashboard, output)
+  except DashboardError as e:
+    sys.stderr.write('ERROR: {}\n'.format(e))
+    return 1
+  return 0
+
+
+sys.exit(main(sys.argv[1:]))
