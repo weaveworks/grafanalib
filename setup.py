@@ -1,4 +1,13 @@
+import os
 from setuptools import setup, find_packages
+
+
+def local_file(name):
+    return os.path.relpath(os.path.join(os.path.dirname(__file__), name))
+
+
+README = local_file('README.rst')
+
 
 setup(
     name='grafanalib',
@@ -6,9 +15,9 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.1.0',
+    version='0.1.1',
     description='Library for building Grafana dashboards',
-    long_description="",
+    long_description=open(README).read(),
     url='https://github.com/weaveworks/grafanalib',
     author='Weaveworks',
     author_email='help@weave.works',
