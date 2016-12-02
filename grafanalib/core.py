@@ -1,4 +1,3 @@
-# -*- mode: python; python-indent-offset: 2 -*-
 """Low-level functions for building Grafana dashboards.
 
 The functions in this module don't enforce Weaveworks policy, and only mildly
@@ -7,6 +6,7 @@ arbitrary Grafana JSON.
 """
 
 import math
+
 
 def RGBA(r, g, b, a):
     return "rgba({}, {}, {}, {})".format(r, g, b, a)
@@ -65,200 +65,202 @@ def Graph(title, dataSource, targets, aliasColors=None, bars=False,
           renderer=DEFAULT_RENDERER, seriesOverrides=None, span=None,
           stack=False, steppedLine=False, timeFrom=None, timeShift=None,
           tooltip=None, xAxis=None, yAxes=None):
-  aliasColors = {} if aliasColors is None else aliasColors
-  grid = Grid() if grid is None else grid
-  legend = Legend() if legend is None else legend
-  links = [] if links is None else links
-  seriesOverrides = [] if seriesOverrides is None else seriesOverrides
-  tooltip = Tooltip() if tooltip is None else tooltip
-  xAxis = XAxis() if xAxis is None else xAxis
-  # XXX: This isn't a *good* default, rather it's the default Grafana uses.
-  yAxes = [YAxis(format=SHORT_FORMAT)] * 2 if yAxes is None else yAxes
-  return {
-    'aliasColors': aliasColors,
-    'bars': bars,
-    'datasource': dataSource,
-    'editable': editable,
-    'error': error,
-    'fill': fill,
-    'grid': grid,
-    'id': id,
-    'isNew': isNew,
-    'legend': legend,
-    'lines': lines,
-    'linewidth': lineWidth,
-    'links': links,
-    'nullPointMode': nullPointMode,
-    'percentage': percentage,
-    'pointradius': pointRadius,
-    'points': points,
-    'renderer': renderer,
-    'seriesOverrides': seriesOverrides,
-    'span': span,
-    'stack': stack,
-    'steppedLine': steppedLine,
-    'targets': targets,
-    'timeFrom': timeFrom,
-    'timeShift': timeShift,
-    'title': title,
-    'tooltip': tooltip,
-    'type': GRAPH_TYPE,
-    'xaxis': xAxis,
-    'yaxes': yAxes,
-  }
+    aliasColors = {} if aliasColors is None else aliasColors
+    grid = Grid() if grid is None else grid
+    legend = Legend() if legend is None else legend
+    links = [] if links is None else links
+    seriesOverrides = [] if seriesOverrides is None else seriesOverrides
+    tooltip = Tooltip() if tooltip is None else tooltip
+    xAxis = XAxis() if xAxis is None else xAxis
+    # XXX: This isn't a *good* default, rather it's the default Grafana uses.
+    yAxes = [YAxis(format=SHORT_FORMAT)] * 2 if yAxes is None else yAxes
+    return {
+        'aliasColors': aliasColors,
+        'bars': bars,
+        'datasource': dataSource,
+        'editable': editable,
+        'error': error,
+        'fill': fill,
+        'grid': grid,
+        'id': id,
+        'isNew': isNew,
+        'legend': legend,
+        'lines': lines,
+        'linewidth': lineWidth,
+        'links': links,
+        'nullPointMode': nullPointMode,
+        'percentage': percentage,
+        'pointradius': pointRadius,
+        'points': points,
+        'renderer': renderer,
+        'seriesOverrides': seriesOverrides,
+        'span': span,
+        'stack': stack,
+        'steppedLine': steppedLine,
+        'targets': targets,
+        'timeFrom': timeFrom,
+        'timeShift': timeShift,
+        'title': title,
+        'tooltip': tooltip,
+        'type': GRAPH_TYPE,
+        'xaxis': xAxis,
+        'yaxes': yAxes,
+    }
 
 
 def Grid(threshold1=None, threshold1Color=GREY1, threshold2=None,
          threshold2Color=GREY2):
-  return {
-    'threshold1': threshold1,
-    'threshold1Color': threshold1Color,
-    'threshold2': threshold2,
-    'threshold2Color': threshold2Color,
-  }
+    return {
+        'threshold1': threshold1,
+        'threshold1Color': threshold1Color,
+        'threshold2': threshold2,
+        'threshold2Color': threshold2Color,
+    }
 
 
 def Legend(avg=False, current=False, max=False, min=False, show=True,
            total=False, values=False):
-  return {
-    'avg': avg,
-    'current': current,
-    'max': max,
-    'min': min,
-    'show': show,
-    'total': total,
-    'values': values,
-  }
+    return {
+        'avg': avg,
+        'current': current,
+        'max': max,
+        'min': min,
+        'show': show,
+        'total': total,
+        'values': values,
+    }
 
 
 def Target(expr, legendFormat="", intervalFactor=2, metric="", refId="",
            step=DEFAULT_STEP):
-  return {
-    'expr': expr,
-    'intervalFactor': intervalFactor,
-    'legendFormat': legendFormat,
-    'metric': metric,
-    'refId': refId,
-    'step': step,
-  }
+    return {
+        'expr': expr,
+        'intervalFactor': intervalFactor,
+        'legendFormat': legendFormat,
+        'metric': metric,
+        'refId': refId,
+        'step': step,
+    }
 
 
 def Tooltip(msResolution=True, shared=True, sort=0, valueType=CUMULATIVE):
-  return {
-    'msResolution': msResolution,
-    'shared': shared,
-    'sort': sort,
-    'value_type': valueType,
-  }
+    return {
+        'msResolution': msResolution,
+        'shared': shared,
+        'sort': sort,
+        'value_type': valueType,
+    }
 
 
 def XAxis(show=True):
-  return {
-    'show': show,
-  }
+    return {
+        'show': show,
+    }
 
 
 def YAxis(format=None, label=None, logBase=1, max=None, min=0, show=True):
-  return {
-    'format': format,
-    'label': label,
-    'logBase': logBase,
-    'max': max,
-    'min': min,
-    'show': show,
-  }
+    return {
+        'format': format,
+        'label': label,
+        'logBase': logBase,
+        'max': max,
+        'min': min,
+        'show': show,
+    }
 
 
 def Row(panels, collapse=False, editable=True, height=DEFAULT_ROW_HEIGHT,
         showTitle=None, title=None):
-  if showTitle is None:
-    showTitle = False if title is None else True
-  if title is None:
-    title = "New row"
+    if showTitle is None:
+        showTitle = False if title is None else True
+    if title is None:
+        title = "New row"
 
-  # Automatically apportion panels amongst the row
-  allotted_spans = sum(panel.get('span', 0) for panel in panels if panel.get('span', 0) is not None)
-  no_span_set = [panel for panel in panels if panel['span'] is None]
-  auto_span = math.ceil((TOTAL_SPAN - allotted_spans) / len(no_span_set))
-  for panel in no_span_set:
-    panel['span'] = auto_span
+    # Automatically apportion panels amongst the row
+    allotted_spans = sum(
+        panel.get('span', 0) for panel in panels
+        if panel.get('span', 0) is not None)
+    no_span_set = [panel for panel in panels if panel['span'] is None]
+    auto_span = math.ceil((TOTAL_SPAN - allotted_spans) / len(no_span_set))
+    for panel in no_span_set:
+        panel['span'] = auto_span
 
-  return {
-    'collapse': collapse,
-    'editable': editable,
-    'height': height,
-    'panels': panels,
-    'showTitle': showTitle,
-    'title': title,
-  }
+    return {
+        'collapse': collapse,
+        'editable': editable,
+        'height': height,
+        'panels': panels,
+        'showTitle': showTitle,
+        'title': title,
+    }
 
 
 def Annotations(list=None):
-  list = [] if list is None else list
-  return {
-    'list': list,
-  }
+    list = [] if list is None else list
+    return {
+        'list': list,
+    }
 
 
 def DashboardLink(dashboard, uri, keepTime=True, title=None):
-  title = dashboard if title is None else title
-  return {
-    "dashUri": uri,
-    "dashboard": dashboard,
-    "keepTime": keepTime,
-    "title": title,
-    "type": DASHBOARD_TYPE,
-  }
+    title = dashboard if title is None else title
+    return {
+        "dashUri": uri,
+        "dashboard": dashboard,
+        "keepTime": keepTime,
+        "title": title,
+        "type": DASHBOARD_TYPE,
+    }
 
 
 def Templating(list=None):
-  list = [] if list is None else list
-  return {
-    'list': list,
-  }
+    list = [] if list is None else list
+    return {
+        'list': list,
+    }
 
 
 def Time(start, end):
-  return {
-    'from': start,
-    'to': end,
-  }
+    return {
+        'from': start,
+        'to': end,
+    }
 
 
 DEFAULT_TIME = Time('now-1h', 'now')
 
 
 def TimePicker(refreshIntervals, timeOptions):
-  return {
-    'refresh_intervals': refreshIntervals,
-    'time_options': timeOptions,
-  }
+    return {
+        'refresh_intervals': refreshIntervals,
+        'time_options': timeOptions,
+    }
 
 
 DEFAULT_TIME_PICKER = TimePicker(
-  refreshIntervals=[
-    "5s",
-    "10s",
-    "30s",
-    "1m",
-    "5m",
-    "15m",
-    "30m",
-    "1h",
-    "2h",
-    "1d"
-  ],
-  timeOptions=[
-    "5m",
-    "15m",
-    "1h",
-    "6h",
-    "12h",
-    "24h",
-    "2d",
-    "7d",
-    "30d"
-  ]
+    refreshIntervals=[
+        "5s",
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+    ],
+    timeOptions=[
+        "5m",
+        "15m",
+        "1h",
+        "6h",
+        "12h",
+        "24h",
+        "2d",
+        "7d",
+        "30d"
+    ]
 )
 
 
@@ -268,29 +270,29 @@ def Dashboard(title, rows, annotations=None, editable=True, gnetId=None,
               sharedCrosshair=False, style=DARK_STYLE, tags=None,
               templating=None, time=None, timePicker=None, timezone=UTC,
               version=0):
-  annotations = Annotations() if annotations is None else annotations
-  links = [] if links is None else links
-  tags = [] if tags is None else tags
-  templating = Templating() if templating is None else templating
-  time = DEFAULT_TIME if time is None else time
-  timePicker = DEFAULT_TIME_PICKER if timePicker is None else timePicker
-  return {
-    'annotations': annotations,
-    'editable': editable,
-    'gnetId': gnetId,
-    'hideControls': hideControls,
-    'id': id,
-    'links': links,
-    'refresh': refresh,
-    'rows': rows,
-    'schemaVersion': schemaVersion,
-    'sharedCrosshair': sharedCrosshair,
-    'style': style,
-    'tags': tags,
-    'templating': templating,
-    'title': title,
-    'time': time,
-    'timepicker': timePicker,
-    'timezone': timezone,
-    'version': version,
-  }
+    annotations = Annotations() if annotations is None else annotations
+    links = [] if links is None else links
+    tags = [] if tags is None else tags
+    templating = Templating() if templating is None else templating
+    time = DEFAULT_TIME if time is None else time
+    timePicker = DEFAULT_TIME_PICKER if timePicker is None else timePicker
+    return {
+        'annotations': annotations,
+        'editable': editable,
+        'gnetId': gnetId,
+        'hideControls': hideControls,
+        'id': id,
+        'links': links,
+        'refresh': refresh,
+        'rows': rows,
+        'schemaVersion': schemaVersion,
+        'sharedCrosshair': sharedCrosshair,
+        'style': style,
+        'tags': tags,
+        'templating': templating,
+        'title': title,
+        'time': time,
+        'timepicker': timePicker,
+        'timezone': timezone,
+        'version': version,
+    }
