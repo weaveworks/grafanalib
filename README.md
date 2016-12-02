@@ -119,3 +119,5 @@ $ pip install grafanalib
 
 This library is in its very early stages. We'll probably make changes that
 break backwards compatibility, although we'll try hard not to.
+
+grafanalib works with Python 3.4 and 3.5.
