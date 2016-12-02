@@ -14,6 +14,16 @@ setup(
     author_email='help@weave.works',
     license='Apache',
     packages=find_packages(),
+    classifiers=[
+        'Development Status :: 3 - Alpha',
+        'Environment :: Console',
+        'Intended Audience :: Developers',
+        'Intended Audience :: System Administrators',
+        'License :: OSI Approved :: Apache Software License',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Topic :: System :: Monitoring',
+    ],
     install_requires=[
     ],
     entry_points={
