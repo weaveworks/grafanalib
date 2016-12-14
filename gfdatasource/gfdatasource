@@ -6,6 +6,7 @@ import argparse
 import attr
 import requests
 import sys
+import time
 from urllib.parse import ParseResult, urlparse
 
 
