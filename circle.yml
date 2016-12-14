@@ -8,8 +8,6 @@ machine:
     SRCDIR: /home/ubuntu/src/github.com/weaveworks/grafanalib
 
 dependencies:
-  cache_directories:
-    - "~/docker"
   override:
     - pip install -e .
     - pip install -r dev-requirements.txt
