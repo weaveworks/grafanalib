@@ -40,7 +40,7 @@ class DataSource(object):
             'access': self.access,
         }
         if self.credentials:
-            data.update(self.credentials)
+            data.update(self.credentials.to_json_dict())
         return data
 
 
@@ -51,27 +51,22 @@ class GrafanaAPI(object):
     base_url = attr.ib()
     credentials = attr.ib()
 
-    def _get_session(self):
-        if not self.credentials:
-            return requests.Session()
-        return requests.Session(
-            auth=(self.credentials.username, self.credentials.password))
-
     def update_datasource(self, data_source):
-        return self._get_session().post(
+        return requests.post(
             '/'.join([self.base_url, 'datasources']),
-            json=data_source.to_json_dict())
+            json=data_source.to_json_dict(),
+            auth=(self.credentials.username, self.credentials.password)
+        )
 
 
 def make_parser():
     parser = argparse.ArgumentParser(prog='gfdatasource')
     parser.add_argument(
-        '--grafana-url', type=urlparse,
-        default='http',
+        '--grafana-url', type=urlparse, required=True,
         help="URL of Grafana API",
     )
     parser.add_argument(
-        '--data-source-url', type=urlparse,
+        '--data-source-url', type=urlparse, required=True,
         help="URL of data source",
     )
     parser.add_argument(
@@ -104,7 +99,7 @@ def _split_creds(url):
         query=url.query,
         fragment=url.fragment,
     )
-    return url, creds
+    return url.geturl(), creds
 
 
 def main():
@@ -113,7 +108,10 @@ def main():
     grafana_url, grafana_creds = _split_creds(opts.grafana_url)
     grafana_api = GrafanaAPI(base_url=grafana_url, credentials=grafana_creds)
     datasource_url, datasource_creds = _split_creds(opts.data_source_url)
-    datasource = DataSource(base_url=datasource_url, credentials=datasource_creds)
+    datasource = DataSource(
+        name=opts.name, type=opts.type, access=opts.access,
+        url=datasource_url, credentials=datasource_creds,
+    )
     while True:
         grafana_api.update_datasource(datasource)
         time.sleep(opts.update_interval)
