@@ -59,7 +59,7 @@ class GrafanaAPI(object):
 
     def update_datasource(self, data_source):
         return self._get_session().post(
-            '/'.join([self.base_url, 'datasource']),
+            '/'.join([self.base_url, 'datasources']),
             json=data_source.to_json_dict())
 
 
