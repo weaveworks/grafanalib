@@ -1,4 +1,6 @@
 machine:
+  services:
+    - docker
   python:
     version: 3.5.2
   environment:
@@ -6,6 +8,8 @@ machine:
     SRCDIR: /home/ubuntu/src/github.com/weaveworks/grafanalib
 
 dependencies:
+  cache_directories:
+    - "~/docker"
   override:
     - pip install -e .
     - pip install -r dev-requirements.txt
@@ -14,3 +18,10 @@ test:
   override:
     - "mkdir -p $(dirname $SRCDIR) && cp -r $(pwd)/ $SRCDIR"
     - cd $SRCDIR; make
+
+deployment:
+  push:
+    branch: master
+    commands:
+      - docker login -e "$DOCKER_REGISTRY_EMAIL" -u "$DOCKER_REGISTRY_USER" -p "$DOCKER_REGISTRY_PASSWORD"
+      - docker push weaveworks/gfdatasource:$(./tools/image-tag)
