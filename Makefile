@@ -30,7 +30,7 @@ all: $(UPTODATE_FILES) test lint
 gfdatasource/$(UPTODATE): gfdatasource/*
 
 lint:
-	flake8 grafanalib
+	flake8 gfdatasource/gfdatasource grafanalib
 
 test:
 
