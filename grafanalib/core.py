@@ -213,6 +213,31 @@ def DashboardLink(dashboard, uri, keepTime=True, title=None):
     }
 
 
+def Template(default, dataSource, label, name, query):
+    return {
+        'allValue': None,
+        'current': {
+            'text': default,
+            'value': default,
+            'tags': [],
+        },
+        'datasource': dataSource,
+        'hide': 0,
+        'includeAll': False,
+        'label': label,
+        'multi': False,
+        'name': name,
+        'options': [],
+        'query': query,
+        'refresh': 1,
+        'regex': '',
+        'sort': 1,
+        'tagValuesQuery': None,
+        'tagsQuery': None,
+        'type': 'query',
+    }
+
+
 def Templating(list=None):
     list = [] if list is None else list
     return {
