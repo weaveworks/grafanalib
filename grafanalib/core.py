@@ -213,6 +213,41 @@ def DashboardLink(dashboard, uri, keepTime=True, title=None):
     }
 
 
+def Template(default, dataSource, label, name, query):
+    """Template create a new 'variable' for the dashboard, defines the variable
+    name, human name, query to fetch the values and the default value.
+
+        :param default: the default value for the variable
+        :param dataSource: where to fetch the values for the variable from
+        :param label: the variable's human label
+        :param name: the variable's name
+        :param query: the query users to fetch the valid values of the variable
+    """
+
+    return {
+        'allValue': None,
+        'current': {
+            'text': default,
+            'value': default,
+            'tags': [],
+        },
+        'datasource': dataSource,
+        'hide': 0,
+        'includeAll': False,
+        'label': label,
+        'multi': False,
+        'name': name,
+        'options': [],
+        'query': query,
+        'refresh': 1,
+        'regex': '',
+        'sort': 1,
+        'tagValuesQuery': None,
+        'tagsQuery': None,
+        'type': 'query',
+    }
+
+
 def Templating(list=None):
     list = [] if list is None else list
     return {
