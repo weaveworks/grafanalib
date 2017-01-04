@@ -64,7 +64,7 @@ def Graph(title, dataSource, targets, aliasColors=None, bars=False,
           pointRadius=DEFAULT_POINT_RADIUS, points=False,
           renderer=DEFAULT_RENDERER, seriesOverrides=None, span=None,
           stack=False, steppedLine=False, timeFrom=None, timeShift=None,
-          tooltip=None, xAxis=None, yAxes=None):
+          tooltip=None, xAxis=None, yAxes=None, alert=None):
     aliasColors = {} if aliasColors is None else aliasColors
     grid = Grid() if grid is None else grid
     legend = Legend() if legend is None else legend
@@ -74,7 +74,7 @@ def Graph(title, dataSource, targets, aliasColors=None, bars=False,
     xAxis = XAxis() if xAxis is None else xAxis
     # XXX: This isn't a *good* default, rather it's the default Grafana uses.
     yAxes = [YAxis(format=SHORT_FORMAT)] * 2 if yAxes is None else yAxes
-    return {
+    graphObject = {
         'aliasColors': aliasColors,
         'bars': bars,
         'datasource': dataSource,
@@ -106,6 +106,9 @@ def Graph(title, dataSource, targets, aliasColors=None, bars=False,
         'xaxis': xAxis,
         'yaxes': yAxes,
     }
+    if alert:
+        graphObject['alert'] = alert
+    return graphObject
 
 
 def Grid(threshold1=None, threshold1Color=GREY1, threshold2=None,
@@ -297,6 +300,61 @@ DEFAULT_TIME_PICKER = TimePicker(
         "30d"
     ]
 )
+
+
+def AlertCondition(target, queryParams=["A", "5m", "now"],
+                   evaluator=["gt", 5], operator="and", type="avg"):
+    """
+    Alert conditions:
+        :param target: Target
+        :param params: [refId, delta time, lasttime]
+        :param evaluator: [gt/lt/within_range/outside_range/no_value, values]
+        :param operator: and/or
+        :param type: avg/min/max/sum/count/last/median
+    """
+    evaluator_params = []
+    if evaluator[0] in ['lt', 'gt']:
+        evaluator_params = [evaluator[1]]
+    elif evaluator[0] in ['outside_range', 'within_range']:
+        evaluator_params = [evaluator[1], evaluator[2]]
+    return {
+        "evaluator": {
+            "params": evaluator_params,
+            "type": evaluator[0]
+        },
+        "operator": {
+            "type": operator
+        },
+        "query": {
+            "model": target,
+            "params": queryParams
+        },
+        "reducer": {
+            "params": [],
+            "type": type
+        },
+        "type": "query"
+    }
+
+
+def Alert(alertConditions=[],
+          executionErrorState="alerting",
+          frequency="60s",
+          handler=1,
+          noDataState="no_data",
+          message="Alert message",
+          name="Alert name",
+          notifications=[]):
+    return {
+        "conditions": alertConditions,
+        "executionErrorState": executionErrorState,
+        "frequency": frequency,
+        "handler": handler,
+        "message": message,
+        "name": name,
+        "noDataState": noDataState,
+        "notifications": notifications
+    }
 
 
 def Dashboard(title, rows, annotations=None, editable=True, gnetId=None,
