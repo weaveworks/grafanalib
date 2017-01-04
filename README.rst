@@ -67,6 +67,25 @@ percentile latency:
             YAxis(format=OPS_FORMAT),
             YAxis(format=SHORT_FORMAT),
           ],
+          alert=Alert(
+            alertConditions=[
+              AlertCondition(
+                Target(
+                  expr='sum(irate(nginx_http_requests_total{job="default/frontend",status=~"1.."}[1m]))',
+                  legendFormat="1xx",
+                  refId='A',
+                ),
+                queryParams=["A", "10m", "now"],
+                evaluator=["gt", 50000],
+                operator="and",
+                type="sum"
+              ),
+            ],
+            frequency="60s",
+            handler=1,
+            message="Alert message",
+            name="Alert name"
+          )
         ),
         Graph(
           title="Frontend latency",

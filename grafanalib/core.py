@@ -307,7 +307,7 @@ def AlertCondition(target, queryParams=["A", "5m", "now"],
     """
     Alert conditions:
         :param target: Target
-        :param params: [refId, delta time, lasttime]
+        :param queryParams: [refId, in_time, "now"]
         :param evaluator: [gt/lt/within_range/outside_range/no_value, values]
         :param operator: and/or
         :param type: avg/min/max/sum/count/last/median
