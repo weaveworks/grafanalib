@@ -330,58 +330,66 @@ DEFAULT_TIME_PICKER = TimePicker(
 )
 
 
+def Evaluator(type, params):
+    return {
+        "type": type,
+        "params": params,
+    }
+
+
 def GreaterThan(value):
-    return [EVAL_GT, value]
+    return Evaluator(EVAL_GT, [value])
 
 
 def LowerThan(value):
-    return [EVAL_LT, value]
+    return Evaluator(EVAL_LT, [value])
 
 
 def WithinRange(from_value, to_value):
-    return [EVAL_WITHIN_RANGE, from_value, to_value]
+    return Evaluator(EVAL_WITHIN_RANGE, [from_value, to_value])
 
 
 def OutsideRange(from_value, to_value):
-    return [EVAL_OUTSIDE_RANGE, from_value, to_value]
+    return Evaluator(EVAL_OUTSIDE_RANGE, [from_value, to_value])
 
 
 def NoValue():
-    return [EVAL_NO_VALUE]
+    return Evaluator(EVAL_NO_VALUE, [])
 
 
-def TimeRange(range_time="5m", to_time="now"):
-    return [range_time, to_time]
+def TimeRange(from_time, to_time="now"):
+    """A time range for an alert condition.
+
+    A condition has to hold for this length of time before triggering.
+
+    :param str from_time: Either a number + unit (s: second, m: minute,
+        h: hour, etc)  e.g. ``"5m"`` for 5 minutes, or ``"now"``.
+    :param str to_time: Either a number + unit (s: second, m: minute,
+        h: hour, etc)  e.g. ``"5m"`` for 5 minutes, or ``"now"``.
+    """
+    return [from_time, to_time]
 
 
-def AlertCondition(target,
-                   timeRange=TimeRange("5m"),
-                   evaluator=GreaterThan(5),
-                   operator=OP_AND,
-                   reducerType=RTYPE_AVG,
+def AlertCondition(target, evaluator, timeRange, operator, reducerType,
                    type=CTYPE_QUERY):
     """
-    Alert conditions:
-        :param target: Target()
-        :param timeRange: TimeRange(time)
-                          time = number + unit (s: second, m: minute, h: hour)
-        :param evaluator: GreaterThan() / LowerThan() /
-                          WithinRange() / OutsideRange() / NoValue()
-        :param operator: OP_*
-        :param reducerType: RTYPE_*
-        :param type: CTYPE_*
+    A condition on an alert.
+
+    :param Target target: Metric the alert condition is based on.
+    :param Evaluator evaluator: How we decide whether we should alert on the
+        metric. e.g. ``GreaterThan(5)`` means the metric must be greater than 5
+        to trigger the condition. See ``GreaterThan``, ``LowerThan``,
+        ``WithinRange``, ``OutsideRange``, ``NoValue``.
+    :param TimeRange timeRange: How long the condition must be true for before
+        we alert.
+    :param operator: One of ``OP_AND`` or ``OP_OR``. How this condition
+        combines with other conditions.
+    :param reducerType: RTYPE_*
+    :param type: CTYPE_*
     """
-    evaluator_params = []
-    if evaluator[0] in [EVAL_LT, EVAL_GT]:
-        evaluator_params = [evaluator[1]]
-    elif evaluator[0] in [EVAL_WITHIN_RANGE, EVAL_OUTSIDE_RANGE]:
-        evaluator_params = [evaluator[1], evaluator[2]]
     queryParams = [target["refId"]] + timeRange
     return {
-        "evaluator": {
-            "params": evaluator_params,
-            "type": evaluator[0],
-        },
+        "evaluator": evaluator,
         "operator": {
             "type": operator,
         },
@@ -397,16 +405,16 @@ def AlertCondition(target,
     }
 
 
-def Alert(alertConditions=None,
+def Alert(name,
+          message,
+          alertConditions,
           executionErrorState=STATE_ALERTING,
           frequency="60s",
           handler=1,
           noDataState=STATE_NO_DATA,
-          message="",
-          name="",
-          notifications=[]):
-    if alertConditions is None:
-        alertConditions = []
+          notifications=None):
+    if notifications is None:
+        notifications = []
     return {
         "conditions": alertConditions,
         "executionErrorState": executionErrorState,
