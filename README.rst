@@ -67,6 +67,23 @@ percentile latency:
             YAxis(format=OPS_FORMAT),
             YAxis(format=SHORT_FORMAT),
           ],
+          alert=Alert(
+            name="Too many 500s on Nginx"
+            message="More than 5 QPS of 500s on Nginx for 5 minutes",
+            alertConditions=[
+              AlertCondition(
+                Target(
+                  expr='sum(irate(nginx_http_requests_total{job="default/frontend",status=~"5.."}[1m]))',
+                  legendFormat="5xx",
+                  refId='A',
+                ),
+                timeRange=TimeRange("5m"),
+                evaluator=GreaterThan(5),
+                operator=OP_AND,
+                reducerType=RTYPE_SUM,
+              ),
+            ],
+          )
         ),
         Graph(
           title="Frontend latency",

@@ -56,6 +56,34 @@ MILLISECONDS_FORMAT = "ms"
 SHORT_FORMAT = "short"
 BYTES_FORMAT = "bytes"
 
+# Alert rule state
+STATE_NO_DATA = "no_data"
+STATE_ALERTING = "alerting"
+STATE_KEEP_LAST_STATE = "keep_state"
+
+# Evaluator
+EVAL_GT = "gt"
+EVAL_LT = "lt"
+EVAL_WITHIN_RANGE = "within_range"
+EVAL_OUTSIDE_RANGE = "outside_range"
+EVAL_NO_VALUE = "no_value"
+
+# Reducer Type avg/min/max/sum/count/last/median
+RTYPE_AVG = "avg"
+RTYPE_MIN = "min"
+RTYPE_MAX = "max"
+RTYPE_SUM = "sum"
+RTYPE_COUNT = "count"
+RTYPE_LAST = "last"
+RTYPE_MEDIAN = "median"
+
+# Condition Type
+CTYPE_QUERY = "query"
+
+# Operator
+OP_AND = "and"
+OP_OR = "or"
+
 
 def Graph(title, dataSource, targets, aliasColors=None, bars=False,
           editable=True, error=False, fill=1, grid=None, id=None, isNew=True,
@@ -64,7 +92,7 @@ def Graph(title, dataSource, targets, aliasColors=None, bars=False,
           pointRadius=DEFAULT_POINT_RADIUS, points=False,
           renderer=DEFAULT_RENDERER, seriesOverrides=None, span=None,
           stack=False, steppedLine=False, timeFrom=None, timeShift=None,
-          tooltip=None, xAxis=None, yAxes=None):
+          tooltip=None, xAxis=None, yAxes=None, alert=None):
     aliasColors = {} if aliasColors is None else aliasColors
     grid = Grid() if grid is None else grid
     legend = Legend() if legend is None else legend
@@ -74,7 +102,7 @@ def Graph(title, dataSource, targets, aliasColors=None, bars=False,
     xAxis = XAxis() if xAxis is None else xAxis
     # XXX: This isn't a *good* default, rather it's the default Grafana uses.
     yAxes = [YAxis(format=SHORT_FORMAT)] * 2 if yAxes is None else yAxes
-    return {
+    graphObject = {
         'aliasColors': aliasColors,
         'bars': bars,
         'datasource': dataSource,
@@ -106,6 +134,9 @@ def Graph(title, dataSource, targets, aliasColors=None, bars=False,
         'xaxis': xAxis,
         'yaxes': yAxes,
     }
+    if alert:
+        graphObject['alert'] = alert
+    return graphObject
 
 
 def Grid(threshold1=None, threshold1Color=GREY1, threshold2=None,
@@ -297,6 +328,103 @@ DEFAULT_TIME_PICKER = TimePicker(
         "30d"
     ]
 )
+
+
+def Evaluator(type, params):
+    return {
+        "type": type,
+        "params": params,
+    }
+
+
+def GreaterThan(value):
+    return Evaluator(EVAL_GT, [value])
+
+
+def LowerThan(value):
+    return Evaluator(EVAL_LT, [value])
+
+
+def WithinRange(from_value, to_value):
+    return Evaluator(EVAL_WITHIN_RANGE, [from_value, to_value])
+
+
+def OutsideRange(from_value, to_value):
+    return Evaluator(EVAL_OUTSIDE_RANGE, [from_value, to_value])
+
+
+def NoValue():
+    return Evaluator(EVAL_NO_VALUE, [])
+
+
+def TimeRange(from_time, to_time="now"):
+    """A time range for an alert condition.
+
+    A condition has to hold for this length of time before triggering.
+
+    :param str from_time: Either a number + unit (s: second, m: minute,
+        h: hour, etc)  e.g. ``"5m"`` for 5 minutes, or ``"now"``.
+    :param str to_time: Either a number + unit (s: second, m: minute,
+        h: hour, etc)  e.g. ``"5m"`` for 5 minutes, or ``"now"``.
+    """
+    return [from_time, to_time]
+
+
+def AlertCondition(target, evaluator, timeRange, operator, reducerType,
+                   type=CTYPE_QUERY):
+    """
+    A condition on an alert.
+
+    :param Target target: Metric the alert condition is based on.
+    :param Evaluator evaluator: How we decide whether we should alert on the
+        metric. e.g. ``GreaterThan(5)`` means the metric must be greater than 5
+        to trigger the condition. See ``GreaterThan``, ``LowerThan``,
+        ``WithinRange``, ``OutsideRange``, ``NoValue``.
+    :param TimeRange timeRange: How long the condition must be true for before
+        we alert.
+    :param operator: One of ``OP_AND`` or ``OP_OR``. How this condition
+        combines with other conditions.
+    :param reducerType: RTYPE_*
+    :param type: CTYPE_*
+    """
+    queryParams = [target["refId"]] + timeRange
+    return {
+        "evaluator": evaluator,
+        "operator": {
+            "type": operator,
+        },
+        "query": {
+            "model": target,
+            "params": queryParams,
+        },
+        "reducer": {
+            "params": [],
+            "type": reducerType,
+        },
+        "type": type,
+    }
+
+
+def Alert(name,
+          message,
+          alertConditions,
+          executionErrorState=STATE_ALERTING,
+          frequency="60s",
+          handler=1,
+          noDataState=STATE_NO_DATA,
+          notifications=None):
+    if notifications is None:
+        notifications = []
+    return {
+        "conditions": alertConditions,
+        "executionErrorState": executionErrorState,
+        "frequency": frequency,
+        "handler": handler,
+        "message": message,
+        "name": name,
+        "noDataState": noDataState,
+        "notifications": notifications,
+    }
 
 
 def Dashboard(title, rows, annotations=None, editable=True, gnetId=None,
