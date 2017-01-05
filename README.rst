@@ -75,10 +75,10 @@ percentile latency:
                   legendFormat="1xx",
                   refId='A',
                 ),
-                queryParams=["A", "10m", "now"],
-                evaluator=["gt", 50000],
-                operator="and",
-                type="sum"
+                timeRange=TimeRange("5m"),
+                evaluator=GreaterThan(5),
+                operator=OP_AND,
+                reducerType=RTYPE_SUM
               ),
             ],
             frequency="60s",

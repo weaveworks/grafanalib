@@ -56,6 +56,34 @@ MILLISECONDS_FORMAT = "ms"
 SHORT_FORMAT = "short"
 BYTES_FORMAT = "bytes"
 
+# Alert rule state
+STATE_NO_DATA = "no_data"
+STATE_ALERTING = "alerting"
+STATE_KEEP_LAST_STATE = "keep_state"
+
+# Evaluator
+EVAL_GT = "gt"
+EVAL_LT = "lt"
+EVAL_WITHIN_RANGE = "within_range"
+EVAL_OUTSIDE_RANGE = "outside_range"
+EVAL_NO_VALUE = "no_value"
+
+# Reducer Type avg/min/max/sum/count/last/median
+RTYPE_AVG = "avg"
+RTYPE_MIN = "min"
+RTYPE_MAX = "max"
+RTYPE_SUM = "sum"
+RTYPE_COUNT = "count"
+RTYPE_LAST = "last"
+RTYPE_MEDIAN = "median"
+
+# Condition Type
+CTYPE_QUERY = "query"
+
+# Operator
+OP_AND = "and"
+OP_OR = "or"
+
 
 def Graph(title, dataSource, targets, aliasColors=None, bars=False,
           editable=True, error=False, fill=1, grid=None, id=None, isNew=True,
@@ -302,49 +330,83 @@ DEFAULT_TIME_PICKER = TimePicker(
 )
 
 
-def AlertCondition(target, queryParams=["A", "5m", "now"],
-                   evaluator=["gt", 5], operator="and", type="avg"):
+def GreaterThan(value):
+    return [EVAL_GT, value]
+
+
+def LowerThan(value):
+    return [EVAL_LT, value]
+
+
+def WithinRange(from_value, to_value):
+    return [EVAL_WITHIN_RANGE, from_value, to_value]
+
+
+def OutsideRange(from_value, to_value):
+    return [EVAL_OUTSIDE_RANGE, from_value, to_value]
+
+
+def NoValue():
+    return [EVAL_NO_VALUE]
+
+
+def TimeRange(range_time="5m", to_time="now"):
+    return [range_time, to_time]
+
+
+def AlertCondition(target,
+                   timeRange=TimeRange("5m"),
+                   evaluator=GreaterThan(5),
+                   operator=OP_AND,
+                   reducerType=RTYPE_AVG,
+                   type=CTYPE_QUERY):
     """
     Alert conditions:
-        :param target: Target
-        :param queryParams: [refId, in_time, "now"]
-        :param evaluator: [gt/lt/within_range/outside_range/no_value, values]
-        :param operator: and/or
-        :param type: avg/min/max/sum/count/last/median
+        :param target: Target()
+        :param timeRange: TimeRange(time)
+                          time = number + unit (s: second, m: minute, h: hour)
+        :param evaluator: GreaterThan() / LowerThan() /
+                          WithinRange() / OutsideRange() / NoValue()
+        :param operator: OP_*
+        :param reducerType: RTYPE_*
+        :param type: CTYPE_*
     """
     evaluator_params = []
-    if evaluator[0] in ['lt', 'gt']:
+    if evaluator[0] in [EVAL_LT, EVAL_GT]:
         evaluator_params = [evaluator[1]]
-    elif evaluator[0] in ['outside_range', 'within_range']:
+    elif evaluator[0] in [EVAL_WITHIN_RANGE, EVAL_OUTSIDE_RANGE]:
         evaluator_params = [evaluator[1], evaluator[2]]
+    queryParams = [target["refId"]] + timeRange
     return {
         "evaluator": {
             "params": evaluator_params,
-            "type": evaluator[0]
+            "type": evaluator[0],
         },
         "operator": {
-            "type": operator
+            "type": operator,
         },
         "query": {
             "model": target,
-            "params": queryParams
+            "params": queryParams,
         },
         "reducer": {
             "params": [],
-            "type": type
+            "type": reducerType,
         },
-        "type": "query"
+        "type": type,
     }
 
 
-def Alert(alertConditions=[],
-          executionErrorState="alerting",
+def Alert(alertConditions=None,
+          executionErrorState=STATE_ALERTING,
           frequency="60s",
           handler=1,
-          noDataState="no_data",
-          message="Alert message",
-          name="Alert name",
+          noDataState=STATE_NO_DATA,
+          message="",
+          name="",
           notifications=[]):
+    if alertConditions is None:
+        alertConditions = []
     return {
         "conditions": alertConditions,
         "executionErrorState": executionErrorState,
@@ -353,7 +415,7 @@ def Alert(alertConditions=[],
         "message": message,
         "name": name,
         "noDataState": noDataState,
-        "notifications": notifications
+        "notifications": notifications,
     }
 
 
