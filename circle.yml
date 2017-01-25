@@ -22,5 +22,5 @@ deployment:
     branch: master
     commands:
       - docker login -e '.' -u "$QUAY_USER" -p "$QUAY_PASSWORD" quay.io
-      - docker tag weaveworks/gfdatasource:$(./tools/image-tag) quay.io/weaveworks/gfdatasource:$(./tools/image-tag)
+      - docker tag quay.io/weaveworks/gfdatasource:$(./tools/image-tag)
       - docker push quay.io/weaveworks/gfdatasource:$(./tools/image-tag)
