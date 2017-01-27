@@ -70,7 +70,7 @@ def QPSGraph(title, expressions, id, **kwargs):
             len(expressions), expressions))
     legends = sorted(ALIAS_COLORS.keys())
     exprs = zip(legends, expressions)
-    return PromGraph(
+    return stacked(PromGraph(
         title=title,
         expressions=exprs,
         aliasColors=ALIAS_COLORS,
@@ -80,7 +80,7 @@ def QPSGraph(title, expressions, id, **kwargs):
             G.YAxis(format=G.SHORT_FORMAT),
         ],
         **kwargs
-    )
+    ))
 
 
 def stacked(graph):
