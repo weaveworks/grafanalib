@@ -1,4 +1,4 @@
-.PHONY: all clean lint test
+.PHONY: all clean lint test deps
 .DEFAULT_GOAL := all
 
 # Boiler plate for bulding Docker containers.
@@ -26,6 +26,9 @@ images:
 	$(info $(IMAGE_NAMES))
 
 all: $(UPTODATE_FILES) test lint
+
+deps: .dev-requirements.txt
+	pip install -r dev-requirements.txt
 
 gfdatasource/$(UPTODATE): gfdatasource/*
 
