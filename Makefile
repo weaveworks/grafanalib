@@ -1,4 +1,4 @@
-.PHONY: all clean clean-deps lint test deps ensure-pip ensure-virtualenv
+.PHONY: all clean clean-deps lint test deps
 .DEFAULT_GOAL := all
 
 # Boiler plate for bulding Docker containers.
@@ -30,17 +30,19 @@ DEPS_UPTODATE = $(VIRTUALENV_DIR)/.deps-uptodate
 VIRTUALENV := $(shell command -v virtualenv 2> /dev/null)
 PIP := $(shell command -v pip 2> /dev/null)
 
-ensure-virtualenv: ensure-pip
+.ensure-virtualenv: .ensure-pip
 ifndef VIRTUALENV
 	$(error "virtualenv is not installed. Install with `pip install [--user] virtualenv`.")
 endif
+	touch .ensure-virtualenv
 
-ensure-pip:
+.ensure-pip:
 ifndef PIP
 	$(error "pip is not installed. Install with `python -m [--user] ensurepip`.")
 endif
+	touch .ensure-pip
 
-$(VIRTUALENV_BIN)/python: ensure-virtualenv
+$(VIRTUALENV_BIN)/pip: .ensure-virtualenv
 	virtualenv $(VIRTUALENV_DIR)
 
 images:
@@ -48,7 +50,7 @@ images:
 
 all: $(UPTODATE_FILES) test lint
 
-$(DEPS_UPTODATE): setup.py $(VIRTUALENV_DIR)
+$(DEPS_UPTODATE): setup.py $(VIRTUALENV_BIN)/pip
 	$(VIRTUALENV_BIN)/pip install -e .[dev]
 	touch $(DEPS_UPTODATE)
 
