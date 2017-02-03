@@ -15,6 +15,12 @@ class DashboardError(Exception):
 
 
 def load_dashboard(path):
+    """Load a ``Dashboard`` from a Python definition.
+
+    :param str path: Path to a *.dashboard.py file that defines a variable,
+        ``dashboard``.
+    :return: A ``Dashboard``
+    """
     module = SourceFileLoader("dashboard", path).load_module()
     marker = object()
     dashboard = getattr(module, 'dashboard', marker)
@@ -24,8 +30,20 @@ def load_dashboard(path):
     return dashboard
 
 
+class DashboardEncoder(json.JSONEncoder):
+    """Encode dashboard objects."""
+
+    def default(self, obj):
+        to_json_data = getattr(obj, 'to_json_data', None)
+        if to_json_data:
+            return to_json_data()
+        return json.JSONEncoder.default(self, obj)
+
+
 def write_dashboard(dashboard, stream):
-    json.dump(dashboard, stream, sort_keys=True, indent=2)
+    json.dump(
+        dashboard.to_json_data(), stream, sort_keys=True, indent=2,
+        cls=DashboardEncoder)
     stream.write('\n')
 
 
