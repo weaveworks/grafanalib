@@ -35,6 +35,11 @@ setup(
     ],
     install_requires=[
     ],
+    extras_require={
+        'dev': [
+            'flake8',
+        ],
+    },
     entry_points={
         'console_scripts': [
             'generate-dashboard=grafanalib._gen:generate_dashboard_script',
