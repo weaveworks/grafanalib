@@ -34,10 +34,12 @@ setup(
         'Topic :: System :: Monitoring',
     ],
     install_requires=[
+        'attrs',
     ],
     extras_require={
         'dev': [
             'flake8',
+            'pytest',
         ],
     },
     entry_points={

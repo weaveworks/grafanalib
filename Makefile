@@ -30,6 +30,8 @@ DEPS_UPTODATE = $(VIRTUALENV_DIR)/.deps-uptodate
 VIRTUALENV := $(shell command -v virtualenv 2> /dev/null)
 PIP := $(shell command -v pip 2> /dev/null)
 
+JUNIT_XML := "junit.xml"
+
 .ensure-virtualenv: .ensure-pip
 ifndef VIRTUALENV
 	$(error "virtualenv is not installed. Install with `pip install [--user] virtualenv`.")
@@ -56,14 +58,15 @@ $(DEPS_UPTODATE): setup.py $(VIRTUALENV_BIN)/pip
 
 deps: $(DEPS_UPTODATE)
 
-$(VIRTUALENV_BIN)/flake8: $(DEPS_UPTODATE)
+$(VIRTUALENV_BIN)/flake8 $(VIRTUALENV_BIN)/py.test: $(DEPS_UPTODATE)
 
 gfdatasource/$(UPTODATE): gfdatasource/*
 
 lint: $(VIRTUALENV_BIN)/flake8
 	$(VIRTUALENV_BIN)/flake8 gfdatasource/gfdatasource grafanalib
 
-test:
+test: $(VIRTUALENV_BIN)/py.test
+	$(VIRTUALENV_BIN)/py.test --junitxml=$(JUNIT_XML)
 
 clean:
 	$(SUDO) docker rmi $(IMAGE_NAMES) >/dev/null 2>&1 || true

@@ -4,9 +4,10 @@ Unlike 'core', which has logic for building generic Grafana dashboards, this
 has our Weave-specific preferences.
 """
 
-import grafanalib.core as G
-
+import attr
 import string
+
+import grafanalib.core as G
 
 
 """The name of the data source for our Prometheus service."""
@@ -85,22 +86,16 @@ def QPSGraph(title, expressions, id, **kwargs):
 
 def stacked(graph):
     """Turn a graph into a stacked graph."""
-    newGraph = dict(graph)  # Shallow copy.
-    newGraph.update(dict(
-        # Bit of a gotcha here. `graph` is a Python dictionary form of the
-        # Grafana JSON object (i.e. an AST). In the Python DSL, we use
-        # consistent camelCase naming, but Grafana itself is inconsistent.
-        # Thus, what was specified as `lineWidth` when passed to Graph is
-        # overridden as `linewidth` here.
-        linewidth=0,
+    return attr.assoc(
+        graph,
+        lineWidth=0,
         nullPointMode=G.NULL_AS_ZERO,
         stack=True,
         fill=10,
         tooltip=G.Tooltip(
             valueType=G.INDIVIDUAL,
         ),
-    ))
-    return newGraph
+    )
 
 
 def PercentUnitAxis(label=None):

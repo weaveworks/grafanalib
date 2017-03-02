@@ -14,7 +14,8 @@ dependencies:
 test:
   override:
     - "mkdir -p $(dirname $SRCDIR) && cp -r $(pwd)/ $SRCDIR"
-    - cd $SRCDIR; make
+    - "mkdir -p $CIRCLE_TEST_REPORTS/py.test/"
+    - cd $SRCDIR; make JUNIT_XML=$CIRCLE_TEST_REPORTS/py.test/junit.xml test
 
 deployment:
   push:
