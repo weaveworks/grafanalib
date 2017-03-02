@@ -5,3 +5,5 @@ build/
 dist/
 .uptodate
 /.env
+/junit.xml
+/.cache

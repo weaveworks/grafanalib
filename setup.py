@@ -38,6 +38,7 @@ setup(
     extras_require={
         'dev': [
             'flake8',
+            'pytest',
         ],
     },
     entry_points={
