@@ -26,6 +26,8 @@ ALIAS_COLORS = {
   "3xx": BLUE,
   "4xx": ORANGE,
   "5xx": RED,
+  "success": GREEN,
+  "error": RED,
 }
 
 
@@ -66,8 +68,8 @@ def QPSGraph(title, expressions, id, **kwargs):
     :param id: The id for the graph, unique within the dashboard.
     :param kwargs: Passed on to Graph.
     """
-    if len(expressions) != 5:
-        raise ValueError('Expected 5 expressions, got {}: {}'.format(
+    if len(expressions) != 5 and len(expressions) != 7:
+        raise ValueError('Expected 5 or 7 expressions, got {}: {}'.format(
             len(expressions), expressions))
     legends = sorted(ALIAS_COLORS.keys())
     exprs = zip(legends, expressions)
