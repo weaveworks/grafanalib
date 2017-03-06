@@ -522,7 +522,7 @@ class Dashboard(object):
     )
     id = attr.ib(default=None)
     links = attr.ib(default=attr.Factory(list))
-    refresh = attr.ib(default=DEFAULT_RENDERER)
+    refresh = attr.ib(default=DEFAULT_REFRESH)
     schemaVersion = attr.ib(default=SCHEMA_VERSION)
     sharedCrosshair = attr.ib(
         default=False,
