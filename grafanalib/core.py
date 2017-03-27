@@ -209,7 +209,8 @@ def _balance_panels(panels):
     """Resize panels so they are evenly spaced."""
     allotted_spans = sum(panel.span if panel.span else 0 for panel in panels)
     no_span_set = [panel for panel in panels if panel.span is None]
-    auto_span = math.ceil((TOTAL_SPAN - allotted_spans) / len(no_span_set))
+    auto_span = math.ceil(
+        (TOTAL_SPAN - allotted_spans) / (len(no_span_set) or 1))
     return [
         attr.assoc(panel, span=auto_span) if panel.span is None else panel
         for panel in panels
