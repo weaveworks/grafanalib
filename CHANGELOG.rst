@@ -2,6 +2,12 @@
 Changelog
 =========
 
+NEXT (YYYY-MM-DD)
+-----------------
+
+* Additional fields in ``Legend`` class (https://github.com/weaveworks/grafanalib/pull/25)
+
+
 0.1.2 (2017-01-02)
 ------------------
 
