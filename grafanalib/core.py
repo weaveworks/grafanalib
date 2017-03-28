@@ -124,6 +124,11 @@ class Legend(object):
     show = attr.ib(default=True, validator=instance_of(bool))
     total = attr.ib(default=False, validator=instance_of(bool))
     values = attr.ib(default=False, validator=instance_of(bool))
+    alignAsTable = attr.ib(default=False, validator=instance_of(bool))
+    hideEmpty = attr.ib(default=False, validator=instance_of(bool))
+    hideZero = attr.ib(default=False, validator=instance_of(bool))
+    rightSide = attr.ib(default=False, validator=instance_of(bool))
+    sideWidth = attr.ib(default=None)
 
     def to_json_data(self):
         return {
@@ -134,6 +139,11 @@ class Legend(object):
             'show': self.show,
             'total': self.total,
             'values': self.values,
+            'alignAsTable': self.alignAsTable,
+            'hideEmpty': self.hideEmpty,
+            'hideZero': self.hideZero,
+            'rightSide': self.rightSide,
+            'sideWidth': self.sideWidth,
         }
 
 
