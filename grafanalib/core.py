@@ -126,6 +126,7 @@ class Mapping(object):
             'value': self.value,
         }
 
+
 MAPPING_TYPE_VALUE_TO_TEXT = 1
 MAPPING_TYPE_RANGE_TO_TEXT = 2
 
