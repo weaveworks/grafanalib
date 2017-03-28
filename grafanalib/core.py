@@ -233,8 +233,19 @@ class Tooltip(object):
         }
 
 
+def is_valid_xaxis_mode(instance, attribute, value):
+    XAXIS_MODES = ("time", "series")
+    if value not in XAXIS_MODES:
+        raise ValueError("{attr} should be one of {choice}".format(
+            attr=attribute, choice=XAXIS_MODES))
+
+
 @attr.s
 class XAxis(object):
+
+    mode = attr.ib(default="time", validator=is_valid_xaxis_mode)
+    name = attr.ib(default=None)
+    values = attr.ib(default=attr.Factory(list))
     show = attr.ib(validator=instance_of(bool), default=True)
 
     def to_json_data(self):
