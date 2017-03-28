@@ -22,6 +22,16 @@ class RGBA(object):
 
 
 @attr.s
+class RGB(object):
+    r = attr.ib(validator=instance_of(int))
+    g = attr.ib(validator=instance_of(int))
+    b = attr.ib(validator=instance_of(int))
+
+    def to_json_data(self):
+        return "rgb({}, {}, {})".format(self.r, self.g, self.b)
+
+
+@attr.s
 class Pixels(object):
     num = attr.ib(validator=instance_of(int))
 
@@ -31,6 +41,11 @@ class Pixels(object):
 
 GREY1 = RGBA(216, 200, 27, 0.27)
 GREY2 = RGBA(234, 112, 112, 0.22)
+BLUE_RGBA = RGBA(31, 118, 189, 0.18)
+BLUE_RGB = RGB(31, 120, 193)
+GREEN = RGBA(50, 172, 45, 0.97)
+ORANGE = RGBA(237, 129, 40, 0.89)
+RED = RGBA(245, 54, 54, 0.9)
 
 INDIVIDUAL = 'individual'
 CUMULATIVE = 'cumulative'
@@ -42,6 +57,7 @@ FLOT = 'flot'
 
 DASHBOARD_TYPE = 'dashboard'
 GRAPH_TYPE = 'graph'
+SINGLESTAT_TYPE = 'singlestat'
 
 DEFAULT_FILL = 1
 DEFAULT_REFRESH = '10s'
@@ -96,6 +112,38 @@ CTYPE_QUERY = "query"
 # Operator
 OP_AND = "and"
 OP_OR = "or"
+
+
+@attr.s
+class Mapping(object):
+
+    name = attr.ib()
+    value = attr.ib(validator=instance_of(int))
+
+    def to_json_data(self):
+        return {
+            'name': self.name,
+            'value': self.value,
+        }
+
+MAPPING_TYPE_VALUE_TO_TEXT = 1
+MAPPING_TYPE_RANGE_TO_TEXT = 2
+
+MAPPING_VALUE_TO_TEXT = Mapping("value to text", MAPPING_TYPE_VALUE_TO_TEXT)
+MAPPING_RANGE_TO_TEXT = Mapping("range to text", MAPPING_TYPE_RANGE_TO_TEXT)
+
+
+# Value types min/max/avg/current/total/name/first/delta/range
+VTYPE_MIN = "min"
+VTYPE_MAX = "max"
+VTYPE_AVG = "avg"
+VTYPE_CURR = "current"
+VTYPE_TOTAL = "total"
+VTYPE_NAME = "name"
+VTYPE_FIRST = "first"
+VTYPE_DELTA = "delta"
+VTYPE_RANGE = "range"
+VTYPE_DEFAULT = VTYPE_AVG
 
 
 @attr.s
@@ -657,3 +705,199 @@ class Graph(object):
         if self.alert:
             graphObject['alert'] = self.alert
         return graphObject
+
+
+@attr.s
+class SparkLine(object):
+    fillColor = attr.ib(default=BLUE_RGBA, validator=instance_of(RGBA))
+    full = attr.ib(default=False, validator=instance_of(bool))
+    lineColor = attr.ib(default=BLUE_RGB, validator=instance_of(RGB))
+    show = attr.ib(default=False, validator=instance_of(bool))
+
+    def to_json_data(self):
+        return {
+            'fillColor': self.fillColor,
+            'full': self.full,
+            'lineColor': self.lineColor,
+            'show': self.show,
+        }
+
+
+@attr.s
+class ValueMap(object):
+    op = attr.ib()
+    text = attr.ib()
+    value = attr.ib()
+
+    def to_json_data(self):
+        return {
+            'op': self.op,
+            'text': self.text,
+            'value': self.value,
+        }
+
+
+@attr.s
+class RangeMap(object):
+    start = attr.ib()
+    end = attr.ib()
+    text = attr.ib()
+
+    def to_json_data(self):
+        return {
+            'from': self.start,
+            'to': self.end,
+            'text': self.text,
+        }
+
+
+@attr.s
+class Gauge(object):
+
+    minValue = attr.ib(default=0, validator=instance_of(int))
+    maxValue = attr.ib(default=100, validator=instance_of(int))
+    show = attr.ib(default=False, validator=instance_of(bool))
+    thresholdLabels = attr.ib(default=False, validator=instance_of(bool))
+    thresholdMarkers = attr.ib(default=True, validator=instance_of(bool))
+
+    def to_json_data(self):
+        return {
+            'maxValue': self.maxValue,
+            'minValue': self.minValue,
+            'show': self.show,
+            'thresholdLabels': self.thresholdLabels,
+            'thresholdMarkers': self.thresholdMarkers,
+        }
+
+
+@attr.s
+class SingleStat(object):
+    """Generates Signle Stat panel json structure
+
+    Grafana doc on singlestat: http://docs.grafana.org/reference/singlestat/
+
+    :param dataSource: Grafana datasource name
+    :param targets: list of metric requests for chousen datasource
+    :param title: panel title
+    :param cacheTimeout: metric query result cache ttl
+    :param colors: the list of colors that can be used for coloring
+        panel value or background. Additional info on coloring in docs:
+        http://docs.grafana.org/reference/singlestat/#coloring
+    :param colorBackground: defines if grafana will color panel background
+    :param colorValue: defines if grafana will color panel value
+    :param description: optional panel description
+    :param decimals: override automatic decimal precision for legend/tooltips
+    :param editable: defines if panel is editable via web interfaces
+    :param format: defines value units
+    :param gauge: draws and additional speedometer-like gauge based
+    :param height: defines panel height
+    :param hideTimeOverride: hides time overrides
+    :param id: panel id
+    :param interval: defines time interval between metric queries
+    :param links: additional web links
+    :param mappingType: defines panel mapping type.
+        Additional info can be found in docs:
+        http://docs.grafana.org/reference/singlestat/#value-to-text-mapping
+    :param mappingTypes: the list of available mapping types for panel
+    :param maxDataPoints: maximum metric query results,
+        that will be used for rendering
+    :param minSpan: minimum span number
+    :param nullText: defines what to show if metric query result is undefined
+    :param nullPointMode: defines how to render undefined values
+    :param postfix: defines postfix that will be attached to value
+    :param postfixFontSize: defines postfix font size
+    :param prefix: defines prefix that will be attached to value
+    :param prefixFontSize: defines prefix font size
+    :param rangeMaps: the list of value to text mappings
+    :param span: defines the number of spans that will be used for panel
+    :param sparkline: defines if grafana should draw an additional sparkline.
+        Sparkline grafana documentation:
+        http://docs.grafana.org/reference/singlestat/#spark-lines
+    :param thresholds: single stat thresholds
+    :param transparent: defines if panel should be transparent
+    :param valueFontSize: defines value font size
+    :param valueName: defines value type. possible values are:
+        min, max, avg, current, total, name, first, delta, range
+    :param valueMaps: the list of value to text mappings
+    """
+
+    dataSource = attr.ib()
+    targets = attr.ib()
+    title = attr.ib()
+    cacheTimeout = attr.ib(default=None)
+    colors = attr.ib(default=[GREEN, ORANGE, RED])
+    colorBackground = attr.ib(default=False, validator=instance_of(bool))
+    colorValue = attr.ib(default=False, validator=instance_of(bool))
+    description = attr.ib(default=None)
+    decimals = attr.ib(default=None)
+    editable = attr.ib(default=True, validator=instance_of(bool))
+    format = attr.ib(default="none")
+    gauge = attr.ib(default=attr.Factory(Gauge),
+                    validator=instance_of(Gauge))
+    height = attr.ib(default=None)
+    hideTimeOverride = attr.ib(default=False, validator=instance_of(bool))
+    id = attr.ib(default=None)
+    interval = attr.ib(default=None)
+    links = attr.ib(default=attr.Factory(list))
+    mappingType = attr.ib(default=MAPPING_TYPE_VALUE_TO_TEXT)
+    mappingTypes = attr.ib(default=[MAPPING_VALUE_TO_TEXT,
+                                    MAPPING_RANGE_TO_TEXT])
+    maxDataPoints = attr.ib(default=100)
+    minSpan = attr.ib(default=None)
+    nullText = attr.ib(default=None)
+    nullPointMode = attr.ib(default="connected")
+    postfix = attr.ib(default="")
+    postfixFontSize = attr.ib(default="50%")
+    prefix = attr.ib(default="")
+    prefixFontSize = attr.ib(default="50%")
+    rangeMaps = attr.ib(default=attr.Factory(list))
+    repeat = attr.ib(default=None)
+    span = attr.ib(default=6)
+    sparkline = attr.ib(default=attr.Factory(SparkLine),
+                        validator=instance_of(SparkLine))
+    thresholds = attr.ib(default="")
+    transparent = attr.ib(default=False, validator=instance_of(bool))
+    valueFontSize = attr.ib(default="80%")
+    valueName = attr.ib(default=VTYPE_DEFAULT)
+    valueMaps = attr.ib(default=attr.Factory(list))
+
+    def to_json_data(self):
+        return {
+            'cacheTimeout': self.cacheTimeout,
+            'colorBackground': self.colorBackground,
+            'colorValue': self.colorValue,
+            'colors': self.colors,
+            'datasource': self.dataSource,
+            'decimals': self.decimals,
+            'description': self.description,
+            'editable': self.editable,
+            'format': self.format,
+            'gauge': self.gauge,
+            'id': self.id,
+            'interval': self.interval,
+            'links': self.links,
+            'height': self.height,
+            'hideTimeOverride': self.hideTimeOverride,
+            'mappingType': self.mappingType,
+            'mappingTypes': self.mappingTypes,
+            'maxDataPoints': self.maxDataPoints,
+            'minSpan': self.minSpan,
+            'nullPointMode': self.nullPointMode,
+            'nullText': self.nullText,
+            'postfix': self.postfix,
+            'postfixFontSize': self.postfixFontSize,
+            'prefix': self.prefix,
+            'prefixFontSize': self.prefixFontSize,
+            'rangeMaps': self.rangeMaps,
+            'repeat': self.repeat,
+            'span': self.span,
+            'sparkline': self.sparkline,
+            'targets': self.targets,
+            'thresholds': self.thresholds,
+            'title': self.title,
+            'transparent': self.transparent,
+            'type': SINGLESTAT_TYPE,
+            'valueFontSize': self.valueFontSize,
+            'valueMaps': self.valueMaps,
+            'valueName': self.valueName
+        }
