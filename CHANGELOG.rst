@@ -5,9 +5,10 @@ Changelog
 NEXT (YYYY-MM-DD)
 -----------------
 
-* ``SingleStat`` panel class added (https://github.com/weaveworks/grafanalib/pull/22)
-* Additional fields for ``Legend`` (https://github.com/weaveworks/grafanalib/pull/25)
-* Additional fields for ``XAxis`` (https://github.com/weaveworks/grafanalib/pull/28)
+* ``SingleStat`` panel class added  (https://github.com/weaveworks/grafanalib/pull/22)
+* Additional fields for ``Legend``  (https://github.com/weaveworks/grafanalib/pull/25)
+* OpenTSDB datasource support added (https://github.com/weaveworks/grafanalib/pull/27)
+* Additional fields for ``XAxis``   (https://github.com/weaveworks/grafanalib/pull/28)
 
 0.1.2 (2017-01-02)
 ------------------
