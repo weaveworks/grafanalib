@@ -172,7 +172,7 @@ class Legend(object):
     min = attr.ib(default=False, validator=instance_of(bool))
     show = attr.ib(default=True, validator=instance_of(bool))
     total = attr.ib(default=False, validator=instance_of(bool))
-    values = attr.ib(default=False, validator=instance_of(bool))
+    values = attr.ib(default=None)
     alignAsTable = attr.ib(default=False, validator=instance_of(bool))
     hideEmpty = attr.ib(default=False, validator=instance_of(bool))
     hideZero = attr.ib(default=False, validator=instance_of(bool))
@@ -180,6 +180,9 @@ class Legend(object):
     sideWidth = attr.ib(default=None)
 
     def to_json_data(self):
+        values = ((self.avg or self.current or self.max or self.min)
+                  if self.values is None else self.values)
+
         return {
             'avg': self.avg,
             'current': self.current,
@@ -187,7 +190,7 @@ class Legend(object):
             'min': self.min,
             'show': self.show,
             'total': self.total,
-            'values': self.values,
+            'values': values,
             'alignAsTable': self.alignAsTable,
             'hideEmpty': self.hideEmpty,
             'hideZero': self.hideZero,
