@@ -5,6 +5,7 @@ encourage it by way of some defaults. Rather, they are ways of building
 arbitrary Grafana JSON.
 """
 
+import itertools
 import attr
 from attr.validators import instance_of
 import math
@@ -620,6 +621,10 @@ class Dashboard(object):
     version = attr.ib(default=0)
 
     def to_json_data(self):
+        GRAPH_ID = itertools.count(1)
+        for row in self.rows:
+            for panel in row.panels:
+                panel.id = next(GRAPH_ID)
         return {
             'annotations': self.annotations,
             'editable': self.editable,
