@@ -31,13 +31,12 @@ ALIAS_COLORS = {
 }
 
 
-def PromGraph(title, expressions, id, **kwargs):
+def PromGraph(title, expressions, **kwargs):
     """Create a graph that renders Prometheus data.
 
     :param title: The title of the graph.
     :param expressions: List of tuples of (legend, expr), where 'expr' is a
         Prometheus expression.
-    :param id: The id for the graph, unique within the dashboard.
     :param kwargs: Passed on to Graph.
     """
     letters = string.ascii_uppercase
@@ -58,14 +57,13 @@ def PromGraph(title, expressions, id, **kwargs):
     )
 
 
-def QPSGraph(title, expressions, id, **kwargs):
+def QPSGraph(title, expressions, **kwargs):
     """Create a graph of QPS, broken up by response code.
 
     Data is drawn from Prometheus.
 
     :param title: Title of the graph.
     :param expressions: List of Prometheus expressions. Must be 5.
-    :param id: The id for the graph, unique within the dashboard.
     :param kwargs: Passed on to Graph.
     """
     if len(expressions) != 5 and len(expressions) != 7:
