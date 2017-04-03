@@ -1,5 +1,6 @@
 """Tests for Grafanalib."""
 
+import attr
 from io import StringIO
 
 import grafanalib.core as G
@@ -29,3 +30,30 @@ def test_serialization():
     stream = StringIO()
     _gen.write_dashboard(graph, stream)
     assert stream.getvalue() != ''
+
+
+def test_auto_id():
+    """auto_panel_ids() provides IDs for all panels without IDs already set."""
+    dashboard = G.Dashboard(
+        title="Test dashboard",
+        rows=[
+            G.Row(panels=[
+                G.Graph(
+                    title="CPU Usage by Namespace (rate[5m])",
+                    dataSource="My data source",
+                    targets=[
+                        G.Target(
+                            expr='namespace:container_cpu_usage_seconds_total:sum_rate',
+                            legendFormat='{{namespace}}',
+                            refId='A',
+                        ),
+                    ],
+                    yAxes=[
+                        G.YAxis(format=G.SHORT_FORMAT, label="CPU seconds / second"),
+                        G.YAxis(format=G.SHORT_FORMAT),
+                    ],
+                )
+            ]),
+        ],
+    ).auto_panel_ids()
+    assert dashboard.rows[0].panels[0].id == 1

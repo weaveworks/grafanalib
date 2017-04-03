@@ -639,7 +639,7 @@ class Dashboard(object):
         auto_ids = (i for i in itertools.count(1) if i not in ids)
 
         def set_id(panel):
-            return attr.assoc(panel, id=next(auto_ids)) if panel.id else panel
+            return panel if panel.id else attr.assoc(panel, id=next(auto_ids))
         return self._map_panels(set_id)
 
     def to_json_data(self):
