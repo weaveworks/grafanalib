@@ -310,7 +310,7 @@ class Row(object):
         return iter(self.panels)
 
     def _map_panels(self, f):
-        return attr.assoc(self, panels=map(f, self.panels))
+        return attr.assoc(self, panels=list(map(f, self.panels)))
 
     def to_json_data(self):
         showTitle = False if self.title is None else True
