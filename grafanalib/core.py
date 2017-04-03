@@ -635,6 +635,13 @@ class Dashboard(object):
         return attr.assoc(self, rows=[r._map_panels(f) for r in self.rows])
 
     def auto_panel_ids(self):
+        """Give unique IDs all the panels without IDs.
+
+        Returns a new ``Dashboard`` that is the same as this one, except all
+        of the panels have their ``id`` property set. Any panels which had an
+        ``id`` property set will keep that property, all others will have
+        auto-generated IDs provided for them.
+        """
         ids = set([panel.id for panel in self._iter_panels() if panel.id])
         auto_ids = (i for i in itertools.count(1) if i not in ids)
 
