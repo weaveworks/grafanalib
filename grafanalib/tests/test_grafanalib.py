@@ -1,6 +1,5 @@
 """Tests for Grafanalib."""
 
-import attr
 from io import StringIO
 
 import grafanalib.core as G
@@ -43,13 +42,13 @@ def test_auto_id():
                     dataSource="My data source",
                     targets=[
                         G.Target(
-                            expr='namespace:container_cpu_usage_seconds_total:sum_rate',
+                            expr='whatever',
                             legendFormat='{{namespace}}',
                             refId='A',
                         ),
                     ],
                     yAxes=[
-                        G.YAxis(format=G.SHORT_FORMAT, label="CPU seconds / second"),
+                        G.YAxis(format=G.SHORT_FORMAT, label="CPU seconds"),
                         G.YAxis(format=G.SHORT_FORMAT),
                     ],
                 )
