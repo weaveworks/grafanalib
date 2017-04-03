@@ -52,7 +52,6 @@ def PromGraph(title, expressions, **kwargs):
         title=title,
         dataSource=PROMETHEUS,
         targets=targets,
-        id=id,
         **kwargs
     )
 
@@ -75,7 +74,6 @@ def QPSGraph(title, expressions, **kwargs):
         title=title,
         expressions=exprs,
         aliasColors=ALIAS_COLORS,
-        id=id,
         yAxes=[
             G.YAxis(format=G.OPS_FORMAT),
             G.YAxis(format=G.SHORT_FORMAT),
