@@ -7,6 +7,7 @@ arbitrary Grafana JSON.
 
 import attr
 from attr.validators import instance_of
+import itertools
 import math
 
 
@@ -304,6 +305,12 @@ class Row(object):
     height = attr.ib(default=DEFAULT_ROW_HEIGHT, validator=instance_of(Pixels))
     showTitle = attr.ib(default=None)
     title = attr.ib(default=None)
+
+    def _iter_panels(self):
+        return iter(self.panels)
+
+    def _map_panels(self, f):
+        return attr.assoc(self, panels=list(map(f, self.panels)))
 
     def to_json_data(self):
         showTitle = False if self.title is None else True
@@ -618,6 +625,29 @@ class Dashboard(object):
     )
     timezone = attr.ib(default=UTC)
     version = attr.ib(default=0)
+
+    def _iter_panels(self):
+        for row in self.rows:
+            for panel in row._iter_panels():
+                yield panel
+
+    def _map_panels(self, f):
+        return attr.assoc(self, rows=[r._map_panels(f) for r in self.rows])
+
+    def auto_panel_ids(self):
+        """Give unique IDs all the panels without IDs.
+
+        Returns a new ``Dashboard`` that is the same as this one, except all
+        of the panels have their ``id`` property set. Any panels which had an
+        ``id`` property set will keep that property, all others will have
+        auto-generated IDs provided for them.
+        """
+        ids = set([panel.id for panel in self._iter_panels() if panel.id])
+        auto_ids = (i for i in itertools.count(1) if i not in ids)
+
+        def set_id(panel):
+            return panel if panel.id else attr.assoc(panel, id=next(auto_ids))
+        return self._map_panels(set_id)
 
     def to_json_data(self):
         return {

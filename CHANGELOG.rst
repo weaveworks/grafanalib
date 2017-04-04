@@ -5,11 +5,16 @@ Changelog
 NEXT (YYYY-MM-DD)
 -----------------
 
-* ``SingleStat`` panel class added      (https://github.com/weaveworks/grafanalib/pull/22)
-* Additional fields for ``Legend``      (https://github.com/weaveworks/grafanalib/pull/25)
-* OpenTSDB datasource support added     (https://github.com/weaveworks/grafanalib/pull/27)
-* Additional fields for ``XAxis``       (https://github.com/weaveworks/grafanalib/pull/28)
+* ``Dashboard`` objects now have an ``auto_panel_id`` method which will
+  automatically supply unique panel (i.e. graph) IDs for any panels that don't
+  have one set. Dashboard config files no longer need to track their own
+  ``GRAPH_ID`` counter.
+* ``SingleStat`` panel class added  (https://github.com/weaveworks/grafanalib/pull/22)
+* Additional fields for ``Legend``  (https://github.com/weaveworks/grafanalib/pull/25)
+* OpenTSDB datasource support added (https://github.com/weaveworks/grafanalib/pull/27)
+* Additional fields for ``XAxis``   (https://github.com/weaveworks/grafanalib/pull/28)
 * Add support for Grafana Zabbix plugin (https://github.com/weaveworks/grafanalib/pull/31)
+
 
 0.1.2 (2017-01-02)
 ------------------
