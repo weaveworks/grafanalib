@@ -13,6 +13,8 @@ NEXT (YYYY-MM-DD)
 * Additional fields for ``Legend``  (https://github.com/weaveworks/grafanalib/pull/25)
 * OpenTSDB datasource support added (https://github.com/weaveworks/grafanalib/pull/27)
 * Additional fields for ``XAxis``   (https://github.com/weaveworks/grafanalib/pull/28)
+* Add support for Grafana Zabbix plugin (https://github.com/weaveworks/grafanalib/pull/31)
+
 
 0.1.2 (2017-01-02)
 ------------------
