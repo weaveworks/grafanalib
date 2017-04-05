@@ -1,8 +1,7 @@
-import re
 import attr
 from attr.validators import instance_of
 from numbers import Number
-
+from grafanalib.validators import *
 
 ZABBIX_QMODE_METRICS = 0
 ZABBIX_QMODE_SERVICES = 1
@@ -27,44 +26,6 @@ ZABBIX_SLA_PROP_PROBTIME = {
 ZABBIX_SLA_PROP_DOWNTIME = {
     "name": "Down time",
     "property": "downtimeTime"}
-
-
-@attr.attributes(repr=False, slots=True)
-class _IsInValidator(object):
-    choices = attr.attr()
-
-    def __call__(self, inst, attr, value):
-        if value not in self.choices:
-            raise ValueError("{attr} should be one of {choice}".format(
-                attr=attr, choice=self.choices))
-
-    def __repr__(self):
-        return (
-            "<is value present in list of  {choice}>"
-            .format(choice=self.choices)
-        )
-
-
-def is_in_validator(choices):
-    """
-    A validator that raises a :exc:`ValueError` if the attribute value is not
-    in a provided list.
-
-    :param choices: List of valid choices
-    """
-    return _IsInValidator(choices)
-
-
-def is_valid_interval(instance, attribute, value):
-    """
-    A validator that raises a :exc:`ValueError` if the attribute value is not
-    matching regular expression.
-    """
-    if not re.match("^[+-]?\d*[smhdMY]$", value):
-        raise ValueError(
-            "valid interval should be a string "
-            "matching an expression: ^[+-]?\d*[smhdMY]$. "
-            "Examples: 24h 7d 1M +24h -24h")
 
 
 @attr.s
@@ -197,9 +158,9 @@ class ZabbixGroupByFunction(object):
     _default_function = "avg"
 
     added = attr.ib(default=False, validator=instance_of(bool))
-    interval = attr.ib(default=_default_interval, validator=is_valid_interval)
+    interval = attr.ib(default=_default_interval, validator=is_interval)
     function = attr.ib(default=_default_function,
-                       validator=is_in_validator(_options))
+                       validator=is_in(_options))
 
     def to_json_data(self):
         text = "groupBy({interval}, {function})"
@@ -272,9 +233,9 @@ class ZabbixAggregateByFunction(object):
     _default_function = "avg"
 
     added = attr.ib(default=False, validator=instance_of(bool))
-    interval = attr.ib(default=_default_interval, validator=is_valid_interval)
+    interval = attr.ib(default=_default_interval, validator=is_interval)
     function = attr.ib(default=_default_function,
-                       validator=is_in_validator(_options))
+                       validator=is_in(_options))
 
     def to_json_data(self):
         text = "aggregateBy({interval}, {function})"
@@ -311,7 +272,7 @@ class ZabbixAverageFunction(object):
     _default_interval = "1m"
 
     added = attr.ib(default=False, validator=instance_of(bool))
-    interval = attr.ib(default=_default_interval, validator=is_valid_interval)
+    interval = attr.ib(default=_default_interval, validator=is_interval)
 
     def to_json_data(self):
         text = "average({interval})"
@@ -345,7 +306,7 @@ class ZabbixMaxFunction(object):
     _default_interval = "1m"
 
     added = attr.ib(default=False, validator=instance_of(bool))
-    interval = attr.ib(default=_default_interval, validator=is_valid_interval)
+    interval = attr.ib(default=_default_interval, validator=is_interval)
 
     def to_json_data(self):
         text = "max({interval})"
@@ -379,7 +340,7 @@ class ZabbixMedianFunction(object):
     _default_interval = "1m"
 
     added = attr.ib(default=False, validator=instance_of(bool))
-    interval = attr.ib(default="1m", validator=is_valid_interval)
+    interval = attr.ib(default="1m", validator=is_interval)
 
     def to_json_data(self):
         text = "median({interval})"
@@ -413,7 +374,7 @@ class ZabbixMinFunction(object):
     _default_interval = "1m"
 
     added = attr.ib(default=False, validator=instance_of(bool))
-    interval = attr.ib(default=_default_interval, validator=is_valid_interval)
+    interval = attr.ib(default=_default_interval, validator=is_interval)
 
     def to_json_data(self):
         text = "min({interval})"
@@ -473,7 +434,7 @@ class ZabbixBottomFunction(object):
     added = attr.ib(default=False, validator=instance_of(bool))
     number = attr.ib(default=_default_number, validator=instance_of(int))
     function = attr.ib(default=_default_function,
-                       validator=is_in_validator(_options))
+                       validator=is_in(_options))
 
     def to_json_data(self):
         text = "bottom({number}, {function})"
@@ -509,7 +470,7 @@ class ZabbixTopFunction(object):
     added = attr.ib(default=False, validator=instance_of(bool))
     number = attr.ib(default=_default_number, validator=instance_of(int))
     function = attr.ib(default=_default_function,
-                       validator=is_in_validator(_options))
+                       validator=is_in(_options))
 
     def to_json_data(self):
         text = "top({number}, {function})"
@@ -548,7 +509,7 @@ class ZabbixTrendValueFunction(object):
     _default_type = "avg"
     added = attr.ib(default=False, validator=instance_of(bool))
     type = attr.ib(default=_default_type,
-                   validator=is_in_validator(_options))
+                   validator=is_in(_options))
 
     def to_json_data(self):
         text = "trendValue({type})"

@@ -2,6 +2,7 @@
 
 import attr
 from attr.validators import instance_of
+from grafanalib.validators import is_in
 
 # OpenTSDB aggregators
 OTSDB_AGG_AVG = "avg"
@@ -44,18 +45,6 @@ OTSDB_QUERY_FILTERS = (
 OTSDB_QUERY_FILTER_DEFAULT = 'literal_or'
 
 
-def valid_opentsdb_downsample_fill_policy(instance, attribute, value):
-    if value not in OTSDB_DOWNSAMPLING_FILL_POLICIES:
-        raise ValueError("{attr} should be one of {choice}".format(
-            attr=attribute, choice=OTSDB_DOWNSAMPLING_FILL_POLICIES))
-
-
-def valid_opentsdb_filter(instance, attribute, value):
-    if value not in OTSDB_QUERY_FILTERS:
-        raise ValueError("{attr} should be one of {choice}".format(
-            attr=attribute, choice=OTSDB_QUERY_FILTERS))
-
-
 @attr.s
 class OpenTSDBFilter(object):
 
@@ -63,7 +52,7 @@ class OpenTSDBFilter(object):
     tag = attr.ib()
     type = attr.ib(
         default=OTSDB_QUERY_FILTER_DEFAULT,
-        validator=valid_opentsdb_filter)
+        validator=is_in(OTSDB_QUERY_FILTERS))
     groupBy = attr.ib(default=False, validator=instance_of(bool))
 
     def to_json_data(self):
@@ -126,7 +115,7 @@ class OpenTSDBTarget(object):
     downsampleAggregator = attr.ib(default=OTSDB_AGG_SUM)
     downsampleFillPolicy = attr.ib(
         default=OTSDB_DOWNSAMPLING_FILL_POLICY_DEFAULT,
-        validator=valid_opentsdb_downsample_fill_policy)
+        validator=is_in(OTSDB_DOWNSAMPLING_FILL_POLICIES))
     downsampleInterval = attr.ib(default=None)
     filters = attr.ib(default=attr.Factory(list))
     shouldComputeRate = attr.ib(default=False, validator=instance_of(bool))
