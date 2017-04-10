@@ -1,7 +1,7 @@
 import attr
 from attr.validators import instance_of
 from numbers import Number
-from grafanalib.validators import *
+from grafanalib.validators import is_interval, is_in
 
 ZABBIX_QMODE_METRICS = 0
 ZABBIX_QMODE_SERVICES = 1
