@@ -59,7 +59,7 @@ def test_is_color_code_raises(color):
 def test_list_of():
     etype = int
     check = (1, 2, 3)
-    val = validators.list_of(etype)
+    val = validators.is_list_of(etype)
     res = val(None, create_attribute(), check)
     assert res is None
 
@@ -68,5 +68,5 @@ def test_list_of_raises():
     etype = int
     check = ("a")
     with pytest.raises(ValueError):
-        val = validators.list_of(etype)
+        val = validators.is_list_of(etype)
         val(None, create_attribute(), check)

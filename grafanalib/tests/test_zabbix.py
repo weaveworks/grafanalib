@@ -31,3 +31,19 @@ def test_serialization_zabbix_target():
     stream = StringIO()
     _gen.write_dashboard(graph, stream)
     assert stream.getvalue() != ''
+
+
+def test_serialization_zabbix_trigger_panel():
+    """Serializing a graph doesn't explode."""
+    graph = Z.ZabbixTriggersPanel(
+        id=1,
+        title="Zabbix Triggers",
+        dataSource="Zabbix data source",
+        triggers=Z.ZabbixTrigger(
+            group='Zabbix Group',
+            application="",
+            trigger="/trigger.regexp/",
+            host="/zabbix.host/"))
+    stream = StringIO()
+    _gen.write_dashboard(graph, stream)
+    assert stream.getvalue() != ''
