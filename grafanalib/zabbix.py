@@ -1,7 +1,13 @@
 import attr
+import itertools
 from attr.validators import instance_of
 from numbers import Number
-from grafanalib.validators import is_interval, is_in
+from grafanalib.validators import is_interval, is_in, is_color_code, is_list_of
+from grafanalib.core import (
+    RGBA, Percent, Pixels, DashboardLink,
+    DEFAULT_ROW_HEIGHT, BLANK, GREEN)
+
+ZABBIX_TRIGGERS_TYPE = "alexanderzobnin-zabbix-triggers-panel"
 
 ZABBIX_QMODE_METRICS = 0
 ZABBIX_QMODE_SERVICES = 1
@@ -26,6 +32,37 @@ ZABBIX_SLA_PROP_PROBTIME = {
 ZABBIX_SLA_PROP_DOWNTIME = {
     "name": "Down time",
     "property": "downtimeTime"}
+
+ZABBIX_EVENT_PROBLEMS = {
+    "text": "Problems",
+    "value": [1]}
+
+ZABBIX_EVENT_OK = {
+    "text": "OK",
+    "value": [0]}
+
+ZABBIX_EVENT_ALL = {
+    "text": "All",
+    "value": [0, 1]}
+
+ZABBIX_TRIGGERS_SHOW_ALL = "all triggers"
+ZABBIX_TRIGGERS_SHOW_ACK = "acknowledged"
+ZABBIX_TRIGGERS_SHOW_NACK = "unacknowledged"
+
+ZABBIX_SORT_TRIGGERS_BY_CHANGE = {
+    "text": "last change",
+    "value": "lastchange"}
+ZABBIX_SORT_TRIGGERS_BY_SEVERITY = {
+    "text": "severity",
+    "value": "priority"}
+
+ZABBIX_SEVERITY_COLORS = (
+    ("#B7DBAB", "Not classified"),
+    ("#82B5D8", "Information"),
+    ("#E5AC0E", "Warning"),
+    ("#C15C17", "Average"),
+    ("#BF1B00", "High"),
+    ("#890F02", "Disaster"))
 
 
 @attr.s
@@ -655,3 +692,166 @@ def zabbixTextTarget(application, group, host, item, text,
         textFilter=text,
         useCaptureGroups=useCaptureGroups,
     )
+
+
+@attr.s
+class ZabbixColor(object):
+    color = attr.ib(validator=is_color_code)
+    priority = attr.ib(validator=instance_of(int))
+    severity = attr.ib(validator=instance_of(str))
+    show = attr.ib(default=True, validator=instance_of(bool))
+
+    def to_json_data(self):
+        return {
+            "color": self.color,
+            "priority": self.priority,
+            "severity": self.severity,
+            "show": self.show,
+        }
+
+
+def createZabbixSeverityColors(colors):
+    priorities = itertools.count(0)
+    return [ZabbixColor(color=c, priority=next(priorities), severity=s)
+            for c, s in colors]
+
+
+@attr.s
+class ZabbixTrigger(object):
+
+    application = attr.ib(default="", validator=instance_of(str))
+    group = attr.ib(default="", validator=instance_of(str))
+    host = attr.ib(default="", validator=instance_of(str))
+    trigger = attr.ib(default="", validator=instance_of(str))
+
+    def to_json_data(self):
+        return {
+            "application": ZabbixTargetField(self.application),
+            "group": ZabbixTargetField(self.group),
+            "host": ZabbixTargetField(self.host),
+            "trigger": ZabbixTargetField(self.trigger),
+        }
+
+
+@attr.s
+class ZabbixTriggersPanel(object):
+    """ZabbixTriggersPanel
+
+    :param dataSource: query datasource name
+    :param title: panel title
+    :param ackEventColor: acknowledged triggers color
+    :param customLastChangeFormat: defines last change field data format.
+        See momentjs docs for time format:
+        http://momentjs.com/docs/#/displaying/format/
+    :param description: additional panel description
+    :param fontSize: panel font size
+    :param height: panel height in Pixels
+    :param hideHostsInMaintenance: defines if triggers form hosts
+        in maintenance should be shown
+    :param hostField: defines if host field should be shown
+    :param hostTechNameField: defines if field with host technical name should
+        be shown
+    :param id: panel identificator
+    :param infoField: defines if field with host info should be shown
+    :param lastChangeField: defines if field with last change
+        time should be shown
+    :param limit: defines number of queried triggers
+    :param links: list of dashboard links
+    :param markAckEvents: defines if acknowledged triggers should be colored
+        with different color
+    :param minSpan: defines panel minimum spans
+    :param okEventColor: defines color for triggers with Ok status
+    :param pageSize: defines number of triggers per panel page
+    :param scroll: defines if scroll should be shown
+    :param severityField: defines if severity field should be shown
+    :param showEvents: defines event type to query (Ok, Problems, All)
+    :param showTriggers: defines trigger type to query
+        (all, acknowledged, unacknowledged)
+    :param sortTriggersBy: defines trigger sort policy
+    :param span: defines span number for panel
+    :param statusField: defines if status field should be shown
+    :param transparent: defines if panel should be transparent
+    :param triggerSeverity: defines colors for trigger severity
+    :param triggers: trigger query
+
+    """
+    dataSource = attr.ib()
+    title = attr.ib()
+
+    ackEventColor = attr.ib(default=BLANK,
+                            validator=instance_of(RGBA))
+    ageField = attr.ib(default=True, validator=instance_of(bool))
+    customLastChangeFormat = attr.ib(default=False,
+                                     validator=instance_of(bool))
+    description = attr.ib(default="", validator=instance_of(str))
+    fontSize = attr.ib(default=attr.Factory(Percent(100)),
+                       validator=instance_of(Percent))
+    height = attr.ib(default=DEFAULT_ROW_HEIGHT, validator=instance_of(Pixels))
+    hideHostsInMaintenance = attr.ib(default=False,
+                                     validator=instance_of(bool))
+    hostField = attr.ib(default=True, validator=instance_of(bool))
+    hostTechNameField = attr.ib(default=False, validator=instance_of(bool))
+    id = attr.ib(default=None)
+    infoField = attr.ib(default=True, validator=instance_of(bool))
+    lastChangeField = attr.ib(default=True, validator=instance_of(bool))
+
+    lastChangeFormat = attr.ib(default="")
+    limit = attr.ib(default=10, validator=instance_of(int))
+    links = attr.ib(default=attr.Factory(list),
+                    validator=is_list_of(DashboardLink))
+    markAckEvents = attr.ib(default=False, validator=instance_of(bool))
+    minSpan = attr.ib(default=None)
+    okEventColor = attr.ib(default=GREEN,
+                           validator=instance_of(RGBA))
+    pageSize = attr.ib(default=10, validator=instance_of(int))
+    repeat = attr.ib(default=None)
+    scroll = attr.ib(default=True, validator=instance_of(bool))
+    severityField = attr.ib(default=False, validator=instance_of(bool))
+    showEvents = attr.ib(default=ZABBIX_EVENT_PROBLEMS)
+    showTriggers = attr.ib(default=ZABBIX_TRIGGERS_SHOW_ALL)
+    sortTriggersBy = attr.ib(default=ZABBIX_SORT_TRIGGERS_BY_CHANGE)
+    span = attr.ib(default=None)
+    statusField = attr.ib(default=False, validator=instance_of(bool))
+    transparent = attr.ib(default=False, validator=instance_of(bool))
+    triggerSeverity = attr.ib(
+        default=attr.Factory(
+            createZabbixSeverityColors(ZABBIX_SEVERITY_COLORS)))
+    triggers = attr.ib(default=ZabbixTrigger(),
+                       validator=instance_of(ZabbixTrigger))
+
+    def to_json_data(self):
+        return {
+            "type": ZABBIX_TRIGGERS_TYPE,
+            "datasource": self.dataSource,
+            "title": self.title,
+            "ackEventColor": self.ackEventColor,
+            "ageField": self.ageField,
+            "customLastChangeFormat": self.customLastChangeFormat,
+            "description": self.description,
+            "fontSize": self.fontSize,
+            "height": self.height,
+            "hideHostsInMaintenance": self.hideHostsInMaintenance,
+            "hostField": self.hostField,
+            "hostTechNameField": self.hostTechNameField,
+            "id": self.id,
+            "infoField": self.infoField,
+            "lastChangeField": self.lastChangeField,
+            "lastChangeFormat": self.lastChangeFormat,
+            "limit": self.limit,
+            "links": self.links,
+            "markAckEvents": self.markAckEvents,
+            "minSpan": self.minSpan,
+            "okEventColor": self.okEventColor,
+            "pageSize": self.pageSize,
+            "repeat": self.repeat,
+            "scroll": self.scroll,
+            "severityField": self.severityField,
+            "showEvents": self.showEvents,
+            "showTriggers": self.showTriggers,
+            "sortTriggersBy": self.sortTriggersBy,
+            "span": self.span,
+            "statusField": self.statusField,
+            "transparent": self.transparent,
+            "triggers": self.triggers,
+            "triggerSeverity": self.triggerSeverity,
+        }
