@@ -74,7 +74,7 @@ class _ListOfValidator(object):
         )
 
 
-def is_list_of(etype):
+def list_of(etype):
     """
     A validator that raises a :exc:`ValueError` if the attribute value is not
     in a provided list.
