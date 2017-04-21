@@ -9,6 +9,7 @@ import attr
 from attr.validators import instance_of
 import itertools
 import math
+from numbers import Number
 
 
 @attr.s
@@ -40,6 +41,14 @@ class Pixels(object):
         return '{}px'.format(self.num)
 
 
+@attr.s
+class Percent(object):
+    num = attr.ib(default=100, validator=instance_of(Number))
+
+    def to_json_data(self):
+        return '{}%'.format(self.num)
+
+
 GREY1 = RGBA(216, 200, 27, 0.27)
 GREY2 = RGBA(234, 112, 112, 0.22)
 BLUE_RGBA = RGBA(31, 118, 189, 0.18)
@@ -47,6 +56,7 @@ BLUE_RGB = RGB(31, 120, 193)
 GREEN = RGBA(50, 172, 45, 0.97)
 ORANGE = RGBA(237, 129, 40, 0.89)
 RED = RGBA(245, 54, 54, 0.9)
+BLANK = RGBA(0, 0, 0, 0.0)
 
 INDIVIDUAL = 'individual'
 CUMULATIVE = 'cumulative'
