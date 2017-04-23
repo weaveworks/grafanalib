@@ -25,9 +25,6 @@ percentile latency:
   from grafanalib.core import *
 
 
-  GRAPH_ID = itertools.count(1)
-
-
   dashboard = Dashboard(
     title="Frontend Stats",
     rows=[
@@ -113,7 +110,7 @@ percentile latency:
         ),
       ]),
     ],
-  )
+  ).auto_panel_ids()
 
 There is a fair bit of repetition here, but once you figure out what works for
 your needs, you can factor that out.
