@@ -59,7 +59,6 @@ percentile latency:
               refId='E',
             ),
           ],
-          id=next(GRAPH_ID),
           yAxes=[
             YAxis(format=OPS_FORMAT),
             YAxis(format=SHORT_FORMAT),
@@ -97,7 +96,6 @@ percentile latency:
               refId='B',
             ),
           ],
-          id=next(GRAPH_ID),
           yAxes=[
             YAxis(
               format=SECONDS_FORMAT,
