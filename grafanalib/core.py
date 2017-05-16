@@ -209,6 +209,22 @@ class Legend(object):
             'sideWidth': self.sideWidth,
         }
 
+@attr.s
+class BucketAggs(object):
+
+    type_ = attr.ib(default="")
+    field = attr.ib(default="")
+    id_ = attr.ib(default="")
+    settings = attr.ib(default="")
+
+    def to_json_data(self):
+        return {
+            'type': self.type_,
+            'field': self.field,
+            'id': self.id_,
+            'settings': self.settings,
+        }
+
 
 @attr.s
 class Target(object):
@@ -219,6 +235,7 @@ class Target(object):
     metric = attr.ib(default="")
     refId = attr.ib(default="")
     step = attr.ib(default=DEFAULT_STEP)
+    bucketAggs = attr.ib(default="")
 
     def to_json_data(self):
         return {
@@ -228,6 +245,7 @@ class Target(object):
             'metric': self.metric,
             'refId': self.refId,
             'step': self.step,
+            'bucketAggs': self.bucketAggs
         }
 
 
