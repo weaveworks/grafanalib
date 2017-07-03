@@ -18,6 +18,8 @@ The following will configure a dashboard with a single row, with one QPS graph
 broken down by status code and another latency graph showing median and 99th
 percentile latency:
 
+.. warning:: This example depends on unreleased changes to grafanalib. It will not work with grafanalib 0.1.2. See https://github.com/weaveworks/grafanalib/issues/44 for details.
+
 .. code-block:: python
 
   import itertools
