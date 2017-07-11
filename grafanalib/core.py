@@ -550,7 +550,9 @@ class AlertCondition(object):
     type = attr.ib(default=CTYPE_QUERY)
 
     def to_json_data(self):
-        queryParams = [self.target.refId, self.timeRange.from_time, self.timeRange.to_time]
+        queryParams = [
+            self.target.refId, self.timeRange.from_time, self.timeRange.to_time
+        ]
         return {
             "evaluator": self.evaluator,
             "operator": {
