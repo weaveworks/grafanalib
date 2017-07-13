@@ -58,15 +58,14 @@ class App(object):
     '''
 
     id = attr.ib()
-    enabled = attr.ib()
     json_data = attr.ib()
     secure_json_data = attr.ib()
 
     def to_json_dict(self):
         data = {
             'id': self.id,
-            'enabled': self.enabled,
-            'pinned': self.enabled,
+            'enabled': True,
+            'pinned': True,
             'json_data': self.json_data,
         }
         if self.secure_json_data is not None:
@@ -114,9 +113,7 @@ def cmd_app(grafana_api, opts):
         secure_json_data = None
 
     app = App(
-        id=opts.id, enabled=not opts.disabled, json_data=json_data,
-        secure_json_data=secure_json_data,
-    )
+        id=opts.id, json_data=json_data, secure_json_data=secure_json_data)
 
     grafana_api.update_app(app)
 
@@ -200,10 +197,6 @@ def make_parser():
     app_parser = subparsers.add_parser('app')
     app_parser.add_argument(
         '--id', type=str, required=True, help="The app plugin ID",
-    )
-    app_parser.add_argument(
-        '--disabled', type=bool, default=False,
-        help="Whether the app should be disabled",
     )
     app_parser.add_argument(
         '--json-data', type=str, default='{}',
