@@ -128,6 +128,7 @@ class DefaultSubcommandArgParse(argparse.ArgumentParser):
         self._default_subparser = name
 
     def parse_args(self, args=None, namespace=None):
+        # Find the subparser for our subcommand
         subparser_action = None
         for action in self._subparsers._actions:
             if isinstance(action, argparse._SubParsersAction):
@@ -137,29 +138,33 @@ class DefaultSubcommandArgParse(argparse.ArgumentParser):
         if not default or not subparser_action:
             return super().parse_args(args, namespace)
 
+        if set(args).intersection(subparser_action.choices.keys()):
+            # If a subcommand was specified, we don't need to do anything
+            return super().parse_args(args, namespace)
+
+        # Otherwise, we need to inject the default command between the global
+        # args and the command args
         global_options = set(
             option
             for actions in self._subparsers._actions
             for option in actions.option_strings)
 
-        in_args = set(args)
-        if in_args.intersection(subparser_action.choices.keys()):
-            return super().parse_args(args, namespace)
+        # Ensure that global options come before command options
+        remaining = tuple(args)
+        global_args = ()
+        cmd_args = ()
+        while remaining:
+            arg, remaining = remaining[0], remaining[1:]
+            if arg in global_options:
+                global_args += (arg, remaining[0])
+                remaining = remaining[1:]
+            elif any(arg.startswith(opt + '=') for opt in global_options):
+                global_args += (arg, )
+            else:
+                cmd_args += (arg, )
 
-        def _index(haystack, value):
-            try:
-                return haystack.index(value)
-            except ValueError:
-                for i, item in enumerate(haystack):
-                    if item.startswith(value + '='):
-                        return i
-                else:
-                    return -1
-
-        idx = max(-1, *(_index(args, g) for g in global_options)) + 1
-        amended = list(args)
-        amended.insert(idx, default)
-        return super().parse_args(amended, namespace)
+        return super().parse_args(
+            list(global_args + (default,) + cmd_args), namespace)
 
 
 def make_parser():
