@@ -122,10 +122,10 @@ def cmd_app(grafana_api, opts):
 
 
 class DefaultSubcommandArgParse(argparse.ArgumentParser):
-    __default_subparser = None
+    _default_subparser = None
 
     def set_default_subparser(self, name):
-        self.__default_subparser = name
+        self._default_subparser = name
 
     def parse_args(self, args=None, namespace=None):
         subparser_action = None
@@ -133,7 +133,7 @@ class DefaultSubcommandArgParse(argparse.ArgumentParser):
             if isinstance(action, argparse._SubParsersAction):
                 subparser_action = action
 
-        default = self.__default_subparser
+        default = self._default_subparser
         if not default or not subparser_action:
             return super().parse_args(args, namespace)
 
