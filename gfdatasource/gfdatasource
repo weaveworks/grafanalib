@@ -103,10 +103,7 @@ def cmd_datasource(grafana_api, opts):
         url=datasource_url, credentials=datasource_creds,
     )
 
-    def update_datasource():
-        grafana_api.update_datasource(datasource)
-
-    return update_datasource
+    grafana_api.update_datasource(datasource)
 
 
 def cmd_app(grafana_api, opts):
@@ -121,10 +118,7 @@ def cmd_app(grafana_api, opts):
         secure_json_data=secure_json_data,
     )
 
-    def update_app():
-        grafana_api.update_app(app)
-
-    return update_app
+    grafana_api.update_app(app)
 
 
 class DefaultSubcommandArgParse(argparse.ArgumentParser):
@@ -253,10 +247,8 @@ def main():
         print('Unknown command', opts.cmd)
         sys.exit(1)
 
-    update_func = cmd_func(grafana_api, opts)
-
     while True:
-        update_func()
+        cmd_func(grafana_api, opts)
         time.sleep(opts.update_interval)
 
 
