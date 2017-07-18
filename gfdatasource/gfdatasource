@@ -141,10 +141,11 @@ class DefaultSubcommandArgParse(argparse.ArgumentParser):
 
         # Otherwise, we need to inject the default command between the global
         # args and the command args
-        global_options = set(
-            option
-            for actions in self._subparsers._actions
-            for option in actions.option_strings)
+        global_options = {
+            option: action
+            for action in self._subparsers._actions
+            for option in action.option_strings
+        }
 
         # Ensure that global options come before command options
         remaining = tuple(args)
@@ -153,9 +154,14 @@ class DefaultSubcommandArgParse(argparse.ArgumentParser):
         while remaining:
             arg, remaining = remaining[0], remaining[1:]
             if arg in global_options:
-                global_args += (arg, remaining[0])
-                remaining = remaining[1:]
-            elif any(arg.startswith(opt + '=') for opt in global_options):
+                global_args += (arg, )
+                nargs = global_options[arg].nargs
+                if nargs:
+                    global_args += tuple(remaining[0:nargs])
+                    remaining = remaining[nargs:]
+
+            elif any(arg.startswith(opt + '=')
+                     for opt in global_options.keys()):
                 global_args += (arg, )
             else:
                 cmd_args += (arg, )
