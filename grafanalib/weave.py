@@ -5,9 +5,10 @@ has our Weave-specific preferences.
 """
 
 import attr
-import string
+import functools
 
 import grafanalib.core as G
+from grafanalib import prometheus
 
 
 """The name of the data source for our Prometheus service."""
@@ -31,29 +32,7 @@ ALIAS_COLORS = {
 }
 
 
-def PromGraph(title, expressions, **kwargs):
-    """Create a graph that renders Prometheus data.
-
-    :param title: The title of the graph.
-    :param expressions: List of tuples of (legend, expr), where 'expr' is a
-        Prometheus expression.
-    :param kwargs: Passed on to Graph.
-    """
-    letters = string.ascii_uppercase
-    expressions = list(expressions)
-    if len(expressions) > len(letters):
-        raise ValueError(
-            'Too many expressions. Can support at most {}, but got {}'.format(
-                len(letters), len(expressions)))
-    targets = [
-        G.Target(expr, legend, refId=refId)
-        for ((legend, expr), refId) in zip(expressions, letters)]
-    return G.Graph(
-        title=title,
-        dataSource=PROMETHEUS,
-        targets=targets,
-        **kwargs
-    )
+PromGraph = functools.partial(prometheus.PromGraph, PROMETHEUS)
 
 
 def QPSGraph(title, expressions, **kwargs):
