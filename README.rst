@@ -140,10 +140,9 @@ This module also provides a script and docker image which can configure grafana
 with new sources, or enable app plugins.
 
 The script answers the `--help` with full usage information, but basic
-invocation looks like the this:
+invocation looks like this:
 
-```
-<gfdatasource> --grafana-url http://grafana. datasource --data-source-url http://datasource
+.. code-block:: console
 
-<gfdatasource> --grafana-url http://grafana. app --id my-plugin
-```
+  $ <gfdatasource> --grafana-url http://grafana. datasource --data-source-url http://datasource
+  $ <gfdatasource> --grafana-url http://grafana. app --id my-plugin
