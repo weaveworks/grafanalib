@@ -5,6 +5,8 @@ Changelog
 NEXT (YYYY-MM-DD)
 -----------------
 
+* ``PromGraph`` now lives in ``grafanalib.prometheus``, and takes a
+  ``data_source`` parameter
 * ``Dashboard`` objects now have an ``auto_panel_id`` method which will
   automatically supply unique panel (i.e. graph) IDs for any panels that don't
   have one set. Dashboard config files no longer need to track their own
