@@ -10,6 +10,7 @@ from attr.validators import instance_of
 import itertools
 import math
 from numbers import Number
+import warnings
 
 
 @attr.s
@@ -271,6 +272,10 @@ class XAxis(object):
 
 @attr.s
 class YAxis(object):
+    """A single Y axis.
+
+    Grafana graphs have two Y axes: one on the left and one on the right.
+    """
     format = attr.ib(default=None)
     label = attr.ib(default=None)
     logBase = attr.ib(default=1)
@@ -287,6 +292,61 @@ class YAxis(object):
             'min': self.min,
             'show': self.show,
         }
+
+
+@attr.s
+class YAxes(object):
+    """The pair of Y axes on a Grafana graph.
+
+    Each graph has two Y Axes, a left one and a right one.
+    """
+    left = attr.ib(default=attr.Factory(lambda: YAxis(format=SHORT_FORMAT)),
+                   validator=instance_of(YAxis))
+    right = attr.ib(default=attr.Factory(lambda: YAxis(format=SHORT_FORMAT)),
+                    validator=instance_of(YAxis))
+
+    def to_json_data(self):
+        return [
+            self.left,
+            self.right,
+        ]
+
+
+def single_y_axis(**kwargs):
+    """Specify that a graph has a single Y axis.
+
+    Parameters are those passed to `YAxis`. Returns a `YAxes` object (i.e. a
+    pair of axes) that can be used as the yAxes parameter of a graph.
+    """
+    axis = YAxis(**kwargs)
+    return YAxes(left=axis)
+
+
+def to_y_axes(data):
+    """Backwards compatibility for 'YAxes'.
+
+    In grafanalib 0.1.2 and earlier, Y axes were specified as a list of two
+    elements. Now, we have a dedicated `YAxes` type.
+
+    This function converts a list of two `YAxis` values to a `YAxes` value,
+    silently passes through `YAxes` values, warns about doing things the old
+    way, and errors when there are invalid values.
+    """
+    if isinstance(data, YAxes):
+        return data
+    if not isinstance(data, (list, tuple)):
+        raise ValueError(
+            "Y axes must be either YAxes or a list of two values, got %r"
+            % data)
+    if len(data) != 2:
+        raise ValueError(
+            "Must specify exactly two YAxes, got %d: %r"
+            % (len(data), data))
+    warnings.warn(
+        "Specify Y axes using YAxes or single_y_axis, rather than a "
+        "list/tuple",
+        DeprecationWarning, stacklevel=3)
+    return YAxes(left=data[0], right=data[1])
 
 
 def _balance_panels(panels):
@@ -723,7 +783,10 @@ class Graph(object):
     xAxis = attr.ib(default=attr.Factory(XAxis), validator=instance_of(XAxis))
     # XXX: This isn't a *good* default, rather it's the default Grafana uses.
     yAxes = attr.ib(
-        default=attr.Factory(lambda: [YAxis(format=SHORT_FORMAT)] * 2))
+        default=attr.Factory(YAxes),
+        convert=to_y_axes,
+        validator=instance_of(YAxes),
+    )
     alert = attr.ib(default=None)
 
     def to_json_data(self):
