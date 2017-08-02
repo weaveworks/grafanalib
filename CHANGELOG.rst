@@ -2,6 +2,16 @@
 Changelog
 =========
 
+0.4.0 (2017-08-02)
+==================
+
+New features
+------------
+
+* Support for ``Text`` panels
+  (https://github.com/weaveworks/grafanalib/pull/63)
+
+
 0.3.0 (2017-07-27)
 ==================
 

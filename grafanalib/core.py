@@ -70,6 +70,7 @@ FLOT = 'flot'
 DASHBOARD_TYPE = 'dashboard'
 GRAPH_TYPE = 'graph'
 SINGLESTAT_TYPE = 'singlestat'
+TEXT_TYPE = 'text'
 
 DEFAULT_FILL = 1
 DEFAULT_REFRESH = '10s'
@@ -124,6 +125,11 @@ CTYPE_QUERY = "query"
 # Operator
 OP_AND = "and"
 OP_OR = "or"
+
+# Text panel modes
+TEXT_MODE_MARKDOWN = "markdown"
+TEXT_MODE_HTML = "html"
+TEXT_MODE_TEXT = "text"
 
 
 @attr.s
@@ -889,6 +895,37 @@ class Gauge(object):
             'show': self.show,
             'thresholdLabels': self.thresholdLabels,
             'thresholdMarkers': self.thresholdMarkers,
+        }
+
+
+@attr.s
+class Text(object):
+    """Generates a Text panel."""
+
+    content = attr.ib()
+    editable = attr.ib(default=True, validator=instance_of(bool))
+    error = attr.ib(default=False, validator=instance_of(bool))
+    height = attr.ib(default=None)
+    id = attr.ib(default=None)
+    links = attr.ib(default=attr.Factory(list))
+    mode = attr.ib(default=TEXT_MODE_MARKDOWN)
+    span = attr.ib(default=None)
+    title = attr.ib(default="")
+    transparent = attr.ib(default=False, validator=instance_of(bool))
+
+    def to_json_data(self):
+        return {
+            'content': self.content,
+            'editable': self.editable,
+            'error': self.error,
+            'height': self.height,
+            'id': self.id,
+            'links': self.links,
+            'mode': self.mode,
+            'span': self.span,
+            'title': self.title,
+            'transparent': self.transparent,
+            'type': TEXT_TYPE,
         }
 
 
