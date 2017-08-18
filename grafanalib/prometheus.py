@@ -12,7 +12,7 @@ def PromGraph(data_source, title, expressions, **kwargs):
         Prometheus data.
     :param title: The title of the graph.
     :param expressions: List of tuples of (legend, expr), where 'expr' is a
-        Prometheus expression.
+        Prometheus expression. Or a list of dict where keys are Target's args.
     :param kwargs: Passed on to Graph.
     """
     letters = string.ascii_uppercase
@@ -21,9 +21,15 @@ def PromGraph(data_source, title, expressions, **kwargs):
         raise ValueError(
             'Too many expressions. Can support at most {}, but got {}'.format(
                 len(letters), len(expressions)))
-    targets = [
-        G.Target(expr, legend, refId=refId)
-        for ((legend, expr), refId) in zip(expressions, letters)]
+
+    if all(isinstance(expr, dict) for expr in expressions):
+        targets = [
+            G.Target(refId=refId, **args)
+            for (args, refId) in zip(expressions, letters)]
+    else:
+        targets = [
+            G.Target(expr, legend, refId=refId)
+            for ((legend, expr), refId) in zip(expressions, letters)]
     return G.Graph(
         title=title,
         dataSource=data_source,
