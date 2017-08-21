@@ -442,6 +442,10 @@ class Template(object):
         :param label: the variable's human label
         :param name: the variable's name
         :param query: the query users to fetch the valid values of the variable
+        :param allValue: specify a custom all value with regex,
+            globs or lucene syntax.
+        :param includeAll: Add a special All option whose value includes
+            all options.
     """
 
     default = attr.ib()
@@ -449,10 +453,15 @@ class Template(object):
     label = attr.ib()
     name = attr.ib()
     query = attr.ib()
+    allValue = attr.ib(default=None)
+    includeAll = attr.ib(
+        default=False,
+        validator=instance_of(bool),
+    )
 
     def to_json_data(self):
         return {
-            'allValue': None,
+            'allValue': self.allValue,
             'current': {
                 'text': self.default,
                 'value': self.default,
@@ -460,7 +469,7 @@ class Template(object):
             },
             'datasource': self.dataSource,
             'hide': 0,
-            'includeAll': False,
+            'includeAll': self.includeAll,
             'label': self.label,
             'multi': False,
             'name': self.name,
