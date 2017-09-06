@@ -97,6 +97,8 @@ SECONDS_FORMAT = "s"
 MILLISECONDS_FORMAT = "ms"
 SHORT_FORMAT = "short"
 BYTES_FORMAT = "bytes"
+BITS_PER_SEC_FORMAT = "bps"
+BYTES_PER_SEC_FORMAT = "Bps"
 
 # Alert rule state
 STATE_NO_DATA = "no_data"
