@@ -133,6 +133,16 @@ break backwards compatibility, although we'll try hard not to.
 
 grafanalib works with Python 3.4 and 3.5.
 
+Developing
+==========
+If you're working on the project, and need to build from source, it's done as follows:
+
+.. code-block:: console
+
+  $ virtualenv .env
+  $ . ./.env/bin/activate
+  $ pip install -e .
+
 `gfdatasource`
 ==============
 
