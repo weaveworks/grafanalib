@@ -275,6 +275,9 @@ class XAxis(object):
     def to_json_data(self):
         return {
             'show': self.show,
+            'mode': self.mode,
+            'name': self.name,
+            'values': self.values,
         }
 
 
@@ -383,6 +386,7 @@ class Row(object):
     height = attr.ib(default=DEFAULT_ROW_HEIGHT, validator=instance_of(Pixels))
     showTitle = attr.ib(default=None)
     title = attr.ib(default=None)
+    titleSize = attr.ib(default=None)
 
     def _iter_panels(self):
         return iter(self.panels)
@@ -391,15 +395,15 @@ class Row(object):
         return attr.assoc(self, panels=list(map(f, self.panels)))
 
     def to_json_data(self):
-        showTitle = False if self.title is None else True
         title = "New row" if self.title is None else self.title
         return {
             'collapse': self.collapse,
             'editable': self.editable,
             'height': self.height,
             'panels': self.panels,
-            'showTitle': showTitle,
+            'showTitle': self.showTitle,
             'title': title,
+            'titleSize': self.titleSize,
         }
 
 
@@ -499,7 +503,7 @@ class Templating(object):
 @attr.s
 class Time(object):
     start = attr.ib()
-    end = attr.ib()
+    end = attr.ib(default='now')
 
     def to_json_data(self):
         return {
@@ -714,6 +718,8 @@ class Dashboard(object):
     )
     timezone = attr.ib(default=UTC)
     version = attr.ib(default=0)
+    graphTooltip = attr.ib(default=None, validator=instance_of(int))
+    description = attr.ib(default=None)
 
     def _iter_panels(self):
         for row in self.rows:
@@ -743,6 +749,7 @@ class Dashboard(object):
             'annotations': self.annotations,
             'editable': self.editable,
             'gnetId': self.gnetId,
+            'graphTooltip': self.graphTooltip,
             'hideControls': self.hideControls,
             'id': self.id,
             'links': self.links,
@@ -758,6 +765,7 @@ class Dashboard(object):
             'timepicker': self.timePicker,
             'timezone': self.timezone,
             'version': self.version,
+            'description': self.description,
         }
 
 
@@ -806,6 +814,9 @@ class Graph(object):
         validator=instance_of(YAxes),
     )
     alert = attr.ib(default=None)
+    dashLength = attr.ib(default=None)
+    spaceLength = attr.ib(default=None)
+    dashes = attr.ib(default=None)
 
     def to_json_data(self):
         graphObject = {
@@ -840,6 +851,9 @@ class Graph(object):
             'type': GRAPH_TYPE,
             'xaxis': self.xAxis,
             'yaxes': self.yAxes,
+            'dashLength': self.dashLength,
+            'spaceLength': self.spaceLength,
+            'dashes': self.dashes,
         }
         if self.alert:
             graphObject['alert'] = self.alert
@@ -947,7 +961,7 @@ class SingleStat(object):
     Grafana doc on singlestat: http://docs.grafana.org/reference/singlestat/
 
     :param dataSource: Grafana datasource name
-    :param targets: list of metric requests for chousen datasource
+    :param targets: list of metric requests for chosen datasource
     :param title: panel title
     :param cacheTimeout: metric query result cache ttl
     :param colors: the list of colors that can be used for coloring
