@@ -20,8 +20,6 @@ percentile latency:
 
 .. code-block:: python
 
-  import itertools
-
   from grafanalib.core import *
 
 
