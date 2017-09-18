@@ -708,6 +708,10 @@ class Dashboard(object):
         default=Templating(),
         validator=instance_of(Templating),
     )
+    inputs = attr.ib(
+        default=[],
+        validator=instance_of(list),
+    )
     time = attr.ib(
         default=DEFAULT_TIME,
         validator=instance_of(Time),
@@ -760,6 +764,7 @@ class Dashboard(object):
             'style': self.style,
             'tags': self.tags,
             'templating': self.templating,
+            '__inputs': self.inputs,
             'title': self.title,
             'time': self.time,
             'timepicker': self.timePicker,
@@ -1083,5 +1088,5 @@ class SingleStat(object):
             'type': SINGLESTAT_TYPE,
             'valueFontSize': self.valueFontSize,
             'valueMaps': self.valueMaps,
-            'valueName': self.valueName
+            'valueName': self.valueName,
         }
