@@ -5,14 +5,9 @@ has our Weave-specific preferences.
 """
 
 import attr
-import functools
 
 import grafanalib.core as G
 from grafanalib import prometheus
-
-
-"""The name of the data source for our Prometheus service."""
-PROMETHEUS = "Scope-as-a-Service Prometheus"
 
 
 YELLOW = "#EAB839"
@@ -32,10 +27,7 @@ ALIAS_COLORS = {
 }
 
 
-PromGraph = functools.partial(prometheus.PromGraph, PROMETHEUS)
-
-
-def QPSGraph(title, expressions, **kwargs):
+def QPSGraph(data_source, title, expressions, **kwargs):
     """Create a graph of QPS, broken up by response code.
 
     Data is drawn from Prometheus.
@@ -49,7 +41,8 @@ def QPSGraph(title, expressions, **kwargs):
             len(expressions), expressions))
     legends = sorted(ALIAS_COLORS.keys())
     exprs = zip(legends, expressions)
-    return stacked(PromGraph(
+    return stacked(prometheus.PromGraph(
+        data_source=data_source,
         title=title,
         expressions=exprs,
         aliasColors=ALIAS_COLORS,
