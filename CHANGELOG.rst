@@ -2,6 +2,14 @@
 Changelog
 =========
 
+Changes
+-------
+
+* Breaking change to ``weave.QPSGraph()`` - added ``data_source``
+  parameter and removed old hard-coded setting.
+  (https://github.com/weaveworks/grafanalib/pull/77)
+
+
 0.4.0 (2017-08-02)
 ==================
 
