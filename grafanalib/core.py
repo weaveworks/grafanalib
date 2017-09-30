@@ -13,33 +13,34 @@ from numbers import Number
 import warnings
 
 
-@attr.s
-class RGBA(object):
-    r = attr.ib(validator=instance_of(int))
-    g = attr.ib(validator=instance_of(int))
-    b = attr.ib(validator=instance_of(int))
-    a = attr.ib(validator=instance_of(float))
+def _rgba_ib(default=None):
+    def convert_rgba(val):
+        return 'rgba({}, {}, {}, {})'.format(*val) if val is not None else None
 
-    def to_json_data(self):
-        return "rgba({}, {}, {}, {})".format(self.r, self.g, self.b, self.a)
+    return attr.ib(
+        default=default, validator=instance_of(str), convert=convert_rgba
+    )
 
 
-@attr.s
-class RGB(object):
-    r = attr.ib(validator=instance_of(int))
-    g = attr.ib(validator=instance_of(int))
-    b = attr.ib(validator=instance_of(int))
+def _rgb_ib(default=None):
+    def convert_rgb(val):
+        return 'rgb({}, {}, {})'.format(*val) if val is not None else None
 
-    def to_json_data(self):
-        return "rgb({}, {}, {})".format(self.r, self.g, self.b)
+    return attr.ib(
+        default=default, validator=instance_of(str), convert=convert_rgb
+    )
 
 
-@attr.s
-class Pixels(object):
-    num = attr.ib(validator=instance_of(int))
+def _rgba_list_ib(default=None):
+    def convert_rgba_list(val):
+        return [
+            'rgba({}, {}, {}, {})'.format(*v) for v in val
+        ] if val is not None else None
 
-    def to_json_data(self):
-        return '{}px'.format(self.num)
+    return attr.ib(
+        default=default, validator=instance_of((list, type(None))),
+        convert=convert_rgba_list,
+    )
 
 
 @attr.s
@@ -50,14 +51,14 @@ class Percent(object):
         return '{}%'.format(self.num)
 
 
-GREY1 = RGBA(216, 200, 27, 0.27)
-GREY2 = RGBA(234, 112, 112, 0.22)
-BLUE_RGBA = RGBA(31, 118, 189, 0.18)
-BLUE_RGB = RGB(31, 120, 193)
-GREEN = RGBA(50, 172, 45, 0.97)
-ORANGE = RGBA(237, 129, 40, 0.89)
-RED = RGBA(245, 54, 54, 0.9)
-BLANK = RGBA(0, 0, 0, 0.0)
+GREY1 = (216, 200, 27, 0.27)
+GREY2 = (234, 112, 112, 0.22)
+BLUE_RGBA = (31, 118, 189, 0.18)
+BLUE_RGB = (31, 120, 193)
+GREEN = (50, 172, 45, 0.97)
+ORANGE = (237, 129, 40, 0.89)
+RED = (245, 54, 54, 0.9)
+BLANK = (0, 0, 0, 0.0)
 
 INDIVIDUAL = 'individual'
 CUMULATIVE = 'cumulative'
@@ -74,7 +75,7 @@ TEXT_TYPE = 'text'
 
 DEFAULT_FILL = 1
 DEFAULT_REFRESH = '10s'
-DEFAULT_ROW_HEIGHT = Pixels(250)
+DEFAULT_ROW_HEIGHT = 250
 DEFAULT_LINE_WIDTH = 2
 DEFAULT_POINT_RADIUS = 5
 DEFAULT_RENDERER = FLOT
@@ -171,9 +172,9 @@ VTYPE_DEFAULT = VTYPE_AVG
 class Grid(object):
 
     threshold1 = attr.ib(default=None)
-    threshold1Color = attr.ib(default=GREY1, validator=instance_of(RGBA))
+    threshold1Color = _rgba_ib(default=GREY1)
     threshold2 = attr.ib(default=None)
-    threshold2Color = attr.ib(default=GREY2, validator=instance_of(RGBA))
+    threshold2Color = _rgba_ib(default=GREY2)
 
     def to_json_data(self):
         return {
@@ -246,7 +247,9 @@ class Tooltip(object):
     msResolution = attr.ib(default=True, validator=instance_of(bool))
     shared = attr.ib(default=True, validator=instance_of(bool))
     sort = attr.ib(default=0)
-    valueType = attr.ib(default=CUMULATIVE)
+    valueType = attr.ib(
+        default=CUMULATIVE, metadata={'output_key': 'value_type'}
+    )
 
     def to_json_data(self):
         return {
@@ -273,12 +276,7 @@ class XAxis(object):
     show = attr.ib(validator=instance_of(bool), default=True)
 
     def to_json_data(self):
-        return {
-            'show': self.show,
-            'mode': self.mode,
-            'name': self.name,
-            'values': self.values,
-        }
+        return _as_dict(self)
 
 
 @attr.s
@@ -295,14 +293,7 @@ class YAxis(object):
     show = attr.ib(default=True, validator=instance_of(bool))
 
     def to_json_data(self):
-        return {
-            'format': self.format,
-            'label': self.label,
-            'logBase': self.logBase,
-            'max': self.max,
-            'min': self.min,
-            'show': self.show,
-        }
+        return _as_dict(self)
 
 
 @attr.s
@@ -344,7 +335,7 @@ def to_y_axes(data):
     way, and errors when there are invalid values.
     """
     if isinstance(data, YAxes):
-        return data
+        return [data.left, data.right]
     if not isinstance(data, (list, tuple)):
         raise ValueError(
             "Y axes must be either YAxes or a list of two values, got %r"
@@ -381,11 +372,14 @@ class Row(object):
         default=False, validator=instance_of(bool),
     )
     editable = attr.ib(
-        default=True, validator=instance_of(bool),
+        default=True, validator=instance_of((bool, type(None))),
     )
-    height = attr.ib(default=DEFAULT_ROW_HEIGHT, validator=instance_of(Pixels))
+    height = attr.ib(
+        default=DEFAULT_ROW_HEIGHT, validator=instance_of((str, type(None))),
+        convert=lambda v: '{}px'.format(v)
+    )
     showTitle = attr.ib(default=None)
-    title = attr.ib(default=None)
+    title = attr.ib(default='Row')
     titleSize = attr.ib(default=None)
 
     def _iter_panels(self):
@@ -395,16 +389,7 @@ class Row(object):
         return attr.assoc(self, panels=list(map(f, self.panels)))
 
     def to_json_data(self):
-        title = "New row" if self.title is None else self.title
-        return {
-            'collapse': self.collapse,
-            'editable': self.editable,
-            'height': self.height,
-            'panels': self.panels,
-            'showTitle': self.showTitle,
-            'title': title,
-            'titleSize': self.titleSize,
-        }
+        return _as_dict(self)
 
 
 @attr.s
@@ -453,9 +438,10 @@ class Template(object):
         :param includeAll: Add a special All option whose value includes
             all options.
     """
-
     default = attr.ib()
-    dataSource = attr.ib()
+    dataSource = attr.ib(
+        validator=instance_of(str), metadata={'output_key': 'datasource'}
+    )
     label = attr.ib()
     name = attr.ib()
     query = attr.ib()
@@ -466,28 +452,22 @@ class Template(object):
     )
 
     def to_json_data(self):
-        return {
-            'allValue': self.allValue,
+        return {**_as_dict(self), **{
             'current': {
                 'text': self.default,
                 'value': self.default,
                 'tags': [],
             },
-            'datasource': self.dataSource,
             'hide': 0,
-            'includeAll': self.includeAll,
-            'label': self.label,
             'multi': False,
-            'name': self.name,
             'options': [],
-            'query': self.query,
             'refresh': 1,
             'regex': '',
             'sort': 1,
             'tagValuesQuery': None,
             'tagsQuery': None,
             'type': 'query',
-        }
+        }}
 
 
 @attr.s
@@ -502,14 +482,11 @@ class Templating(object):
 
 @attr.s
 class Time(object):
-    start = attr.ib()
-    end = attr.ib(default='now')
+    start = attr.ib(metadata={'output_key': 'from'})
+    end = attr.ib(default='now', metadata={'output_key': 'to'})
 
     def to_json_data(self):
-        return {
-            'from': self.start,
-            'to': self.end,
-        }
+        return _as_dict(self)
 
 
 DEFAULT_TIME = Time('now-1h', 'now')
@@ -517,8 +494,8 @@ DEFAULT_TIME = Time('now-1h', 'now')
 
 @attr.s
 class TimePicker(object):
-    refreshIntervals = attr.ib()
-    timeOptions = attr.ib()
+    refreshIntervals = attr.ib(metadata={'output_key': 'refresh_intervals'})
+    timeOptions = attr.ib(metadata={'output_key': 'time_options'})
 
     def to_json_data(self):
         return {
@@ -678,7 +655,6 @@ class Alert(object):
 
 @attr.s
 class Dashboard(object):
-
     title = attr.ib()
     rows = attr.ib()
     annotations = attr.ib(
@@ -711,14 +687,17 @@ class Dashboard(object):
     inputs = attr.ib(
         default=[],
         validator=instance_of(list),
+        metadata={
+            'output_key': '__inputs',
+        }
     )
     time = attr.ib(
         default=DEFAULT_TIME,
         validator=instance_of(Time),
     )
     timePicker = attr.ib(
-        default=DEFAULT_TIME_PICKER,
-        validator=instance_of(TimePicker),
+        default=DEFAULT_TIME_PICKER, validator=instance_of(TimePicker),
+        metadata={'output_key': 'timepicker'}
     )
     timezone = attr.ib(default=UTC)
     version = attr.ib(default=0)
@@ -749,37 +728,18 @@ class Dashboard(object):
         return self._map_panels(set_id)
 
     def to_json_data(self):
-        return {
-            'annotations': self.annotations,
-            'editable': self.editable,
-            'gnetId': self.gnetId,
-            'graphTooltip': self.graphTooltip,
-            'hideControls': self.hideControls,
-            'id': self.id,
-            'links': self.links,
-            'refresh': self.refresh,
-            'rows': self.rows,
-            'schemaVersion': self.schemaVersion,
-            'sharedCrosshair': self.sharedCrosshair,
-            'style': self.style,
-            'tags': self.tags,
-            'templating': self.templating,
-            '__inputs': self.inputs,
-            'title': self.title,
-            'time': self.time,
-            'timepicker': self.timePicker,
-            'timezone': self.timezone,
-            'version': self.version,
-            'description': self.description,
-        }
+        return _as_dict(self)
 
 
 @attr.s
 class Graph(object):
+    grafana_type = 'graph'
 
     title = attr.ib()
-    dataSource = attr.ib()
-    targets = attr.ib()
+    dataSource = attr.ib(
+        validator=instance_of(str), metadata={'output_key': 'datasource'}
+    )
+    targets = attr.ib(validator=instance_of(list))
     aliasColors = attr.ib(default=attr.Factory(dict))
     bars = attr.ib(default=False, validator=instance_of(bool))
     description = attr.ib(default=None)
@@ -794,11 +754,15 @@ class Graph(object):
         validator=instance_of(Legend),
     )
     lines = attr.ib(default=True, validator=instance_of(bool))
-    lineWidth = attr.ib(default=DEFAULT_LINE_WIDTH)
+    lineWidth = attr.ib(
+        default=DEFAULT_LINE_WIDTH, metadata={'output_key': 'linewidth'},
+    )
     links = attr.ib(default=attr.Factory(list))
     nullPointMode = attr.ib(default=NULL_CONNECTED)
     percentage = attr.ib(default=False, validator=instance_of(bool))
-    pointRadius = attr.ib(default=DEFAULT_POINT_RADIUS)
+    pointRadius = attr.ib(
+        default=DEFAULT_POINT_RADIUS, metadata={'output_key': 'pointradius'},
+    )
     points = attr.ib(default=False, validator=instance_of(bool))
     renderer = attr.ib(default=DEFAULT_RENDERER)
     seriesOverrides = attr.ib(default=attr.Factory(list))
@@ -811,12 +775,15 @@ class Graph(object):
         default=attr.Factory(Tooltip),
         validator=instance_of(Tooltip),
     )
-    xAxis = attr.ib(default=attr.Factory(XAxis), validator=instance_of(XAxis))
+    xAxis = attr.ib(
+        default=attr.Factory(XAxis), validator=instance_of(XAxis),
+        metadata={'output_key': 'xaxis'},
+    )
     # XXX: This isn't a *good* default, rather it's the default Grafana uses.
     yAxes = attr.ib(
-        default=attr.Factory(YAxes),
-        convert=to_y_axes,
-        validator=instance_of(YAxes),
+        default=attr.Factory(YAxes), convert=to_y_axes,
+        validator=instance_of(list), metadata={'output_key': 'yaxes'},
+
     )
     alert = attr.ib(default=None)
     dashLength = attr.ib(default=None)
@@ -824,61 +791,15 @@ class Graph(object):
     dashes = attr.ib(default=None)
 
     def to_json_data(self):
-        graphObject = {
-            'aliasColors': self.aliasColors,
-            'bars': self.bars,
-            'datasource': self.dataSource,
-            'description': self.description,
-            'editable': self.editable,
-            'error': self.error,
-            'fill': self.fill,
-            'grid': self.grid,
-            'id': self.id,
-            'isNew': self.isNew,
-            'legend': self.legend,
-            'lines': self.lines,
-            'linewidth': self.lineWidth,
-            'links': self.links,
-            'nullPointMode': self.nullPointMode,
-            'percentage': self.percentage,
-            'pointradius': self.pointRadius,
-            'points': self.points,
-            'renderer': self.renderer,
-            'seriesOverrides': self.seriesOverrides,
-            'span': self.span,
-            'stack': self.stack,
-            'steppedLine': self.steppedLine,
-            'targets': self.targets,
-            'timeFrom': self.timeFrom,
-            'timeShift': self.timeShift,
-            'title': self.title,
-            'tooltip': self.tooltip,
-            'type': GRAPH_TYPE,
-            'xaxis': self.xAxis,
-            'yaxes': self.yAxes,
-            'dashLength': self.dashLength,
-            'spaceLength': self.spaceLength,
-            'dashes': self.dashes,
-        }
-        if self.alert:
-            graphObject['alert'] = self.alert
-        return graphObject
+        return _as_dict(self)
 
 
 @attr.s
 class SparkLine(object):
-    fillColor = attr.ib(default=BLUE_RGBA, validator=instance_of(RGBA))
+    fillColor = _rgba_ib(default=BLUE_RGBA)
     full = attr.ib(default=False, validator=instance_of(bool))
-    lineColor = attr.ib(default=BLUE_RGB, validator=instance_of(RGB))
+    lineColor = _rgb_ib(default=BLUE_RGB)
     show = attr.ib(default=False, validator=instance_of(bool))
-
-    def to_json_data(self):
-        return {
-            'fillColor': self.fillColor,
-            'full': self.full,
-            'lineColor': self.lineColor,
-            'show': self.show,
-        }
 
 
 @attr.s
@@ -911,7 +832,6 @@ class RangeMap(object):
 
 @attr.s
 class Gauge(object):
-
     minValue = attr.ib(default=0, validator=instance_of(int))
     maxValue = attr.ib(default=100, validator=instance_of(int))
     show = attr.ib(default=False, validator=instance_of(bool))
@@ -919,13 +839,7 @@ class Gauge(object):
     thresholdMarkers = attr.ib(default=True, validator=instance_of(bool))
 
     def to_json_data(self):
-        return {
-            'maxValue': self.maxValue,
-            'minValue': self.minValue,
-            'show': self.show,
-            'thresholdLabels': self.thresholdLabels,
-            'thresholdMarkers': self.thresholdMarkers,
-        }
+        return _as_dict(self)
 
 
 @attr.s
@@ -941,7 +855,9 @@ class Text(object):
     mode = attr.ib(default=TEXT_MODE_MARKDOWN)
     span = attr.ib(default=None)
     title = attr.ib(default="")
-    transparent = attr.ib(default=False, validator=instance_of(bool))
+    transparent = attr.ib(
+        default=False, validator=instance_of((bool, type(None)))
+    )
 
     def to_json_data(self):
         return {
@@ -957,6 +873,39 @@ class Text(object):
             'transparent': self.transparent,
             'type': TEXT_TYPE,
         }
+
+
+def _as_dict(inst):
+    def filter_field(a, value):
+        return value is None
+
+    rv = {}
+    try:
+        rv['type'] = inst.grafana_type
+    except AttributeError:
+        pass
+    for a in attr.fields(type(inst)):
+        v = getattr(inst, a.name)
+        if filter_field(a, v):
+            continue
+
+        output_key = a.metadata.get('output_key', a.name)
+
+        if attr.has(type(v)):
+            rv[output_key] = _as_dict(v)
+        elif isinstance(v, (tuple, list, set)):
+            rv[output_key] = list([
+                _as_dict(i) if attr.has(type(i)) else i for i in v
+            ])
+        elif isinstance(v, dict):
+            rv[output_key] = dict((
+                _as_dict(kk) if attr.has(type(kk)) else kk,
+                _as_dict(vv) if attr.has(type(vv)) else vv)
+                for kk, vv in v.items())
+        else:
+            rv[output_key] = v
+
+    return rv
 
 
 @attr.s
@@ -1009,12 +958,15 @@ class SingleStat(object):
         min, max, avg, current, total, name, first, delta, range
     :param valueMaps: the list of value to text mappings
     """
+    grafana_type = 'singlestat'
 
-    dataSource = attr.ib()
-    targets = attr.ib()
+    dataSource = attr.ib(
+        validator=instance_of(str), metadata={'output_key': 'datasource', }
+    )
+    targets = attr.ib(validator=instance_of(list))
     title = attr.ib()
     cacheTimeout = attr.ib(default=None)
-    colors = attr.ib(default=[GREEN, ORANGE, RED])
+    colors = _rgba_list_ib(default=[GREEN, ORANGE, RED])
     colorBackground = attr.ib(default=False, validator=instance_of(bool))
     colorValue = attr.ib(default=False, validator=instance_of(bool))
     description = attr.ib(default=None)
@@ -1024,7 +976,9 @@ class SingleStat(object):
     gauge = attr.ib(default=attr.Factory(Gauge),
                     validator=instance_of(Gauge))
     height = attr.ib(default=None)
-    hideTimeOverride = attr.ib(default=False, validator=instance_of(bool))
+    hideTimeOverride = attr.ib(
+        default=False, validator=instance_of((bool, type(None)))
+    )
     id = attr.ib(default=None)
     interval = attr.ib(default=None)
     links = attr.ib(default=attr.Factory(list))
@@ -1045,48 +999,12 @@ class SingleStat(object):
     sparkline = attr.ib(default=attr.Factory(SparkLine),
                         validator=instance_of(SparkLine))
     thresholds = attr.ib(default="")
-    transparent = attr.ib(default=False, validator=instance_of(bool))
+    transparent = attr.ib(
+        default=False, validator=instance_of((bool, type(None)))
+    )
     valueFontSize = attr.ib(default="80%")
     valueName = attr.ib(default=VTYPE_DEFAULT)
     valueMaps = attr.ib(default=attr.Factory(list))
 
     def to_json_data(self):
-        return {
-            'cacheTimeout': self.cacheTimeout,
-            'colorBackground': self.colorBackground,
-            'colorValue': self.colorValue,
-            'colors': self.colors,
-            'datasource': self.dataSource,
-            'decimals': self.decimals,
-            'description': self.description,
-            'editable': self.editable,
-            'format': self.format,
-            'gauge': self.gauge,
-            'id': self.id,
-            'interval': self.interval,
-            'links': self.links,
-            'height': self.height,
-            'hideTimeOverride': self.hideTimeOverride,
-            'mappingType': self.mappingType,
-            'mappingTypes': self.mappingTypes,
-            'maxDataPoints': self.maxDataPoints,
-            'minSpan': self.minSpan,
-            'nullPointMode': self.nullPointMode,
-            'nullText': self.nullText,
-            'postfix': self.postfix,
-            'postfixFontSize': self.postfixFontSize,
-            'prefix': self.prefix,
-            'prefixFontSize': self.prefixFontSize,
-            'rangeMaps': self.rangeMaps,
-            'repeat': self.repeat,
-            'span': self.span,
-            'sparkline': self.sparkline,
-            'targets': self.targets,
-            'thresholds': self.thresholds,
-            'title': self.title,
-            'transparent': self.transparent,
-            'type': SINGLESTAT_TYPE,
-            'valueFontSize': self.valueFontSize,
-            'valueMaps': self.valueMaps,
-            'valueName': self.valueName,
-        }
+        return _as_dict(self)
