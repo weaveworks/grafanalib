@@ -133,6 +133,10 @@ TEXT_MODE_MARKDOWN = "markdown"
 TEXT_MODE_HTML = "html"
 TEXT_MODE_TEXT = "text"
 
+# Target formats
+TIME_SERIES_TARGET_FORMAT = "time_series"
+TABLE_TARGET_FORMAT = "table"
+
 
 @attr.s
 class Mapping(object):
@@ -223,6 +227,7 @@ class Legend(object):
 class Target(object):
 
     expr = attr.ib()
+    format = attr.ib(default=TIME_SERIES_TARGET_FORMAT)
     legendFormat = attr.ib(default="")
     intervalFactor = attr.ib(default=2)
     metric = attr.ib(default="")
@@ -232,6 +237,7 @@ class Target(object):
     def to_json_data(self):
         return {
             'expr': self.expr,
+            'format': self.format,
             'intervalFactor': self.intervalFactor,
             'legendFormat': self.legendFormat,
             'metric': self.metric,
