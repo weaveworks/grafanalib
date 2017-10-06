@@ -146,6 +146,10 @@ PLUGIN_ID_OPENTSDB = "opentsdb"
 PLUGIN_ID_ELASTICSEARCH = "elasticsearch"
 PLUGIN_ID_CLOUDWATCH = "cloudwatch"
 
+# Target formats
+TIME_SERIES_TARGET_FORMAT = "time_series"
+TABLE_TARGET_FORMAT = "table"
+
 
 @attr.s
 class Mapping(object):
@@ -236,6 +240,7 @@ class Legend(object):
 class Target(object):
 
     expr = attr.ib()
+    format = attr.ib(default=TIME_SERIES_TARGET_FORMAT)
     legendFormat = attr.ib(default="")
     interval = attr.ib(default="", validator=instance_of(str))
     intervalFactor = attr.ib(default=2)
@@ -246,6 +251,7 @@ class Target(object):
     def to_json_data(self):
         return {
             'expr': self.expr,
+            'format': self.format,
             'interval': self.interval,
             'intervalFactor': self.intervalFactor,
             'legendFormat': self.legendFormat,
