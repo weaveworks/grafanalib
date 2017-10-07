@@ -56,3 +56,17 @@ def test_auto_id():
         ],
     ).auto_panel_ids()
     assert dashboard.rows[0].panels[0].id == 1
+
+
+def test_row_show_title():
+    row = G.Row().to_json_data()
+    assert row['title'] == 'New row'
+    assert row['showTitle'] == False
+
+    row = G.Row(title='My title').to_json_data()
+    assert row['title'] == 'My title'
+    assert row['showTitle'] == True
+
+    row = G.Row(title='My title', showTitle=False).to_json_data()
+    assert row['title'] == 'My title'
+    assert row['showTitle'] == False

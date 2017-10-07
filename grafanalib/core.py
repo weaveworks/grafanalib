@@ -391,8 +391,13 @@ class Row(object):
         return attr.assoc(self, panels=list(map(f, self.panels)))
 
     def to_json_data(self):
-        showTitle = False if self.title is None else True
-        title = "New row" if self.title is None else self.title
+        showTitle = False
+        title = "New row"
+        if self.title is not None:
+            showTitle = True
+            title = self.title
+        if self.showTitle is not None:
+            showTitle = self.showTitle
         return {
             'collapse': self.collapse,
             'editable': self.editable,
