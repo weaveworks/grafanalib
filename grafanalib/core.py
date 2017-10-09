@@ -383,6 +383,7 @@ class Row(object):
     height = attr.ib(default=DEFAULT_ROW_HEIGHT, validator=instance_of(Pixels))
     showTitle = attr.ib(default=None)
     title = attr.ib(default=None)
+    repeat = attr.ib(default=None)
 
     def _iter_panels(self):
         return iter(self.panels)
@@ -400,6 +401,7 @@ class Row(object):
             'panels': self.panels,
             'showTitle': showTitle,
             'title': title,
+            'repeat': self.repeat,
         }
 
 
