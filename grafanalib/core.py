@@ -7,6 +7,7 @@ arbitrary Grafana JSON.
 
 import attr
 from attr.validators import instance_of
+import copy
 import itertools
 import math
 from numbers import Number
@@ -72,6 +73,7 @@ ABSOLUTE_TYPE = 'absolute'
 DASHBOARD_TYPE = 'dashboard'
 GRAPH_TYPE = 'graph'
 SINGLESTAT_TYPE = 'singlestat'
+TABLE_TYPE = 'table'
 TEXT_TYPE = 'text'
 
 DEFAULT_FILL = 1
@@ -149,6 +151,19 @@ PLUGIN_ID_CLOUDWATCH = "cloudwatch"
 # Target formats
 TIME_SERIES_TARGET_FORMAT = "time_series"
 TABLE_TARGET_FORMAT = "table"
+
+# Table Transforms
+AGGREGATIONS_TRANSFORM = "timeseries_aggregations"
+ANNOTATIONS_TRANSFORM = "annotations"
+COLUMNS_TRANSFORM = "timeseries_to_columns"
+JSON_TRANSFORM = "json"
+ROWS_TRANSFORM = "timeseries_to_rows"
+TABLE_TRANSFORM = "table"
+
+# Column styles
+DATE_COLUMN_STYLE = "date"
+NUMBER_COLUMN_STYLE = "number"
+STRING_COLUMN_STYLE = "string"
 
 
 @attr.s
@@ -1161,4 +1176,169 @@ class SingleStat(object):
             'valueMaps': self.valueMaps,
             'valueName': self.valueName,
             'timeFrom': self.timeFrom,
+        }
+
+
+@attr.s
+class ColumnStyle(object):
+
+    alias = attr.ib(default="")
+    colorMode = attr.ib(default=None)
+    colors = attr.ib(default=[GREEN, ORANGE, RED])
+    dateFormat = attr.ib(default="YYYY-MM-DD HH:mm:ss")
+    decimals = attr.ib(default=2, validator=instance_of(int))
+    pattern = attr.ib(default="")
+    thresholds = attr.ib(default=attr.Factory(list))
+    type = attr.ib(default=NUMBER_COLUMN_STYLE)
+    unit = attr.ib(default=SHORT_FORMAT)
+
+    def to_json_data(self):
+        data = {
+            'alias': self.alias,
+            'pattern': self.pattern,
+            'type': self.type,
+        }
+        if self.type == DATE_COLUMN_STYLE:
+            data.update({
+                'dateFormat': self.dateFormat,
+            })
+        else:
+            data.update({
+                'colorMode': self.colorMode,
+                'colors': self.colors,
+                'decimals': self.decimals,
+                'thresholds': self.thresholds,
+                'unit': self.unit,
+            })
+        return data
+
+
+@attr.s
+class ColumnSort(object):
+    col = attr.ib(default=None)
+    desc = attr.ib(default=False, validator=instance_of(bool))
+
+    def to_json_data(self):
+        return {
+            'col': self.col,
+            'desc': self.desc,
+        }
+
+
+@attr.s
+class Column(object):
+    """Details of an aggregation column in a table panel
+
+    :param style: shorthand for specifying a style that maps to this column
+    :param text: name of column
+    :param value: aggregation function
+    """
+
+    style = attr.ib(default=None)
+    text = attr.ib(default="Avg")
+    value = attr.ib(default="avg")
+
+    def to_json_data(self):
+        return {
+            'text': self.text,
+            'value': self.value,
+        }
+
+
+@attr.s
+class Table(object):
+    """Generates Table panel json structure
+
+    Grafana doc on table: http://docs.grafana.org/reference/table_panel/
+
+    :param columns: table columns for Aggregations view
+    :param dataSource: Grafana datasource name
+    :param description: optional panel description
+    :param editable: defines if panel is editable via web interfaces
+    :param fontSize: defines value font size
+    :param height: defines panel height
+    :param hideTimeOverride: hides time overrides
+    :param id: panel id
+    :param links: additional web links
+    :param minSpan: minimum span number
+    :param pageSize: rows per page (None is unlimited)
+    :param scroll: scroll the table instead of displaying in full
+    :param showHeader: show the table header
+    :param span: defines the number of spans that will be used for panel
+    :param styles: defines formatting for each column
+    :param targets: list of metric requests for chosen datasource
+    :param title: panel title
+    :param transform: table style
+    :param transparent: defines if panel should be transparent
+    """
+
+    dataSource = attr.ib()
+    targets = attr.ib()
+    title = attr.ib()
+    columns = attr.ib(default=attr.Factory(list))
+    description = attr.ib(default=None)
+    editable = attr.ib(default=True, validator=instance_of(bool))
+    fontSize = attr.ib(default="100%")
+    height = attr.ib(default=None)
+    hideTimeOverride = attr.ib(default=False, validator=instance_of(bool))
+    id = attr.ib(default=None)
+    links = attr.ib(default=attr.Factory(list))
+    minSpan = attr.ib(default=None)
+    pageSize = attr.ib(default=None)
+    repeat = attr.ib(default=None)
+    scroll = attr.ib(default=True, validator=instance_of(bool))
+    showHeader = attr.ib(default=True, validator=instance_of(bool))
+    span = attr.ib(default=6)
+    sort = attr.ib(default=attr.Factory(ColumnSort), validator=instance_of(ColumnSort))
+    styles = attr.ib()
+
+    transform = attr.ib(default=COLUMNS_TRANSFORM)
+    transparent = attr.ib(default=False, validator=instance_of(bool))
+
+    @styles.default
+    def styles_default(self):
+        return [
+            ColumnStyle(
+                alias="Time",
+                pattern="time",
+                type="date",
+            ),
+            ColumnStyle(
+                pattern="/.*/",
+            ),
+        ]
+
+    def to_json_data(self):
+        styles = self.styles
+        for column in self.columns:
+            if column.style:
+                style = copy.deepcopy(column.style)
+                if style.pattern and style.pattern != column.text:
+                    raise ValueError("Column style pattern must match the column name if specified")
+                style.pattern = column.text
+                styles.append(style)
+
+        return {
+            'columns': self.columns,
+            'datasource': self.dataSource,
+            'description': self.description,
+            'editable': self.editable,
+            'fontSize': self.fontSize,
+            'height': self.height,
+            'hideTimeOverride': self.hideTimeOverride,
+            'id': self.id,
+            'links': self.links,
+            'minSpan': self.minSpan,
+            'pageSize': self.pageSize,
+            'repeat': self.repeat,
+            'scroll': self.scroll,
+            'showHeader': self.showHeader,
+            'span': self.span,
+            'sort': self.sort,
+            'styles': self.styles,
+            'targets': self.targets,
+            'title': self.title,
+            'transform': self.transform,
+            'transparent': self.transparent,
+            'type': TABLE_TYPE,
         }
