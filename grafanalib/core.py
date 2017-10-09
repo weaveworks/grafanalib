@@ -450,6 +450,10 @@ class Template(object):
             globs or lucene syntax.
         :param includeAll: Add a special All option whose value includes
             all options.
+        :param regex: Regex to filter or capture specific parts of the names
+            return by your data source query.
+        :param multi: If enabled, the variable will support the selection of
+            multiple options at the same time.
     """
 
     default = attr.ib()
@@ -462,6 +466,11 @@ class Template(object):
         default=False,
         validator=instance_of(bool),
     )
+    multi = attr.ib(
+        default=False,
+        validator=instance_of(bool),
+    )
+    regex = attr.ib(default=None)
 
     def to_json_data(self):
         return {
@@ -475,12 +484,12 @@ class Template(object):
             'hide': 0,
             'includeAll': self.includeAll,
             'label': self.label,
-            'multi': False,
+            'multi': self.multi,
             'name': self.name,
             'options': [],
             'query': self.query,
             'refresh': 1,
-            'regex': '',
+            'regex': self.regex,
             'sort': 1,
             'tagValuesQuery': None,
             'tagsQuery': None,
