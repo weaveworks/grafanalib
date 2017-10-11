@@ -414,6 +414,25 @@ class Annotations(object):
 
 
 @attr.s
+class DataSourceInput(object):
+    name = attr.ib()
+    type = attr.ib()
+    label = attr.ib()
+    pluginId = attr.ib()
+    pluginName = attr.ib()
+    description = attr.ib(default="", validator=instance_of(str))
+
+    def to_json_data(self):
+        return {
+            "name": self.name,
+            "label": self.label,
+            "description": self.description,
+            "type": self.type,
+            "pluginId": self.pluginId,
+            "pluginName": self.pluginName
+        }
+
+@attr.s
 class DashboardLink(object):
     dashboard = attr.ib()
     uri = attr.ib()
@@ -691,6 +710,7 @@ class Dashboard(object):
         validator=instance_of(bool),
     )
     id = attr.ib(default=None)
+    inputs = attr.ib(default=attr.Factory(list))
     links = attr.ib(default=attr.Factory(list))
     refresh = attr.ib(default=DEFAULT_REFRESH)
     schemaVersion = attr.ib(default=SCHEMA_VERSION)
@@ -740,6 +760,7 @@ class Dashboard(object):
 
     def to_json_data(self):
         return {
+            '__inputs': self.inputs,
             'annotations': self.annotations,
             'editable': self.editable,
             'gnetId': self.gnetId,
