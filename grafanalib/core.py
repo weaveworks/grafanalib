@@ -133,6 +133,14 @@ TEXT_MODE_MARKDOWN = "markdown"
 TEXT_MODE_HTML = "html"
 TEXT_MODE_TEXT = "text"
 
+# Datasource plugins
+PLUGIN_ID_GRAPHITE = "graphite"
+PLUGIN_ID_PROMETHEUS = "prometheus"
+PLUGIN_ID_INFLUXDB = "influxdb"
+PLUGIN_ID_OPENTSDB = "opentsdb"
+PLUGIN_ID_ELASTICSEARCH = "elasticsearch"
+PLUGIN_ID_CLOUDWATCH = "cloudwatch"
+
 
 @attr.s
 class Mapping(object):
@@ -414,23 +422,42 @@ class Annotations(object):
 
 
 @attr.s
-class DataSourceInput(object):
+class Input(object):
     name = attr.ib()
-    type = attr.ib()
     label = attr.ib()
+
+
+@attr.s
+class DataSourceInput(Input):
     pluginId = attr.ib()
     pluginName = attr.ib()
     description = attr.ib(default="", validator=instance_of(str))
 
     def to_json_data(self):
         return {
-            "name": self.name,
-            "label": self.label,
             "description": self.description,
-            "type": self.type,
+            "label": self.label,
+            "name": self.name,
             "pluginId": self.pluginId,
-            "pluginName": self.pluginName
+            "pluginName": self.pluginName,
+            "type": "datasource",
         }
+
+
+@attr.s
+class ConstantInput(Input):
+    value = attr.ib()
+    description = attr.ib(default="", validator=instance_of(str))
+
+    def to_json_data(self):
+        return {
+            "description": self.description,
+            "label": self.label,
+            "name": self.name,
+            "type": "constant",
+            "value": self.value,
+        }
+
 
 @attr.s
 class DashboardLink(object):
