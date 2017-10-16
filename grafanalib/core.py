@@ -422,13 +422,9 @@ class Annotations(object):
 
 
 @attr.s
-class Input(object):
+class DataSourceInput(object):
     name = attr.ib()
     label = attr.ib()
-
-
-@attr.s
-class DataSourceInput(Input):
     pluginId = attr.ib()
     pluginName = attr.ib()
     description = attr.ib(default="", validator=instance_of(str))
@@ -445,7 +441,9 @@ class DataSourceInput(Input):
 
 
 @attr.s
-class ConstantInput(Input):
+class ConstantInput(object):
+    name = attr.ib()
+    label = attr.ib()
     value = attr.ib()
     description = attr.ib(default="", validator=instance_of(str))
 
