@@ -133,6 +133,14 @@ TEXT_MODE_MARKDOWN = "markdown"
 TEXT_MODE_HTML = "html"
 TEXT_MODE_TEXT = "text"
 
+# Datasource plugins
+PLUGIN_ID_GRAPHITE = "graphite"
+PLUGIN_ID_PROMETHEUS = "prometheus"
+PLUGIN_ID_INFLUXDB = "influxdb"
+PLUGIN_ID_OPENTSDB = "opentsdb"
+PLUGIN_ID_ELASTICSEARCH = "elasticsearch"
+PLUGIN_ID_CLOUDWATCH = "cloudwatch"
+
 
 @attr.s
 class Mapping(object):
@@ -417,6 +425,42 @@ class Annotations(object):
     def to_json_data(self):
         return {
             'list': self.list,
+        }
+
+
+@attr.s
+class DataSourceInput(object):
+    name = attr.ib()
+    label = attr.ib()
+    pluginId = attr.ib()
+    pluginName = attr.ib()
+    description = attr.ib(default="", validator=instance_of(str))
+
+    def to_json_data(self):
+        return {
+            "description": self.description,
+            "label": self.label,
+            "name": self.name,
+            "pluginId": self.pluginId,
+            "pluginName": self.pluginName,
+            "type": "datasource",
+        }
+
+
+@attr.s
+class ConstantInput(object):
+    name = attr.ib()
+    label = attr.ib()
+    value = attr.ib()
+    description = attr.ib(default="", validator=instance_of(str))
+
+    def to_json_data(self):
+        return {
+            "description": self.description,
+            "label": self.label,
+            "name": self.name,
+            "type": "constant",
+            "value": self.value,
         }
 
 
@@ -707,6 +751,7 @@ class Dashboard(object):
         validator=instance_of(bool),
     )
     id = attr.ib(default=None)
+    inputs = attr.ib(default=attr.Factory(list))
     links = attr.ib(default=attr.Factory(list))
     refresh = attr.ib(default=DEFAULT_REFRESH)
     schemaVersion = attr.ib(default=SCHEMA_VERSION)
@@ -756,6 +801,7 @@ class Dashboard(object):
 
     def to_json_data(self):
         return {
+            '__inputs': self.inputs,
             'annotations': self.annotations,
             'editable': self.editable,
             'gnetId': self.gnetId,
