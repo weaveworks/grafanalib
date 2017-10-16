@@ -61,12 +61,12 @@ def test_auto_id():
 def test_row_show_title():
     row = G.Row().to_json_data()
     assert row['title'] == 'New row'
-    assert row['showTitle'] == False
+    assert not row['showTitle']
 
     row = G.Row(title='My title').to_json_data()
     assert row['title'] == 'My title'
-    assert row['showTitle'] == True
+    assert row['showTitle']
 
     row = G.Row(title='My title', showTitle=False).to_json_data()
     assert row['title'] == 'My title'
-    assert row['showTitle'] == False
+    assert not row['showTitle']
