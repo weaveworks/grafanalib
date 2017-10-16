@@ -383,6 +383,7 @@ class Row(object):
     height = attr.ib(default=DEFAULT_ROW_HEIGHT, validator=instance_of(Pixels))
     showTitle = attr.ib(default=None)
     title = attr.ib(default=None)
+    repeat = attr.ib(default=None)
 
     def _iter_panels(self):
         return iter(self.panels)
@@ -405,6 +406,7 @@ class Row(object):
             'panels': self.panels,
             'showTitle': showTitle,
             'title': title,
+            'repeat': self.repeat,
         }
 
 
@@ -453,6 +455,10 @@ class Template(object):
             globs or lucene syntax.
         :param includeAll: Add a special All option whose value includes
             all options.
+        :param regex: Regex to filter or capture specific parts of the names
+            return by your data source query.
+        :param multi: If enabled, the variable will support the selection of
+            multiple options at the same time.
     """
 
     default = attr.ib()
@@ -465,6 +471,11 @@ class Template(object):
         default=False,
         validator=instance_of(bool),
     )
+    multi = attr.ib(
+        default=False,
+        validator=instance_of(bool),
+    )
+    regex = attr.ib(default=None)
 
     def to_json_data(self):
         return {
@@ -478,12 +489,12 @@ class Template(object):
             'hide': 0,
             'includeAll': self.includeAll,
             'label': self.label,
-            'multi': False,
+            'multi': self.multi,
             'name': self.name,
             'options': [],
             'query': self.query,
             'refresh': 1,
-            'regex': '',
+            'regex': self.regex,
             'sort': 1,
             'tagValuesQuery': None,
             'tagsQuery': None,
