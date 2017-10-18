@@ -46,6 +46,7 @@ setup(
         'console_scripts': [
             'generate-dashboard=grafanalib._gen:generate_dashboard_script',
             'generate-dashboards=grafanalib._gen:generate_dashboards_script',
+            'parse-dashboard=grafanalib._gen:parse_dashboard_script',
         ],
     },
 )

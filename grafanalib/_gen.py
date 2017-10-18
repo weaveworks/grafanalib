@@ -124,3 +124,27 @@ def generate_dashboards_script():
 def generate_dashboard_script():
     """Entry point for generate-dasboard."""
     run_script(generate_dashboard)
+
+
+def parse_dashboard(args):
+    parser = argparse.ArgumentParser(prog='generate-dashboard')
+    # parser.add_argument(
+    #     '--output', '-o', type=os.path.abspath,
+    #     help='Where to write the dashboard JSON'
+    # )
+    parser.add_argument(
+        'dashboard', metavar='DASHBOARD', type=os.path.abspath,
+        help='Path to dashboard definition',
+    )
+    opts = parser.parse_args(args)
+
+    with open(opts.dashboard) as f:
+        json_data = json.load(f)
+
+    import pprint
+    pprint.pprint(json_data)
+
+
+def parse_dashboard_script():
+    """Entry point for parse-dasboard."""
+    run_script(parse_dashboard)
