@@ -143,13 +143,15 @@ def parse_dashboard(args):
     opts = parser.parse_args(args)
 
     with open(opts.dashboard) as f:
-        json_data = json.load(f, cls=grafanalib._parse.DashboardDecoder)
+        json_data = json.load(f)
+
+    dashboard = grafanalib.core.Dashboard.parse_json_data(json_data)
 
     python_code = textwrap.dedent("""
     from grafanalib.core import *\n
 
     dashboard = {}
-    """.format(pprint.pformat(json_data)))
+    """.format(pprint.pformat(dashboard)))
 
     print(python_code)
 
