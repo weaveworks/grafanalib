@@ -269,8 +269,11 @@ class Grid(object):
         }
 
     def parse_json_data(data):
-        data['threshold1Color'] = RGBA.parse_json_data(data['threshold1Color'])
-        data['threshold2Color'] = RGBA.parse_json_data(data['threshold2Color'])
+        if 'threshold1Color' in data:
+            data['threshold1Color'] = RGBA.parse_json_data(data['threshold1Color'])
+        if 'threshold2Color' in data:
+            data['threshold2Color'] = RGBA.parse_json_data(data['threshold2Color'])
+
         return Grid(**data)
 
 
@@ -532,11 +535,10 @@ class Row(object):
 
     @staticmethod
     def parse_json_data(data):
-        data['panels'] = [
-            Graph.parse_json_data(panel) for panel in data['panels']]
+        data['panels'] = parse_panels(data['panels'])
         data['height'] = Pixels.parse_json_data(data['height'])
 
-        return Row(**data)
+        return try_to_instantiate_object_from_data(Row, data)
 
 
 @attr.s
@@ -1033,6 +1035,18 @@ class Dashboard(object):
         return Dashboard(**data)
 
 
+def parse_panel(panel):
+    panel_type = panel.get('type')
+    if panel_type == GRAPH_TYPE:
+        return Graph.parse_json_data(panel)
+    elif panel_type == TEXT_TYPE:
+        return Text.parse_json_data(panel)
+
+
+def parse_panels(panels):
+    return [parse_panel(panel) for panel in panels]
+
+
 @attr.s
 class Graph(object):
 
@@ -1236,6 +1250,11 @@ class Text(object):
             'transparent': self.transparent,
             'type': TEXT_TYPE,
         }
+
+    @staticmethod
+    def parse_json_data(data):
+        data.pop('type')
+        return Text(**data)
 
 
 @attr.s
