@@ -1009,7 +1009,8 @@ class Dashboard(object):
         }
 
     def parse_json_data(data):
-        data['inputs'] = parse_inputs(data.pop('__inputs'))
+        if '__inputs' in data:
+            data['inputs'] = parse_inputs(data.pop('__inputs'))
         data['timePicker'] = data.pop('timepicker')
         data['annotations'] = Annotations.parse_json_data(data['annotations'])
         data['templating'] = Templating.parse_json_data(data['templating'])
@@ -1109,15 +1110,23 @@ class Graph(object):
     @staticmethod
     def parse_json_data(data):
         data['dataSource'] = data.pop('datasource')
-        data['lineWidth'] = data.pop('linewidth')
-        data['pointRadius'] = data.pop('pointradius')
-        data['xAxis'] = XAxis.parse_json_data(data.pop('xaxis'))
-        data['yAxes'] = YAxes.parse_json_data(data.pop('yaxes'))
-        data['grid'] = Grid.parse_json_data(data['grid'])
-        data['legend'] = Legend.parse_json_data(data['legend'])
-        data['tooltip'] = Tooltip.parse_json_data(data['tooltip'])
-        data['targets'] = [Target.parse_json_data(target)
-                           for target in data['targets']]
+        if 'linewidth' in data:
+            data['lineWidth'] = data.pop('linewidth')
+        if 'pointradius' in data:
+            data['pointRadius'] = data.pop('pointradius')
+        if 'xaxis' in data:
+            data['xAxis'] = XAxis.parse_json_data(data.pop('xaxis'))
+        if 'yaxes' in data:
+            data['yAxes'] = YAxes.parse_json_data(data.pop('yaxes'))
+        if 'grid' in data:
+            data['grid'] = Grid.parse_json_data(data['grid'])
+        if 'legend' in data:
+            data['legend'] = Legend.parse_json_data(data['legend'])
+        if 'tooltip' in data:
+            data['tooltip'] = Tooltip.parse_json_data(data['tooltip'])
+        if 'targets' in data:
+            data['targets'] = [Target.parse_json_data(target)
+                               for target in data['targets']]
         data.pop('type')
 
         return Graph(**data)
