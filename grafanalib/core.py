@@ -67,6 +67,7 @@ NULL_AS_ZERO = 'null as zero'
 
 FLOT = 'flot'
 
+ABSOLUTE_TYPE = 'absolute'
 DASHBOARD_TYPE = 'dashboard'
 GRAPH_TYPE = 'graph'
 SINGLESTAT_TYPE = 'singlestat'
@@ -473,6 +474,7 @@ class DashboardLink(object):
         validator=instance_of(bool),
     )
     title = attr.ib(default=None)
+    type = attr.ib(default=DASHBOARD_TYPE)
 
     def to_json_data(self):
         title = self.dashboard if self.title is None else self.title
@@ -481,7 +483,8 @@ class DashboardLink(object):
             "dashboard": self.dashboard,
             "keepTime": self.keepTime,
             "title": title,
-            "type": DASHBOARD_TYPE,
+            "type": self.type,
+            "url": self.uri,
         }
 
 
