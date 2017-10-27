@@ -292,6 +292,7 @@ class YAxis(object):
 
     Grafana graphs have two Y axes: one on the left and one on the right.
     """
+    decimals = attr.ib(default=None)
     format = attr.ib(default=None)
     label = attr.ib(default=None)
     logBase = attr.ib(default=1)
@@ -301,6 +302,7 @@ class YAxis(object):
 
     def to_json_data(self):
         return {
+            'decimals': self.decimals,
             'format': self.format,
             'label': self.label,
             'logBase': self.logBase,
