@@ -64,6 +64,7 @@ CUMULATIVE = 'cumulative'
 
 NULL_CONNECTED = 'connected'
 NULL_AS_ZERO = 'null as zero'
+NULL_AS_NULL = 'null'
 
 FLOT = 'flot'
 
