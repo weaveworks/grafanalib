@@ -866,6 +866,7 @@ class Graph(object):
         default=attr.Factory(Tooltip),
         validator=instance_of(Tooltip),
     )
+    transparent = attr.ib(default=False, validator=instance_of(bool))
     xAxis = attr.ib(default=attr.Factory(XAxis), validator=instance_of(XAxis))
     # XXX: This isn't a *good* default, rather it's the default Grafana uses.
     yAxes = attr.ib(
@@ -905,6 +906,7 @@ class Graph(object):
             'timeShift': self.timeShift,
             'title': self.title,
             'tooltip': self.tooltip,
+            'transparent': self.transparent,
             'type': GRAPH_TYPE,
             'xaxis': self.xAxis,
             'yaxes': self.yAxes,
