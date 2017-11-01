@@ -1054,12 +1054,16 @@ class Dashboard(object):
     def parse_json_data(data):
         if '__inputs' in data:
             data['inputs'] = parse_inputs(data.pop('__inputs'))
-        data['timePicker'] = data.pop('timepicker')
-        data['annotations'] = Annotations.parse_json_data(data['annotations'])
-        data['templating'] = Templating.parse_json_data(data['templating'])
-        data['rows'] = [Row.parse_json_data(row) for row in data['rows']]
-        data['time'] = Time.parse_json_data(data['time'])
-        data['timePicker'] = TimePicker.parse_json_data(data['timePicker'])
+        if 'annotations' in data:
+            data['annotations'] = Annotations.parse_json_data(data['annotations'])
+        if 'templating' in data:
+            data['templating'] = Templating.parse_json_data(data['templating'])
+        if 'rows' in data:
+            data['rows'] = [Row.parse_json_data(row) for row in data['rows']]
+        if 'time' in data:
+            data['time'] = Time.parse_json_data(data['time'])
+        if 'timepicker' in data:
+            data['timePicker'] = TimePicker.parse_json_data(data.pop('timepicker'))
 
         return Dashboard(**data)
 
