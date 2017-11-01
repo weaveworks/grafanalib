@@ -12,18 +12,6 @@ import math
 from numbers import Number
 import warnings
 import re
-import sys
-
-
-def try_to_instantiate_object_from_data(cls, data):
-    try:
-        return cls(**data)
-    except TypeError as error:
-        print("Unable to instantiate object from data.\n"
-              "Probably due to an unimplemented feature.\n"
-              "Tried to instantiate an object of type {}\n".format(cls.__name__) ,
-              "Error: {}".format(error))
-        sys.exit(-1)
 
 
 @attr.s
@@ -363,7 +351,7 @@ class Target(object):
 
     @staticmethod
     def parse_json_data(data):
-        return try_to_instantiate_object_from_data(Target, data)
+        return Target(**data)
 
 
 @attr.s
@@ -566,7 +554,7 @@ class Row(object):
         data['panels'] = parse_panels(data['panels'])
         data['height'] = Pixels.parse_json_data(data['height'])
 
-        return try_to_instantiate_object_from_data(Row, data)
+        return Row(**data)
 
 
 @attr.s
@@ -802,6 +790,7 @@ class TimePicker(object):
         data['refreshIntervals'] = data.pop('refresh_intervals')
         data['timeOptions'] = data.pop('time_options')
 
+        data.pop('type', None)
         return TimePicker(**data)
 
 
@@ -1217,7 +1206,7 @@ class Graph(object):
                                for target in data['targets']]
         data.pop('type')
 
-        return try_to_instantiate_object_from_data(Graph, data)
+        return Graph(**data)
 
 
 @attr.s
