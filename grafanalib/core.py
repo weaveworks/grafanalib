@@ -637,14 +637,19 @@ class ConstantInput(object):
 
 @attr.s
 class DashboardLink(object):
-    dashboard = attr.ib()
-    uri = attr.ib()
+    dashboard = attr.ib(default=None)
+    uri = attr.ib(default=None)
     keepTime = attr.ib(
         default=True,
         validator=instance_of(bool),
     )
     title = attr.ib(default=None)
     type = attr.ib(default=DASHBOARD_TYPE)
+    asDropdown = attr.ib(default=None)
+    icon = attr.ib(default=None)
+    includeVars = attr.ib(default=None)
+    tags = attr.ib(default=attr.Factory(list))
+    targetBlank = attr.ib(default=None)
 
     def to_json_data(self):
         title = self.dashboard if self.title is None else self.title
@@ -655,11 +660,14 @@ class DashboardLink(object):
             "title": title,
             "type": self.type,
             "url": self.uri,
+            "icon": self.icon,
+            "includeVars": self.includeVars,
+            "tags": self.tags,
+            "targetBlank": self.targetBlank,
         }
 
     @staticmethod
     def parse_json_data(data):
-        data.pop('type')
         return DashboardLink(**data)
 
 
@@ -1070,6 +1078,9 @@ class Dashboard(object):
             data['time'] = Time.parse_json_data(data['time'])
         if 'timepicker' in data:
             data['timePicker'] = TimePicker.parse_json_data(data.pop('timepicker'))
+        if 'links' in data:
+            data['links'] = [DashboardLink.parse_json_data(link)
+                             for link in data['links']]
 
         return Dashboard(**data)
 
