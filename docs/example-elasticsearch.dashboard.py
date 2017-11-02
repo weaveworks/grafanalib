@@ -1,20 +1,30 @@
+"""
+This is an exemplary Grafana board that uses an elastichsearch datasource.
+The graph shows the followinging metrics for HTTP requests to the URL path "/login":
+- number of succesful requests resulted in a HTTP response code between 200-300
+- number of failed requests resulted in a HTTP response code between 400-500,
+- Max. response time per point of time of HTTP requests
+"""
+
 from grafanalib.core import *
 from grafanalib.elasticsearch import *
 
-suc_label = "Success (1XX)"
-clt_err_label = "Client Errors (4XX)"
+suc_label = "Success (200-300)"
+clt_err_label = "Client Errors (400-500)"
 resptime_label = "Max response time"
 
-filterSetting = FiltersAggSettings(filters=[
-        Filter(query="response: [200 TO 300]", label=suc_label),
-        Filter(query="response: [400 TO 500]", label=clt_err_label)])
+filters = [Filter(query="response: [200 TO 300]", label=suc_label),
+           Filter(query="response: [400 TO 500]", label=clt_err_label)]
 
 tgts = [ElasticsearchTarget(query='request: "/login"',
-                            bucket_aggs=[FiltersAgg(settings=filterSetting),
-                                         DateTimeAgg(settings=DateTimeAggSettings(interval="10m"))]),
+                            bucketAggs=[FiltersGroupBy(filters=filters),
+                                        DateHistogramGroupBy(interval="10m")]).\
+                           auto_bucket_agg_ids(),
         ElasticsearchTarget(query='request: "/login"',
-                            metrics=[MaxMetric(field="resptime")],
-                            alias=resptime_label)]
+                            metricAggs=[MaxMetricAgg(field="resptime")],
+                            alias=resptime_label).\
+                           auto_bucket_agg_ids(),
+        ]
 
 g = Graph(title="login requests",
           dataSource="elasticsearch",

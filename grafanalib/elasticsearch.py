@@ -1,103 +1,151 @@
-"""Support for Elasticsearch."""
+"""Helpers to create Elasticsearch specific Grafana Queries."""
 
 import attr
 import itertools
 from attr.validators import instance_of
 
+DATE_HISTOGRAM_DEFAULT_FIELD = "time_iso8601"
+ORDER_ASC = "asc"
+ORDER_DESC = "desc"
+
 
 @attr.s
-class CountMetric(object):
-    field = attr.ib(default="select field", validator=instance_of(str))
-    type = attr.ib(default="count", validator=instance_of(str))
+class CountMetricAgg(object):
+    """An aggregator that counts the number of values.
 
+    https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-valuecount-aggregation.html
+
+    It's the default aggregator for elasticsearch queries.
+    """
     def to_json_data(self):
         return {
-            'field': self.field,
-            'type': self.type,
+            'type': 'count',
+            'field': 'select field',
+            'settings': {},
         }
 
 
 @attr.s
-class MaxMetric(object):
-    field = attr.ib(default="select field", validator=instance_of(str))
-    type = attr.ib(default="max", validator=instance_of(str))
-    # without an empty settings key, it's not displayed correctly in the
-    # dashboard's "Metrics" view in the webinterface
-    settings = attr.ib(default=attr.Factory(dict))
+class MaxMetricAgg(object):
+    """An aggregator that provides the max. value among the values.
+
+    https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-max-aggregation.html
+
+    :param field: name of elasticsearch field to provide the maximum for
+    """
+    field = attr.ib(default="", validator=instance_of(str))
 
     def to_json_data(self):
         return {
+            'type': 'max',
             'field': self.field,
-            'type': self.type,
-            'settings': self.settings
+            'settings': {},
         }
 
 
 @attr.s
-class DateTimeAggSettings(object):
-    interval = attr.ib(default="auto", validator=instance_of(str))
-    min_doc_count = attr.ib(default=0, validator=instance_of(int))
-    trimEdges = attr.ib(default=0, validator=instance_of(int))
+class DateHistogramGroupBy(object):
+    """A bucket aggregator that groups results by date.
 
-    def to_json_data(self):
-        return {
-                'interval': self.interval,
-                'min_doc_count': self.min_doc_count,
-                'trimEdges': self.trimEdges,
-                }
+    https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-datehistogram-aggregation.html
 
-
-@attr.s
-class DateTimeAgg(object):
-    field = attr.ib(default="time_iso8601", validator=instance_of(str))
+    :param id: ascending unique number per GroupBy clause
+    :param field: name of the elasticsearch field to group by
+    :param interval: interval to group by
+    :param minDocCount: min. amount of records in the timespan to return a
+                        result
+    """
     id = attr.ib(default=0, validator=instance_of(int))
-    settings = attr.ib(default=DateTimeAggSettings())
-    type = attr.ib(default="date_histogram", validator=instance_of(str))
+    field = attr.ib(default=DATE_HISTOGRAM_DEFAULT_FIELD,
+                    validator=instance_of(str))
+    interval = attr.ib(default="auto", validator=instance_of(str))
+    minDocCount = attr.ib(default=0, validator=instance_of(int))
 
     def to_json_data(self):
         return {
                 'field': self.field,
                 'id': str(self.id),
-                'settings': self.settings,
-                'type': self.type
+                'settings': {
+                             'interval': self.interval,
+                             'min_doc_count': self.minDocCount,
+                             'trimEdges': 0,
+                             },
+                'type': 'date_histogram',
                 }
 
 
 @attr.s
 class Filter(object):
+    """ A Filter for a FilterGroupBy aggregator.
+
+    https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-filter-aggregation.html
+
+    :param label: label for the metric that is shown in the graph
+    :param query: the query to filter by
+    """
     label = attr.ib(default="", validator=instance_of(str))
     query = attr.ib(default="", validator=instance_of(str))
 
     def to_json_data(self):
         return {
                 'label': self.label,
-                'query': self.query
+                'query': self.query,
                 }
 
 
 @attr.s
-class FiltersAggSettings(object):
+class FiltersGroupBy(object):
+    """ A bucket aggregator that groups records by a filter expression.
+
+    https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-filter-aggregation.html
+
+    :param id: ascending unique number per GroupBy clause
+    :param filters: list of Filter objects
+    """
+    id = attr.ib(default=0, validator=instance_of(int))
     filters = attr.ib(default=attr.Factory(list))
 
     def to_json_data(self):
         return {
-                'filters': self.filters
-               }
+                'id': str(self.id),
+                'settings': {
+                             'filters': self.filters,
+                             },
+                'type': 'filters',
+                }
 
 
 @attr.s
-class FiltersAgg(object):
-    field = attr.ib(default="time_iso8601", validator=instance_of(str))
+class TermsGroupBy(object):
+    """ A multi-bucket aggregator based on field values.
+
+    https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-terms-aggregation.html
+
+    :param id: ascending unique number per GroupBy clause
+    :param field: name of the field to group by
+    :param minDocCount: min. amount of matching records to return a result
+    :param order: ORDER_ASC or ORDER_DESC
+    :param orderBy: term to order the bucker
+    :param size: how many buckets are returned
+    """
+    field = attr.ib(validator=instance_of(str))
     id = attr.ib(default=0, validator=instance_of(int))
-    settings = attr.ib(default=FiltersAggSettings())
-    type = attr.ib(default="filters", validator=instance_of(str))
+    minDocCount = attr.ib(default=1, validator=instance_of(int))
+    order = attr.ib(default=ORDER_DESC, validator=instance_of(str))
+    orderBy = attr.ib(default="_term", validator=instance_of(str))
+    size = attr.ib(default=0, validator=instance_of(int))
 
     def to_json_data(self):
         return {
-                'field': self.field,
                 'id': str(self.id),
-                'settings': self.settings,
-                'type': self.type
+                'type': 'terms',
+                'field': self.field,
+                'settings': {
+                    'min_doc_count': self.minDocCount,
+                    'order': self.order,
+                    'order_by': self.orderBy,
+                    'size': self.size,
+                 },
                 }
 
 
@@ -111,36 +159,49 @@ class ElasticsearchTarget(object):
     https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html
 
     :param alias: legend alias
-    :param bucketAggs: Group by query aggregators
-    :param metrics: Elasticsearch metric
+    :param bucketAggs: Bucket aggregators
+    :param metricAggs: Metric Aggregators
     :param query: query
     :param refId: target reference id
     """
 
     alias = attr.ib(default=None)
-    bucket_aggs = attr.ib(default=[DateTimeAgg()])
-    metrics = attr.ib(default=[CountMetric()])
+    bucketAggs = attr.ib(default=attr.Factory(
+                                          lambda: [DateHistogramGroupBy()]))
+    metricAggs = attr.ib(default=attr.Factory(lambda: [CountMetricAgg()]))
     query = attr.ib(default="", validator=instance_of(str))
     refId = attr.ib(default="", validator=instance_of(str))
 
-    def auto_bucket_aggs_id(self):
-        ids = set([agg.id for agg in self.bucket_aggs if agg.id])
+    def _map_bucket_aggs(self, f):
+        return attr.assoc(self, bucketAggs=list(map(f, self.bucketAggs)))
+
+    def auto_bucket_agg_ids(self):
+        """Give unique IDs all bucketAggs without ID.
+
+        Returns a new ``ElasticsearchTarget`` that is the same as this one,
+        except all of the bucketAggs have their ``id`` property set. Any panels
+        which had an ``id`` property set will keep that property, all others
+        will have auto-generated IDs provided for them.
+
+        If the bucketAggs don't have unique ID associated with it, the
+        generated graph will be broken.
+        """
+        ids = set([agg.id for agg in self.bucketAggs if agg.id])
         auto_ids = (i for i in itertools.count(1) if i not in ids)
 
         def set_id(agg):
             if agg.id:
                 return agg
 
-            agg.id = next(auto_ids)
-            return agg
+            return attr.evolve(agg, id=next(auto_ids))
 
-        return list(map(set_id, self.bucket_aggs))
+        return self._map_bucket_aggs(set_id)
 
     def to_json_data(self):
         return {
             'alias': self.alias,
-            'bucketAggs': self.auto_bucket_aggs_id(),
-            'metrics': self.metrics,
+            'bucketAggs': self.bucketAggs,
+            'metrics': self.metricAggs,
             'query': self.query,
             'refId': self.refId,
         }
