@@ -234,6 +234,7 @@ class Target(object):
 
     expr = attr.ib()
     legendFormat = attr.ib(default="")
+    interval = attr.ib(default="", validator=instance_of(str))
     intervalFactor = attr.ib(default=2)
     metric = attr.ib(default="")
     refId = attr.ib(default="")
@@ -242,6 +243,7 @@ class Target(object):
     def to_json_data(self):
         return {
             'expr': self.expr,
+            'interval': self.interval,
             'intervalFactor': self.intervalFactor,
             'legendFormat': self.legendFormat,
             'metric': self.metric,
