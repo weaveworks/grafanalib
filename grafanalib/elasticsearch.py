@@ -101,6 +101,30 @@ class FiltersAgg(object):
                 'type': self.type
                 }
 
+@attr.s
+class TermsAggSettings(object):
+    min_doc_count = attr.ib(default=1, validator=instance_of(int))
+    order = attr.ib(default="desc", validator=instance_of(str))
+    order_by = attr.ib(default="_term", validator=instance_of(str))
+    size = attr.ib(default=0, validator=instance_of(int))
+
+    def to_json_data(self):
+        pass
+
+@attr.s
+class TermsAgg(object):
+    field = attr.ib(validator=instance_of(str))
+    id = attr.ib(default=0, validator=instance_of(int))
+    settings = attr.ib(default=TermsAggSettings())
+    type = attr.ib(default="terms", validator=instance_of(str))
+
+    def to_json_data(self):
+        return {
+                'field': self.field,
+                'id': str(self.id),
+                'settings': self.settings,
+                'type': self.type
+                }
 
 @attr.s
 class ElasticsearchTarget(object):
