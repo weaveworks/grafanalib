@@ -515,9 +515,9 @@ class Template(object):
 
     default = attr.ib()
     dataSource = attr.ib()
-    label = attr.ib()
     name = attr.ib()
     query = attr.ib()
+    label = attr.ib(default=None)
     allValue = attr.ib(default=None)
     includeAll = attr.ib(
         default=False,
