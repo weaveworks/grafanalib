@@ -3,7 +3,10 @@
 from io import StringIO
 
 import grafanalib.core as G
-import grafanalib.opentsdb as O
+from grafanalib.opentsdb import (
+    OpenTSDBFilter,
+    OpenTSDBTarget,
+)
 from grafanalib import _gen
 
 
@@ -13,12 +16,12 @@ def test_serialization_opentsdb_target():
         title="CPU Usage",
         dataSource="OpenTSDB data source",
         targets=[
-            O.OpenTSDBTarget(
+            OpenTSDBTarget(
                 metric='cpu',
                 alias='$tag_instance',
                 filters=[
-                    O.OpenTSDBFilter(value='*', tag='instance',
-                                     type='wildcard', groupBy=True),
+                    OpenTSDBFilter(value='*', tag='instance',
+                                   type='wildcard', groupBy=True),
                 ]),
         ],
         id=1,
