@@ -1184,7 +1184,7 @@ class ColumnStyle(object):
 
     alias = attr.ib(default="")
     colorMode = attr.ib(default=None)
-    colors = attr.ib(default=[GREEN, ORANGE, RED])
+    colors = attr.ib(default=attr.Factory(lambda: [GREEN, ORANGE, RED]))
     dateFormat = attr.ib(default="YYYY-MM-DD HH:mm:ss")
     decimals = attr.ib(default=2, validator=instance_of(int))
     pattern = attr.ib(default="")
@@ -1289,7 +1289,8 @@ class Table(object):
     scroll = attr.ib(default=True, validator=instance_of(bool))
     showHeader = attr.ib(default=True, validator=instance_of(bool))
     span = attr.ib(default=6)
-    sort = attr.ib(default=attr.Factory(ColumnSort), validator=instance_of(ColumnSort))
+    sort = attr.ib(
+        default=attr.Factory(ColumnSort), validator=instance_of(ColumnSort))
     styles = attr.ib()
 
     transform = attr.ib(default=COLUMNS_TRANSFORM)
@@ -1314,7 +1315,9 @@ class Table(object):
             if column.style:
                 style = copy.deepcopy(column.style)
                 if style.pattern and style.pattern != column.text:
-                    raise ValueError("Column style pattern must match the column name if specified")
+                    raise ValueError(
+                        "Column style pattern must match the column name if "
+                        "specified")
                 style.pattern = column.text
                 styles.append(style)
 
