@@ -1,4 +1,4 @@
-from hypothesis import given
+from hypothesis import given, settings, HealthCheck
 import hypothesis.strategies as st
 
 import pytest
@@ -189,7 +189,7 @@ def tables():
                      scroll=unknown(),
                      showHeader=unknown(),
                      sort=unknown(),
-                     span=unknown(),
+                     span=st.integers(),
                      styles=unknown(),
                      targets=st.lists(max_size=0),
                      timeFrom=unknown(),
@@ -208,7 +208,7 @@ def texts():
                      id=unknown(),
                      links=st.lists(max_size=0),
                      mode=st.sampled_from(('markdown', 'html', 'text')),
-                     span=unknown(),
+                     span=st.integers(),
                      title=st.text(string.printable),
                      transparent=st.booleans(),
                      dataSource=unknown(),
@@ -216,9 +216,52 @@ def texts():
                      isNew=unknown())
 
 
+def singlestats():
+    return st.builds(G.SingleStat,
+                     dataSource=unknown(),
+                     targets=st.lists(max_size=0),
+                     title=unknown(),
+                     cacheTimeout=unknown(),
+                     colors=st.lists(rgbas()),
+                     colorBackground=st.booleans(),
+                     colorValue=st.booleans(),
+                     description=unknown(),
+                     decimals=unknown(),
+                     editable=st.booleans(),
+                     format=unknown(),
+                     gauge=gauges(),
+                     height=pixels(),
+                     hideTimeOverride=st.booleans(),
+                     id=unknown(),
+                     interval=unknown(),
+                     links=st.lists(max_size=0),
+                     mappingType=st.integers(),
+                     mappingTypes=st.lists(mappings(), min_size=2, max_size=2),
+                     maxDataPoints=st.integers(),
+                     minSpan=unknown(),
+                     nullText=unknown(),
+                     nullPointMode=unknown(),
+                     postfix=unknown(),
+                     postfixFontSize=unknown(),
+                     prefix=unknown(),
+                     prefixFontSize=unknown(),
+                     rangeMaps=st.lists(max_size=0),
+                     repeat=unknown(),
+                     span=st.integers(),
+                     sparkline=sparklines(),
+                     thresholds=unknown(),
+                     transparent=st.booleans(),
+                     valueFontSize=unknown(),
+                     valueName=unknown(),
+                     valueMaps=st.lists(max_size=0),
+                     tableColumn=unknown(),
+                     error=unknown(),
+                     timeFrom=unknown(),
+                     timeShift=unknown())
+
+
 def panels():
-    # TODO
-    return graphs()
+    return graphs() | singlestats() | tables() | texts()
 
 
 def rows():
@@ -233,6 +276,121 @@ def rows():
                      repeatIteration=unknown(),
                      repeatRowId=unknown(),
                      titleSize=unknown())
+
+
+def sparklines():
+    return st.builds(G.SparkLine,
+                     fillColor=rgbas(),
+                     full=st.booleans(),
+                     lineColor=rgbs(),
+                     show=st.booleans())
+
+def valuemaps():
+    return st.builds(G.ValueMap,
+                     op=unknown(),
+                     text=unknown(),
+                     value=unknown())
+
+
+def rangemaps():
+    return st.builds(G.RangeMap,
+                     start=unknown(),
+                     end=unknown(),
+                     text=unknown())
+
+
+def gauges():
+    return st.builds(G.Gauge,
+                     minValue=st.integers(),
+                     maxValue=st.integers(),
+                     show=st.booleans(),
+                     thresholdLabels=st.booleans(),
+                     thresholdMarkers=st.booleans())
+
+
+def datasources():
+    return st.builds(G.DataSourceInput,
+                     name=unknown(),
+                     label=unknown(),
+                     pluginId=unknown(),
+                     pluginName=unknown(),
+                     description=unknown())
+
+
+def constantinputs():
+    return st.builds(G.ConstantInput,
+                     name=unknown(),
+                     label=unknown(),
+                     value=unknown(),
+                     description=unknown())
+
+
+def inputs():
+    return datasources() | constantinputs()
+
+
+def annotations():
+    return st.builds(G.Annotations,
+                     list=st.lists(max_size=0))
+
+
+def templating():
+    return st.builds(G.Templating,
+                     list=st.lists(max_size=0))
+
+
+def templates():
+    return st.builds(G.Template,
+                     default=unknown(),
+                     dataSource=unknown(),
+                     label=unknown(),
+                     name=unknown(),
+                     query=unknown(),
+                     allValue=unknown(),
+                     includeAll=st.booleans(),
+                     multi=st.booleans(),
+                     regex=unknown())
+
+
+def times():
+    return st.builds(G.Time,
+                     start=unknown(),
+                     end=unknown())
+
+
+def timepickers():
+    return st.builds(G.TimePicker,
+                     refreshIntervals=unknown(),
+                     timeOptions=unknown(),
+                     collapse=st.booleans(),
+                     enable=unknown(),
+                     notice=unknown(),
+                     now=unknown(),
+                     status=unknown())
+
+
+def dashboards():
+    return st.builds(G.Dashboard,
+                     title=st.text(string.printable),
+                     rows=st.lists(rows()),
+                     annotations=annotations(),
+                     editable=st.booleans(),
+                     gnetId=unknown(),
+                     hideControls=st.booleans(),
+                     id=unknown(),
+                     inputs=st.lists(inputs()),
+                     links=st.lists(max_size=0),
+                     refresh=unknown(),
+                     schemaVersion=st.integers(),
+                     sharedCrosshair=st.booleans(),
+                     style=unknown(),
+                     tags=st.lists(max_size=0),
+                     templating=templating(),
+                     time=times(),
+                     timePicker=timepickers(),
+                     timezone=unknown(),
+                     version=st.integers(),
+                     graphTooltip=st.integers())
 
 
 def json_round_trip(obj):
@@ -258,11 +416,25 @@ def json_round_trip(obj):
     (yaxes, G.YAxis),
     (yaxeses, G.YAxes),
     (graphs, G.Graph),
+    (singlestats, G.SingleStat),
     (tables, G.Table),
     (texts, G.Text),
     (rows, G.Row),
+    (sparklines, G.SparkLine),
+    (valuemaps, G.ValueMap),
+    (rangemaps, G.RangeMap),
+    (gauges, G.Gauge),
+    (datasources, G.DataSourceInput),
+    (constantinputs, G.ConstantInput),
+    (templates, G.Template),
+    (annotations, G.Annotations),
+    (times, G.Time),
+    (timepickers, G.TimePicker),
+    (templating, G.Templating),
+    (dashboards, G.Dashboard),
 ])
 def test_roundtrip(generator, parser):
+    @settings(suppress_health_check=[HealthCheck.too_slow])
     @given(original=generator())
     def round_trip(original):
         json_dict = json_round_trip(original)
