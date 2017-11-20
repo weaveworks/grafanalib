@@ -40,6 +40,7 @@ setup(
         'dev': [
             'flake8',
             'pytest',
+            'pytest-cov',
             'hypothesis',
             'hypothesis-pytest',
         ],
