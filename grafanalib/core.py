@@ -28,7 +28,7 @@ class RGBA(object):
     def to_json_data(self):
         return "rgba({}, {}, {}, {})".format(self.r, self.g, self.b, self.a)
 
-    REGEX = re.compile("^rgba\((\d+), (\d+), (\d+), (\d+(?:\.\d+))\)$")
+    REGEX = re.compile("^rgba\((\d+), (\d+), (\d+), (\d*(?:\.\d+)(?:e-\d\d)?)\)$")
 
     @staticmethod
     def parse_json_data(data):
