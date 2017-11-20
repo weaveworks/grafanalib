@@ -40,6 +40,8 @@ setup(
         'dev': [
             'flake8',
             'pytest',
+            'hypothesis',
+            'hypothesis-pytest',
         ],
     },
     entry_points={
