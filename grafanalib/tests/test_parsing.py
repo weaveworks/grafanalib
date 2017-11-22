@@ -176,7 +176,7 @@ def graphs():
         legend=legends(),
         lines=st.booleans(),
         lineWidth=st.integers(),
-        links=st.lists(max_size=0),
+        links=st.lists(dashboardlinks()),
         nullPointMode=st.text(string.printable),
         percentage=st.booleans(),
         pointRadius=st.integers(),
@@ -190,7 +190,22 @@ def graphs():
         timeShift=unknown(),
         tooltip=tooltips(),
         transparent=st.booleans(),
-        xAxis=xaxes()
+        xAxis=xaxes(),
+        yAxes=yaxeses(),
+        alert=alerts() | st.none(),
+        dashLength=st.integers(),
+        dashes=st.booleans(),
+        spaceLength=st.integers(),
+        decimals=unknown(),
+        minSpan=unknown(),
+        repeat=unknown(),
+        scopedVars=unknown(),
+        repeatIteration=unknown(),
+        repeatPanelId=unknown(),
+        hideTimeOverride=unknown(),
+        x_axis=unknown(),
+        y_axis=unknown(),
+        y_formats=unknown()
     )
 
 
@@ -206,7 +221,7 @@ def tables():
         height=pixels(),
         hideTimeOverride=unknown(),
         id=unknown(),
-        links=st.lists(max_size=0),
+        links=st.lists(dashboardlinks()),
         pageSize=unknown(),
         scroll=unknown(),
         showHeader=unknown(),
@@ -231,7 +246,7 @@ def texts():
         error=st.booleans(),
         height=unknown(),
         id=unknown(),
-        links=st.lists(max_size=0),
+        links=st.lists(dashboardlinks()),
         mode=st.sampled_from(('markdown', 'html', 'text')),
         span=st.integers(),
         title=st.text(string.printable),
@@ -262,7 +277,7 @@ def singlestats():
         hideTimeOverride=st.booleans(),
         id=unknown(),
         interval=unknown(),
-        links=st.lists(max_size=0),
+        links=st.lists(dashboardlinks()),
         mappingType=st.integers(),
         mappingTypes=st.lists(mappings(), min_size=2, max_size=2),
         maxDataPoints=st.integers(),
@@ -273,7 +288,7 @@ def singlestats():
         postfixFontSize=unknown(),
         prefix=unknown(),
         prefixFontSize=unknown(),
-        rangeMaps=st.lists(max_size=0),
+        rangeMaps=st.lists(rangemaps()),
         repeat=unknown(),
         span=st.integers(),
         sparkline=sparklines(),
@@ -281,7 +296,7 @@ def singlestats():
         transparent=st.booleans(),
         valueFontSize=unknown(),
         valueName=unknown(),
-        valueMaps=st.lists(max_size=0),
+        valueMaps=st.lists(valuemaps()),
         tableColumn=unknown(),
         error=unknown(),
         timeFrom=unknown(),
@@ -395,7 +410,13 @@ def templates():
         allValue=unknown(),
         includeAll=st.booleans(),
         multi=st.booleans(),
-        regex=unknown()
+        regex=unknown(),
+        hide=st.integers(),
+        options=st.lists(unknown()),
+        refresh=st.integers(),
+        sort=st.integers(),
+        tagValuesQuery=unknown(),
+        tagsQuery=unknown()
     )
 
 
@@ -418,6 +439,24 @@ def timepickers():
     )
 
 
+def dashboardlinks():
+    """Generate arbitrary valid DashboardLink objects"""
+    return st.builds(
+        G.DashboardLink,
+        dashboard=unknown(),
+        uri=unknown(),
+        keepTime=st.booleans(),
+        title=unknown(),
+        asDropdown=unknown(),
+        icon=unknown(),
+        includeVars=unknown(),
+        tags=st.lists(unknown()),
+        targetBlank=unknown()
+        # TODO: fix url/uri/dashUriw
+        # url=unknown()
+    )
+
+
 def dashboards():
     """Generate arbitrary valid Dashboard objects"""
     return st.builds(
@@ -430,7 +469,7 @@ def dashboards():
         hideControls=st.booleans(),
         id=unknown(),
         inputs=st.lists(inputs()),
-        links=st.lists(max_size=0),
+        links=st.lists(dashboardlinks()),
         refresh=unknown(),
         schemaVersion=st.integers(),
         sharedCrosshair=st.booleans(),
@@ -441,7 +480,44 @@ def dashboards():
         timePicker=timepickers(),
         timezone=unknown(),
         version=st.integers(),
-        graphTooltip=st.integers()
+        graphTooltip=st.integers(),
+    )
+
+
+def evaluators():
+    """Generate arbitrary valid Evaluator objects"""
+    return st.builds(G.Evaluator, type=unknown(), params=unknown())
+
+
+def timeranges():
+    """Generate arbitrary valid Evaluator objects"""
+    return st.builds(G.TimeRange, from_time=times(), to_time=times())
+
+
+@st.composite
+def alertconditions(draw):
+    """Generate arbitrary valid Evaluator objects"""
+    return G.AlertCondition(
+        target=draw(targets()),
+        evaluator=draw(evaluators()),
+        timeRange=draw(timeranges()),
+        operator=draw(unknown()),
+        reducerType=draw(unknown()),
+        type=draw(unknown())
+    )
+
+
+def alerts():
+    return st.builds(
+        G.Alert,
+        name=unknown(),
+        message=unknown(),
+        alertConditions=unknown(),
+        executionErrorState=unknown(),
+        frequency=unknown(),
+        handler=st.integers(),
+        noDataState=unknown(),
+        notifications=st.lists(unknown())
     )
 
 
@@ -465,6 +541,7 @@ def json_round_trip(obj):
     (xaxes, G.XAxis),
     (yaxes, G.YAxis),
     (yaxeses, G.YAxes),
+    (dashboardlinks, G.DashboardLink),
     (graphs, G.Graph),
     (singlestats, G.SingleStat),
     (tables, G.Table),
@@ -481,10 +558,15 @@ def json_round_trip(obj):
     (times, G.Time),
     (timepickers, G.TimePicker),
     (templating, G.Templating),
+    (evaluators, G.Evaluator),
+    (timeranges, G.TimeRange),
+    (alertconditions, G.AlertCondition),
+    (alerts, G.Alert),
     (dashboards, G.Dashboard),
 ])
 def test_roundtrip(generator, parser):
-    @settings(suppress_health_check=[HealthCheck.too_slow])
+    @settings(suppress_health_check=[HealthCheck.too_slow,
+                                     HealthCheck.data_too_large])
     @given(original=generator())
     def round_trip(original):
         json_dict = json_round_trip(original)
