@@ -603,7 +603,7 @@ class Row(object):
     @classmethod
     def parse_json_data(cls, data):
         if 'panels' in data:
-            data['panels'] = parse_panels(data['panels'])
+            data['panels'] = parse_objects(data['panels'], PANEL_TYPES)
         if 'height' in data:
             data['height'] = Pixels.parse_json_data(data['height'])
 
@@ -622,21 +622,6 @@ class Annotations(object):
     @classmethod
     def parse_json_data(cls, data):
         return cls(**data)
-
-
-def parse_input(data):
-    object_type = data.get('type')
-
-    if object_type == DATASOURCE_TYPE:
-        return DataSourceInput.parse_json_data(data)
-    elif object_type == CONSTANT_TYPE:
-        return ConstantInput.parse_json_data(data)
-
-    raise ParseJsonException("Unknown input type {}".format(object_type))
-
-
-def parse_inputs(inputs):
-    return [parse_input(data) for data in inputs]
 
 
 @attr.s
@@ -1164,7 +1149,7 @@ class Dashboard(object):
     @classmethod
     def parse_json_data(cls, data):
         if '__inputs' in data:
-            data['inputs'] = parse_inputs(data.pop('__inputs'))
+            data['inputs'] = parse_objects(data.pop('__inputs'), INPUT_TYPES)
         if 'annotations' in data:
             data['annotations'] = Annotations.parse_json_data(
                 data['annotations'])
@@ -1182,25 +1167,6 @@ class Dashboard(object):
                              for link in data['links']]
 
         return cls(**data)
-
-
-def parse_panel(panel):
-    panel_type = panel.get('type')
-
-    if panel_type == GRAPH_TYPE:
-        return Graph.parse_json_data(panel)
-    elif panel_type == TEXT_TYPE:
-        return Text.parse_json_data(panel)
-    elif panel_type == SINGLESTAT_TYPE:
-        return SingleStat.parse_json_data(panel)
-    elif panel_type == TABLE_TYPE:
-        return Table.parse_json_data(panel)
-
-    raise ParseJsonException("Unknown panel type {}".format(panel_type))
-
-
-def parse_panels(panels):
-    return [parse_panel(panel) for panel in panels]
 
 
 @attr.s
@@ -1969,3 +1935,28 @@ class Table(object):
                              for link in data['links']]
 
         return cls(**data)
+
+
+PANEL_TYPES = {
+    GRAPH_TYPE: Graph,
+    TEXT_TYPE: Text,
+    SINGLESTAT_TYPE: SingleStat,
+    TABLE_TYPE: Table
+}
+
+INPUT_TYPES = {
+    DATASOURCE_TYPE: DataSourceInput,
+    CONSTANT_TYPE: ConstantInput,
+}
+
+
+def parse_object(obj, mapping):
+    object_type = obj.get('type')
+    try:
+        return mapping[object_type].parse_json_data(obj)
+    except KeyError:
+        raise ParseJsonException("Unknown panel type {}".format(object_type))
+
+
+def parse_objects(objects, mapping):
+    return [parse_object(obj, mapping) for obj in objects]
