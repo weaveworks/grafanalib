@@ -2,12 +2,13 @@
 Changelog
 =========
 
-0.4.0 (2017-08-02)
+0.4.0 (2017-11-23)
 ==================
 
 Massive release!
 
-Thanks to:
+It's Thanksgiving today, so more than ever I want to express my gratitude to
+all the people who have contributed to this release!
 
 * @aknuds1
 * @atopuzov
