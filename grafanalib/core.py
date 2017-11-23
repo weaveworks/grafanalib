@@ -1222,7 +1222,10 @@ class Dashboard(object):
                 'inputs',
                 foreach(lambda input: parse_object(input, INPUT_TYPES))
             ),
-            dicttransform('annotations', transform=Annotations.parse_json_data),
+            dicttransform(
+                'annotations',
+                transform=Annotations.parse_json_data
+            ),
             dicttransform('templating', transform=Templating.parse_json_data),
             dicttransform(
                 'timepicker',
@@ -1368,7 +1371,10 @@ class Graph(object):
             dicttransform('x-axis', 'x_axis'),
             dicttransform('y-axis', 'y_axis'),
             dicttransform('alert', transform=Alert.parse_json_data),
-            dicttransform('targets', transform=foreach(Target.parse_json_data)),
+            dicttransform(
+                'targets',
+                transform=foreach(Target.parse_json_data)
+            ),
             dicttransform(
                 'links',
                 transform=foreach(DashboardLink.parse_json_data)
@@ -1912,7 +1918,10 @@ class Table(object):
             data,
             dicttransform('datasource', 'dataSource'),
             dicttransform('colors', transform=foreach(RGBA.parse_json_data)),
-            dicttransform('targets', transform=foreach(Target.parse_json_data)),
+            dicttransform(
+                'targets',
+                transform=foreach(Target.parse_json_data)
+            ),
             dicttransform('gauge', transform=Gauge.parse_json_data),
             dicttransform('sparkline', transform=SparkLine.parse_json_data),
             dicttransform('mappingTypes',
