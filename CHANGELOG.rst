@@ -2,6 +2,38 @@
 Changelog
 =========
 
+0.4.0 (2017-11-23)
+==================
+
+Massive release!
+
+It's Thanksgiving today, so more than ever I want to express my gratitude to
+all the people who have contributed to this release!
+
+* @aknuds1
+* @atopuzov
+* @bboreham
+* @fho
+* @filippog
+* @gaelL
+* @lalinsky
+* @leth
+* @lexfrei
+* @mikebryant
+
+New features
+------------
+
+* Support for ``Text`` panels
+  (https://github.com/weaveworks/grafanalib/pull/63)
+* ``PromGraph`` is now more powerful.
+  If you want to pass extra parameters like ``intervalFactor`` to your
+  targets, you can do so by listing targets as dictionaries,
+  rather than tuples.
+  (https://github.com/weaveworks/grafanalib/pull/66)
+* Support for absolute links to drill-down in graphs
+  (https://github.com/weaveworks/grafanalib/pull/86)
+
 Changes
 -------
 
@@ -9,15 +41,35 @@ Changes
   parameter and removed old hard-coded setting.
   (https://github.com/weaveworks/grafanalib/pull/77)
 
+Extensions
+----------
 
-0.4.0 (2017-08-02)
-==================
+Generally adding more parameters to existing things:
 
-New features
-------------
+* Graphs can now have descriptions or be transparent
+  (https://github.com/weaveworks/grafanalib/pull/62 https://github.com/weaveworks/grafanalib/pull/89)
+* New formats: "bps" and "Bps"
+  (https://github.com/weaveworks/grafanalib/pull/68)
+* Specify the "Min step" for a ``Target``
+  using the ``interval`` attribute.
+* Specify the number of decimals shown on the ``YAxis``
+  with the ``decimals`` attribute
+* Specify multiple ``Dashboard`` inputs,
+  allowing dashboards to be parametrized by data source.
+  (https://github.com/weaveworks/grafanalib/pull/83)
+* Templates
+  * ``label`` is now optional (https://github.com/weaveworks/grafanalib/pull/92)
+  * ``allValue`` and ``includeAll`` attributes now available (https://github.com/weaveworks/grafanalib/pull/67)
+  * ``regex`` and ``multi`` attributes now available (https://github.com/weaveworks/grafanalib/pull/82)
+* Rows can now repeat (https://github.com/weaveworks/grafanalib/pull/82)
+* Add missing ``NULL_AS_NULL`` constant
 
-* Support for ``Text`` panels
-  (https://github.com/weaveworks/grafanalib/pull/63)
+Fixes
+-----
+
+* The ``showTitle`` parameter in ``Row`` is now respected
+  (https://github.com/weaveworks/grafanalib/pull/80)
+
 
 
 0.3.0 (2017-07-27)
