@@ -13,6 +13,53 @@ from numbers import Number
 import warnings
 import re
 
+from collections import namedtuple
+
+
+class dicttransform(
+        namedtuple('dicttransform', ['old_key', 'new_key', 'transform'])):
+    '''Helper data structure used to simplify the transformations on data when
+    parsing the object from JSON. Used in conjunction with `transform_dict`
+    :param str old_key: Source key
+    :param str new_key: Destination key. If not specified same as `old_key``
+    :param function transform: Function used to transform the data, if not
+                               specified uses identity function
+
+    Example usage:
+    dicttransform('old_key', 'new_key') - renames keys
+    dicttransform('old_key', transform=some_function)
+     - uses some_function to transform data at `old_key`
+    dicttransform('old_key', 'new_key', some_function)
+     - use some_function to transform the data and rename the key from
+       `old_key` to `new_key`
+    '''
+
+    def __new__(cls, old_key, new_key=None, transform=lambda x: x):
+        if new_key is None:
+            new_key = old_key
+
+        return super(dicttransform, cls).__new__(cls, old_key, new_key,
+                                                 transform)
+
+
+def transform_dict(data, *key_transformations):
+    '''
+    :param dict data: Dictionary to be transformed
+    :param list(dicttransform): Transformation to perform
+    '''
+    new_data = dict(data)
+    for old_key, new_key, transform in key_transformations:
+        if old_key in new_data:
+            old_value = new_data.pop(old_key)
+            new_data[new_key] = transform(old_value)
+    return new_data
+
+
+def foreach(func):
+    def inner(args):
+        return [func(arg) for arg in args]
+    return inner
+
 
 class ParseJsonException(Exception):
     pass
@@ -293,14 +340,12 @@ class Grid(object):
 
     @classmethod
     def parse_json_data(cls, data):
-        if 'threshold1Color' in data:
-            data['threshold1Color'] = RGBA.parse_json_data(
-                data['threshold1Color'])
-        if 'threshold2Color' in data:
-            data['threshold2Color'] = RGBA.parse_json_data(
-                data['threshold2Color'])
-
-        return cls(**data)
+        new_data = transform_dict(
+            data,
+            dicttransform('threshold1Color', transform=RGBA.parse_json_data),
+            dicttransform('threshold2Color', transform=RGBA.parse_json_data)
+        )
+        return cls(**new_data)
 
 
 @attr.s
@@ -421,10 +466,11 @@ class Tooltip(object):
 
     @classmethod
     def parse_json_data(cls, data):
-        if 'value_type' in data:
-            data['valueType'] = data.pop('value_type')
-
-        return cls(**data)
+        new_data = transform_dict(
+            data,
+            dicttransform('value_type', 'valueType')
+        )
+        return cls(**new_data)
 
 
 def is_valid_xaxis_mode(instance, attribute, value):
@@ -502,7 +548,9 @@ class YAxes(object):
 
     @classmethod
     def parse_json_data(cls, data):
-        return cls(left=YAxis(**data[0]), right=YAxis(**data[1]))
+        return cls(
+            left=YAxis.parse_json_data(data[0]),
+            right=YAxis.parse_json_data(data[1]))
 
 
 def single_y_axis(**kwargs):
@@ -602,12 +650,16 @@ class Row(object):
 
     @classmethod
     def parse_json_data(cls, data):
-        if 'panels' in data:
-            data['panels'] = parse_objects(data['panels'], PANEL_TYPES)
-        if 'height' in data:
-            data['height'] = Pixels.parse_json_data(data['height'])
+        new_data = transform_dict(
+            data,
+            dicttransform(
+                'panels',
+                transform=foreach(lambda panel: parse_object(panel, PANEL_TYPES))
+            ),
+            dicttransform('height', transform=Pixels.parse_json_data)
+        )
 
-        return cls(**data)
+        return cls(**new_data)
 
 
 @attr.s
@@ -705,12 +757,15 @@ class DashboardLink(object):
 
     @classmethod
     def parse_json_data(cls, data):
-        if 'dashUri' in data:
-            data['uri'] = data.pop('dashUri')
+        new_data = transform_dict(
+            data,
+            dicttransform('dashUri', 'uri'),
 
-        # TODO: fix url/uri/dashUriw
-        data.pop('url')
-        return cls(**data)
+        )
+        # TODO: fix url/uri/dashUri
+        new_data.pop('url', None)
+
+        return cls(**new_data)
 
 
 @attr.s
@@ -789,16 +844,19 @@ class Template(object):
 
     @classmethod
     def parse_json_data(cls, data):
-        if 'current' in data:
-            current = data.pop('current')
-            if 'text' in current:
-                data['default'] = current['text']
-            elif 'value' in current:
-                data['default'] = current['value']
-        if 'datasource' in data:
-            data['dataSource'] = data.pop('datasource')
+        new_data = transform_dict(
+            data,
+            dicttransform('datasource', 'dataSource')
+        )
 
-        return cls(**data)
+        if 'current' in new_data:
+            current = new_data.pop('current')
+            if 'text' in current:
+                new_data['default'] = current['text']
+            elif 'value' in current:
+                new_data['default'] = current['value']
+
+        return cls(**new_data)
 
 
 @attr.s
@@ -828,9 +886,13 @@ class Time(object):
 
     @classmethod
     def parse_json_data(cls, data):
-        data['start'] = data.pop('from')
-        data['end'] = data.pop('to')
-        return cls(**data)
+        new_data = transform_dict(
+            data,
+            dicttransform('from', 'start'),
+            dicttransform('to', 'end')
+        )
+
+        return cls(**new_data)
 
 
 DEFAULT_TIME = Time('now-1h', 'now')
@@ -860,12 +922,13 @@ class TimePicker(object):
 
     @classmethod
     def parse_json_data(cls, data):
-        if 'refresh_intervals' in data:
-            data['refreshIntervals'] = data.pop('refresh_intervals')
-        if 'time_options' in data:
-            data['timeOptions'] = data.pop('time_options')
+        new_data = transform_dict(
+            data,
+            dicttransform('refresh_intervals', 'refreshIntervals'),
+            dicttransform('time_options', 'timeOptions')
+        )
 
-        return cls(**data)
+        return cls(**new_data)
 
 
 DEFAULT_TIME_PICKER = TimePicker(
@@ -1004,23 +1067,22 @@ class AlertCondition(object):
 
     @classmethod
     def parse_json_data(cls, data):
-        if 'evaluator' in data:
-            data['evaluator'] = Evaluator.parse_json_data(data['evaluator'])
+        # TODO
+        new_data = transform_dict(
+            data,
+            dicttransform('evaluator', transform=Evaluator.parse_json_data),
+            dicttransform('operator', transform=lambda x: x['type']),
+            dicttransform('reducer', 'reducerType', lambda x: x['type'])
+        )
 
-        if 'operator' in data:
-            data['operator'] = data.pop('operator')['type']
-
-        if 'query' in data:
-            query = data.pop('query')
-            data['target'] = Target.parse_json_data(query['model'])
+        if 'query' in new_data:
+            query = new_data.pop('query')
+            new_data['target'] = Target.parse_json_data(query['model'])
             refId, *timeRange = query['params']
-            data['target'].refId = refId
-            data['timeRange'] = TimeRange.parse_json_data(timeRange)
+            new_data['target'].refId = refId
+            new_data['timeRange'] = TimeRange.parse_json_data(timeRange)
 
-        if 'reducer' in data:
-            data['reducerType'] = data.pop('reducer')['type']
-
-        return cls(**data)
+        return cls(**new_data)
 
 
 @attr.s
@@ -1049,9 +1111,12 @@ class Alert(object):
 
     @classmethod
     def parse_json_data(cls, data):
-        if 'conditions' in data:
-            data['alertConditions'] = data.pop('conditions')
-        return cls(**data)
+        new_data = transform_dict(
+            data,
+            dicttransform('conditions', 'alertConditions')
+        )
+
+        return cls(**new_data)
 
 
 @attr.s
@@ -1148,25 +1213,26 @@ class Dashboard(object):
 
     @classmethod
     def parse_json_data(cls, data):
-        if '__inputs' in data:
-            data['inputs'] = parse_objects(data.pop('__inputs'), INPUT_TYPES)
-        if 'annotations' in data:
-            data['annotations'] = Annotations.parse_json_data(
-                data['annotations'])
-        if 'templating' in data:
-            data['templating'] = Templating.parse_json_data(data['templating'])
-        if 'rows' in data:
-            data['rows'] = [Row.parse_json_data(row) for row in data['rows']]
-        if 'time' in data:
-            data['time'] = Time.parse_json_data(data['time'])
-        if 'timepicker' in data:
-            data['timePicker'] = TimePicker.parse_json_data(
-                data.pop('timepicker'))
-        if 'links' in data:
-            data['links'] = [DashboardLink.parse_json_data(link)
-                             for link in data['links']]
+        new_data = transform_dict(
+            data,
+            dicttransform(
+                '__inputs',
+                'inputs',
+                foreach(lambda input: parse_object(input, INPUT_TYPES))
+            ),
+            dicttransform('annotations', transform=Annotations.parse_json_data),
+            dicttransform('templating', transform=Templating.parse_json_data),
+            dicttransform(
+                'timepicker',
+                'timePicker',
+                TimePicker.parse_json_data
+            ),
+            dicttransform('time', transform=Time.parse_json_data),
+            dicttransform('rows', transform=foreach(Row.parse_json_data)),
+            dicttransform('links', transform=foreach(DashboardLink.parse_json_data))
+        )
 
-        return cls(**data)
+        return cls(**new_data)
 
 
 @attr.s
@@ -1284,35 +1350,24 @@ class Graph(object):
 
     @classmethod
     def parse_json_data(cls, data):
-        data['dataSource'] = data.pop('datasource')
-        if 'linewidth' in data:
-            data['lineWidth'] = data.pop('linewidth')
-        if 'pointradius' in data:
-            data['pointRadius'] = data.pop('pointradius')
-        if 'xaxis' in data:
-            data['xAxis'] = XAxis.parse_json_data(data.pop('xaxis'))
-        if 'yaxes' in data:
-            data['yAxes'] = YAxes.parse_json_data(data.pop('yaxes'))
-        if 'grid' in data:
-            data['grid'] = Grid.parse_json_data(data['grid'])
-        if 'legend' in data:
-            data['legend'] = Legend.parse_json_data(data['legend'])
-        if 'tooltip' in data:
-            data['tooltip'] = Tooltip.parse_json_data(data['tooltip'])
-        if 'targets' in data:
-            data['targets'] = [Target.parse_json_data(target)
-                               for target in data['targets']]
-        if 'x-axis' in data:
-            data['x_axis'] = data.pop('x-axis')
-        if 'y-axis' in data:
-            data['y_axis'] = data.pop('y-axis')
-        if 'links' in data:
-            data['links'] = [DashboardLink.parse_json_data(link)
-                             for link in data['links']]
-        if 'alert' in data:
-            data['alert'] = Alert.parse_json_data(data['alert'])
+        new_data = transform_dict(
+            data,
+            dicttransform('datasource', 'dataSource'),
+            dicttransform('linewidth', 'lineWidth'),
+            dicttransform('pointradius', 'pointRadius'),
+            dicttransform('xaxis', 'xAxis', XAxis.parse_json_data),
+            dicttransform('yaxes', 'yAxes', YAxes.parse_json_data),
+            dicttransform('grid', transform=Grid.parse_json_data),
+            dicttransform('legend', transform=Legend.parse_json_data),
+            dicttransform('tooltip', transform=Tooltip.parse_json_data),
+            dicttransform('x-axis', 'x_axis'),
+            dicttransform('y-axis', 'y_axis'),
+            dicttransform('alert', transform=Alert.parse_json_data),
+            dicttransform('targets', transform=foreach(Target.parse_json_data)),
+            dicttransform('links', transform=foreach(DashboardLink.parse_json_data))
+        )
 
-        return cls(**data)
+        return cls(**new_data)
 
 
 @attr.s
@@ -1332,11 +1387,13 @@ class SparkLine(object):
 
     @classmethod
     def parse_json_data(cls, data):
-        if 'fillColor' in data:
-            data['fillColor'] = RGBA.parse_json_data(data['fillColor'])
-        if 'lineColor' in data:
-            data['lineColor'] = RGB.parse_json_data(data['lineColor'])
-        return cls(**data)
+        new_data = transform_dict(
+            data,
+            dicttransform('fillColor', transform=RGBA.parse_json_data),
+            dicttransform('lineColor', transform=RGB.parse_json_data)
+        )
+
+        return cls(**new_data)
 
 
 @attr.s
@@ -1437,13 +1494,13 @@ class Text(object):
 
     @classmethod
     def parse_json_data(cls, data):
-        if 'datasource' in data:
-            data['dataSource'] = data.pop('datasource')
-        if 'links' in data:
-            data['links'] = [DashboardLink.parse_json_data(link)
-                             for link in data['links']]
+        new_data = transform_dict(
+            data,
+            dicttransform('datasource', 'dataSource'),
+            dicttransform('links', transform=foreach(DashboardLink.parse_json_data))
+        )
 
-        return cls(**data)
+        return cls(**new_data)
 
 
 @attr.s
@@ -1840,34 +1897,21 @@ class Table(object):
 
     @classmethod
     def parse_json_data(cls, data):
-        if 'colors' in data:
-            data['colors'] = [RGBA.parse_json_data(color)
-                              for color in data['colors']]
-        if 'datasource' in data:
-            data['dataSource'] = data.pop('datasource')
-        if 'targets' in data:
-            data['targets'] = [Target.parse_json_data(target)
-                               for target in data['targets']]
-        if 'gauge' in data:
-            data['gauge'] = Gauge.parse_json_data(data['gauge'])
-        if 'sparkline' in data:
-            data['sparkline'] = SparkLine.parse_json_data(data['sparkline'])
-        if 'mappingTypes' in data:
-            data['mappingTypes'] = [Mapping.parse_json_data(map_type)
-                                    for map_type in data['mappingTypes']]
-        if 'height' in data:
-            data['height'] = Pixels.parse_json_data(data['height'])
-        if 'links' in data:
-            data['links'] = [DashboardLink.parse_json_data(link)
-                             for link in data['links']]
-        if 'rangeMaps' in data:
-            data['rangeMaps'] = [RangeMap.parse_json_data(rmap)
-                                 for rmap in data['rangeMaps']]
-        if 'valueMaps' in data:
-            data['valueMaps'] = [ValueMap.parse_json_data(vmap)
-                                 for vmap in data['valueMaps']]
+        new_data = transform_dict(
+            data,
+            dicttransform('datasource', 'dataSource'),
+            dicttransform('colors', transform=foreach(RGBA.parse_json_data)),
+            dicttransform('targets', transform=foreach(Target.parse_json_data)),
+            dicttransform('gauge', transform=Gauge.parse_json_data),
+            dicttransform('sparkline', transform=SparkLine.parse_json_data),
+            dicttransform('mappingTypes', transform=foreach(Mapping.parse_json_data)),
+            dicttransform('links', transform=foreach(DashboardLink.parse_json_data)),
+            dicttransform('height', transform=Pixels.parse_json_data),
+            dicttransform('rangeMaps', transform=foreach(RangeMap.parse_json_data)),
+            dicttransform('valueMaps', transform=foreach(ValueMap.parse_json_data))
+        )
 
-        return cls(**data)
+        return cls(**new_data)
 
 
 @attr.s
@@ -1923,18 +1967,15 @@ class Table(object):
 
     @classmethod
     def parse_json_data(cls, data):
-        if 'datasource' in data:
-            data['dataSource'] = data.pop('datasource')
-        if 'targets' in data:
-            data['targets'] = [Target.parse_json_data(target)
-                               for target in data['targets']]
-        if 'height' in data:
-            data['height'] = Pixels.parse_json_data(data['height'])
-        if 'links' in data:
-            data['links'] = [DashboardLink.parse_json_data(link)
-                             for link in data['links']]
+        new_data = transform_dict(
+            data,
+            dicttransform('datasource', 'dataSource'),
+            dicttransform('targets', transform=foreach(Target.parse_json_data)),
+            dicttransform('height', transform=Pixels.parse_json_data),
+            dicttransform('links', transform=foreach(DashboardLink.parse_json_data))
+        )
 
-        return cls(**data)
+        return cls(**new_data)
 
 
 PANEL_TYPES = {
@@ -1956,7 +1997,3 @@ def parse_object(obj, mapping):
         return mapping[object_type].parse_json_data(obj)
     except KeyError:
         raise ParseJsonException("Unknown panel type {}".format(object_type))
-
-
-def parse_objects(objects, mapping):
-    return [parse_object(obj, mapping) for obj in objects]
