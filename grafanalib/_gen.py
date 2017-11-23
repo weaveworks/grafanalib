@@ -125,17 +125,20 @@ def generate_dashboards_script():
     run_script(generate_dashboards)
 
 
-def generate_dashboard_script():
-    """Entry point for generate-dasboard."""
-    run_script(generate_dashboard)
+def dashboard_code(code):
+    return textwrap.dedent("""
+    from grafanalib.core import *\n
+
+    dashboard = {}
+    """.format(pprint.pformat(code)))
 
 
 def parse_dashboard(args):
     parser = argparse.ArgumentParser(prog='generate-dashboard')
-    # parser.add_argument(
-    #     '--output', '-o', type=os.path.abspath,
-    #     help='Where to write the dashboard JSON'
-    # )
+    parser.add_argument(
+        '--output', '-o', type=os.path.abspath,
+        help='Where to write the dashboard python code'
+    )
     parser.add_argument(
         'dashboard', metavar='DASHBOARD', type=os.path.abspath,
         help='Path to dashboard definition',
@@ -145,15 +148,10 @@ def parse_dashboard(args):
     with open(opts.dashboard) as f:
         json_data = json.load(f)
 
-    dashboard = grafanalib.core.Dashboard.parse_json_data(json_data)
+        dashboard = grafanalib.core.Dashboard.parse_json_data(json_data)
 
-    python_code = textwrap.dedent("""
-    from grafanalib.core import *\n
-
-    dashboard = {}
-    """.format(pprint.pformat(dashboard)))
-
-    print(python_code)
+    with open(opts.output, 'w') as f:
+        f.write(dashboard_code(dashboard))
 
 
 def parse_dashboard_script():
