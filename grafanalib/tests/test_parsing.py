@@ -85,6 +85,7 @@ def legends():
         sortDesc=unknown()
     )
 
+
 @st.composite
 def targets(draw):
     """Generate arbitrary valid Legend objects
@@ -345,7 +346,12 @@ def valuemaps():
 
 def rangemaps():
     """Generate arbitrary valid RangeMap objects"""
-    return st.builds(G.RangeMap, start=unknown(), end=unknown(), text=unknown())
+    return st.builds(
+        G.RangeMap,
+        start=unknown(),
+        end=unknown(),
+        text=unknown()
+    )
 
 
 def gauges():
