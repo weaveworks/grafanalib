@@ -7,6 +7,7 @@ arbitrary Grafana JSON.
 
 import attr
 from attr.validators import instance_of
+from grafanalib.validators import is_in
 import itertools
 import math
 from numbers import Number
@@ -142,6 +143,9 @@ PLUGIN_ID_INFLUXDB = "influxdb"
 PLUGIN_ID_OPENTSDB = "opentsdb"
 PLUGIN_ID_ELASTICSEARCH = "elasticsearch"
 PLUGIN_ID_CLOUDWATCH = "cloudwatch"
+
+# Template types
+TEMPLATE_TYPES = ('custom', 'query', 'interval')
 
 
 @attr.s
@@ -511,6 +515,7 @@ class Template(object):
             return by your data source query.
         :param multi: If enabled, the variable will support the selection of
             multiple options at the same time.
+        :param variableType: set type of template variable
     """
 
     default = attr.ib()
@@ -528,6 +533,10 @@ class Template(object):
         validator=instance_of(bool),
     )
     regex = attr.ib(default=None)
+    variableType = attr.ib(
+        default='query',
+        validator=is_in(TEMPLATE_TYPES),
+    )
 
     def to_json_data(self):
         return {
@@ -550,7 +559,7 @@ class Template(object):
             'sort': 1,
             'tagValuesQuery': None,
             'tagsQuery': None,
-            'type': 'query',
+            'type': self.variableType,
         }
 
 
