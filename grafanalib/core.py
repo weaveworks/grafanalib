@@ -1435,14 +1435,19 @@ class RangeMap(object):
 
     def to_json_data(self):
         return {
-            'start': self.start,
-            'end': self.end,
+            'from': self.start,
+            'to': self.end,
             'text': self.text,
         }
 
     @classmethod
     def parse_json_data(cls, data):
-        return cls(**data)
+        new_data = transform_dict(
+            data,
+            dicttransform('from', 'start'),
+            dicttransform('to', 'end')
+        )
+        return cls(**new_data)
 
 
 @attr.s
