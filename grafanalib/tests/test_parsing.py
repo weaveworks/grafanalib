@@ -191,6 +191,7 @@ def graphs():
         timeShift=unknown(),
         tooltip=tooltips(),
         transparent=st.booleans(),
+        thresholds=unknown(),
         xAxis=xaxes(),
         yAxes=yaxeses(),
         alert=alerts() | st.none(),
