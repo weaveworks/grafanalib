@@ -172,6 +172,7 @@ def graphs():
         error=st.booleans(),
         fill=st.integers(),
         grid=grids(),
+        height=pixels(),
         id=unknown(),
         isNew=st.booleans(),
         legend=legends(),
