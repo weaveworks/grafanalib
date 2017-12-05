@@ -469,6 +469,7 @@ def dashboards():
     return st.builds(
         G.Dashboard,
         title=st.text(string.printable),
+        description=unknown(),
         rows=st.lists(rows()),
         annotations=annotations(),
         editable=st.booleans(),

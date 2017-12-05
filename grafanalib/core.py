@@ -1125,6 +1125,7 @@ class Dashboard(object):
 
     title = attr.ib()
     rows = attr.ib()
+    description = attr.ib(default=None)
     annotations = attr.ib(
         default=Annotations(),
         validator=instance_of(Annotations),
@@ -1192,6 +1193,7 @@ class Dashboard(object):
         return {
             '__inputs': self.inputs,
             'annotations': self.annotations,
+            'description': self.description,
             'editable': self.editable,
             'gnetId': self.gnetId,
             'hideControls': self.hideControls,
