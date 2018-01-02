@@ -1064,6 +1064,7 @@ class SingleStat(object):
     :param valueName: defines value type. possible values are:
         min, max, avg, current, total, name, first, delta, range
     :param valueMaps: the list of value to text mappings
+    :param timeFrom: time range that Override relative time
     """
 
     dataSource = attr.ib()
@@ -1105,6 +1106,7 @@ class SingleStat(object):
     valueFontSize = attr.ib(default="80%")
     valueName = attr.ib(default=VTYPE_DEFAULT)
     valueMaps = attr.ib(default=attr.Factory(list))
+    timeFrom = attr.ib(default=None)
 
     def to_json_data(self):
         return {
@@ -1144,5 +1146,6 @@ class SingleStat(object):
             'type': SINGLESTAT_TYPE,
             'valueFontSize': self.valueFontSize,
             'valueMaps': self.valueMaps,
-            'valueName': self.valueName
+            'valueName': self.valueName,
+            'timeFrom': self.timeFrom,
         }
