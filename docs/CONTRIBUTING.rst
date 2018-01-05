@@ -26,6 +26,8 @@ Conventions
 * Attributes are ``camelCased``
 * Methods are ``snake_cased``
 * Local variables are ``snake_cased``
+* We're kind of fussy about indentation:
+  4 spaces everywhere, follow the examples in `core.py`_ if you're uncertain
 
 Testing
 -------
@@ -63,3 +65,4 @@ Filing a bug
 .. _`CHANGELOG`: ../CHANGELOG.rst
 .. _`attr.Factory`: http://www.attrs.org/en/stable/api.html#attr.Factory
 .. _`hypothesis`: http://hypothesis.works/
+.. _`core.py`: ../grafanalib/core.py
