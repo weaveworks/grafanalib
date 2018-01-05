@@ -6,8 +6,7 @@ arbitrary Grafana JSON.
 """
 
 import attr
-from attr.validators import instance_of, optional
-import copy
+from attr.validators import instance_of
 import itertools
 import math
 from numbers import Number
@@ -1271,14 +1270,12 @@ class ColumnSort(object):
 
 @attr.s
 class Column(object):
-    """Details of an aggregation column in a table panel
+    """Details of an aggregation column in a table panel.
 
-    :param style: shorthand for specifying a style that maps to this column
     :param text: name of column
     :param value: aggregation function
     """
 
-    style = attr.ib(default=None, validator=optional(instance_of(ColumnStyle)))
     text = attr.ib(default="Avg")
     value = attr.ib(default="avg")
 
@@ -1287,6 +1284,33 @@ class Column(object):
             'text': self.text,
             'value': self.value,
         }
+
+
+def _style_columns(columns):
+    """Generate a list of column styles given some styled columns.
+
+    The 'Table' object in Grafana separates column definitions from column
+    style definitions. However, when defining dashboards it can be very useful
+    to define the style next to the column. This function helps that happen.
+
+    :param columns: A list of (Column, ColumnStyle) pairs. The associated
+        ColumnStyles must not have a 'pattern' specified. You can also provide
+       'None' if you want to use the default styles.
+    :return: A list of ColumnStyle values that can be used in a Grafana
+        definition.
+    """
+    new_columns = []
+    styles = []
+    for column, style in columns:
+        new_columns.append(column)
+        if not style:
+            continue
+        if style.pattern and style.pattern != column.text:
+            raise ValueError(
+                "ColumnStyle pattern (%r) must match the column name (%r) if "
+                "specified" % (style.pattern, column.text))
+        styles.append(attr.evolve(style, pattern=column.text))
+    return new_columns, styles
 
 
 @attr.s
@@ -1353,18 +1377,24 @@ class Table(object):
             ),
         ]
 
-    def to_json_data(self):
-        styles = self.styles
-        for column in self.columns:
-            if column.style:
-                style = copy.deepcopy(column.style)
-                if style.pattern and style.pattern != column.text:
-                    raise ValueError(
-                        "Column style pattern must match the column name if "
-                        "specified")
-                style.pattern = column.text
-                styles.append(style)
+    @classmethod
+    def with_styled_columns(cls, columns, styles=None, **kwargs):
+        """Construct a table where each column has an associated style.
 
+        :param columns: A list of (Column, ColumnStyle) pairs, where the
+            ColumnStyle is the style for the column and does **not** have a
+            pattern set (or the pattern is set to exactly the column name).
+            The ColumnStyle may also be None.
+        :param styles: An optional list of extra column styles that will be
+            appended to the table's list of styles.
+        :param **kwargs: Other parameters to the Table constructor.
+        :return: A Table.
+        """
+        extraStyles = styles if styles else []
+        columns, styles = _style_columns(columns)
+        return cls(columns=columns, styles=styles + extraStyles, **kwargs)
+
+    def to_json_data(self):
         return {
             'columns': self.columns,
             'datasource': self.dataSource,
