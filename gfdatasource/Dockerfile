@@ -1,4 +1,4 @@
-FROM alpine:3.4
+FROM alpine:3.6
 LABEL works.weave.role=system
 RUN apk update && apk upgrade && apk add python3
 RUN python3 -m ensurepip && pip3 install --upgrade pip
