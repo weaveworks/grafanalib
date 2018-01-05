@@ -8,6 +8,11 @@ and to help us remember how to review things properly.
 
 If something comes up during a code review or on a ticket that you think should be part of these guidelines, please say so, or even file a PR to make this doc better!
 
+Code of conduct
+===============
+
+We have a `code of conduct`_, and we enforce it. Please take a look!
+
 Coding guidelines
 =================
 
@@ -52,6 +57,7 @@ Submitting a PR
 * We try to review PRs as quickly as possible, but it might take a couple of weeks to get around to reviewing your PR—sorry, we know that sucks
 * Please add an entry to the `CHANGELOG`_ in your PR
 * It helps a lot if the PR description provides some context on what you are trying to do and why you think it's a good idea
+* The smaller the PR, the more quickly we'll be able to review it
 
 Filing a bug
 ============
@@ -66,3 +72,4 @@ Filing a bug
 .. _`attr.Factory`: http://www.attrs.org/en/stable/api.html#attr.Factory
 .. _`hypothesis`: http://hypothesis.works/
 .. _`core.py`: ../grafanalib/core.py
+.. _`code of conduct`: ./CODE_OF_CONDUCT.rst
