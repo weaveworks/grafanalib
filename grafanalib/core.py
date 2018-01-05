@@ -6,7 +6,7 @@ arbitrary Grafana JSON.
 """
 
 import attr
-from attr.validators import instance_of
+from attr.validators import instance_of, optional
 import copy
 import itertools
 import math
@@ -1278,7 +1278,7 @@ class Column(object):
     :param value: aggregation function
     """
 
-    style = attr.ib(default=None)
+    style = attr.ib(default=None, validator=optional(instance_of(ColumnStyle)))
     text = attr.ib(default="Avg")
     value = attr.ib(default="avg")
 
