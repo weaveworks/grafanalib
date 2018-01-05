@@ -160,11 +160,6 @@ JSON_TRANSFORM = "json"
 ROWS_TRANSFORM = "timeseries_to_rows"
 TABLE_TRANSFORM = "table"
 
-# Column styles
-DATE_COLUMN_STYLE = "date"
-NUMBER_COLUMN_STYLE = "number"
-STRING_COLUMN_STYLE = "string"
-
 
 @attr.s
 class Mapping(object):
@@ -1180,36 +1175,85 @@ class SingleStat(object):
 
 
 @attr.s
+class DateColumnStyleType(object):
+    TYPE = 'date'
+
+    dateFormat = attr.ib(default="YYYY-MM-DD HH:mm:ss")
+
+    def to_json_data(self):
+        return {
+            'dateFormat': self.dateFormat,
+            'type': self.TYPE,
+        }
+
+
+@attr.s
+class NumberColumnStyleType(object):
+    TYPE = 'number'
+
+    colorMode = attr.ib(default=None)
+    colors = attr.ib(default=attr.Factory(lambda: [GREEN, ORANGE, RED]))
+    thresholds = attr.ib(default=attr.Factory(list))
+    decimals = attr.ib(default=2, validator=instance_of(int))
+    unit = attr.ib(default=SHORT_FORMAT)
+
+    def to_json_data(self):
+        return {
+            'colorMode': self.colorMode,
+            'colors': self.colors,
+            'decimals': self.decimals,
+            'thresholds': self.thresholds,
+            'type': self.TYPE,
+            'unit': self.unit,
+        }
+
+
+@attr.s
+class StringColumnStyleType(object):
+    TYPE = 'string'
+
+    preserveFormat = attr.ib(validator=instance_of(bool))
+    sanitize = attr.ib(validator=instance_of(bool))
+
+    def to_json_data(self):
+        return {
+            'preserveFormat': self.preserveFormat,
+            'sanitize': self.sanitize,
+            'type': self.TYPE,
+        }
+
+
+@attr.s
+class HiddenColumnStyleType(object):
+    TYPE = 'hidden'
+
+    def to_json_data(self):
+        return {
+            'type': self.TYPE,
+        }
+
+
+@attr.s
 class ColumnStyle(object):
 
     alias = attr.ib(default="")
-    colorMode = attr.ib(default=None)
-    colors = attr.ib(default=attr.Factory(lambda: [GREEN, ORANGE, RED]))
-    dateFormat = attr.ib(default="YYYY-MM-DD HH:mm:ss")
-    decimals = attr.ib(default=2, validator=instance_of(int))
     pattern = attr.ib(default="")
-    thresholds = attr.ib(default=attr.Factory(list))
-    type = attr.ib(default=NUMBER_COLUMN_STYLE)
-    unit = attr.ib(default=SHORT_FORMAT)
+    type = attr.ib(
+        default=attr.Factory(NumberColumnStyleType),
+        validator=instance_of((
+            DateColumnStyleType,
+            HiddenColumnStyleType,
+            NumberColumnStyleType,
+            StringColumnStyleType,
+        ))
+    )
 
     def to_json_data(self):
         data = {
             'alias': self.alias,
             'pattern': self.pattern,
-            'type': self.type,
         }
-        if self.type == DATE_COLUMN_STYLE:
-            data.update({
-                'dateFormat': self.dateFormat,
-            })
-        else:
-            data.update({
-                'colorMode': self.colorMode,
-                'colors': self.colors,
-                'decimals': self.decimals,
-                'thresholds': self.thresholds,
-                'unit': self.unit,
-            })
+        data.update(self.type.to_json_data())
         return data
 
 
@@ -1302,7 +1346,7 @@ class Table(object):
             ColumnStyle(
                 alias="Time",
                 pattern="time",
-                type="date",
+                type=DateColumnStyleType(),
             ),
             ColumnStyle(
                 pattern="/.*/",
