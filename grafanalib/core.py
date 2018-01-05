@@ -531,6 +531,12 @@ class Template(object):
         validator=instance_of(bool),
     )
     regex = attr.ib(default=None)
+    useTags = attr.ib(
+        default=False,
+        validator=instance_of(bool),
+    )
+    tagsQuery = attr.ib(default=None)
+    tagValuesQuery = attr.ib(default=None)
 
     def to_json_data(self):
         return {
@@ -551,9 +557,10 @@ class Template(object):
             'refresh': 1,
             'regex': self.regex,
             'sort': 1,
-            'tagValuesQuery': None,
-            'tagsQuery': None,
             'type': 'query',
+            'useTags': self.useTags,
+            'tagsQuery': self.tagsQuery,
+            'tagValuesQuery': self.tagValuesQuery,
         }
 
 
