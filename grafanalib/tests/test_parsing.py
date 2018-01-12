@@ -216,27 +216,24 @@ def tables():
     """Generate arbitrary valid Table objects"""
     return st.builds(
         G.Table,
-        columns=unknown(),
+        columns=st.lists(columns()),
         dataSource=unknown(),
-        editable=unknown(),
-        error=unknown(),
+        editable=st.booleans(),
         fontSize=unknown(),
         height=pixels() | st.none(),
-        hideTimeOverride=unknown(),
+        hideTimeOverride=st.booleans(),
         id=unknown(),
         links=st.lists(dashboardlinks()),
         pageSize=unknown(),
-        scroll=unknown(),
-        showHeader=unknown(),
-        sort=unknown(),
+        scroll=st.booleans(),
+        showHeader=st.booleans(),
+        sort=columnsorts(),
         span=st.integers(),
-        styles=unknown(),
+        styles=st.lists(columnstyles()),
         targets=st.lists(targets()),
-        timeFrom=unknown(),
         title=unknown(),
         transform=unknown(),
-        transparent=unknown(),
-        filterNull=unknown()
+        transparent=st.booleans(),
     )
 
 
@@ -530,6 +527,64 @@ def alerts():
     )
 
 
+def datecolumstyletypes():
+    return st.builds(
+        G.DateColumnStyleType,
+        dateFormat=st.text(string.printable),
+    )
+
+
+def numbercolumnstyletypes():
+    return st.builds(
+        G.NumberColumnStyleType,
+        colorMode=unknown(),
+        colors=st.lists(rgbas()),
+        thresholds=unknown(),
+        decimals=st.integers(),
+        unit=unknown(),
+    )
+
+
+def stringcolumnstyletypes():
+    return st.builds(
+        G.StringColumnStyleType,
+        preserveFormat=st.booleans(),
+        sanitize=st.booleans(),
+    )
+
+
+def hiddencolumnstyletypes():
+    return st.builds(
+        G.HiddenColumnStyleType
+    )
+
+
+def columnstyles():
+    return st.builds(
+        G.ColumnStyle,
+        alias=unknown(),
+        pattern=unknown(),
+        type=numbercolumnstyletypes() | stringcolumnstyletypes() |
+        hiddencolumnstyletypes()
+    )
+
+
+def columnsorts():
+    return st.builds(
+        G.ColumnSort,
+        col=unknown(),
+        desc=st.booleans(),
+    )
+
+
+def columns():
+    return st.builds(
+        G.Column,
+        text=unknown(),
+        value=unknown(),
+    )
+
+
 def json_round_trip(obj):
     """Dumps the object to a JSON and load it back. This is necessary as the
     DashboardEncoder takes care of nested structures """
@@ -551,6 +606,13 @@ def json_round_trip(obj):
     (yaxes, G.YAxis),
     (yaxeses, G.YAxes),
     (dashboardlinks, G.DashboardLink),
+    (datecolumstyletypes, G.DateColumnStyleType),
+    (numbercolumnstyletypes, G.NumberColumnStyleType),
+    (stringcolumnstyletypes, G.StringColumnStyleType),
+    (hiddencolumnstyletypes, G.HiddenColumnStyleType),
+    (columnstyles, G.ColumnStyle),
+    (columnsorts, G.ColumnSort),
+    (columns, G.Column),
     (graphs, G.Graph),
     (singlestats, G.SingleStat),
     (tables, G.Table),
@@ -571,7 +633,7 @@ def json_round_trip(obj):
     (timeranges, G.TimeRange),
     (alertconditions, G.AlertCondition),
     (alerts, G.Alert),
-    (dashboards, G.Dashboard),
+    (dashboards, G.Dashboard),  # BROKEN
 ])
 def test_roundtrip(generator, parser):
     @settings(suppress_health_check=[HealthCheck.too_slow,
@@ -580,6 +642,10 @@ def test_roundtrip(generator, parser):
     def round_trip(original):
         json_dict = json_round_trip(original)
         parsed = parser.parse_json_data(json_dict)
+        print("Original")
+        print(original)
+        print("Parsed")
+        print(parsed)
         assert original == parsed
 
     round_trip()

@@ -1670,8 +1670,42 @@ class SingleStat(object):
             'valueFontSize': self.valueFontSize,
             'valueMaps': self.valueMaps,
             'valueName': self.valueName,
+            'tableColumn': self.tableColumn,
+            'error': self.error,
             'timeFrom': self.timeFrom,
+            'timeShift': self.timeShift,
         }
+
+    @classmethod
+    def parse_json_data(cls, data):
+        new_data = transform_dict(
+            data,
+            dicttransform('datasource', 'dataSource'),
+            dicttransform('colors', transform=foreach(RGBA.parse_json_data)),
+            dicttransform(
+                'targets',
+                transform=foreach(Target.parse_json_data)
+            ),
+            dicttransform('gauge', transform=Gauge.parse_json_data),
+            dicttransform('sparkline', transform=SparkLine.parse_json_data),
+            dicttransform('mappingTypes',
+                          transform=foreach(Mapping.parse_json_data)),
+            dicttransform(
+                'links',
+                transform=foreach(DashboardLink.parse_json_data)
+            ),
+            dicttransform('height', transform=Pixels.parse_json_data),
+            dicttransform(
+                'rangeMaps',
+                transform=foreach(RangeMap.parse_json_data)
+            ),
+            dicttransform(
+                'valueMaps',
+                transform=foreach(ValueMap.parse_json_data)
+            )
+        )
+
+        return cls(**new_data)
 
 
 @attr.s
@@ -1679,12 +1713,17 @@ class DateColumnStyleType(object):
     TYPE = 'date'
 
     dateFormat = attr.ib(default="YYYY-MM-DD HH:mm:ss")
+    type = attr.ib(default=TYPE)
 
     def to_json_data(self):
         return {
             'dateFormat': self.dateFormat,
             'type': self.TYPE,
         }
+
+    @classmethod
+    def parse_json_data(cls, data):
+        return cls(**data)
 
 
 @attr.s
@@ -1696,6 +1735,7 @@ class NumberColumnStyleType(object):
     thresholds = attr.ib(default=attr.Factory(list))
     decimals = attr.ib(default=2, validator=instance_of(int))
     unit = attr.ib(default=SHORT_FORMAT)
+    type = attr.ib(default=TYPE)
 
     def to_json_data(self):
         return {
@@ -1707,6 +1747,15 @@ class NumberColumnStyleType(object):
             'unit': self.unit,
         }
 
+    @classmethod
+    def parse_json_data(cls, data):
+        new_data = transform_dict(
+            data,
+            dicttransform('colors', transform=foreach(RGBA.parse_json_data)),
+        )
+
+        return cls(**new_data)
+
 
 @attr.s
 class StringColumnStyleType(object):
@@ -1714,6 +1763,7 @@ class StringColumnStyleType(object):
 
     preserveFormat = attr.ib(validator=instance_of(bool))
     sanitize = attr.ib(validator=instance_of(bool))
+    type = attr.ib(default=TYPE)
 
     def to_json_data(self):
         return {
@@ -1722,15 +1772,32 @@ class StringColumnStyleType(object):
             'type': self.TYPE,
         }
 
+    @classmethod
+    def parse_json_data(cls, data):
+        return cls(**data)
+
 
 @attr.s
 class HiddenColumnStyleType(object):
     TYPE = 'hidden'
 
+    type = attr.ib(default=TYPE)
+
     def to_json_data(self):
         return {
             'type': self.TYPE,
         }
+
+    @classmethod
+    def parse_json_data(cls, data):
+        return cls(**data)
+
+
+COLUMN_STYLE_TYPES = {
+    'hidden': HiddenColumnStyleType,
+    'string': StringColumnStyleType,
+    'number': NumberColumnStyleType,
+}
 
 
 @attr.s
@@ -1756,6 +1823,17 @@ class ColumnStyle(object):
         data.update(self.type.to_json_data())
         return data
 
+    @classmethod
+    def parse_json_data(cls, data):
+        common_keys = ('alias', 'pattern')
+        common_data = {k: v for k, v in data.items()
+                       if k in common_keys}
+        specific_data = {k: v for k, v in data.items()
+                         if k not in common_keys}
+        type_obj = parse_object(specific_data, COLUMN_STYLE_TYPES)
+
+        return cls(**common_data, type=type_obj)
+
 
 @attr.s
 class ColumnSort(object):
@@ -1767,6 +1845,10 @@ class ColumnSort(object):
             'col': self.col,
             'desc': self.desc,
         }
+
+    @classmethod
+    def parse_json_data(cls, data):
+        return cls(**data)
 
 
 @attr.s
@@ -1785,6 +1867,10 @@ class Column(object):
             'text': self.text,
             'value': self.value,
         }
+
+    @classmethod
+    def parse_json_data(cls, data):
+        return cls(**data)
 
 
 def _style_columns(columns):
@@ -1848,7 +1934,7 @@ class Table(object):
     description = attr.ib(default=None)
     editable = attr.ib(default=True, validator=instance_of(bool))
     fontSize = attr.ib(default="100%")
-    height = attr.ib(default=None)
+    height = attr.ib(default=None, validator=optional(instance_of(Pixels)))
     hideTimeOverride = attr.ib(default=False, validator=instance_of(bool))
     id = attr.ib(default=None)
     links = attr.ib(default=attr.Factory(list))
@@ -1864,6 +1950,7 @@ class Table(object):
 
     transform = attr.ib(default=COLUMNS_TRANSFORM)
     transparent = attr.ib(default=False, validator=instance_of(bool))
+    type = attr.ib(default=TABLE_TYPE)
 
     @styles.default
     def styles_default(self):
@@ -1919,93 +2006,6 @@ class Table(object):
             'transform': self.transform,
             'transparent': self.transparent,
             'type': TABLE_TYPE,
-            'tableColumn': self.tableColumn,
-            'error': self.error,
-            'timeFrom': self.timeFrom,
-            'timeShift': self.timeShift,
-        }
-
-    @classmethod
-    def parse_json_data(cls, data):
-        new_data = transform_dict(
-            data,
-            dicttransform('datasource', 'dataSource'),
-            dicttransform('colors', transform=foreach(RGBA.parse_json_data)),
-            dicttransform(
-                'targets',
-                transform=foreach(Target.parse_json_data)
-            ),
-            dicttransform('gauge', transform=Gauge.parse_json_data),
-            dicttransform('sparkline', transform=SparkLine.parse_json_data),
-            dicttransform('mappingTypes',
-                          transform=foreach(Mapping.parse_json_data)),
-            dicttransform(
-                'links',
-                transform=foreach(DashboardLink.parse_json_data)
-            ),
-            dicttransform('height', transform=Pixels.parse_json_data),
-            dicttransform(
-                'rangeMaps',
-                transform=foreach(RangeMap.parse_json_data)
-            ),
-            dicttransform(
-                'valueMaps',
-                transform=foreach(ValueMap.parse_json_data)
-            )
-        )
-
-        return cls(**new_data)
-
-
-@attr.s
-class Table(object):
-    columns = attr.ib(default=None)
-    dataSource = attr.ib(default=None)
-    editable = attr.ib(default=None)
-    error = attr.ib(default=None)
-    fontSize = attr.ib(default=None)
-    height = attr.ib(default=None, validator=optional(instance_of(Pixels)))
-    hideTimeOverride = attr.ib(default=None)
-    id = attr.ib(default=None)
-    links = attr.ib(default=attr.Factory(list))
-    pageSize = attr.ib(default=None)
-    scroll = attr.ib(default=None)
-    showHeader = attr.ib(default=None)
-    sort = attr.ib(default=None)
-    span = attr.ib(default=None)
-    styles = attr.ib(default=None)
-    targets = attr.ib(default=None)
-    timeFrom = attr.ib(default=None)
-    title = attr.ib(default=None)
-    transform = attr.ib(default=None)
-    transparent = attr.ib(default=None)
-    filterNull = attr.ib(default=None)
-    type = attr.ib(default=TABLE_TYPE)
-
-    def to_json_data(self):
-        return {
-            'columns': self.columns,
-            'datasource': self.dataSource,
-            'editable': self.editable,
-            'error': self.error,
-            'fontSize': self.fontSize,
-            'height': self.height,
-            'hideTimeOverride': self.hideTimeOverride,
-            'id': self.id,
-            'links': self.links,
-            'pageSize': self.pageSize,
-            'scroll': self.scroll,
-            'showHeader': self.showHeader,
-            'sort': self.sort,
-            'span': self.span,
-            'styles': self.styles,
-            'targets': self.targets,
-            'timeFrom': self.timeFrom,
-            'title': self.title,
-            'transform': self.transform,
-            'transparent': self.transparent,
-            'type': TABLE_TYPE,
-            'filterNull': self.filterNull,
         }
 
     @classmethod
@@ -2017,10 +2017,19 @@ class Table(object):
                 'targets',
                 transform=foreach(Target.parse_json_data)
             ),
-            dicttransform('height', transform=Pixels.parse_json_data),
             dicttransform(
                 'links',
                 transform=foreach(DashboardLink.parse_json_data)
+            ),
+            dicttransform('height', transform=Pixels.parse_json_data),
+            dicttransform('sort', transform=ColumnSort.parse_json_data),
+            dicttransform(
+                'columns',
+                transform=foreach(Column.parse_json_data)
+            ),
+            dicttransform(
+                'styles',
+                transform=foreach(ColumnStyle.parse_json_data)
             )
         )
 
@@ -2045,4 +2054,4 @@ def parse_object(obj, mapping):
     try:
         return mapping[object_type].parse_json_data(obj)
     except KeyError:
-        raise ParseJsonException("Unknown panel type {}".format(object_type))
+        raise ParseJsonException("Unknown object type {}".format(object_type))
