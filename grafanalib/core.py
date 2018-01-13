@@ -430,7 +430,6 @@ class Target(object):
             'refId': self.refId,
             'step': self.step,
             'hide': self.hide,
-            'format': self.format,
             'calculatedInterval': self.calculatedInterval,
             'datasourceErrors': self.datasourceErrors,
             'errors': self.errors,
@@ -764,7 +763,6 @@ class DashboardLink(object):
             dicttransform('dashUri', 'uri'),
 
         )
-        # TODO: fix url/uri/dashUri
         new_data.pop('url', None)
 
         return cls(**new_data)
@@ -1069,7 +1067,6 @@ class AlertCondition(object):
 
     @classmethod
     def parse_json_data(cls, data):
-        # TODO
         new_data = transform_dict(
             data,
             dicttransform('evaluator', transform=Evaluator.parse_json_data),
@@ -1797,6 +1794,7 @@ COLUMN_STYLE_TYPES = {
     'hidden': HiddenColumnStyleType,
     'string': StringColumnStyleType,
     'number': NumberColumnStyleType,
+    'date': DateColumnStyleType,
 }
 
 

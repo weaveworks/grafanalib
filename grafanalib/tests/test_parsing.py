@@ -457,8 +457,6 @@ def dashboardlinks():
         includeVars=unknown(),
         tags=st.lists(unknown()),
         targetBlank=unknown()
-        # TODO: fix url/uri/dashUriw
-        # url=unknown()
     )
 
 
@@ -564,8 +562,8 @@ def columnstyles():
         G.ColumnStyle,
         alias=unknown(),
         pattern=unknown(),
-        type=numbercolumnstyletypes() | stringcolumnstyletypes() |
-        hiddencolumnstyletypes()
+        type=datecolumstyletypes() | numbercolumnstyletypes() |
+        stringcolumnstyletypes() | hiddencolumnstyletypes()
     )
 
 
@@ -633,7 +631,7 @@ def json_round_trip(obj):
     (timeranges, G.TimeRange),
     (alertconditions, G.AlertCondition),
     (alerts, G.Alert),
-    (dashboards, G.Dashboard),  # BROKEN
+    (dashboards, G.Dashboard),
 ])
 def test_roundtrip(generator, parser):
     @settings(suppress_health_check=[HealthCheck.too_slow,

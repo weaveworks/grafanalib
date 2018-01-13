@@ -134,7 +134,8 @@ def dashboard_code(code):
 
 
 def parse_dashboard(args):
-    parser = argparse.ArgumentParser(prog='generate-dashboard')
+    parser = argparse.ArgumentParser(
+        description="EXPERIMENTAL dashboard parser.", prog='parse-dashboard')
     parser.add_argument(
         '--output', '-o', type=os.path.abspath,
         help='Where to write the dashboard python code'
