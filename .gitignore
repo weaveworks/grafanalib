@@ -8,3 +8,5 @@ dist/
 /junit.xml
 /.cache
 .ensure-*
+.hypothesis/
+.coverage

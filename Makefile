@@ -66,7 +66,7 @@ lint: $(VIRTUALENV_BIN)/flake8
 	$(VIRTUALENV_BIN)/flake8 gfdatasource/gfdatasource grafanalib
 
 test: $(VIRTUALENV_BIN)/py.test
-	$(VIRTUALENV_BIN)/py.test --junitxml=$(JUNIT_XML)
+	$(VIRTUALENV_BIN)/py.test --junitxml=$(JUNIT_XML) --cov=grafanalib --cov-report term-missing
 
 clean:
 	$(SUDO) docker rmi $(IMAGE_NAMES) >/dev/null 2>&1 || true

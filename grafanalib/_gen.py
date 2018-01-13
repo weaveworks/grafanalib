@@ -4,7 +4,11 @@ import argparse
 import json
 import os
 import sys
+import pprint
+import textwrap
 from importlib.machinery import SourceFileLoader
+
+import grafanalib.core
 
 
 DASHBOARD_SUFFIX = '.dashboard.py'
@@ -121,6 +125,36 @@ def generate_dashboards_script():
     run_script(generate_dashboards)
 
 
-def generate_dashboard_script():
-    """Entry point for generate-dasboard."""
-    run_script(generate_dashboard)
+def dashboard_code(code):
+    return textwrap.dedent("""
+    from grafanalib.core import *\n
+
+    dashboard = {}
+    """.format(pprint.pformat(code)))
+
+
+def parse_dashboard(args):
+    parser = argparse.ArgumentParser(
+        description="EXPERIMENTAL dashboard parser.", prog='parse-dashboard')
+    parser.add_argument(
+        '--output', '-o', type=os.path.abspath,
+        help='Where to write the dashboard python code'
+    )
+    parser.add_argument(
+        'dashboard', metavar='DASHBOARD', type=os.path.abspath,
+        help='Path to dashboard definition',
+    )
+    opts = parser.parse_args(args)
+
+    with open(opts.dashboard) as f:
+        json_data = json.load(f)
+
+        dashboard = grafanalib.core.Dashboard.parse_json_data(json_data)
+
+    with open(opts.output, 'w') as f:
+        f.write(dashboard_code(dashboard))
+
+
+def parse_dashboard_script():
+    """Entry point for parse-dasboard."""
+    run_script(parse_dashboard)
