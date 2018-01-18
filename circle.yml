@@ -1,8 +1,8 @@
 machine:
   services:
     - docker
-  python:
-    version: 3.5.2
+  post:
+    - pyenv global 2.7.12 3.4.4 3.5.2 3.6.1
   environment:
     PATH: $HOME/bin:$PATH
     SRCDIR: /home/ubuntu/src/github.com/weaveworks/grafanalib
