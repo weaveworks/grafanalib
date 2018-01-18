@@ -1,10 +1,10 @@
 """Generate JSON Grafana dashboards."""
 
 import argparse
+import imp
 import json
 import os
 import sys
-from importlib.machinery import SourceFileLoader
 
 
 DASHBOARD_SUFFIX = '.dashboard.py'
@@ -21,7 +21,7 @@ def load_dashboard(path):
         ``dashboard``.
     :return: A ``Dashboard``
     """
-    module = SourceFileLoader("dashboard", path).load_module()
+    module = imp.load_source("dashboard", path)
     marker = object()
     dashboard = getattr(module, 'dashboard', marker)
     if dashboard is marker:
