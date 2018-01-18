@@ -1,14 +1,14 @@
 """Tests for Zabbix Datasource"""
 
+import grafanalib.core as G
+import grafanalib.zabbix as Z
+from grafanalib import _gen
+
 import sys
 if sys.version_info[0] < 3:
     from io import BytesIO as StringIO
 else:
     from io import StringIO
-
-import grafanalib.core as G
-import grafanalib.zabbix as Z
-from grafanalib import _gen
 
 
 def test_serialization_zabbix_target():
