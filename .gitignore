@@ -5,6 +5,7 @@ build/
 dist/
 .uptodate
 /.env
-/junit.xml
+/junit-*.xml
 /.cache
 .ensure-*
+/.tox

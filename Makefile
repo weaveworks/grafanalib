@@ -23,56 +23,53 @@ DOCKER_IMAGE_DIRS=$(patsubst %/Dockerfile,%,$(DOCKERFILES))
 IMAGE_NAMES=$(foreach dir,$(DOCKER_IMAGE_DIRS),$(patsubst %,$(IMAGE_PREFIX)/%,$(shell basename $(dir))))
 
 # Python-specific stuff
-VIRTUALENV_DIR ?= .env
-VIRTUALENV_BIN = $(VIRTUALENV_DIR)/bin
-DEPS_UPTODATE = $(VIRTUALENV_DIR)/.deps-uptodate
-
-VIRTUALENV := $(shell command -v virtualenv 2> /dev/null)
+TOX := $(shell command -v tox 2> /dev/null)
 PIP := $(shell command -v pip 2> /dev/null)
+FLAKE8 := $(shell command -v flake8 2> /dev/null)
 
-JUNIT_XML := "junit.xml"
-
-.ensure-virtualenv: .ensure-pip
-ifndef VIRTUALENV
-	$(error "virtualenv is not installed. Install with `pip install [--user] virtualenv`.")
+.ensure-tox: .ensure-pip
+ifndef TOX
+	rm -f .ensure-tox
+	$(error "tox is not installed. Install with `pip install [--user] tox`.")
 endif
-	touch .ensure-virtualenv
+	touch .ensure-tox
 
 .ensure-pip:
 ifndef PIP
+	rm -f .ensure-pip
 	$(error "pip is not installed. Install with `python -m [--user] ensurepip`.")
 endif
 	touch .ensure-pip
 
-$(VIRTUALENV_BIN)/pip: .ensure-virtualenv
-	virtualenv $(VIRTUALENV_DIR)
+.ensure-flake8: .ensure-pip
+ifndef FLAKE8
+	rm -f .ensure-flake8
+	$(error "flake8 is not installed. Install with `pip install [--user] flake8`.")
+endif
+	touch .ensure-pip
 
 images:
 	$(info $(IMAGE_NAMES))
 
 all: $(UPTODATE_FILES) test lint
 
-$(DEPS_UPTODATE): setup.py $(VIRTUALENV_BIN)/pip
-	$(VIRTUALENV_BIN)/pip install -e .[dev]
-	touch $(DEPS_UPTODATE)
-
-deps: $(DEPS_UPTODATE)
+deps: setup.py .ensure-tox tox.ini
 
 $(VIRTUALENV_BIN)/flake8 $(VIRTUALENV_BIN)/py.test: $(DEPS_UPTODATE)
 
 gfdatasource/$(UPTODATE): gfdatasource/*
 
-lint: $(VIRTUALENV_BIN)/flake8
-	$(VIRTUALENV_BIN)/flake8 gfdatasource/gfdatasource grafanalib
+lint: .ensure-flake8
+	$(FLAKE8) gfdatasource/gfdatasource grafanalib
 
-test: $(VIRTUALENV_BIN)/py.test
-	$(VIRTUALENV_BIN)/py.test --junitxml=$(JUNIT_XML)
+test: .ensure-tox
+	$(TOX) --skip-missing-interpreters
 
 clean:
 	$(SUDO) docker rmi $(IMAGE_NAMES) >/dev/null 2>&1 || true
 	rm -rf $(UPTODATE_FILES)
 	rm -rf grafanalib.egg-info
-	rm $(DEPS_UPTODATE)
+	rm -f .ensure-pip .ensure-tox .ensure-flake8
 	find . -name '*.pyc' | xargs rm
 
 clean-deps:

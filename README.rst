@@ -129,7 +129,7 @@ Support
 This library is in its very early stages. We'll probably make changes that
 break backwards compatibility, although we'll try hard not to.
 
-grafanalib works with Python 3.4 and 3.5.
+grafanalib works with Python 2.7, 3.4, 3.5, and 3.6.
 
 Developing
 ==========
