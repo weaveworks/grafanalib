@@ -1,6 +1,10 @@
 """Tests for OpenTSDB datasource"""
 
-from io import StringIO
+import sys
+if sys.version_info[0] < 3:
+    from io import BytesIO as StringIO
+else:
+    from io import StringIO
 
 import grafanalib.core as G
 from grafanalib.opentsdb import (
