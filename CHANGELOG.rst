@@ -63,6 +63,7 @@ Generally adding more parameters to existing things:
   * ``regex`` and ``multi`` attributes now available (https://github.com/weaveworks/grafanalib/pull/82)
 * Rows can now repeat (https://github.com/weaveworks/grafanalib/pull/82)
 * Add missing ``NULL_AS_NULL`` constant
+* Specify the "Instant" for a ``Target`` using the ``instant`` attribute.
 
 Fixes
 -----
