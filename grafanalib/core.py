@@ -256,6 +256,7 @@ class Target(object):
     metric = attr.ib(default="")
     refId = attr.ib(default="")
     step = attr.ib(default=DEFAULT_STEP)
+    instant = attr.ib(validator=instance_of(bool), default=False)
 
     def to_json_data(self):
         return {
@@ -267,6 +268,7 @@ class Target(object):
             'metric': self.metric,
             'refId': self.refId,
             'step': self.step,
+            'instant': self.instant,
         }
 
 
