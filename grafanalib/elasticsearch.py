@@ -1,4 +1,4 @@
-"""Helpers to create Elasticsearch specific Grafana Queries."""
+"""Helpers to create Elasticsearch-specific Grafana queries."""
 
 import attr
 import itertools
