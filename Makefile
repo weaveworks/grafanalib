@@ -1,4 +1,4 @@
-.PHONY: all clean clean-deps lint test deps
+.PHONY: all clean clean-deps lint test deps coverage
 .DEFAULT_GOAL := all
 
 # Boiler plate for bulding Docker containers.
@@ -51,7 +51,7 @@ endif
 images:
 	$(info $(IMAGE_NAMES))
 
-all: $(UPTODATE_FILES) test lint
+all: $(UPTODATE_FILES) test lint coverage
 
 deps: setup.py .ensure-tox tox.ini
 
@@ -64,6 +64,9 @@ lint: .ensure-flake8
 
 test: .ensure-tox
 	$(TOX) --skip-missing-interpreters
+
+coverage:
+	$(TOX) -e coverage
 
 clean:
 	$(SUDO) docker rmi $(IMAGE_NAMES) >/dev/null 2>&1 || true
