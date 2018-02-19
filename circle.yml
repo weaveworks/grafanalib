@@ -9,7 +9,7 @@ machine:
 
 dependencies:
   override:
-    - pip install --user tox
+    - pip install tox
     - make deps
 
 test:
