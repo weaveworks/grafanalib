@@ -1,5 +1,5 @@
 """
-This is an exemplary Grafana board that uses an elastichsearch datasource.
+This is an exemplary Grafana board that uses an elasticsearch datasource.
 The graph shows the following metrics for HTTP requests to the URL path "/login":
 - number of successful requests resulted in a HTTP response code between 200-300
 - number of failed requests resulted in a HTTP response code between 400-500,
