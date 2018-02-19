@@ -2,6 +2,22 @@
 Changelog
 =========
 
+0.5.0 (2018-??-??)
+==================
+
+New features
+------------
+
+* grafanalib now supports Python 2.7. This enables it to be used within `Bazel <https://bazel.build>`_.
+* Partial support for graphs against Elasticsearch datasources (https://github.com/weaveworks/grafanalib/pull/99)
+
+Extensions
+----------
+
+* Constants for days, hours, and minutes (https://github.com/weaveworks/grafanalib/pull/98)
+* Groups and tags can now be used with templates (https://github.com/weaveworks/grafanalib/pull/97)
+
+
 0.4.0 (2017-11-23)
 ==================
 
