@@ -197,9 +197,15 @@ VTYPE_DEFAULT = VTYPE_AVG
 class Grid(object):
 
     threshold1 = attr.ib(default=None)
-    threshold1Color = attr.ib(default=GREY1, validator=instance_of(RGBA))
+    threshold1Color = attr.ib(
+        default=attr.Factory(lambda: GREY1),
+        validator=instance_of(RGBA),
+    )
     threshold2 = attr.ib(default=None)
-    threshold2Color = attr.ib(default=GREY2, validator=instance_of(RGBA))
+    threshold2Color = attr.ib(
+        default=attr.Factory(lambda: GREY2),
+        validator=instance_of(RGBA),
+    )
 
     def to_json_data(self):
         return {
@@ -414,7 +420,10 @@ class Row(object):
     editable = attr.ib(
         default=True, validator=instance_of(bool),
     )
-    height = attr.ib(default=DEFAULT_ROW_HEIGHT, validator=instance_of(Pixels))
+    height = attr.ib(
+        default=attr.Factory(lambda: DEFAULT_ROW_HEIGHT),
+        validator=instance_of(Pixels),
+    )
     showTitle = attr.ib(default=None)
     title = attr.ib(default=None)
     repeat = attr.ib(default=None)
@@ -773,7 +782,7 @@ class Dashboard(object):
     title = attr.ib()
     rows = attr.ib()
     annotations = attr.ib(
-        default=Annotations(),
+        default=attr.Factory(Annotations),
         validator=instance_of(Annotations),
     )
     editable = attr.ib(
@@ -797,15 +806,15 @@ class Dashboard(object):
     style = attr.ib(default=DARK_STYLE)
     tags = attr.ib(default=attr.Factory(list))
     templating = attr.ib(
-        default=Templating(),
+        default=attr.Factory(Templating),
         validator=instance_of(Templating),
     )
     time = attr.ib(
-        default=DEFAULT_TIME,
+        default=attr.Factory(lambda: DEFAULT_TIME),
         validator=instance_of(Time),
     )
     timePicker = attr.ib(
-        default=DEFAULT_TIME_PICKER,
+        default=attr.Factory(lambda: DEFAULT_TIME_PICKER),
         validator=instance_of(TimePicker),
     )
     timezone = attr.ib(default=UTC)
@@ -947,9 +956,15 @@ class Graph(object):
 
 @attr.s
 class SparkLine(object):
-    fillColor = attr.ib(default=BLUE_RGBA, validator=instance_of(RGBA))
+    fillColor = attr.ib(
+        default=attr.Factory(lambda: BLUE_RGBA),
+        validator=instance_of(RGBA),
+    )
     full = attr.ib(default=False, validator=instance_of(bool))
-    lineColor = attr.ib(default=BLUE_RGB, validator=instance_of(RGB))
+    lineColor = attr.ib(
+        default=attr.Factory(BLUE_RGB),
+        validator=instance_of(RGB),
+    )
     show = attr.ib(default=False, validator=instance_of(bool))
 
     def to_json_data(self):
@@ -1095,7 +1110,7 @@ class SingleStat(object):
     targets = attr.ib()
     title = attr.ib()
     cacheTimeout = attr.ib(default=None)
-    colors = attr.ib(default=[GREEN, ORANGE, RED])
+    colors = attr.ib(default=attr.Factory(lambda: [GREEN, ORANGE, RED]))
     colorBackground = attr.ib(default=False, validator=instance_of(bool))
     colorValue = attr.ib(default=False, validator=instance_of(bool))
     description = attr.ib(default=None)
@@ -1110,8 +1125,12 @@ class SingleStat(object):
     interval = attr.ib(default=None)
     links = attr.ib(default=attr.Factory(list))
     mappingType = attr.ib(default=MAPPING_TYPE_VALUE_TO_TEXT)
-    mappingTypes = attr.ib(default=[MAPPING_VALUE_TO_TEXT,
-                                    MAPPING_RANGE_TO_TEXT])
+    mappingTypes = attr.ib(
+        default=attr.Factory(lambda: [
+            MAPPING_VALUE_TO_TEXT,
+            MAPPING_RANGE_TO_TEXT,
+        ]),
+    )
     maxDataPoints = attr.ib(default=100)
     minSpan = attr.ib(default=None)
     nullText = attr.ib(default=None)
@@ -1123,8 +1142,10 @@ class SingleStat(object):
     rangeMaps = attr.ib(default=attr.Factory(list))
     repeat = attr.ib(default=None)
     span = attr.ib(default=6)
-    sparkline = attr.ib(default=attr.Factory(SparkLine),
-                        validator=instance_of(SparkLine))
+    sparkline = attr.ib(
+        default=attr.Factory(SparkLine),
+        validator=instance_of(SparkLine),
+    )
     thresholds = attr.ib(default="")
     transparent = attr.ib(default=False, validator=instance_of(bool))
     valueFontSize = attr.ib(default="80%")

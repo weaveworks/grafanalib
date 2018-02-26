@@ -31,7 +31,8 @@ ZABBIX_SLA_PROP_PROBTIME = {
 
 ZABBIX_SLA_PROP_DOWNTIME = {
     "name": "Down time",
-    "property": "downtimeTime"}
+    "property": "downtimeTime",
+}
 
 ZABBIX_EVENT_PROBLEMS = {
     "text": "Problems",
@@ -51,10 +52,12 @@ ZABBIX_TRIGGERS_SHOW_NACK = "unacknowledged"
 
 ZABBIX_SORT_TRIGGERS_BY_CHANGE = {
     "text": "last change",
-    "value": "lastchange"}
+    "value": "lastchange",
+}
 ZABBIX_SORT_TRIGGERS_BY_SEVERITY = {
     "text": "severity",
-    "value": "priority"}
+    "value": "priority",
+}
 
 ZABBIX_SEVERITY_COLORS = (
     ("#B7DBAB", "Not classified"),
@@ -62,7 +65,8 @@ ZABBIX_SEVERITY_COLORS = (
     ("#E5AC0E", "Warning"),
     ("#C15C17", "Average"),
     ("#BF1B00", "High"),
-    ("#890F02", "Disaster"))
+    ("#890F02", "Disaster"),
+)
 
 
 def convertZabbixSeverityColors(colors):
@@ -778,7 +782,7 @@ class ZabbixTriggersPanel(object):
     dataSource = attr.ib()
     title = attr.ib()
 
-    ackEventColor = attr.ib(default=BLANK,
+    ackEventColor = attr.ib(default=attr.Factory(lambda: BLANK),
                             validator=instance_of(RGBA))
     ageField = attr.ib(default=True, validator=instance_of(bool))
     customLastChangeFormat = attr.ib(default=False,
@@ -801,23 +805,28 @@ class ZabbixTriggersPanel(object):
                     validator=is_list_of(DashboardLink))
     markAckEvents = attr.ib(default=False, validator=instance_of(bool))
     minSpan = attr.ib(default=None)
-    okEventColor = attr.ib(default=GREEN,
+    okEventColor = attr.ib(default=attr.Factory(lambda: GREEN),
                            validator=instance_of(RGBA))
     pageSize = attr.ib(default=10, validator=instance_of(int))
     repeat = attr.ib(default=None)
     scroll = attr.ib(default=True, validator=instance_of(bool))
     severityField = attr.ib(default=False, validator=instance_of(bool))
-    showEvents = attr.ib(default=ZABBIX_EVENT_PROBLEMS)
+    showEvents = attr.ib(default=attr.Factory(lambda: ZABBIX_EVENT_PROBLEMS))
     showTriggers = attr.ib(default=ZABBIX_TRIGGERS_SHOW_ALL)
-    sortTriggersBy = attr.ib(default=ZABBIX_SORT_TRIGGERS_BY_CHANGE)
+    sortTriggersBy = attr.ib(
+        default=attr.Factory(lambda: ZABBIX_SORT_TRIGGERS_BY_CHANGE),
+    )
     span = attr.ib(default=None)
     statusField = attr.ib(default=False, validator=instance_of(bool))
     transparent = attr.ib(default=False, validator=instance_of(bool))
     triggerSeverity = attr.ib(
         default=ZABBIX_SEVERITY_COLORS,
-        convert=convertZabbixSeverityColors)
-    triggers = attr.ib(default=ZabbixTrigger(),
-                       validator=instance_of(ZabbixTrigger))
+        convert=convertZabbixSeverityColors,
+    )
+    triggers = attr.ib(
+        default=attr.Factory(ZabbixTrigger),
+        validator=instance_of(ZabbixTrigger),
+    )
 
     def to_json_data(self):
         return {

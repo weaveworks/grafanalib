@@ -56,22 +56,24 @@ class DateHistogramGroupBy(object):
                         result
     """
     id = attr.ib(default=0, validator=instance_of(int))
-    field = attr.ib(default=DATE_HISTOGRAM_DEFAULT_FIELD,
-                    validator=instance_of(str))
+    field = attr.ib(
+        default=DATE_HISTOGRAM_DEFAULT_FIELD,
+        validator=instance_of(str),
+    )
     interval = attr.ib(default="auto", validator=instance_of(str))
     minDocCount = attr.ib(default=0, validator=instance_of(int))
 
     def to_json_data(self):
         return {
-                'field': self.field,
-                'id': str(self.id),
-                'settings': {
-                             'interval': self.interval,
-                             'min_doc_count': self.minDocCount,
-                             'trimEdges': 0,
-                             },
-                'type': 'date_histogram',
-                }
+            'field': self.field,
+            'id': str(self.id),
+            'settings': {
+                'interval': self.interval,
+                'min_doc_count': self.minDocCount,
+                'trimEdges': 0,
+            },
+            'type': 'date_histogram',
+        }
 
 
 @attr.s
@@ -137,16 +139,16 @@ class TermsGroupBy(object):
 
     def to_json_data(self):
         return {
-                'id': str(self.id),
-                'type': 'terms',
-                'field': self.field,
-                'settings': {
-                    'min_doc_count': self.minDocCount,
-                    'order': self.order,
-                    'order_by': self.orderBy,
-                    'size': self.size,
-                 },
-                }
+            'id': str(self.id),
+            'type': 'terms',
+            'field': self.field,
+            'settings': {
+                'min_doc_count': self.minDocCount,
+                'order': self.order,
+                'order_by': self.orderBy,
+                'size': self.size,
+            },
+        }
 
 
 @attr.s
@@ -166,8 +168,9 @@ class ElasticsearchTarget(object):
     """
 
     alias = attr.ib(default=None)
-    bucketAggs = attr.ib(default=attr.Factory(
-                                          lambda: [DateHistogramGroupBy()]))
+    bucketAggs = attr.ib(
+        default=attr.Factory(lambda: [DateHistogramGroupBy()]),
+    )
     metricAggs = attr.ib(default=attr.Factory(lambda: [CountMetricAgg()]))
     query = attr.ib(default="", validator=instance_of(str))
     refId = attr.ib(default="", validator=instance_of(str))
