@@ -962,7 +962,7 @@ class SparkLine(object):
     )
     full = attr.ib(default=False, validator=instance_of(bool))
     lineColor = attr.ib(
-        default=attr.Factory(BLUE_RGB),
+        default=attr.Factory(lambda: BLUE_RGB),
         validator=instance_of(RGB),
     )
     show = attr.ib(default=False, validator=instance_of(bool))
