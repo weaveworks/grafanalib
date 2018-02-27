@@ -22,3 +22,14 @@ def test_table_styled_columns():
     assert t.styles == [
         G.ColumnStyle(pattern='Foo'),
     ]
+
+
+def test_single_stat():
+    data_source = 'dummy data source'
+    targets = ['dummy_prom_query']
+    title = 'dummy title'
+    single_stat = G.SingleStat(data_source, targets, title)
+    data = single_stat.to_json_data()
+    assert data['targets'] == targets
+    assert data['datasource'] == data_source
+    assert data['title'] == title

@@ -2,6 +2,17 @@
 Changelog
 =========
 
+0.5.1 (2018-02-27)
+==================
+
+Fixes
+-----
+
+* Fix for crasher bug that broke ``SingleStat``, introduced by `#114`_
+
+.. _`#114`: https://github.com/weaveworks/grafanalib/pull/114
+
+
 0.5.0 (2018-02-26)
 ==================
 
