@@ -962,7 +962,7 @@ class SparkLine(object):
     )
     full = attr.ib(default=False, validator=instance_of(bool))
     lineColor = attr.ib(
-        default=attr.Factory(BLUE_RGB),
+        default=attr.Factory(lambda: BLUE_RGB),
         validator=instance_of(RGB),
     )
     show = attr.ib(default=False, validator=instance_of(bool))
@@ -1056,12 +1056,12 @@ class Text(object):
 
 @attr.s
 class SingleStat(object):
-    """Generates Signle Stat panel json structure
+    """Generates Single Stat panel json structure
 
     Grafana doc on singlestat: http://docs.grafana.org/reference/singlestat/
 
     :param dataSource: Grafana datasource name
-    :param targets: list of metric requests for chousen datasource
+    :param targets: list of metric requests for chosen datasource
     :param title: panel title
     :param cacheTimeout: metric query result cache ttl
     :param colors: the list of colors that can be used for coloring
