@@ -2,6 +2,15 @@
 Changelog
 =========
 
+0.5.2 (unreleased)
+==================
+
+Changes
+-------
+
+* Update README.rst with information on how to get help.
+
+
 0.5.1 (2018-02-27)
 ==================
 
