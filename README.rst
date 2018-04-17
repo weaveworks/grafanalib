@@ -154,3 +154,15 @@ invocation looks like this:
 
   $ <gfdatasource> --grafana-url http://grafana. datasource --data-source-url http://datasource
   $ <gfdatasource> --grafana-url http://grafana. app --id my-plugin
+
+Getting Help
+============
+
+If you have any questions about, feedback for or problems with ``grafanalib``:
+
+- Invite yourself to the `#weave-community <https://weaveworks.github.io/community-slack/>`_ slack channel.
+- Ask a question on the `#weave-community <https://weave-community.slack.com/messages/general/>`_ slack channel.
+- Send an email to `weave-users@weave.works <mailto:weave-users@weave.works>`_.
+- `File an issue <https://github.com/weaveworks/grafanalib>`_.
+
+Your feedback is always welcome!
