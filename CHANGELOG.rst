@@ -1,6 +1,14 @@
 =========
 Changelog
 =========
+0.5.3 (unreleased)
+==================
+
+Changes
+-------
+
+* Added the AlertList Panel support in grafanalib/core
+
 
 0.5.2 (unreleased)
 ==================
