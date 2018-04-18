@@ -263,6 +263,7 @@ class Target(object):
     refId = attr.ib(default="")
     step = attr.ib(default=DEFAULT_STEP)
     instant = attr.ib(validator=instance_of(bool), default=False)
+    datasource = attr.ib(default="")
 
     def to_json_data(self):
         return {
@@ -275,6 +276,7 @@ class Target(object):
             'refId': self.refId,
             'step': self.step,
             'instant': self.instant,
+            'datasource': self.datasource,
         }
 
 
