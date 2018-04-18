@@ -1,6 +1,14 @@
 =========
 Changelog
 =========
+0.5.3 (unreleased)
+==================
+
+Changes
+-------
+
+* Added the support for mixed data sources  
+
 
 0.5.2 (unreleased)
 ==================
