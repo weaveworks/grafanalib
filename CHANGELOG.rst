@@ -7,6 +7,7 @@ Changelog
 Changes
 -------
 
+* Added the AlertList Panel support in grafanalib/core
 * Added the support for mixed data sources  
 
 

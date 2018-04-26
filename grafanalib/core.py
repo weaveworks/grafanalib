@@ -6,7 +6,7 @@ arbitrary Grafana JSON.
 """
 
 import attr
-from attr.validators import instance_of
+from attr.validators import instance_of, in_
 import itertools
 import math
 from numbers import Number
@@ -74,6 +74,7 @@ GRAPH_TYPE = 'graph'
 SINGLESTAT_TYPE = 'singlestat'
 TABLE_TYPE = 'table'
 TEXT_TYPE = 'text'
+ALERTLIST_TYPE = "alertlist"
 
 DEFAULT_FILL = 1
 DEFAULT_REFRESH = '10s'
@@ -82,6 +83,7 @@ DEFAULT_LINE_WIDTH = 2
 DEFAULT_POINT_RADIUS = 5
 DEFAULT_RENDERER = FLOT
 DEFAULT_STEP = 10
+DEFAULT_LIMIT = 10
 TOTAL_SPAN = 12
 
 DARK_STYLE = 'dark'
@@ -158,6 +160,22 @@ COLUMNS_TRANSFORM = "timeseries_to_columns"
 JSON_TRANSFORM = "json"
 ROWS_TRANSFORM = "timeseries_to_rows"
 TABLE_TRANSFORM = "table"
+
+# AlertList show selections
+ALERTLIST_SHOW_CURRENT = "current"
+ALERTLIST_SHOW_CHANGES = "changes"
+
+# AlertList state filter options
+ALERTLIST_STATE_OK = "ok"
+ALERTLIST_STATE_PAUSED = "paused"
+ALERTLIST_STATE_NO_DATA = "no_data"
+ALERTLIST_STATE_EXECUTION_ERROR = "execution_error"
+ALERTLIST_STATE_ALERTING = "alerting"
+
+# Display Sort Order
+SORT_ASC = 1
+SORT_DESC = 2
+SORT_IMPORTANCE = 3
 
 
 @attr.s
@@ -1053,6 +1071,37 @@ class Text(object):
             'title': self.title,
             'transparent': self.transparent,
             'type': TEXT_TYPE,
+        }
+
+
+@attr.s
+class AlertList(object):
+    """Generates the AlertList Panel."""
+
+    description = attr.ib(default="")
+    id = attr.ib(default=None)
+    limit = attr.ib(default=DEFAULT_LIMIT)
+    links = attr.ib(default=attr.Factory(list))
+    onlyAlertsOnDashboard = attr.ib(default=True, validator=instance_of(bool))
+    show = attr.ib(default=ALERTLIST_SHOW_CURRENT)
+    sortOrder = attr.ib(default=SORT_ASC, validator=in_([1, 2, 3]))
+    stateFilter = attr.ib(default=attr.Factory(list))
+    title = attr.ib(default="")
+    transparent = attr.ib(default=False, validator=instance_of(bool))
+
+    def to_json_data(self):
+        return {
+            'description': self.description,
+            'id': self.id,
+            'limit': self.limit,
+            'links': self.links,
+            'onlyAlertsOnDashboard': self.onlyAlertsOnDashboard,
+            'show': self.show,
+            'sortOrder': self.sortOrder,
+            'stateFilter': self.stateFilter,
+            'title': self.title,
+            'transparent': self.transparent,
+            'type': ALERTLIST_TYPE,
         }
 
 
