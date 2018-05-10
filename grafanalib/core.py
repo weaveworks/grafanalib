@@ -839,6 +839,7 @@ class Dashboard(object):
     )
     timezone = attr.ib(default=UTC)
     version = attr.ib(default=0)
+    uid = attr.ib(default=None)
 
     def _iter_panels(self):
         for row in self.rows:
@@ -884,6 +885,7 @@ class Dashboard(object):
             'timepicker': self.timePicker,
             'timezone': self.timezone,
             'version': self.version,
+            'uid': self.uid,
         }
 
 
