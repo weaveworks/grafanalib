@@ -898,6 +898,12 @@ class Dashboard(object):
 
 @attr.s
 class Graph(object):
+    """
+    Generates Graph panel json structure.
+
+    :param minSpan: Minimum width for each panel
+    :param repeat: Template's name to repeat Graph on
+    """
 
     title = attr.ib()
     dataSource = attr.ib()
@@ -918,11 +924,13 @@ class Graph(object):
     lines = attr.ib(default=True, validator=instance_of(bool))
     lineWidth = attr.ib(default=DEFAULT_LINE_WIDTH)
     links = attr.ib(default=attr.Factory(list))
+    minSpan = attr.ib(default=None)
     nullPointMode = attr.ib(default=NULL_CONNECTED)
     percentage = attr.ib(default=False, validator=instance_of(bool))
     pointRadius = attr.ib(default=DEFAULT_POINT_RADIUS)
     points = attr.ib(default=False, validator=instance_of(bool))
     renderer = attr.ib(default=DEFAULT_RENDERER)
+    repeat = attr.ib(default=None)
     seriesOverrides = attr.ib(default=attr.Factory(list))
     span = attr.ib(default=None)
     stack = attr.ib(default=False, validator=instance_of(bool))
@@ -959,11 +967,13 @@ class Graph(object):
             'lines': self.lines,
             'linewidth': self.lineWidth,
             'links': self.links,
+            'minSpan': self.minSpan,
             'nullPointMode': self.nullPointMode,
             'percentage': self.percentage,
             'pointradius': self.pointRadius,
             'points': self.points,
             'renderer': self.renderer,
+            'repeat': self.repeat,
             'seriesOverrides': self.seriesOverrides,
             'span': self.span,
             'stack': self.stack,
