@@ -901,15 +901,16 @@ class Graph(object):
     """
     Generates Graph panel json structure.
 
+    :param dataSource: DataSource's name
     :param minSpan: Minimum width for each panel
     :param repeat: Template's name to repeat Graph on
     """
 
     title = attr.ib()
-    dataSource = attr.ib()
     targets = attr.ib()
     aliasColors = attr.ib(default=attr.Factory(dict))
     bars = attr.ib(default=False, validator=instance_of(bool))
+    dataSource = attr.ib(default=None)
     description = attr.ib(default=None)
     editable = attr.ib(default=True, validator=instance_of(bool))
     error = attr.ib(default=False, validator=instance_of(bool))
