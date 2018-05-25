@@ -569,10 +569,10 @@ class Template(object):
             multiple options at the same time.
     """
 
-    default = attr.ib()
-    dataSource = attr.ib()
     name = attr.ib()
     query = attr.ib()
+    default = attr.ib(default=None)
+    dataSource = attr.ib(default=None)
     label = attr.ib(default=None)
     allValue = attr.ib(default=None)
     includeAll = attr.ib(
