@@ -271,8 +271,13 @@ class Legend(object):
 
 @attr.s
 class Target(object):
+    """
+    Metric to show.
 
-    expr = attr.ib()
+    :param target: Graphite way to select data
+    """
+
+    expr = attr.ib(default="")
     format = attr.ib(default=TIME_SERIES_TARGET_FORMAT)
     legendFormat = attr.ib(default="")
     interval = attr.ib(default="", validator=instance_of(str))
@@ -280,12 +285,14 @@ class Target(object):
     metric = attr.ib(default="")
     refId = attr.ib(default="")
     step = attr.ib(default=DEFAULT_STEP)
+    target = attr.ib(default="")
     instant = attr.ib(validator=instance_of(bool), default=False)
     datasource = attr.ib(default="")
 
     def to_json_data(self):
         return {
             'expr': self.expr,
+            'target': self.target,
             'format': self.format,
             'interval': self.interval,
             'intervalFactor': self.intervalFactor,
@@ -562,10 +569,10 @@ class Template(object):
             multiple options at the same time.
     """
 
-    default = attr.ib()
-    dataSource = attr.ib()
     name = attr.ib()
     query = attr.ib()
+    default = attr.ib(default=None)
+    dataSource = attr.ib(default=None)
     label = attr.ib(default=None)
     allValue = attr.ib(default=None)
     includeAll = attr.ib(
@@ -891,12 +898,19 @@ class Dashboard(object):
 
 @attr.s
 class Graph(object):
+    """
+    Generates Graph panel json structure.
+
+    :param dataSource: DataSource's name
+    :param minSpan: Minimum width for each panel
+    :param repeat: Template's name to repeat Graph on
+    """
 
     title = attr.ib()
-    dataSource = attr.ib()
     targets = attr.ib()
     aliasColors = attr.ib(default=attr.Factory(dict))
     bars = attr.ib(default=False, validator=instance_of(bool))
+    dataSource = attr.ib(default=None)
     description = attr.ib(default=None)
     editable = attr.ib(default=True, validator=instance_of(bool))
     error = attr.ib(default=False, validator=instance_of(bool))
@@ -911,11 +925,13 @@ class Graph(object):
     lines = attr.ib(default=True, validator=instance_of(bool))
     lineWidth = attr.ib(default=DEFAULT_LINE_WIDTH)
     links = attr.ib(default=attr.Factory(list))
+    minSpan = attr.ib(default=None)
     nullPointMode = attr.ib(default=NULL_CONNECTED)
     percentage = attr.ib(default=False, validator=instance_of(bool))
     pointRadius = attr.ib(default=DEFAULT_POINT_RADIUS)
     points = attr.ib(default=False, validator=instance_of(bool))
     renderer = attr.ib(default=DEFAULT_RENDERER)
+    repeat = attr.ib(default=None)
     seriesOverrides = attr.ib(default=attr.Factory(list))
     span = attr.ib(default=None)
     stack = attr.ib(default=False, validator=instance_of(bool))
@@ -952,11 +968,13 @@ class Graph(object):
             'lines': self.lines,
             'linewidth': self.lineWidth,
             'links': self.links,
+            'minSpan': self.minSpan,
             'nullPointMode': self.nullPointMode,
             'percentage': self.percentage,
             'pointradius': self.pointRadius,
             'points': self.points,
             'renderer': self.renderer,
+            'repeat': self.repeat,
             'seriesOverrides': self.seriesOverrides,
             'span': self.span,
             'stack': self.stack,
