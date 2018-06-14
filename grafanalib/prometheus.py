@@ -28,7 +28,7 @@ def PromGraph(data_source, title, expressions, **kwargs):
             for (args, refId) in zip(expressions, letters)]
     else:
         targets = [
-            G.Target(expr, legend, refId=refId)
+            G.Target(expr=expr, legendFormat=legend, refId=refId)
             for ((legend, expr), refId) in zip(expressions, letters)]
     return G.Graph(
         title=title,
