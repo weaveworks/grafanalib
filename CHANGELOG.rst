@@ -10,6 +10,7 @@ Changes
 * Fixed a bug that was losing any legends on a PromGraph
 * Added the AlertList Panel support in grafanalib/core
 * Added the support for mixed data sources  
+* Add `ExternalLink` class for dashboard-level links to other pages
 
 
 0.5.2 (unreleased)
