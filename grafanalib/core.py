@@ -572,7 +572,8 @@ class Template(object):
         :param multi: If enabled, the variable will support the selection of
             multiple options at the same time.
         :param type: The template type, can be one of: query (default),
-            interval, datasource, custom, constant, adhoc.
+        :param hide: Hide this variable in the dashboard, can be one of:
+            0 (default, no hide), 1 (hide label), 2 (hide variable)
     """
 
     name = attr.ib()
@@ -597,6 +598,7 @@ class Template(object):
     tagsQuery = attr.ib(default=None)
     tagValuesQuery = attr.ib(default=None)
     type = attr.ib(default='query')
+    hide = attr.ib(default=0)
 
     def to_json_data(self):
         return {
@@ -607,7 +609,7 @@ class Template(object):
                 'tags': [],
             },
             'datasource': self.dataSource,
-            'hide': 0,
+            'hide': self.hide,
             'includeAll': self.includeAll,
             'label': self.label,
             'multi': self.multi,
