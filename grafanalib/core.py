@@ -253,6 +253,8 @@ class Legend(object):
     hideZero = attr.ib(default=False, validator=instance_of(bool))
     rightSide = attr.ib(default=False, validator=instance_of(bool))
     sideWidth = attr.ib(default=None)
+    sort = attr.ib(default=None)
+    sortDesc = attr.ib(default=False)
 
     def to_json_data(self):
         values = ((self.avg or self.current or self.max or self.min)
@@ -271,13 +273,20 @@ class Legend(object):
             'hideZero': self.hideZero,
             'rightSide': self.rightSide,
             'sideWidth': self.sideWidth,
+            'sort': self.sort,
+            'sortDesc': self.sortDesc,
         }
 
 
 @attr.s
 class Target(object):
+    """
+    Metric to show.
 
-    expr = attr.ib()
+    :param target: Graphite way to select data
+    """
+
+    expr = attr.ib(default="")
     format = attr.ib(default=TIME_SERIES_TARGET_FORMAT)
     legendFormat = attr.ib(default="")
     interval = attr.ib(default="", validator=instance_of(str))
@@ -285,12 +294,14 @@ class Target(object):
     metric = attr.ib(default="")
     refId = attr.ib(default="")
     step = attr.ib(default=DEFAULT_STEP)
+    target = attr.ib(default="")
     instant = attr.ib(validator=instance_of(bool), default=False)
     datasource = attr.ib(default="")
 
     def to_json_data(self):
         return {
             'expr': self.expr,
+            'target': self.target,
             'format': self.format,
             'interval': self.interval,
             'intervalFactor': self.intervalFactor,
@@ -548,6 +559,31 @@ class DashboardLink(object):
 
 
 @attr.s
+class ExternalLink(object):
+    '''ExternalLink creates a top-level link attached to a dashboard.
+
+        :param url: the URL to link to
+        :param title: the text of the link
+        :param keepTime: if true, the URL params for the dashboard's
+            current time period are appended
+    '''
+    uri = attr.ib()
+    title = attr.ib()
+    keepTime = attr.ib(
+        default=False,
+        validator=instance_of(bool),
+    )
+
+    def to_json_data(self):
+        return {
+            "keepTime": self.keepTime,
+            "title": self.title,
+            "type": 'link',
+            "url": self.uri,
+        }
+
+
+@attr.s
 class Template(object):
     """Template create a new 'variable' for the dashboard, defines the variable
     name, human name, query to fetch the values and the default value.
@@ -566,12 +602,16 @@ class Template(object):
             return by your data source query.
         :param multi: If enabled, the variable will support the selection of
             multiple options at the same time.
+        :param type: The template type, can be one of: query (default),
+            interval, datasource, custom, constant, adhoc.
+        :param hide: Hide this variable in the dashboard, can be one of:
+            0 (default, no hide), 1 (hide label), 2 (hide variable)
     """
 
-    default = attr.ib()
-    dataSource = attr.ib()
     name = attr.ib()
     query = attr.ib()
+    default = attr.ib(default=None)
+    dataSource = attr.ib(default=None)
     label = attr.ib(default=None)
     allValue = attr.ib(default=None)
     includeAll = attr.ib(
@@ -591,6 +631,8 @@ class Template(object):
     tagValuesQuery = attr.ib(default=None)
     refresh = attr.ib(default=REFRESH_ON_DASHBOARD_LOAD,
                       validator=instance_of(int))
+    type = attr.ib(default='query')
+    hide = attr.ib(default=0)
 
     def to_json_data(self):
         return {
@@ -601,7 +643,7 @@ class Template(object):
                 'tags': [],
             },
             'datasource': self.dataSource,
-            'hide': 0,
+            'hide': self.hide,
             'includeAll': self.includeAll,
             'label': self.label,
             'multi': self.multi,
@@ -611,7 +653,7 @@ class Template(object):
             'refresh': self.refresh,
             'regex': self.regex,
             'sort': 1,
-            'type': 'query',
+            'type': self.type,
             'useTags': self.useTags,
             'tagsQuery': self.tagsQuery,
             'tagValuesQuery': self.tagValuesQuery,
@@ -847,6 +889,7 @@ class Dashboard(object):
     )
     timezone = attr.ib(default=UTC)
     version = attr.ib(default=0)
+    uid = attr.ib(default=None)
 
     def _iter_panels(self):
         for row in self.rows:
@@ -892,17 +935,25 @@ class Dashboard(object):
             'timepicker': self.timePicker,
             'timezone': self.timezone,
             'version': self.version,
+            'uid': self.uid,
         }
 
 
 @attr.s
 class Graph(object):
+    """
+    Generates Graph panel json structure.
+
+    :param dataSource: DataSource's name
+    :param minSpan: Minimum width for each panel
+    :param repeat: Template's name to repeat Graph on
+    """
 
     title = attr.ib()
-    dataSource = attr.ib()
     targets = attr.ib()
     aliasColors = attr.ib(default=attr.Factory(dict))
     bars = attr.ib(default=False, validator=instance_of(bool))
+    dataSource = attr.ib(default=None)
     description = attr.ib(default=None)
     editable = attr.ib(default=True, validator=instance_of(bool))
     error = attr.ib(default=False, validator=instance_of(bool))
@@ -917,11 +968,13 @@ class Graph(object):
     lines = attr.ib(default=True, validator=instance_of(bool))
     lineWidth = attr.ib(default=DEFAULT_LINE_WIDTH)
     links = attr.ib(default=attr.Factory(list))
+    minSpan = attr.ib(default=None)
     nullPointMode = attr.ib(default=NULL_CONNECTED)
     percentage = attr.ib(default=False, validator=instance_of(bool))
     pointRadius = attr.ib(default=DEFAULT_POINT_RADIUS)
     points = attr.ib(default=False, validator=instance_of(bool))
     renderer = attr.ib(default=DEFAULT_RENDERER)
+    repeat = attr.ib(default=None)
     seriesOverrides = attr.ib(default=attr.Factory(list))
     span = attr.ib(default=None)
     stack = attr.ib(default=False, validator=instance_of(bool))
@@ -958,11 +1011,13 @@ class Graph(object):
             'lines': self.lines,
             'linewidth': self.lineWidth,
             'links': self.links,
+            'minSpan': self.minSpan,
             'nullPointMode': self.nullPointMode,
             'percentage': self.percentage,
             'pointradius': self.pointRadius,
             'points': self.points,
             'renderer': self.renderer,
+            'repeat': self.repeat,
             'seriesOverrides': self.seriesOverrides,
             'span': self.span,
             'stack': self.stack,

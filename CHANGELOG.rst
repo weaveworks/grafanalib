@@ -7,8 +7,12 @@ Changelog
 Changes
 -------
 
-* Added the AlertList Panel support in grafanalib/core
-* Added the support for mixed data sources  
+* Fixed a bug that was losing any legends on a PromGraph
+* Add the AlertList Panel support in grafanalib/core
+* Add support for mixed data sources
+* Add `ExternalLink` class for dashboard-level links to other pages
+* Template now supports 'type' and 'hide' attributes
+* Legend now supports 'sort' and 'sortDesc' attributes
 
 
 0.5.2 (unreleased)
