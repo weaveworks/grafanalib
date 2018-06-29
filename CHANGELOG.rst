@@ -11,6 +11,7 @@ Changes
 * Added the AlertList Panel support in grafanalib/core
 * Added the support for mixed data sources
 * Template now supports 'type' attribute
+* Legend now supports 'sort' and 'sortDesc' attributes
 
 
 0.5.2 (unreleased)
