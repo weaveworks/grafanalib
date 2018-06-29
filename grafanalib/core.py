@@ -248,6 +248,8 @@ class Legend(object):
     hideZero = attr.ib(default=False, validator=instance_of(bool))
     rightSide = attr.ib(default=False, validator=instance_of(bool))
     sideWidth = attr.ib(default=None)
+    sort = attr.ib(default=None)
+    sortDesc = attr.ib(default=False)
 
     def to_json_data(self):
         values = ((self.avg or self.current or self.max or self.min)
@@ -266,6 +268,8 @@ class Legend(object):
             'hideZero': self.hideZero,
             'rightSide': self.rightSide,
             'sideWidth': self.sideWidth,
+            'sort': self.sort,
+            'sortDesc': self.sortDesc,
         }
 
 
@@ -592,6 +596,10 @@ class Template(object):
             return by your data source query.
         :param multi: If enabled, the variable will support the selection of
             multiple options at the same time.
+        :param type: The template type, can be one of: query (default),
+            interval, datasource, custom, constant, adhoc.
+        :param hide: Hide this variable in the dashboard, can be one of:
+            0 (default, no hide), 1 (hide label), 2 (hide variable)
     """
 
     name = attr.ib()
@@ -615,6 +623,8 @@ class Template(object):
     )
     tagsQuery = attr.ib(default=None)
     tagValuesQuery = attr.ib(default=None)
+    type = attr.ib(default='query')
+    hide = attr.ib(default=0)
 
     def to_json_data(self):
         return {
@@ -625,7 +635,7 @@ class Template(object):
                 'tags': [],
             },
             'datasource': self.dataSource,
-            'hide': 0,
+            'hide': self.hide,
             'includeAll': self.includeAll,
             'label': self.label,
             'multi': self.multi,
@@ -635,7 +645,7 @@ class Template(object):
             'refresh': 1,
             'regex': self.regex,
             'sort': 1,
-            'type': 'query',
+            'type': self.type,
             'useTags': self.useTags,
             'tagsQuery': self.tagsQuery,
             'tagValuesQuery': self.tagValuesQuery,
