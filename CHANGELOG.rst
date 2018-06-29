@@ -10,7 +10,7 @@ Changes
 * Fixed a bug that was losing any legends on a PromGraph
 * Added the AlertList Panel support in grafanalib/core
 * Added the support for mixed data sources
-* Template now supports 'type' attribute
+* Template now supports 'type' and 'hide' attributes
 * Legend now supports 'sort' and 'sortDesc' attributes
 
 
