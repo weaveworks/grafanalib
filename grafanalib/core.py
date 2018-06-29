@@ -554,6 +554,31 @@ class DashboardLink(object):
 
 
 @attr.s
+class ExternalLink(object):
+    '''ExternalLink creates a top-level link attached to a dashboard.
+
+        :param url: the URL to link to
+        :param title: the text of the link
+        :param keepTime: if true, the URL params for the dashboard's
+            current time period are appended
+    '''
+    uri = attr.ib()
+    title = attr.ib()
+    keepTime = attr.ib(
+        default=False,
+        validator=instance_of(bool),
+    )
+
+    def to_json_data(self):
+        return {
+            "keepTime": self.keepTime,
+            "title": self.title,
+            "type": 'link',
+            "url": self.uri,
+        }
+
+
+@attr.s
 class Template(object):
     """Template create a new 'variable' for the dashboard, defines the variable
     name, human name, query to fetch the values and the default value.
