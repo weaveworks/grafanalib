@@ -177,6 +177,11 @@ SORT_ASC = 1
 SORT_DESC = 2
 SORT_IMPORTANCE = 3
 
+# Template
+REFRESH_NEVER = 0
+REFRESH_ON_DASHBOARD_LOAD = 1
+REFRESH_ON_TIME_RANGE_CHANGE = 2
+
 
 @attr.s
 class Mapping(object):
@@ -588,6 +593,7 @@ class Template(object):
         :param label: the variable's human label
         :param name: the variable's name
         :param query: the query users to fetch the valid values of the variable
+        :param refresh: Controls when to update values in the dropdown
         :param allValue: specify a custom all value with regex,
             globs or lucene syntax.
         :param includeAll: Add a special All option whose value includes
@@ -623,6 +629,8 @@ class Template(object):
     )
     tagsQuery = attr.ib(default=None)
     tagValuesQuery = attr.ib(default=None)
+    refresh = attr.ib(default=REFRESH_ON_DASHBOARD_LOAD,
+                      validator=instance_of(int))
     type = attr.ib(default='query')
     hide = attr.ib(default=0)
 
@@ -642,7 +650,7 @@ class Template(object):
             'name': self.name,
             'options': [],
             'query': self.query,
-            'refresh': 1,
+            'refresh': self.refresh,
             'regex': self.regex,
             'sort': 1,
             'type': self.type,
