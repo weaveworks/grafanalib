@@ -572,6 +572,7 @@ class Template(object):
         :param multi: If enabled, the variable will support the selection of
             multiple options at the same time.
         :param type: The template type, can be one of: query (default),
+            interval, datasource, custom, constant, adhoc.
         :param hide: Hide this variable in the dashboard, can be one of:
             0 (default, no hide), 1 (hide label), 2 (hide variable)
     """
