@@ -1472,6 +1472,7 @@ class Table(object):
     :param span: defines the number of spans that will be used for panel
     :param styles: defines formatting for each column
     :param targets: list of metric requests for chosen datasource
+    :param timeFrom: time range that Override relative time
     :param title: panel title
     :param transform: table style
     :param transparent: defines if panel should be transparent
@@ -1497,6 +1498,7 @@ class Table(object):
     sort = attr.ib(
         default=attr.Factory(ColumnSort), validator=instance_of(ColumnSort))
     styles = attr.ib()
+    timeFrom = attr.ib(default=None)
 
     transform = attr.ib(default=COLUMNS_TRANSFORM)
     transparent = attr.ib(default=False, validator=instance_of(bool))
@@ -1551,6 +1553,7 @@ class Table(object):
             'sort': self.sort,
             'styles': self.styles,
             'targets': self.targets,
+            'timeFrom': self.timeFrom,
             'title': self.title,
             'transform': self.transform,
             'transparent': self.transparent,

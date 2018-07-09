@@ -13,6 +13,7 @@ Changes
 * Add `ExternalLink` class for dashboard-level links to other pages
 * Template now supports 'type' and 'hide' attributes
 * Legend now supports 'sort' and 'sortDesc' attributes
+* Tables now support 'timeFrom' attribute
 
 
 0.5.2 (unreleased)
