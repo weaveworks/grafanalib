@@ -1,27 +1,26 @@
 =========
 Changelog
 =========
-0.5.3 (unreleased)
+
+0.5.2 (2018-07-19)
 ==================
+
+Fixes
+-----
+
+* ``PromGraph`` was losing all its legends. It doesn't any more. (`#130`_)
+
+.. _`#130`: https://github.com/weaveworks/grafanalib/pull/130
 
 Changes
 -------
 
-* Fixed a bug that was losing any legends on a PromGraph
-* Add the AlertList Panel support in grafanalib/core
+* Add ``AlertList`` panel support
 * Add support for mixed data sources
-* Add `ExternalLink` class for dashboard-level links to other pages
+* Add ``ExternalLink`` class for dashboard-level links to other pages
 * Template now supports 'type' and 'hide' attributes
-* Legend now supports 'sort' and 'sortDesc' attributes
-* Tables now support 'timeFrom' attribute
-
-
-0.5.2 (unreleased)
-==================
-
-Changes
--------
-
+* Legend now supports ``sort`` and ``sortDesc`` attributes
+* Tables now support ``timeFrom`` attribute
 * Update README.rst with information on how to get help.
 
 
