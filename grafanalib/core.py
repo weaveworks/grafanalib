@@ -1205,7 +1205,7 @@ class RowPanel(object):
     panels = attr.ib(default=attr.Factory(list))
     title = attr.ib(default=None)
     repeat = attr.ib(default=None)
-    type = attr.ib(default="row")
+    panel_type = attr.ib(default="row")
     gridPos = attr.ib(default=None)
 
     def _iter_panels(self):
@@ -1217,7 +1217,7 @@ class RowPanel(object):
             'id': self.id,
             'panels': self.panels,
             'title': self.title,
-            'type': self.type,
+            'type': self.panel_type,
             'gridPos': self.gridPos,
         }
 
