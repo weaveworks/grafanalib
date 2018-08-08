@@ -1173,6 +1173,39 @@ class AlertList(object):
 
 
 @attr.s
+class RowPanel(object):
+    """
+    :param id: row panel id
+    :param title: row panel title
+    :param gridPos: the dict of size and direction:
+        { "x": 0, "y": 0, "h": 8, "w": 24 }
+    """
+
+    collapsed = attr.ib(
+        default=False, validator=instance_of(bool),
+    )
+    id = attr.ib(default=None)
+    panels = attr.ib(default=attr.Factory(list))
+    title = attr.ib(default=None)
+    repeat = attr.ib(default=None)
+    type = attr.ib(default="row")
+    gridPos = attr.ib(default=None)
+
+    def _iter_panels(self):
+        return iter(self.panels)
+
+    def to_json_data(self):
+        return {
+            'collapsed': self.collapsed,
+            'id': self.id,
+            'panels': self.panels,
+            'title': self.title,
+            'type': self.type,
+            'gridPos': self.gridPos,
+        }
+
+
+@attr.s
 class SingleStat(object):
     """Generates Single Stat panel json structure
 
