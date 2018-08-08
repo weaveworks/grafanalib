@@ -947,6 +947,8 @@ class Graph(object):
     :param dataSource: DataSource's name
     :param minSpan: Minimum width for each panel
     :param repeat: Template's name to repeat Graph on
+    :param gridPos: the dict of size and direction:
+        { "x": 0, "y": 0, "h": 8, "w": 8 }
     """
 
     title = attr.ib()
@@ -994,6 +996,7 @@ class Graph(object):
         validator=instance_of(YAxes),
     )
     alert = attr.ib(default=None)
+    gridPos = attr.ib(default=None)
 
     def to_json_data(self):
         graphObject = {
@@ -1031,6 +1034,7 @@ class Graph(object):
             'type': GRAPH_TYPE,
             'xaxis': self.xAxis,
             'yaxes': self.yAxes,
+            'gridPos': self.gridPos,
         }
         if self.alert:
             graphObject['alert'] = self.alert
