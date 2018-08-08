@@ -1272,6 +1272,8 @@ class SingleStat(object):
         min, max, avg, current, total, name, first, delta, range
     :param valueMaps: the list of value to text mappings
     :param timeFrom: time range that Override relative time
+    :param gridPos: the dict of size and direction:
+        { "x": 0, "y": 0, "h": 8, "w": 8 }
     """
 
     dataSource = attr.ib()
@@ -1320,6 +1322,7 @@ class SingleStat(object):
     valueName = attr.ib(default=VTYPE_DEFAULT)
     valueMaps = attr.ib(default=attr.Factory(list))
     timeFrom = attr.ib(default=None)
+    gridPos = attr.ib(default=None)
 
     def to_json_data(self):
         return {
@@ -1361,6 +1364,7 @@ class SingleStat(object):
             'valueMaps': self.valueMaps,
             'valueName': self.valueName,
             'timeFrom': self.timeFrom,
+            'gridPos': self.gridPos,
         }
 
 
