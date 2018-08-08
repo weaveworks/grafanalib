@@ -850,7 +850,7 @@ class Alert(object):
 class Dashboard(object):
 
     title = attr.ib()
-    rows = attr.ib()
+    struct = attr.ib()
     annotations = attr.ib(
         default=attr.Factory(Annotations),
         validator=instance_of(Annotations),
@@ -891,17 +891,32 @@ class Dashboard(object):
     version = attr.ib(default=0)
     uid = attr.ib(default=None)
 
+    def _set_struct_name(self):
+        if isinstance(self.struct[0], Row):
+            return "rows"
+        return "panels"
+
     def _iter_panels(self):
-        for row in self.rows:
-            for panel in row._iter_panels():
+        if isinstance(self.struct[0], Row):
+            for row in self.struct:
+                for panel in row._iter_panels():
+                    yield panel
+        else:
+            for panel in self.struct:
                 yield panel
 
     def _map_panels(self, f):
-        return attr.assoc(self, rows=[r._map_panels(f) for r in self.rows])
+        if isinstance(self.struct[0], Row):
+            return attr.assoc(
+                self, struct=[r._map_panels(f) for r in self.struct]
+            )
+        else:
+            return attr.assoc(
+                self, struct=[f(panel) for panel in self.struct]
+            )
 
     def auto_panel_ids(self):
         """Give unique IDs all the panels without IDs.
-
         Returns a new ``Dashboard`` that is the same as this one, except all
         of the panels have their ``id`` property set. Any panels which had an
         ``id`` property set will keep that property, all others will have
@@ -915,6 +930,8 @@ class Dashboard(object):
         return self._map_panels(set_id)
 
     def to_json_data(self):
+        struct_name = self._set_struct_name()
+
         return {
             '__inputs': self.inputs,
             'annotations': self.annotations,
@@ -924,7 +941,7 @@ class Dashboard(object):
             'id': self.id,
             'links': self.links,
             'refresh': self.refresh,
-            'rows': self.rows,
+            struct_name: self.struct,
             'schemaVersion': self.schemaVersion,
             'sharedCrosshair': self.sharedCrosshair,
             'style': self.style,
