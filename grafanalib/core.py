@@ -262,6 +262,7 @@ class GridPosition(object):
             'w': self.w,
         }
 
+
 @attr.s
 class Legend(object):
     avg = attr.ib(default=False, validator=instance_of(bool))
