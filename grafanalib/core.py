@@ -987,8 +987,7 @@ class Graph(object):
     :param dataSource: DataSource's name
     :param minSpan: Minimum width for each panel
     :param repeat: Template's name to repeat Graph on
-    :param gridPos: the dict of size and direction:
-        { "x": 0, "y": 0, "h": 8, "w": 8 }
+    :param gridPos: size and direction:
     """
 
     title = attr.ib()
@@ -1213,12 +1212,11 @@ class AlertList(object):
 
 
 @attr.s
-class RowPanel(object):
+class RowGrid(object):
     """
     :param id: row panel id
     :param title: row panel title
-    :param gridPos: the dict of size and direction:
-        { "x": 0, "y": 0, "h": 8, "w": 24 }
+    :param gridPos: size and direction:
     """
 
     collapsed = attr.ib(
@@ -1295,8 +1293,7 @@ class SingleStat(object):
         min, max, avg, current, total, name, first, delta, range
     :param valueMaps: the list of value to text mappings
     :param timeFrom: time range that Override relative time
-    :param gridPos: the dict of size and direction:
-        { "x": 0, "y": 0, "h": 8, "w": 8 }
+    :param gridPos: size and direction:
     """
 
     dataSource = attr.ib()
