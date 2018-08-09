@@ -239,7 +239,7 @@ class Grid(object):
         }
 
 
-@attrs
+@attr.s
 class GridPosition(object):
     """Define a grid position
 
