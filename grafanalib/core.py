@@ -245,8 +245,8 @@ class GridPosition(object):
 
     :param x: setting position X
     :param y: setting position Y
-    :param height: setting height
-    :param width: setting width
+    :param h: setting height
+    :param w: setting width
     """
 
     x = attr.ib(default=0)
@@ -258,8 +258,8 @@ class GridPosition(object):
         return {
             'x': self.x,
             'y': self.y,
-            'height': self.height,
-            'width': self.width,
+            'h': self.h,
+            'w': self.w,
         }
 
 @attr.s
