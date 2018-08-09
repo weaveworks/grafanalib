@@ -239,6 +239,29 @@ class Grid(object):
         }
 
 
+@attrs
+class GridPosition(object):
+    """Define a grid position
+
+    :param x: setting position X
+    :param y: setting position Y
+    :param height: setting height
+    :param width: setting width
+    """
+
+    x = attr.ib(default=0)
+    y = attr.ib(default=0)
+    height = attr.ib(default=1)
+    width = attr.ib(default=24)
+
+    def to_json_data(self):
+        return {
+            'x': self.x,
+            'y': self.y,
+            'height': self.height,
+            'width': self.width,
+        }
+
 @attr.s
 class Legend(object):
     avg = attr.ib(default=False, validator=instance_of(bool))
