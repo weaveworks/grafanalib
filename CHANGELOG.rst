@@ -9,6 +9,7 @@ New features
 ------------
 
 * grafanalib now supports handle a grid position
+  Note: The class Dashboard parameter were renamed from ``row`` to ``struct``
 
 
 0.5.2 (2018-07-19)

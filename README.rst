@@ -25,7 +25,7 @@ percentile latency:
 
   dashboard = Dashboard(
     title="Frontend Stats",
-    rows=[
+    struct=[
       Row(panels=[
         Graph(
           title="Frontend QPS",
