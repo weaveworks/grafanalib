@@ -2,6 +2,15 @@
 Changelog
 =========
 
+0.5.3 (2018-08-09)
+==================
+
+New features
+------------
+
+* grafanalib now supports handle a grid position
+
+
 0.5.2 (2018-07-19)
 ==================
 
