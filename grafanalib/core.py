@@ -940,6 +940,7 @@ class Dashboard(object):
 
     def auto_panel_ids(self):
         """Give unique IDs all the panels without IDs.
+
         Returns a new ``Dashboard`` that is the same as this one, except all
         of the panels have their ``id`` property set. Any panels which had an
         ``id`` property set will keep that property, all others will have
