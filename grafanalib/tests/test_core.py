@@ -33,3 +33,24 @@ def test_single_stat():
     assert data['targets'] == targets
     assert data['datasource'] == data_source
     assert data['title'] == title
+
+def test_grid_position():
+    x = '10'
+    y = '10'
+    w = '20'
+    h = '20'
+    grid_position = G.GridPosition(x, y, w, h)
+    data = grid_position.to_json_data()
+    assert data['x'] == x
+    assert data['y'] == y
+    assert data['w'] == w
+    assert data['h'] == h
+
+
+def test_row_grid():
+    title = 'dummy title'
+    gridPos = G.GridPosition()
+    row_grid = G.RowGrid(title=title, gridPos=gridPos)
+    data = row_grid.to_json_data()
+    assert data['title'] == title
+    assert data['gridPos'] == gridPos

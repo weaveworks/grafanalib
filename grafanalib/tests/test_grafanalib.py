@@ -39,7 +39,7 @@ def test_auto_id():
     """auto_panel_ids() provides IDs for all panels without IDs already set."""
     dashboard = G.Dashboard(
         title="Test dashboard",
-        rows=[
+        struct=[
             G.Row(panels=[
                 G.Graph(
                     title="CPU Usage by Namespace (rate[5m])",
@@ -59,7 +59,7 @@ def test_auto_id():
             ]),
         ],
     ).auto_panel_ids()
-    assert dashboard.rows[0].panels[0].id == 1
+    assert dashboard.struct[0].panels[0].id == 1
 
 
 def test_row_show_title():
