@@ -251,8 +251,8 @@ class GridPosition(object):
 
     x = attr.ib(default=0)
     y = attr.ib(default=0)
-    height = attr.ib(default=1)
-    width = attr.ib(default=24)
+    h = attr.ib(default=1)
+    w = attr.ib(default=24)
 
     def to_json_data(self):
         return {
