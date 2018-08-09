@@ -34,6 +34,7 @@ def test_single_stat():
     assert data['datasource'] == data_source
     assert data['title'] == title
 
+
 def test_grid_position():
     x = '10'
     y = '10'
