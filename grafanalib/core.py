@@ -569,6 +569,7 @@ class DashboardLink(object):
     )
     title = attr.ib(default=None)
     type = attr.ib(default=DASHBOARD_TYPE)
+    gridPos = attr.ib(default=None)
 
     def to_json_data(self):
         title = self.dashboard if self.title is None else self.title
@@ -579,6 +580,7 @@ class DashboardLink(object):
             "title": title,
             "type": self.type,
             "url": self.uri,
+            'gridPos': self.gridPos,
         }
 
 
@@ -1165,6 +1167,7 @@ class Text(object):
     span = attr.ib(default=None)
     title = attr.ib(default="")
     transparent = attr.ib(default=False, validator=instance_of(bool))
+    gridPos = attr.ib(default=None)
 
     def to_json_data(self):
         return {
@@ -1179,6 +1182,7 @@ class Text(object):
             'title': self.title,
             'transparent': self.transparent,
             'type': TEXT_TYPE,
+            'gridPos': self.gridPos,
         }
 
 
@@ -1196,6 +1200,7 @@ class AlertList(object):
     stateFilter = attr.ib(default=attr.Factory(list))
     title = attr.ib(default="")
     transparent = attr.ib(default=False, validator=instance_of(bool))
+    gridPos = attr.ib(default=None)
 
     def to_json_data(self):
         return {
@@ -1210,6 +1215,7 @@ class AlertList(object):
             'title': self.title,
             'transparent': self.transparent,
             'type': ALERTLIST_TYPE,
+            'gridPos': self.gridPos,
         }
 
 
@@ -1556,6 +1562,7 @@ class Table(object):
     :param title: panel title
     :param transform: table style
     :param transparent: defines if panel should be transparent
+    :param gridPos: size and direction
     """
 
     dataSource = attr.ib()
@@ -1582,6 +1589,7 @@ class Table(object):
 
     transform = attr.ib(default=COLUMNS_TRANSFORM)
     transparent = attr.ib(default=False, validator=instance_of(bool))
+    gridPos = attr.ib(default=None)
 
     @styles.default
     def styles_default(self):
@@ -1638,4 +1646,5 @@ class Table(object):
             'transform': self.transform,
             'transparent': self.transparent,
             'type': TABLE_TYPE,
+            'gridPos': self.gridPos,
         }
