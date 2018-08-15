@@ -580,7 +580,7 @@ class DashboardLink(object):
             "title": title,
             "type": self.type,
             "url": self.uri,
-            'gridPos': self.gridPos,
+            "gridPos": self.gridPos,
         }
 
 
