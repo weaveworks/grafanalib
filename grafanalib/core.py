@@ -181,6 +181,9 @@ SORT_IMPORTANCE = 3
 REFRESH_NEVER = 0
 REFRESH_ON_DASHBOARD_LOAD = 1
 REFRESH_ON_TIME_RANGE_CHANGE = 2
+SHOW = 0
+HIDE_LABEL = 1
+HIDE_VARIABLE = 2
 
 
 @attr.s
@@ -605,7 +608,7 @@ class Template(object):
         :param type: The template type, can be one of: query (default),
             interval, datasource, custom, constant, adhoc.
         :param hide: Hide this variable in the dashboard, can be one of:
-            0 (default, no hide), 1 (hide label), 2 (hide variable)
+            SHOW (default), HIDE_LABEL, HIDE_VARIABLE
     """
 
     name = attr.ib()
@@ -632,7 +635,7 @@ class Template(object):
     refresh = attr.ib(default=REFRESH_ON_DASHBOARD_LOAD,
                       validator=instance_of(int))
     type = attr.ib(default='query')
-    hide = attr.ib(default=0)
+    hide = attr.ib(default=SHOW)
 
     def to_json_data(self):
         return {
