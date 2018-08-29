@@ -185,6 +185,7 @@ SHOW = 0
 HIDE_LABEL = 1
 HIDE_VARIABLE = 2
 
+
 @attr.s
 class Mapping(object):
 
