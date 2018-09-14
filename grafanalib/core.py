@@ -613,6 +613,7 @@ class Template(object):
 
     name = attr.ib()
     query = attr.ib()
+    _current = attr.ib(init=False, default=attr.Factory(dict))
     default = attr.ib(default=None)
     dataSource = attr.ib(default=None)
     label = attr.ib(default=None)
@@ -625,6 +626,7 @@ class Template(object):
         default=False,
         validator=instance_of(bool),
     )
+    options = attr.ib(default=attr.Factory(list))
     regex = attr.ib(default=None)
     useTags = attr.ib(
         default=False,
@@ -637,21 +639,42 @@ class Template(object):
     type = attr.ib(default='query')
     hide = attr.ib(default=SHOW)
 
-    def to_json_data(self):
-        return {
-            'allValue': self.allValue,
-            'current': {
+    def __attrs_post_init__(self):
+        if self.type == 'custom':
+            if len(self.options) == 0:
+                for value in self.query.split(','):
+                    is_default = value == self.default
+                    option = {
+                        "selected": is_default,
+                        "text": value,
+                        "value": value,
+                    }
+                    if is_default:
+                        self._current = option
+                    self.options.append(option)
+            else:
+                for option in self.options:
+                    if option['selected']:
+                        self._current = option
+                        break
+        else:
+            self._current = {
                 'text': self.default,
                 'value': self.default,
                 'tags': [],
-            },
+            }
+
+    def to_json_data(self):
+        return {
+            'allValue': self.allValue,
+            'current': self._current,
             'datasource': self.dataSource,
             'hide': self.hide,
             'includeAll': self.includeAll,
             'label': self.label,
             'multi': self.multi,
             'name': self.name,
-            'options': [],
+            'options': self.options,
             'query': self.query,
             'refresh': self.refresh,
             'regex': self.regex,
