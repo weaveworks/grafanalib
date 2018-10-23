@@ -50,6 +50,12 @@ def test_auto_id():
                             legendFormat='{{namespace}}',
                             refId='A',
                         ),
+                        G.Target(
+                            expr='hidden whatever',
+                            legendFormat='{{namespace}}',
+                            refId='B',
+                            hide=True
+                        ),
                     ],
                     yAxes=[
                         G.YAxis(format=G.SHORT_FORMAT, label="CPU seconds"),
