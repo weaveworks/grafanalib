@@ -19,6 +19,7 @@ TBA
 * Add ``PieChart`` class for creating Pie Chart panels
 * Add `transparent` setting to classes that were missing it (Heatmap, PieChart)
 * Add InfluxDB data source
+* Add ``auto_ref_ids`` to ``Graph``s
 * ...
 
 

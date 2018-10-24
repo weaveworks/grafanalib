@@ -62,6 +62,64 @@ def test_auto_id():
     assert dashboard.rows[0].panels[0].id == 1
 
 
+def test_auto_refids_preserves_provided_ids():
+    """
+    auto_ref_ids() provides refIds for all targets without refIds already
+    set.
+    """
+    dashboard = G.Dashboard(
+        title="Test dashboard",
+        rows=[
+            G.Row(panels=[
+                G.Graph(
+                    title="CPU Usage by Namespace (rate[5m])",
+                    targets=[
+                        G.Target(
+                            expr='whatever #Q',
+                            legendFormat='{{namespace}}',
+                        ),
+                        G.Target(
+                            expr='hidden whatever',
+                            legendFormat='{{namespace}}',
+                            refId='Q',
+                        ),
+                        G.Target(
+                            expr='another target'
+                        ),
+                    ],
+                ).auto_ref_ids()
+            ]),
+        ],
+    )
+    assert dashboard.rows[0].panels[0].targets[0].refId == 'A'
+    assert dashboard.rows[0].panels[0].targets[1].refId == 'Q'
+    assert dashboard.rows[0].panels[0].targets[2].refId == 'B'
+
+
+def test_auto_refids():
+    """
+    auto_ref_ids() provides refIds for all targets without refIds already
+    set.
+    """
+    dashboard = G.Dashboard(
+        title="Test dashboard",
+        rows=[
+            G.Row(panels=[
+                G.Graph(
+                    title="CPU Usage by Namespace (rate[5m])",
+                    targets=[G.Target(expr="metric %d" % i)
+                             for i in range(53)],
+                ).auto_ref_ids()
+            ]),
+        ],
+    )
+    assert dashboard.rows[0].panels[0].targets[0].refId == 'A'
+    assert dashboard.rows[0].panels[0].targets[25].refId == 'Z'
+    assert dashboard.rows[0].panels[0].targets[26].refId == 'AA'
+    assert dashboard.rows[0].panels[0].targets[51].refId == 'AZ'
+    assert dashboard.rows[0].panels[0].targets[52].refId == 'BA'
+
+
 def test_row_show_title():
     row = G.Row().to_json_data()
     assert row['title'] == 'New row'
