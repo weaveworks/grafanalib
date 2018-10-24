@@ -107,6 +107,7 @@ SHORT_FORMAT = "short"
 BYTES_FORMAT = "bytes"
 BITS_PER_SEC_FORMAT = "bps"
 BYTES_PER_SEC_FORMAT = "Bps"
+PACKETS_PER_SEC_FORMAT = "pps"
 
 # Alert rule state
 STATE_NO_DATA = "no_data"
