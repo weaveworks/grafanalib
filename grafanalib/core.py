@@ -10,6 +10,7 @@ from attr.validators import instance_of, in_
 import itertools
 import math
 from numbers import Number
+import string
 import warnings
 
 
@@ -107,6 +108,7 @@ SHORT_FORMAT = "short"
 BYTES_FORMAT = "bytes"
 BITS_PER_SEC_FORMAT = "bps"
 BYTES_PER_SEC_FORMAT = "Bps"
+PACKETS_PER_SEC_FORMAT = "pps"
 
 # Alert rule state
 STATE_NO_DATA = "no_data"
@@ -300,6 +302,7 @@ class Target(object):
     target = attr.ib(default="")
     instant = attr.ib(validator=instance_of(bool), default=False)
     datasource = attr.ib(default="")
+    hide = attr.ib(default=False)
 
     def to_json_data(self):
         return {
@@ -314,6 +317,7 @@ class Target(object):
             'step': self.step,
             'instant': self.instant,
             'datasource': self.datasource,
+            'hide': self.hide,
         }
 
 
@@ -1038,6 +1042,29 @@ class Graph(object):
         if self.alert:
             graphObject['alert'] = self.alert
         return graphObject
+
+    def _iter_targets(self):
+        for target in self.targets:
+            yield target
+
+    def _map_targets(self, f):
+        return attr.assoc(self, targets=[f(t) for t in self.targets])
+
+    def auto_ref_ids(self):
+        """Give unique IDs all the panels without IDs.
+
+        Returns a new ``Graph`` that is the same as this one, except all
+        of the metrics have their ``refId`` property set. Any panels which had an
+        ``refId`` property set will keep that property, all others will have
+        auto-generated IDs provided for them.
+        """
+        ref_ids = set([target.refId for target in self._iter_targets() if target.refId])
+        candidate_ref_ids = itertools.chain(string.ascii_uppercase, itertools.product(string.ascii_uppercase, repeat=2))
+        auto_ref_ids = (i for i in candidate_ref_ids if i not in ref_ids)
+
+        def set_refid(target):
+            return target if target.refId else attr.assoc(target, refId=next(auto_ref_ids))
+        return self._map_targets(set_refid)
 
 
 @attr.s
