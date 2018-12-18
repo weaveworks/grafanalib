@@ -1151,6 +1151,7 @@ class AlertList(object):
     onlyAlertsOnDashboard = attr.ib(default=True, validator=instance_of(bool))
     show = attr.ib(default=ALERTLIST_SHOW_CURRENT)
     sortOrder = attr.ib(default=SORT_ASC, validator=in_([1, 2, 3]))
+    span = attr.ib(default=None)
     stateFilter = attr.ib(default=attr.Factory(list))
     title = attr.ib(default="")
     transparent = attr.ib(default=False, validator=instance_of(bool))
@@ -1164,6 +1165,7 @@ class AlertList(object):
             'onlyAlertsOnDashboard': self.onlyAlertsOnDashboard,
             'show': self.show,
             'sortOrder': self.sortOrder,
+            'span': self.span,
             'stateFilter': self.stateFilter,
             'title': self.title,
             'transparent': self.transparent,
