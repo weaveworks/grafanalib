@@ -30,8 +30,9 @@ def test_serialization():
             G.YAxis(format=G.SHORT_FORMAT),
         ],
     )
+    ensureAscii = StringIO()
     stream = StringIO()
-    _gen.write_dashboard(graph, stream)
+    _gen.write_dashboard(graph, ensureAscii, stream)
     assert stream.getvalue() != ''
 
 

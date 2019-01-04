@@ -34,6 +34,7 @@ def test_serialization_opentsdb_target():
             G.YAxis(format=G.SHORT_FORMAT),
         ],
     )
+    ensureAscii = StringIO()
     stream = StringIO()
-    _gen.write_dashboard(graph, stream)
+    _gen.write_dashboard(graph, ensureAscii, stream)
     assert stream.getvalue() != ''

@@ -32,8 +32,9 @@ def test_serialization_zabbix_target():
             G.YAxis(format=G.SHORT_FORMAT),
         ],
     )
+    ensureAscii = False
     stream = StringIO()
-    _gen.write_dashboard(graph, stream)
+    _gen.write_dashboard(graph, ensureAscii, stream)
     assert stream.getvalue() != ''
 
 
@@ -48,6 +49,7 @@ def test_serialization_zabbix_trigger_panel():
             application="",
             trigger="/trigger.regexp/",
             host="/zabbix.host/"))
+    ensureAscii = False
     stream = StringIO()
-    _gen.write_dashboard(graph, stream)
+    _gen.write_dashboard(graph, ensureAscii, stream)
     assert stream.getvalue() != ''
