@@ -40,15 +40,15 @@ class DashboardEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-def write_dashboard(dashboard, stream):
+def write_dashboard(dashboard, ensure_ascii, stream):
     json.dump(
-        dashboard.to_json_data(), stream, sort_keys=True, indent=2,
-        cls=DashboardEncoder)
+        dashboard.to_json_data(), stream, ensure_ascii=ensure_ascii,
+        sort_keys=True, indent=2, cls=DashboardEncoder)
     stream.write('\n')
 
 
-def print_dashboard(dashboard):
-    write_dashboard(dashboard, stream=sys.stdout)
+def print_dashboard(dashboard, ensure_ascii):
+    write_dashboard(dashboard, ensure_ascii, stream=sys.stdout)
 
 
 def write_dashboards(paths):
@@ -95,6 +95,10 @@ def generate_dashboard(args):
         help='Where to write the dashboard JSON'
     )
     parser.add_argument(
+        '--ensure_ascii', default=True, action='store_false',
+        help='Use ascii encoding if your dashboard file has special characters'
+    )
+    parser.add_argument(
         'dashboard', metavar='DASHBOARD', type=os.path.abspath,
         help='Path to dashboard definition',
     )
@@ -102,10 +106,10 @@ def generate_dashboard(args):
     try:
         dashboard = load_dashboard(opts.dashboard)
         if not opts.output:
-            print_dashboard(dashboard)
+            print_dashboard(dashboard, opts.ensure_ascii)
         else:
             with open(opts.output, 'w') as output:
-                write_dashboard(dashboard, output)
+                write_dashboard(dashboard, opts.ensure_ascii, output)
     except DashboardError as e:
         sys.stderr.write('ERROR: {}\n'.format(e))
         return 1
