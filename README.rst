@@ -160,9 +160,8 @@ Getting Help
 
 If you have any questions about, feedback for or problems with ``grafanalib``:
 
-- Invite yourself to the `#weave-community <https://weaveworks.github.io/community-slack/>`_ slack channel.
-- Ask a question on the `#weave-community <https://weave-community.slack.com/messages/general/>`_ slack channel.
-- Send an email to `weave-users@weave.works <mailto:weave-users@weave.works>`_.
-- `File an issue <https://github.com/weaveworks/grafanalib>`_.
+- Invite yourself to the `Weave Users Slack <https://slack.weave.works/>`_.
+- Ask a question on the `#general <https://weave-community.slack.com/messages/general/>`_ slack channel.
+- `File an issue <https://github.com/weaveworks/grafanalib/issues/new>`_.
 
 Your feedback is always welcome!
