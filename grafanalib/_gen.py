@@ -95,7 +95,7 @@ def generate_dashboard(args):
         help='Where to write the dashboard JSON'
     )
     parser.add_argument(
-        '--ensure_ascii', default=True, action='store_false',
+        '--ensure_ascii ', default=True, action='store_false',
         help='Use ascii encoding if your dashboard file has special characters'
     )
     parser.add_argument(
