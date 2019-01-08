@@ -5,11 +5,18 @@ Changelog
 0.5.3 (2018-08-09)
 ==================
 
+Changes
+-------
+
+* Breaking change to ``core.Dashboard()`` -
+  The parameter were renamed from ``row`` to ``struct``.
+  (https://github.com/weaveworks/grafanalib/pull/141)
+
+
 New features
 ------------
 
 * grafanalib now supports handle a grid position
-  Note: The class Dashboard parameter were renamed from ``row`` to ``struct``
 
 
 0.5.2 (2018-07-19)
