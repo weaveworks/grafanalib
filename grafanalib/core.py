@@ -95,21 +95,60 @@ UTC = 'utc'
 SCHEMA_VERSION = 12
 
 # Y Axis formats
-DURATION_FORMAT = "dtdurations"
+# more here: https://github.com/grafana/grafana/blob/master/packages/grafana-ui/src/utils/valueFormats/categories.ts
+
+# MISC
 NO_FORMAT = "none"
-OPS_FORMAT = "ops"
+SHORT_FORMAT = "short"
 PERCENT_FORMAT = "percent" # 1%, 80%, etc
 PERCENT_UNIT_FORMAT = "percentunit" # 0.01, 0.8
-DAYS_FORMAT = "d"
-HOURS_FORMAT = "h"
-MINUTES_FORMAT = "m"
-SECONDS_FORMAT = "s"
+
+# Date
+DATE_TIME_ISO_FORMAT = "dateTimeAsIso" # YYYY-MM-DD HH:mm:ss
+DATE_TIME_US_FORMAT = "dateTimeAsUS" # DD/MM/YYYY h:mm:ss a
+DATE_TIME_NOW = "dateTimeFromNow"
+
+# Time
 MILLISECONDS_FORMAT = "ms"
-SHORT_FORMAT = "short"
+SECONDS_FORMAT = "s"
+MINUTES_FORMAT = "m"
+HOURS_FORMAT = "h"
+DAYS_FORMAT = "d"
+DURATION_MS_FORMAT = "dtdurationms" # duration in milliseconds
+DURATION_FORMAT = "dtdurations" # duration in seconds
+
+# Throughput
+OPS_FORMAT = "ops" # ops per second
+REQ_PER_SEC_FORMAT = "reqps"
+READS_PER_SEC_FORMAT = "rps"
+WRITES_PER_SEC_FORMAT = "wps"
+IOPS_FORMAT = "iops"
+OPM_FORMAT = "opm"
+READS_PER_MIN = "rpm"
+WRITES_PER_MIN = "wpm"
+
+
+# Data
+BITS_FORMAT = "bits"
 BYTES_FORMAT = "bytes"
+KIBIBYTES_FORMAT = "kbytes" # 2^10
+MEBIBYTES_FORMAT = "mbytes" # 2^20
+GIBIBYTES_FORMAT = "gbytes" # 2^30
+
+KILOBYTES_FORMAT = "deckbytes" # 10^3
+MEGABYTES_FORMAT = "decmbytes" # 10^6
+GIGABYTES_FORMAT = "decgbytes" # 10^9
+
+# Data rate
+PACKETS_PER_SEC_FORMAT = "pps"
 BITS_PER_SEC_FORMAT = "bps"
 BYTES_PER_SEC_FORMAT = "Bps"
-PACKETS_PER_SEC_FORMAT = "pps"
+KILOBYTES_PER_SEC_FORMAT = "KBs"
+KILOBITS_PER_SEC_FORMAT = "Kbits"
+MEGABYTES_PER_SEC_FORMAT = "MBs"
+MEGABITES_PER_SEC_FORMAT = "Mbits"
+GIGABYTES_PER_SEC_FORMAT = "GBs"
+GIGABITS_PER_SEC_FORMAT = "Gbits"
 
 # Alert rule state
 STATE_NO_DATA = "no_data"
