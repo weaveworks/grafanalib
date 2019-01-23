@@ -102,6 +102,7 @@ class OpenTSDBTarget(object):
     :param currentFilterKey: defines current filter key
     :param currentFilterType: defines current filter type
     :param currentFilterValue: defines current filter value
+    :param dataSource: defines current dataSource
     """
 
     metric = attr.ib()
@@ -123,6 +124,7 @@ class OpenTSDBTarget(object):
     currentFilterKey = attr.ib(default="")
     currentFilterType = attr.ib(default=OTSDB_QUERY_FILTER_DEFAULT)
     currentFilterValue = attr.ib(default="")
+    dataSource = attr.ib(default="")
 
     def to_json_data(self):
 
@@ -132,6 +134,7 @@ class OpenTSDBTarget(object):
             'isCounter': self.isCounter,
             'counterMax': self.counterMax,
             'counterResetValue': self.counterResetValue,
+            'datasource': self.dataSource,
             'disableDownsampling': self.disableDownsampling,
             'downsampleAggregator': self.downsampleAggregator,
             'downsampleFillPolicy': self.downsampleFillPolicy,
