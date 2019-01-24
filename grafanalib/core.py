@@ -109,6 +109,9 @@ DATE_TIME_US_FORMAT = "dateTimeAsUS" # DD/MM/YYYY h:mm:ss a
 DATE_TIME_NOW = "dateTimeFromNow"
 
 # Time
+HERTZ_FORMAT = "hertz"
+NANOSECONDS_FORMAT = "ns"
+MICROSECONDS_FORMAT = "µs" # on a Mac: opt + m
 MILLISECONDS_FORMAT = "ms"
 SECONDS_FORMAT = "s"
 MINUTES_FORMAT = "m"
@@ -116,6 +119,9 @@ HOURS_FORMAT = "h"
 DAYS_FORMAT = "d"
 DURATION_MS_FORMAT = "dtdurationms" # duration in milliseconds
 DURATION_FORMAT = "dtdurations" # duration in seconds
+TIMETICKS_FORMAT = "timeticks"
+CLOCK_MS_FORMAT = "clockms"
+CLOCK_S_FORMAT = "clocks"
 
 # Throughput
 OPS_FORMAT = "ops" # ops per second
