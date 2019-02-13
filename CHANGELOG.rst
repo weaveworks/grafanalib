@@ -2,6 +2,14 @@
 Changelog
 =========
 
+0.5.5 (2019-02-13)
+==================
+
+Fixes
+-----
+* Merged in https://github.com/weaveworks/grafanalib/pull/143 to support custom variables
+
+
 0.5.4 (2019-02-08)
 ==================
 
