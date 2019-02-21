@@ -550,7 +550,7 @@ class Row(object):
         validator=instance_of(Pixels),
     )
     showTitle = attr.ib(default=None)
-    title = attr.ib(default=None)
+    title = attr.ib(default="")
     repeat = attr.ib(default=None)
 
     def _iter_panels(self):
