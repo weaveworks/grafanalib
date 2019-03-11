@@ -1066,6 +1066,7 @@ class Graph(object):
     aliasColors = attr.ib(default=attr.Factory(dict))
     bars = attr.ib(default=False, validator=instance_of(bool))
     dataSource = attr.ib(default=None)
+    decimals = attr.ib(default=1)
     description = attr.ib(default=None)
     editable = attr.ib(default=True, validator=instance_of(bool))
     error = attr.ib(default=False, validator=instance_of(bool))
@@ -1112,6 +1113,7 @@ class Graph(object):
             'aliasColors': self.aliasColors,
             'bars': self.bars,
             'datasource': self.dataSource,
+            'decimals': self.decimals,
             'description': self.description,
             'editable': self.editable,
             'error': self.error,

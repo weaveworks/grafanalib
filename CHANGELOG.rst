@@ -2,13 +2,21 @@
 Changelog
 =========
 
+0.5.8 (2019-04-09)
+==================
+
+Fixes
+-----
+
+* Add 'decimals' field to the Graph class to dictate significant digits in Grafana legend
+
+
 0.5.7 (2019-04-01)
 ==================
 
 Fixes
 -----
 * Add `Annotation` model for defining dashboard annotations
-
 
 0.5.6 (2019-02-21)
 ==================
