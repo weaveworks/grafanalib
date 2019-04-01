@@ -1748,11 +1748,11 @@ class Table(object):
 @attr.s
 class Annotation(object):
     """
-    Annotation create a new dashboard annotation.  Annotations can be defined to query a
+    Annotation creates a new dashboard annotation.  Annotations can be defined to query a
     datasource and overlay information related to key events, such as container exits or deploys.
 
         :param default: the default value for the variable
-        :param dataSource: where to fetch the values for the variable from
+        :param datasource: where to fetch the values for the variable from
         :param label: the variable's human label
         :param name: the variable's name
         :param expr: the query users to fetch the valid values of the variable
@@ -1773,10 +1773,11 @@ class Annotation(object):
             SHOW (default), HIDE_LABEL, HIDE_VARIABLE
     """
     name = attr.ib()
-    expr = attr.ib()
+    expr = attr.ib(default=None)
+    target = attr.ib(default=None)
     _current = attr.ib(init=False, default=attr.Factory(dict))
     default = attr.ib(default=None)
-    dataSource = attr.ib(default=None)
+    datasource = attr.ib(default=None)
     label = attr.ib(default=None)
     allValue = attr.ib(default=None)
     hide = attr.ib(default=SHOW)
@@ -1836,7 +1837,7 @@ class Annotation(object):
         return {
             'allValue': self.allValue,
             'current': self._current,
-            'datasource': self.dataSource,
+            'datasource': self.datasource,
             'enable': self.enable,
             'expr': self.expr,
             'hide': self.hide,
@@ -1850,6 +1851,7 @@ class Annotation(object):
             'regex': self.regex,
             'sort': 1,
             'step': self.step,
+            'target': self.target,
             'textFormat': self.textFormat,
             'type': self.type,
             'useTags': self.useTags,
