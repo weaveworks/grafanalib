@@ -1808,31 +1808,6 @@ class Annotation(object):
         validator=instance_of(bool),
     )
 
-    def __attrs_post_init__(self):
-        if self.type == 'custom':
-            if len(self.options) == 0:
-                for value in self.query.split(','):
-                    is_default = value == self.default
-                    option = {
-                        "selected": is_default,
-                        "text": value,
-                        "value": value,
-                    }
-                    if is_default:
-                        self._current = option
-                    self.options.append(option)
-            else:
-                for option in self.options:
-                    if option['selected']:
-                        self._current = option
-                        break
-        else:
-            self._current = {
-                'text': self.default,
-                'value': self.default,
-                'tags': [],
-            }
-
     def to_json_data(self):
         return {
             'allValue': self.allValue,
