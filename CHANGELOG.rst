@@ -2,6 +2,14 @@
 Changelog
 =========
 
+0.5.7 (2019-04-01)
+==================
+
+Fixes
+-----
+* Add `Annotation` model for defining dashboard annotations
+
+
 0.5.6 (2019-02-21)
 ==================
 
