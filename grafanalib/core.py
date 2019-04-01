@@ -1743,3 +1743,113 @@ class Table(object):
             'transparent': self.transparent,
             'type': TABLE_TYPE,
         }
+
+
+@attr.s
+class Annotation(object):
+    """
+    Annotation create a new dashboard annotation.  Annotations can be defined to query a
+    datasource and overlay information related to key events, such as container exits or deploys.
+
+        :param default: the default value for the variable
+        :param dataSource: where to fetch the values for the variable from
+        :param label: the variable's human label
+        :param name: the variable's name
+        :param expr: the query users to fetch the valid values of the variable
+        :param step: the time window size to use when querying for annotation data
+        :param refresh: Controls when to update values in the dropdown
+        :param allValue: specify a custom all value with regex,
+            globs or lucene syntax.
+        :param includeAll: Add a special All option whose value includes
+            all options.
+        :param regex: Regex to filter or capture specific parts of the names
+            return by your data source query.
+        :param multi: If enabled, the variable will support the selection of
+            multiple options at the same time.
+        :param type: The template type, can be one of: query (default),
+            interval, datasource, custom, constant, adhoc.
+        :param hide: Hide this variable in the dashboard, can be one of:
+            SHOW (default), HIDE_LABEL, HIDE_VARIABLE
+    """
+    name = attr.ib()
+    expr = attr.ib()
+    _current = attr.ib(init=False, default=attr.Factory(dict))
+    default = attr.ib(default=None)
+    dataSource = attr.ib(default=None)
+    label = attr.ib(default=None)
+    allValue = attr.ib(default=None)
+    hide = attr.ib(default=SHOW)
+    iconColor = attr.ib(default=None)
+    enable = attr.ib(
+        default=True,
+        validator=instance_of(bool),
+    )
+    includeAll = attr.ib(
+        default=False,
+        validator=instance_of(bool),
+    )
+    multi = attr.ib(
+        default=False,
+        validator=instance_of(bool),
+    )
+    options = attr.ib(default=attr.Factory(list))
+    refresh = attr.ib(default=REFRESH_ON_DASHBOARD_LOAD,
+                      validator=instance_of(int))
+    regex = attr.ib(default=None)
+    step = attr.ib(default=None)
+    tagsQuery = attr.ib(default=None)
+    tagValuesQuery = attr.ib(default=None)
+    type = attr.ib(default='query')
+    useTags = attr.ib(
+        default=False,
+        validator=instance_of(bool),
+    )
+
+    def __attrs_post_init__(self):
+        if self.type == 'custom':
+            if len(self.options) == 0:
+                for value in self.query.split(','):
+                    is_default = value == self.default
+                    option = {
+                        "selected": is_default,
+                        "text": value,
+                        "value": value,
+                    }
+                    if is_default:
+                        self._current = option
+                    self.options.append(option)
+            else:
+                for option in self.options:
+                    if option['selected']:
+                        self._current = option
+                        break
+        else:
+            self._current = {
+                'text': self.default,
+                'value': self.default,
+                'tags': [],
+            }
+
+    def to_json_data(self):
+        return {
+            'allValue': self.allValue,
+            'current': self._current,
+            'datasource': self.dataSource,
+            'enable': self.enable,
+            'expr': self.expr,
+            'hide': self.hide,
+            'iconColor': self.iconColor,
+            'includeAll': self.includeAll,
+            'label': self.label,
+            'multi': self.multi,
+            'name': self.name,
+            'options': self.options,
+            'refresh': self.refresh,
+            'regex': self.regex,
+            'sort': 1,
+            'step': self.step,
+            'type': self.type,
+            'useTags': self.useTags,
+            'tagsQuery': self.tagsQuery,
+            'tagValuesQuery': self.tagValuesQuery,
+        }
