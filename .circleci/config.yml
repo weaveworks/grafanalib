@@ -1,0 +1,38 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: quay.io/weaveworks/build-golang:1.11.1-stretch
+    working_directory: /go/src/github.com/weaveworks/grafanalib
+    environment:
+      GOPATH: /go
+    steps:
+    - checkout
+    - run:
+        name: Install Docker client
+        command: |
+          curl -L -o /tmp/docker.tgz https://download.docker.com/linux/static/stable/x86_64/docker-17.03.0-ce.tgz
+          tar -xz -C /tmp -f /tmp/docker.tgz
+          mv /tmp/docker/* /usr/bin
+    - setup_remote_docker
+    - run:
+        name: Dependencies
+        command: |
+          pip install tox flake8
+          make deps
+    - run:
+        name: make all
+        command: |
+          mkdir -p test-results/tests
+          make JUNIT_XML=test-results/tests/junit.xml all
+    - store_test_results:
+        path: test-results
+    - store_artifacts:
+        path: test-results
+    - deploy:
+        command: |
+          if [ "${CIRCLE_BRANCH}" == "master" ]; then
+            docker login -u "$QUAY_USER" -p "$QUAY_PASSWORD" quay.io
+            docker push quay.io/weaveworks/gfdatasource:$(./tools/image-tag)
+          fi
