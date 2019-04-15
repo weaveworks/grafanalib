@@ -24,8 +24,7 @@ jobs:
     - run:
         name: make all
         command: |
-          mkdir -p test-results/tests
-          make JUNIT_XML=test-results/tests/junit.xml all
+          make all
     - store_test_results:
         path: test-results
     - store_artifacts:
