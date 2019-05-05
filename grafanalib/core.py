@@ -835,6 +835,7 @@ class Alert(object):
     handler = attr.ib(default=1)
     noDataState = attr.ib(default=STATE_NO_DATA)
     notifications = attr.ib(default=attr.Factory(list))
+    gracePeriod = attr.ib(default='5m')
 
     def to_json_data(self):
         return {
@@ -846,6 +847,7 @@ class Alert(object):
             "name": self.name,
             "noDataState": self.noDataState,
             "notifications": self.notifications,
+            "for": self.gracePeriod,
         }
 
 
