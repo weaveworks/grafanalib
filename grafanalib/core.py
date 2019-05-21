@@ -409,7 +409,7 @@ class Tooltip(object):
     msResolution = attr.ib(default=True, validator=instance_of(bool))
     shared = attr.ib(default=True, validator=instance_of(bool))
     sort = attr.ib(default=0)
-    valueType = attr.ib(default=CUMULATIVE)
+    valueType = attr.ib(default=INDIVIDUAL)
 
     def to_json_data(self):
         return {
