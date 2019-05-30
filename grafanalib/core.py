@@ -1,5 +1,4 @@
 """Low-level functions for building Grafana dashboards.
-
 The functions in this module don't enforce Weaveworks policy, and only mildly
 encourage it by way of some defaults. Rather, they are ways of building
 arbitrary Grafana JSON.
@@ -181,9 +180,6 @@ SORT_IMPORTANCE = 3
 REFRESH_NEVER = 0
 REFRESH_ON_DASHBOARD_LOAD = 1
 REFRESH_ON_TIME_RANGE_CHANGE = 2
-SHOW = 0
-HIDE_LABEL = 1
-HIDE_VARIABLE = 2
 
 
 @attr.s
@@ -243,6 +239,28 @@ class Grid(object):
 
 
 @attr.s
+class GridPosition(object):
+    """Define a grid position
+    :param x: setting position X
+    :param y: setting position Y
+    :param h: setting height
+    :param w: setting width
+    """
+
+    x = attr.ib(default=0)
+    y = attr.ib(default=0)
+    h = attr.ib(default=1)
+    w = attr.ib(default=24)
+
+    def to_json_data(self):
+        return {
+            'x': self.x,
+            'y': self.y,
+            'h': self.h,
+            'w': self.w,
+        }
+
+@attr.s
 class Legend(object):
     avg = attr.ib(default=False, validator=instance_of(bool))
     current = attr.ib(default=False, validator=instance_of(bool))
@@ -285,7 +303,6 @@ class Legend(object):
 class Target(object):
     """
     Metric to show.
-
     :param target: Graphite way to select data
     """
 
@@ -358,7 +375,6 @@ class XAxis(object):
 @attr.s
 class YAxis(object):
     """A single Y axis.
-
     Grafana graphs have two Y axes: one on the left and one on the right.
     """
     decimals = attr.ib(default=None)
@@ -384,7 +400,6 @@ class YAxis(object):
 @attr.s
 class YAxes(object):
     """The pair of Y axes on a Grafana graph.
-
     Each graph has two Y Axes, a left one and a right one.
     """
     left = attr.ib(default=attr.Factory(lambda: YAxis(format=SHORT_FORMAT)),
@@ -401,7 +416,6 @@ class YAxes(object):
 
 def single_y_axis(**kwargs):
     """Specify that a graph has a single Y axis.
-
     Parameters are those passed to `YAxis`. Returns a `YAxes` object (i.e. a
     pair of axes) that can be used as the yAxes parameter of a graph.
     """
@@ -411,10 +425,8 @@ def single_y_axis(**kwargs):
 
 def to_y_axes(data):
     """Backwards compatibility for 'YAxes'.
-
     In grafanalib 0.1.2 and earlier, Y axes were specified as a list of two
     elements. Now, we have a dedicated `YAxes` type.
-
     This function converts a list of two `YAxis` values to a `YAxes` value,
     silently passes through `YAxes` values, warns about doing things the old
     way, and errors when there are invalid values.
@@ -564,7 +576,6 @@ class DashboardLink(object):
 @attr.s
 class ExternalLink(object):
     '''ExternalLink creates a top-level link attached to a dashboard.
-
         :param url: the URL to link to
         :param title: the text of the link
         :param keepTime: if true, the URL params for the dashboard's
@@ -590,7 +601,6 @@ class ExternalLink(object):
 class Template(object):
     """Template create a new 'variable' for the dashboard, defines the variable
     name, human name, query to fetch the values and the default value.
-
         :param default: the default value for the variable
         :param dataSource: where to fetch the values for the variable from
         :param label: the variable's human label
@@ -608,7 +618,7 @@ class Template(object):
         :param type: The template type, can be one of: query (default),
             interval, datasource, custom, constant, adhoc.
         :param hide: Hide this variable in the dashboard, can be one of:
-            SHOW (default), HIDE_LABEL, HIDE_VARIABLE
+            0 (default, no hide), 1 (hide label), 2 (hide variable)
     """
 
     name = attr.ib()
@@ -635,7 +645,7 @@ class Template(object):
     refresh = attr.ib(default=REFRESH_ON_DASHBOARD_LOAD,
                       validator=instance_of(int))
     type = attr.ib(default='query')
-    hide = attr.ib(default=SHOW)
+    hide = attr.ib(default=0)
 
     def to_json_data(self):
         return {
@@ -762,9 +772,7 @@ def NoValue():
 @attr.s
 class TimeRange(object):
     """A time range for an alert condition.
-
     A condition has to hold for this length of time before triggering.
-
     :param str from_time: Either a number + unit (s: second, m: minute,
         h: hour, etc)  e.g. ``"5m"`` for 5 minutes, or ``"now"``.
     :param str to_time: Either a number + unit (s: second, m: minute,
@@ -782,7 +790,6 @@ class TimeRange(object):
 class AlertCondition(object):
     """
     A condition on an alert.
-
     :param Target target: Metric the alert condition is based on.
     :param Evaluator evaluator: How we decide whether we should alert on the
         metric. e.g. ``GreaterThan(5)`` means the metric must be greater than 5
@@ -853,7 +860,7 @@ class Alert(object):
 class Dashboard(object):
 
     title = attr.ib()
-    rows = attr.ib()
+    struct = attr.ib()
     annotations = attr.ib(
         default=attr.Factory(Annotations),
         validator=instance_of(Annotations),
@@ -894,17 +901,32 @@ class Dashboard(object):
     version = attr.ib(default=0)
     uid = attr.ib(default=None)
 
+    def _set_struct_name(self):
+        if isinstance(self.struct[0], Row):
+            return "rows"
+        return "panels"
+
     def _iter_panels(self):
-        for row in self.rows:
-            for panel in row._iter_panels():
+        if isinstance(self.struct[0], Row):
+            for row in self.struct:
+                for panel in row._iter_panels():
+                    yield panel
+        else:
+            for panel in self.struct:
                 yield panel
 
     def _map_panels(self, f):
-        return attr.assoc(self, rows=[r._map_panels(f) for r in self.rows])
+        if isinstance(self.struct[0], Row):
+            return attr.assoc(
+                self, struct=[r._map_panels(f) for r in self.struct]
+            )
+        else:
+            return attr.assoc(
+                self, struct=[f(panel) for panel in self.struct]
+            )
 
     def auto_panel_ids(self):
         """Give unique IDs all the panels without IDs.
-
         Returns a new ``Dashboard`` that is the same as this one, except all
         of the panels have their ``id`` property set. Any panels which had an
         ``id`` property set will keep that property, all others will have
@@ -918,6 +940,8 @@ class Dashboard(object):
         return self._map_panels(set_id)
 
     def to_json_data(self):
+        struct_name = self._set_struct_name()
+
         return {
             '__inputs': self.inputs,
             'annotations': self.annotations,
@@ -927,7 +951,7 @@ class Dashboard(object):
             'id': self.id,
             'links': self.links,
             'refresh': self.refresh,
-            'rows': self.rows,
+            struct_name: self.struct,
             'schemaVersion': self.schemaVersion,
             'sharedCrosshair': self.sharedCrosshair,
             'style': self.style,
@@ -946,10 +970,10 @@ class Dashboard(object):
 class Graph(object):
     """
     Generates Graph panel json structure.
-
     :param dataSource: DataSource's name
     :param minSpan: Minimum width for each panel
     :param repeat: Template's name to repeat Graph on
+    :param gridPos: size and direction:
     """
 
     title = attr.ib()
@@ -997,6 +1021,7 @@ class Graph(object):
         validator=instance_of(YAxes),
     )
     alert = attr.ib(default=None)
+    gridPos = attr.ib(default=None)
 
     def to_json_data(self):
         graphObject = {
@@ -1034,6 +1059,7 @@ class Graph(object):
             'type': GRAPH_TYPE,
             'xaxis': self.xAxis,
             'yaxes': self.yAxes,
+            'gridPos': self.gridPos,
         }
         if self.alert:
             graphObject['alert'] = self.alert
@@ -1172,11 +1198,41 @@ class AlertList(object):
 
 
 @attr.s
+class RowGrid(object):
+    """
+    :param id: row panel id
+    :param title: row panel title
+    :param gridPos: size and direction:
+    """
+
+    collapsed = attr.ib(
+        default=False, validator=instance_of(bool),
+    )
+    id = attr.ib(default=None)
+    panels = attr.ib(default=attr.Factory(list))
+    title = attr.ib(default=None)
+    repeat = attr.ib(default=None)
+    panel_type = attr.ib(default="row")
+    gridPos = attr.ib(default=None)
+
+    def _iter_panels(self):
+        return iter(self.panels)
+
+    def to_json_data(self):
+        return {
+            'collapsed': self.collapsed,
+            'id': self.id,
+            'panels': self.panels,
+            'title': self.title,
+            'type': self.panel_type,
+            'gridPos': self.gridPos,
+        }
+
+
+@attr.s
 class SingleStat(object):
     """Generates Single Stat panel json structure
-
     Grafana doc on singlestat: http://docs.grafana.org/reference/singlestat/
-
     :param dataSource: Grafana datasource name
     :param targets: list of metric requests for chosen datasource
     :param title: panel title
@@ -1221,6 +1277,7 @@ class SingleStat(object):
         min, max, avg, current, total, name, first, delta, range
     :param valueMaps: the list of value to text mappings
     :param timeFrom: time range that Override relative time
+    :param gridPos: size and direction:
     """
 
     dataSource = attr.ib()
@@ -1269,6 +1326,7 @@ class SingleStat(object):
     valueName = attr.ib(default=VTYPE_DEFAULT)
     valueMaps = attr.ib(default=attr.Factory(list))
     timeFrom = attr.ib(default=None)
+    gridPos = attr.ib(default=None)
 
     def to_json_data(self):
         return {
@@ -1310,6 +1368,7 @@ class SingleStat(object):
             'valueMaps': self.valueMaps,
             'valueName': self.valueName,
             'timeFrom': self.timeFrom,
+            'gridPos': self.gridPos,
         }
 
 
@@ -1411,7 +1470,6 @@ class ColumnSort(object):
 @attr.s
 class Column(object):
     """Details of an aggregation column in a table panel.
-
     :param text: name of column
     :param value: aggregation function
     """
@@ -1428,11 +1486,9 @@ class Column(object):
 
 def _style_columns(columns):
     """Generate a list of column styles given some styled columns.
-
     The 'Table' object in Grafana separates column definitions from column
     style definitions. However, when defining dashboards it can be very useful
     to define the style next to the column. This function helps that happen.
-
     :param columns: A list of (Column, ColumnStyle) pairs. The associated
         ColumnStyles must not have a 'pattern' specified. You can also provide
        'None' if you want to use the default styles.
@@ -1456,9 +1512,7 @@ def _style_columns(columns):
 @attr.s
 class Table(object):
     """Generates Table panel json structure
-
     Grafana doc on table: http://docs.grafana.org/reference/table_panel/
-
     :param columns: table columns for Aggregations view
     :param dataSource: Grafana datasource name
     :param description: optional panel description
@@ -1522,7 +1576,6 @@ class Table(object):
     @classmethod
     def with_styled_columns(cls, columns, styles=None, **kwargs):
         """Construct a table where each column has an associated style.
-
         :param columns: A list of (Column, ColumnStyle) pairs, where the
             ColumnStyle is the style for the column and does **not** have a
             pattern set (or the pattern is set to exactly the column name).
