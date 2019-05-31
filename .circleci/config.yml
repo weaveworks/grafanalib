@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: quay.io/weaveworks/build-golang:1.11.1-stretch
+      - image: weaveworks/build-golang:1.11.1-stretch
     working_directory: /go/src/github.com/weaveworks/grafanalib
     environment:
       GOPATH: /go
