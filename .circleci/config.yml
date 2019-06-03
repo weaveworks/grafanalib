@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: quay.io/weaveworks/build-golang:1.11.1-stretch
+      - image: weaveworks/build-golang:1.11.1-stretch
     working_directory: /go/src/github.com/weaveworks/grafanalib
     environment:
       GOPATH: /go
@@ -32,6 +32,6 @@ jobs:
     - deploy:
         command: |
           if [ "${CIRCLE_BRANCH}" == "master" ]; then
-            docker login -u "$QUAY_USER" -p "$QUAY_PASSWORD" quay.io
-            docker push quay.io/weaveworks/gfdatasource:$(./tools/image-tag)
+            echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USER" --password-stdin
+            docker push weaveworks/gfdatasource:$(./tools/image-tag)
           fi
