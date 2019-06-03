@@ -63,6 +63,7 @@ def stacked(graph):
         stack=True,
         fill=10,
         tooltip=G.Tooltip(
+            sort=G.SORT_DESC,
             valueType=G.INDIVIDUAL,
         ),
     )
