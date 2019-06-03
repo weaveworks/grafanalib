@@ -12,7 +12,7 @@ jobs:
     - run:
         name: Install Docker client
         command: |
-          curl -L -o /tmp/docker.tgz https://download.docker.com/linux/static/stable/x86_64/docker-17.03.0-ce.tgz
+          curl -L -o /tmp/docker.tgz https://download.docker.com/linux/static/stable/x86_64/docker-18.09.6.tgz
           tar -xz -C /tmp -f /tmp/docker.tgz
           mv /tmp/docker/* /usr/bin
     - setup_remote_docker
