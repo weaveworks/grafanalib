@@ -3,12 +3,13 @@ Changelog
 =========
 
 Next release
-==================
+=======
 
 Changes
 -------
 
 * Add ``for`` parameter for alerts on Grafana 6.X
+* Add 'diff', 'percent_diff' and 'count_non_null' as RTYPE
 
 0.5.3 (2018-07-19)
 ==================
