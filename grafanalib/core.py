@@ -120,7 +120,7 @@ EVAL_WITHIN_RANGE = "within_range"
 EVAL_OUTSIDE_RANGE = "outside_range"
 EVAL_NO_VALUE = "no_value"
 
-# Reducer Type 
+# Reducer Type
 # avg/min/max/sum/count/last/median/diff/percent_diff/count_non_null
 RTYPE_AVG = "avg"
 RTYPE_MIN = "min"
