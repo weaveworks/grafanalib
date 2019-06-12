@@ -43,7 +43,7 @@ class DashboardEncoder(json.JSONEncoder):
 def write_dashboard(dashboard, stream):
     json.dump(
         dashboard.to_json_data(), stream, sort_keys=True, indent=2,
-        cls=DashboardEncoder)
+        separators=(',', ':'), cls=DashboardEncoder)
     stream.write('\n')
 
 
