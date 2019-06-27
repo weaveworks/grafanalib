@@ -184,6 +184,13 @@ REFRESH_ON_TIME_RANGE_CHANGE = 2
 SHOW = 0
 HIDE_LABEL = 1
 HIDE_VARIABLE = 2
+SORT_DISABLED = 0
+SORT_ALPHA_ASC = 1
+SORT_ALPHA_DESC = 2
+SORT_NUMERIC_ASC = 3
+SORT_NUMERIC_DESC = 4
+SORT_ALPHA_IGNORE_CASE_ASC = 5
+SORT_ALPHA_IGNORE_CASE_DESC = 6
 
 
 @attr.s
@@ -636,6 +643,7 @@ class Template(object):
                       validator=instance_of(int))
     type = attr.ib(default='query')
     hide = attr.ib(default=SHOW)
+    sort = attr.ib(default=SORT_ALPHA_ASC)
 
     def to_json_data(self):
         return {
@@ -655,7 +663,7 @@ class Template(object):
             'query': self.query,
             'refresh': self.refresh,
             'regex': self.regex,
-            'sort': 1,
+            'sort': self.sort,
             'type': self.type,
             'useTags': self.useTags,
             'tagsQuery': self.tagsQuery,
