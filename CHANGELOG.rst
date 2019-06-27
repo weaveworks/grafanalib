@@ -2,13 +2,21 @@
 Changelog
 =========
 
-0.5.3 (2019-05-05)
+Next release
 ==================
 
 Changes
 -------
 
 * Add ``for`` parameter for alerts on Grafana 6.X
+
+0.5.3 (2018-07-19)
+==================
+
+Changes
+-------
+
+* Minor markup tweaks to the README
 
 0.5.2 (2018-07-19)
 ==================
