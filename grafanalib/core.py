@@ -120,7 +120,8 @@ EVAL_WITHIN_RANGE = "within_range"
 EVAL_OUTSIDE_RANGE = "outside_range"
 EVAL_NO_VALUE = "no_value"
 
-# Reducer Type avg/min/max/sum/count/last/median
+# Reducer Type
+# avg/min/max/sum/count/last/median/diff/percent_diff/count_non_null
 RTYPE_AVG = "avg"
 RTYPE_MIN = "min"
 RTYPE_MAX = "max"
@@ -128,6 +129,9 @@ RTYPE_SUM = "sum"
 RTYPE_COUNT = "count"
 RTYPE_LAST = "last"
 RTYPE_MEDIAN = "median"
+RTYPE_DIFF = "diff"
+RTYPE_PERCENT_DIFF = "percent_diff"
+RTYPE_COUNT_NON_NULL = "count_non_null"
 
 # Condition Type
 CTYPE_QUERY = "query"
