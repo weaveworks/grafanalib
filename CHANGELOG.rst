@@ -8,8 +8,19 @@ Next release
 Changes
 -------
 
-* Add ``for`` parameter for alerts on Grafana 6.X
+TBA
+
+0.5.4 (2019-07-3)
+=======
+
+Changes
+-------
+
 * Add 'diff', 'percent_diff' and 'count_non_null' as RTYPE
+* Support for changing sort value in Template Variables.
+* Sort tooltips by value in Weave/Stacked-Charts
+* Add ``for`` parameter for alerts on Grafana 6.X
+* Add named values for the Template.hide parameter
 
 0.5.3 (2018-07-19)
 ==================
