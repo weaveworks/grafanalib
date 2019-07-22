@@ -44,6 +44,24 @@ class MaxMetricAgg(object):
 
 
 @attr.s
+class CardinalityMetricAgg(object):
+    """An aggregator that provides the cardinality. value among the values.
+
+    https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-cardinality-aggregation.html
+
+    :param field: name of elasticsearch field to provide the maximum for
+    """
+    field = attr.ib(default="", validator=instance_of(str))
+
+    def to_json_data(self):
+        return {
+            'type': 'cardinality',
+            'field': self.field,
+            'settings': {},
+        }
+
+
+@attr.s
 class DateHistogramGroupBy(object):
     """A bucket aggregator that groups results by date.
 
