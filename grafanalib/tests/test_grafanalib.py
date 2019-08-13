@@ -16,7 +16,7 @@ def test_serialization():
     """Serializing a graph doesn't explode."""
     graph = G.Graph(
         title="CPU Usage by Namespace (rate[5m])",
-        dataSource="My data source",
+        datasource="My data source",
         targets=[
             G.Target(
                 expr='namespace:container_cpu_usage_seconds_total:sum_rate',
@@ -29,6 +29,7 @@ def test_serialization():
             G.YAxis(format=G.SHORT_FORMAT, label="CPU seconds / second"),
             G.YAxis(format=G.SHORT_FORMAT),
         ],
+        gridPos=G.GridPos(h=8, w=12, x=0, y=0)
     )
     stream = StringIO()
     _gen.write_dashboard(graph, stream)
@@ -39,38 +40,39 @@ def test_auto_id():
     """auto_panel_ids() provides IDs for all panels without IDs already set."""
     dashboard = G.Dashboard(
         title="Test dashboard",
-        rows=[
-            G.Row(panels=[
-                G.Graph(
-                    title="CPU Usage by Namespace (rate[5m])",
-                    dataSource="My data source",
-                    targets=[
-                        G.Target(
-                            expr='whatever',
-                            legendFormat='{{namespace}}',
-                            refId='A',
-                        ),
-                    ],
-                    yAxes=[
-                        G.YAxis(format=G.SHORT_FORMAT, label="CPU seconds"),
-                        G.YAxis(format=G.SHORT_FORMAT),
-                    ],
-                )
-            ]),
+        panels=[
+            G.Row(
+                panels=[
+                    G.Graph(
+                        title="CPU Usage by Namespace (rate[5m])",
+                        datasource="My data source",
+                        targets=[
+                            G.Target(
+                                expr='whatever',
+                                legendFormat='{{namespace}}',
+                                refId='A',
+                            ),
+                        ],
+                        yAxes=[
+                            G.YAxis(
+                                format=G.SHORT_FORMAT, label="CPU seconds"
+                            ),
+                            G.YAxis(format=G.SHORT_FORMAT),
+                        ],
+                        gridPos=G.GridPos(h=8, w=12, x=0, y=0)
+                    )
+                ],
+                gridPos=G.GridPos(h=1, w=24, x=0, y=0)
+            ),
         ],
     ).auto_panel_ids()
-    assert dashboard.rows[0].panels[0].id == 1
+    assert dashboard.panels[0].id == 1
 
 
 def test_row_show_title():
-    row = G.Row().to_json_data()
+    row = G.Row(gridPos=G.GridPos(h=1, w=24, x=0, y=0)).to_json_data()
     assert row['title'] == 'New row'
-    assert not row['showTitle']
 
-    row = G.Row(title='My title').to_json_data()
+    row = G.Row(gridPos=G.GridPos(h=1, w=24, x=0, y=0), title='My title')\
+        .to_json_data()
     assert row['title'] == 'My title'
-    assert row['showTitle']
-
-    row = G.Row(title='My title', showTitle=False).to_json_data()
-    assert row['title'] == 'My title'
-    assert not row['showTitle']

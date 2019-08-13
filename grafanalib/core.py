@@ -71,6 +71,7 @@ FLOT = 'flot'
 ABSOLUTE_TYPE = 'absolute'
 DASHBOARD_TYPE = 'dashboard'
 GRAPH_TYPE = 'graph'
+ROW_TYPE = 'row'
 SINGLESTAT_TYPE = 'singlestat'
 TABLE_TYPE = 'table'
 TEXT_TYPE = 'text'
@@ -250,6 +251,23 @@ class Grid(object):
             'threshold1Color': self.threshold1Color,
             'threshold2': self.threshold2,
             'threshold2Color': self.threshold2Color,
+        }
+
+
+@attr.s
+class GridPos(object):
+    h = attr.ib()
+    w = attr.ib()
+    x = attr.ib()
+    y = attr.ib()
+    static = attr.ib(default=False, validator=instance_of(bool))
+
+    def to_json_data(self):
+        return {
+            'h': self.h,
+            'w': self.w,
+            'x': self.x,
+            'y': self.y
         }
 
 
@@ -460,46 +478,60 @@ def _balance_panels(panels):
 
 
 @attr.s
-class Row(object):
-    # TODO: jml would like to separate the balancing behaviour from this
-    # layer.
-    panels = attr.ib(default=attr.Factory(list), convert=_balance_panels)
-    collapse = attr.ib(
-        default=False, validator=instance_of(bool),
+class Panel(object):
+    gridPos = attr.ib(validator=instance_of(GridPos))
+
+    id = attr.ib(default=None)
+    type = attr.ib(default=None)
+    title = attr.ib(default='')
+    alert = attr.ib(default=None)
+    scopedVars = attr.ib(
+        default=attr.Factory(dict), validator=instance_of(dict)
     )
-    editable = attr.ib(
-        default=True, validator=instance_of(bool),
-    )
-    height = attr.ib(
-        default=attr.Factory(lambda: DEFAULT_ROW_HEIGHT),
-        validator=instance_of(Pixels),
-    )
-    showTitle = attr.ib(default=None)
-    title = attr.ib(default=None)
     repeat = attr.ib(default=None)
+    repeatIteration = attr.ib(default=None)
+    repeatPanelId = attr.ib(default=None)
+    repeatDirection = attr.ib(default=None)
+    repeatedByRow = attr.ib(default=False, validator=instance_of(bool))
+    maxPerRow = attr.ib(default=None)
+    collapsed = attr.ib(default=False, validator=instance_of(bool))
+    panels = attr.ib(default=attr.Factory(list))
+    soloMode = attr.ib(default=False, validator=instance_of(bool))
+    targets = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+    datasource = attr.ib(default=None)
+    thresholds = attr.ib(
+        default=attr.Factory(list), validator=instance_of(list)
+    )
+    pluginVersion = attr.ib(default=None)
 
-    def _iter_panels(self):
-        return iter(self.panels)
+    snapshotData = attr.ib(
+        default=attr.Factory(list), validator=instance_of(list)
+    )
+    timeFrom = attr.ib(default=None)
+    timeShift = attr.ib(default=None)
+    hideTimeOverride = attr.ib(default=None)
+    options = attr.ib(default=attr.Factory(list), validator=instance_of(list))
 
-    def _map_panels(self, f):
-        return attr.assoc(self, panels=list(map(f, self.panels)))
+    maxDataPoints = attr.ib(default=None)
+    interval = attr.ib(default=None)
+    description = attr.ib(default=None)
+    links = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+    transparent = attr.ib(default=False, validator=instance_of(bool))
+
+
+@attr.s
+class Row(Panel):
+    title = attr.ib(default='New row')
 
     def to_json_data(self):
-        showTitle = False
-        title = "New row"
-        if self.title is not None:
-            showTitle = True
-            title = self.title
-        if self.showTitle is not None:
-            showTitle = self.showTitle
         return {
-            'collapse': self.collapse,
-            'editable': self.editable,
-            'height': self.height,
-            'panels': self.panels,
-            'showTitle': showTitle,
-            'title': title,
+            'collapsed': self.collapsed,
+            'gridPos': self.gridPos,
+            'id': self.id,
+            'panels': self.panels if self.collapsed else [],
             'repeat': self.repeat,
+            'title': self.title,
+            'type': ROW_TYPE
         }
 
 
@@ -867,29 +899,26 @@ class Alert(object):
 class Dashboard(object):
 
     title = attr.ib()
-    rows = attr.ib()
     annotations = attr.ib(
         default=attr.Factory(Annotations),
         validator=instance_of(Annotations),
     )
+    autoUpdate = attr.ib(default=None)
+    description = attr.ib(default=None)
     editable = attr.ib(
         default=True,
         validator=instance_of(bool),
     )
     gnetId = attr.ib(default=None)
-    hideControls = attr.ib(
-        default=False,
-        validator=instance_of(bool),
-    )
+    graphTooltip = attr.ib(default=0)
     id = attr.ib(default=None)
     inputs = attr.ib(default=attr.Factory(list))
     links = attr.ib(default=attr.Factory(list))
+    panels = attr.ib(default=attr.Factory(list), validator=instance_of(list))
     refresh = attr.ib(default=DEFAULT_REFRESH)
+    revision = attr.ib(default=None)
     schemaVersion = attr.ib(default=SCHEMA_VERSION)
-    sharedCrosshair = attr.ib(
-        default=False,
-        validator=instance_of(bool),
-    )
+    snapshot = attr.ib(default=None)
     style = attr.ib(default=DARK_STYLE)
     tags = attr.ib(default=attr.Factory(list))
     templating = attr.ib(
@@ -900,21 +929,13 @@ class Dashboard(object):
         default=attr.Factory(lambda: DEFAULT_TIME),
         validator=instance_of(Time),
     )
-    timePicker = attr.ib(
+    timepicker = attr.ib(
         default=attr.Factory(lambda: DEFAULT_TIME_PICKER),
         validator=instance_of(TimePicker),
     )
     timezone = attr.ib(default=UTC)
     version = attr.ib(default=0)
     uid = attr.ib(default=None)
-
-    def _iter_panels(self):
-        for row in self.rows:
-            for panel in row._iter_panels():
-                yield panel
-
-    def _map_panels(self, f):
-        return attr.assoc(self, rows=[r._map_panels(f) for r in self.rows])
 
     def auto_panel_ids(self):
         """Give unique IDs all the panels without IDs.
@@ -924,85 +945,102 @@ class Dashboard(object):
         ``id`` property set will keep that property, all others will have
         auto-generated IDs provided for them.
         """
-        ids = set([panel.id for panel in self._iter_panels() if panel.id])
+        ids = set()
+        for panel in self.panels:
+            if panel.id:
+                ids.add(panel.id)
+            if panel.panels:
+                ids.update(
+                    [
+                        sub_panel.id
+                        for sub_panel in panel.panels if sub_panel.id
+                    ]
+                )
         auto_ids = (i for i in itertools.count(1) if i not in ids)
 
         def set_id(panel):
-            return panel if panel.id else attr.assoc(panel, id=next(auto_ids))
-        return self._map_panels(set_id)
+            kwargs = {'id': panel.id if panel.id else next(auto_ids)}
+            if panel.panels:
+                kwargs['panels'] = [
+                    sub_panel
+                    if sub_panel.id
+                    else attr.assoc(sub_panel, id=next(auto_ids))
+                    for sub_panel in panel.panels
+                ]
+            return attr.assoc(panel, **kwargs)
+
+        return attr.assoc(
+            self, panels=[set_id(panel) for panel in self.panels]
+        )
 
     def to_json_data(self):
         return {
             '__inputs': self.inputs,
             'annotations': self.annotations,
+            'autoUpdate': self.autoUpdate,
+            'description': self.description,
             'editable': self.editable,
             'gnetId': self.gnetId,
-            'hideControls': self.hideControls,
+            'graphTooltip': self.graphTooltip,
             'id': self.id,
             'links': self.links,
+            'panels': self.panels,
             'refresh': self.refresh,
-            'rows': self.rows,
+            'revision': self.revision,
             'schemaVersion': self.schemaVersion,
-            'sharedCrosshair': self.sharedCrosshair,
+            'snapshot': self.snapshot,
             'style': self.style,
             'tags': self.tags,
             'templating': self.templating,
             'title': self.title,
             'time': self.time,
-            'timepicker': self.timePicker,
+            'timepicker': self.timepicker,
             'timezone': self.timezone,
             'version': self.version,
-            'uid': self.uid,
+            'uid': self.uid
         }
 
 
 @attr.s
-class Graph(object):
+class Graph(Panel):
     """
     Generates Graph panel json structure.
 
-    :param dataSource: DataSource's name
-    :param minSpan: Minimum width for each panel
+    :param datasource: DataSource's name
     :param repeat: Template's name to repeat Graph on
     """
 
-    title = attr.ib()
-    targets = attr.ib()
-    aliasColors = attr.ib(default=attr.Factory(dict))
+    aliasColors = attr.ib(
+        default=attr.Factory(dict), validator=instance_of(dict)
+    )
     bars = attr.ib(default=False, validator=instance_of(bool))
-    dataSource = attr.ib(default=None)
-    description = attr.ib(default=None)
-    editable = attr.ib(default=True, validator=instance_of(bool))
-    error = attr.ib(default=False, validator=instance_of(bool))
+    dashes = attr.ib(default=False, validator=instance_of(bool))
+    dashLength = attr.ib(default=10)
     fill = attr.ib(default=1, validator=instance_of(int))
-    grid = attr.ib(default=attr.Factory(Grid), validator=instance_of(Grid))
-    id = attr.ib(default=None)
-    isNew = attr.ib(default=True, validator=instance_of(bool))
     legend = attr.ib(
         default=attr.Factory(Legend),
         validator=instance_of(Legend),
     )
     lines = attr.ib(default=True, validator=instance_of(bool))
-    lineWidth = attr.ib(default=DEFAULT_LINE_WIDTH)
-    links = attr.ib(default=attr.Factory(list))
-    minSpan = attr.ib(default=None)
+    linewidth = attr.ib(default=DEFAULT_LINE_WIDTH)
     nullPointMode = attr.ib(default=NULL_CONNECTED)
+    paceLength = attr.ib(default=10)
     percentage = attr.ib(default=False, validator=instance_of(bool))
-    pointRadius = attr.ib(default=DEFAULT_POINT_RADIUS)
+    pointradius = attr.ib(default=DEFAULT_POINT_RADIUS)
     points = attr.ib(default=False, validator=instance_of(bool))
     renderer = attr.ib(default=DEFAULT_RENDERER)
-    repeat = attr.ib(default=None)
-    seriesOverrides = attr.ib(default=attr.Factory(list))
-    span = attr.ib(default=None)
+    seriesOverrides = attr.ib(
+        default=attr.Factory(list), validator=instance_of(list)
+    )
     stack = attr.ib(default=False, validator=instance_of(bool))
     steppedLine = attr.ib(default=False, validator=instance_of(bool))
-    timeFrom = attr.ib(default=None)
-    timeShift = attr.ib(default=None)
+    timeRegions = attr.ib(
+        default=attr.Factory(list), validator=instance_of(list)
+    )
     tooltip = attr.ib(
         default=attr.Factory(Tooltip),
         validator=instance_of(Tooltip),
     )
-    transparent = attr.ib(default=False, validator=instance_of(bool))
     xAxis = attr.ib(default=attr.Factory(XAxis), validator=instance_of(XAxis))
     # XXX: This isn't a *good* default, rather it's the default Grafana uses.
     yAxes = attr.ib(
@@ -1010,43 +1048,46 @@ class Graph(object):
         convert=to_y_axes,
         validator=instance_of(YAxes),
     )
-    alert = attr.ib(default=None)
 
     def to_json_data(self):
         graphObject = {
             'aliasColors': self.aliasColors,
             'bars': self.bars,
-            'datasource': self.dataSource,
+            'dashes': self.dashes,
+            'dashLength': self.dashLength,
+            'datasource': self.datasource,
             'description': self.description,
-            'editable': self.editable,
-            'error': self.error,
             'fill': self.fill,
-            'grid': self.grid,
+            'gridPos': self.gridPos,
             'id': self.id,
-            'isNew': self.isNew,
             'legend': self.legend,
             'lines': self.lines,
-            'linewidth': self.lineWidth,
+            'linewidth': self.linewidth,
             'links': self.links,
-            'minSpan': self.minSpan,
             'nullPointMode': self.nullPointMode,
+            'paceLength': self.paceLength,
             'percentage': self.percentage,
-            'pointradius': self.pointRadius,
+            'pointradius': self.pointradius,
             'points': self.points,
             'renderer': self.renderer,
             'repeat': self.repeat,
             'seriesOverrides': self.seriesOverrides,
-            'span': self.span,
             'stack': self.stack,
             'steppedLine': self.steppedLine,
             'targets': self.targets,
+            'thresholds': self.thresholds,
             'timeFrom': self.timeFrom,
+            'timeRegions': self.timeRegions,
             'timeShift': self.timeShift,
             'title': self.title,
             'tooltip': self.tooltip,
             'transparent': self.transparent,
             'type': GRAPH_TYPE,
             'xaxis': self.xAxis,
+            'yaxis': {
+                'align': False,
+                'alignLevel': None
+            },
             'yaxes': self.yAxes,
         }
         if self.alert:
@@ -1124,30 +1165,19 @@ class Gauge(object):
 
 
 @attr.s
-class Text(object):
+class Text(Panel):
     """Generates a Text panel."""
 
-    content = attr.ib()
-    editable = attr.ib(default=True, validator=instance_of(bool))
-    error = attr.ib(default=False, validator=instance_of(bool))
-    height = attr.ib(default=None)
-    id = attr.ib(default=None)
-    links = attr.ib(default=attr.Factory(list))
+    content = attr.ib(default='')
     mode = attr.ib(default=TEXT_MODE_MARKDOWN)
-    span = attr.ib(default=None)
-    title = attr.ib(default="")
-    transparent = attr.ib(default=False, validator=instance_of(bool))
 
     def to_json_data(self):
         return {
             'content': self.content,
-            'editable': self.editable,
-            'error': self.error,
-            'height': self.height,
+            'gridPos': self.gridPos,
             'id': self.id,
             'links': self.links,
             'mode': self.mode,
-            'span': self.span,
             'title': self.title,
             'transparent': self.transparent,
             'type': TEXT_TYPE,

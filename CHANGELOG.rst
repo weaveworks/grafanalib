@@ -10,6 +10,8 @@ Changes
 
 * Add ``for`` parameter for alerts on Grafana 6.X
 * Add 'diff', 'percent_diff' and 'count_non_null' as RTYPE
+* Treat a ``Row`` as a ``Dashboard`` panel
+* Update ``Row``, ``Graph``, and ``Text`` panels to use GridPos
 
 0.5.3 (2018-07-19)
 ==================
