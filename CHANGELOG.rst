@@ -127,6 +127,9 @@ Changes
 * pin to attrs 19.2 and fix deprecated arguments
 
 Many thanks to contributors @bboreham, @dholbach, @ducksecops, @kevingessner, @matthewmrichter, @uritau.
+=======
+* Treat a ``Row`` as a ``Dashboard`` panel
+* Update ``Row``, ``Graph``, and ``Text`` panels to use GridPos
 
 0.5.4 (2019-08-30)
 ==================

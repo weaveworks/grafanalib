@@ -18,7 +18,7 @@ def test_serialization_opentsdb_target():
     """Serializing a graph doesn't explode."""
     graph = G.Graph(
         title="CPU Usage",
-        dataSource="OpenTSDB data source",
+        datasource="OpenTSDB data source",
         targets=[
             OpenTSDBTarget(
                 metric='cpu',
@@ -33,6 +33,7 @@ def test_serialization_opentsdb_target():
             G.YAxis(format=G.SHORT_FORMAT, label="CPU seconds / second"),
             G.YAxis(format=G.SHORT_FORMAT),
         ),
+        gridPos=G.GridPos(h=8, w=12, x=0, y=0)
     )
     stream = StringIO()
     _gen.write_dashboard(graph, stream)
