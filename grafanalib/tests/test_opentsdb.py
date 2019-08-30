@@ -18,7 +18,7 @@ def test_serialization_opentsdb_target():
     """Serializing a graph doesn't explode."""
     graph = G.Graph(
         title="CPU Usage",
-        datasource="OpenTSDB data source",
+        dataSource="OpenTSDB data source",
         targets=[
             OpenTSDBTarget(
                 metric='cpu',

@@ -15,7 +15,7 @@ def test_serialization_zabbix_target():
     """Serializing a graph doesn't explode."""
     graph = G.Graph(
         title="CPU Usage",
-        datasource="Zabbix data source",
+        dataSource="Zabbix data source",
         targets=[
             Z.zabbixMetricTarget(
                 group="Zabbix Group",
