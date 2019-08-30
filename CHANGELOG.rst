@@ -10,7 +10,7 @@ Changes
 
 TBA
 
-0.5.4 (2019-07-3)
+0.5.4 (2019-08-30)
 =======
 
 Changes
@@ -20,7 +20,11 @@ Changes
 * Support for changing sort value in Template Variables.
 * Sort tooltips by value in Weave/Stacked-Charts
 * Add ``for`` parameter for alerts on Grafana 6.X
+* Add ``STATE_OK`` for alerts
 * Add named values for the Template.hide parameter
+* Add cardinality metric aggregator for ElasticSearch
+
+Many thanks to contributors @kevingessner, @2easy, @vicmarbev, @butlerx.
 
 0.5.3 (2018-07-19)
 ==================
