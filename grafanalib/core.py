@@ -112,6 +112,7 @@ BYTES_PER_SEC_FORMAT = "Bps"
 STATE_NO_DATA = "no_data"
 STATE_ALERTING = "alerting"
 STATE_KEEP_LAST_STATE = "keep_state"
+STATE_OK = "ok"
 
 # Evaluator
 EVAL_GT = "gt"
