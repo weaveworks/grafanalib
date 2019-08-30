@@ -577,7 +577,7 @@ class Panel(object):
     panels = attr.ib(default=attr.Factory(list))
     soloMode = attr.ib(default=False, validator=instance_of(bool))
     targets = attr.ib(default=attr.Factory(list), validator=instance_of(list))
-    datasource = attr.ib(default=None)
+    dataSource = attr.ib(default=None)
     thresholds = attr.ib(
         default=attr.Factory(list), validator=instance_of(list)
     )
@@ -1055,7 +1055,7 @@ class Dashboard(object):
         default=attr.Factory(lambda: DEFAULT_TIME),
         validator=instance_of(Time),
     )
-    timepicker = attr.ib(
+    timePicker = attr.ib(
         default=attr.Factory(lambda: DEFAULT_TIME_PICKER),
         validator=instance_of(TimePicker),
     )
@@ -1120,10 +1120,10 @@ class Dashboard(object):
             'templating': self.templating,
             'title': self.title,
             'time': self.time,
-            'timepicker': self.timepicker,
+            'timepicker': self.timePicker,
             'timezone': self.timezone,
             'version': self.version,
-            'uid': self.uid
+            'uid': self.uid,
         }
 
 
@@ -1232,11 +1232,11 @@ class Graph(Panel):
         validator=instance_of(Legend),
     )
     lines = attr.ib(default=True, validator=instance_of(bool))
-    linewidth = attr.ib(default=DEFAULT_LINE_WIDTH)
+    lineWidth = attr.ib(default=DEFAULT_LINE_WIDTH)
     nullPointMode = attr.ib(default=NULL_CONNECTED)
     paceLength = attr.ib(default=10)
     percentage = attr.ib(default=False, validator=instance_of(bool))
-    pointradius = attr.ib(default=DEFAULT_POINT_RADIUS)
+    pointRadius = attr.ib(default=DEFAULT_POINT_RADIUS)
     points = attr.ib(default=False, validator=instance_of(bool))
     renderer = attr.ib(default=DEFAULT_RENDERER)
     seriesOverrides = attr.ib(
@@ -1278,19 +1278,19 @@ class Graph(Panel):
             },
             'dashes': self.dashes,
             'dashLength': self.dashLength,
-            'datasource': self.datasource,
+            'datasource': self.dataSource,
             'description': self.description,
             'fill': self.fill,
             'gridPos': self.gridPos,
             'id': self.id,
             'legend': self.legend,
             'lines': self.lines,
-            'linewidth': self.linewidth,
+            'linewidth': self.lineWidth,
             'links': self.links,
             'nullPointMode': self.nullPointMode,
             'paceLength': self.paceLength,
             'percentage': self.percentage,
-            'pointradius': self.pointradius,
+            'pointradius': self.pointRadius,
             'points': self.points,
             'renderer': self.renderer,
             'seriesOverrides': self.seriesOverrides,

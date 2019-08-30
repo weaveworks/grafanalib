@@ -16,7 +16,7 @@ def test_serialization():
     """Serializing a graph doesn't explode."""
     graph = G.Graph(
         title="CPU Usage by Namespace (rate[5m])",
-        datasource="My data source",
+        dataSource="My data source",
         targets=[
             G.Target(
                 expr='namespace:container_cpu_usage_seconds_total:sum_rate',
@@ -45,7 +45,7 @@ def test_auto_id():
                 panels=[
                     G.Graph(
                         title="CPU Usage by Namespace (rate[5m])",
-                        datasource="My data source",
+                        dataSource="My data source",
                         targets=[
                             G.Target(
                                 expr='whatever',
