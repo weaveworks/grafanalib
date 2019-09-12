@@ -21,6 +21,7 @@ Changes
 * Add description attribute to Dashboard.
 * Add support for custom variables.
 * Point out documentation on readthedocs more clearly.
+* Add average metric aggregation for elastic search
 
 0.5.5 (2020-02-17)
 ==================
