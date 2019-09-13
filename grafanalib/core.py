@@ -1011,21 +1011,28 @@ class Graph(object):
     """
     Generates Graph panel json structure.
 
+    :param cacheTimeout: metric query result cache ttl
     :param dataSource: DataSource's name
+    :param hideTimeOverride: hides time overrides
+    :param maxDataPoints: maximum metric query results,
+        that will be used for rendering
     :param minSpan: Minimum width for each panel
     :param repeat: Template's name to repeat Graph on
+    :param timeFrom: time range that Override relative time
     """
 
     title = attr.ib()
     targets = attr.ib()
     aliasColors = attr.ib(default=attr.Factory(dict))
     bars = attr.ib(default=False, validator=instance_of(bool))
+    cacheTimeout = attr.ib(default=None)
     dataSource = attr.ib(default=None)
     description = attr.ib(default=None)
     editable = attr.ib(default=True, validator=instance_of(bool))
     error = attr.ib(default=False, validator=instance_of(bool))
     fill = attr.ib(default=1, validator=instance_of(int))
     grid = attr.ib(default=attr.Factory(Grid), validator=instance_of(Grid))
+    hideTimeOverride = attr.ib(default=False, validator=instance_of(bool))
     id = attr.ib(default=None)
     isNew = attr.ib(default=True, validator=instance_of(bool))
     legend = attr.ib(
@@ -1035,6 +1042,7 @@ class Graph(object):
     lines = attr.ib(default=True, validator=instance_of(bool))
     lineWidth = attr.ib(default=DEFAULT_LINE_WIDTH)
     links = attr.ib(default=attr.Factory(list))
+    maxDataPoints = attr.ib(default=100)
     minSpan = attr.ib(default=None)
     nullPointMode = attr.ib(default=NULL_CONNECTED)
     percentage = attr.ib(default=False, validator=instance_of(bool))
@@ -1066,18 +1074,21 @@ class Graph(object):
         graphObject = {
             'aliasColors': self.aliasColors,
             'bars': self.bars,
+            'cacheTimeout': self.cacheTimeout,
             'datasource': self.dataSource,
             'description': self.description,
             'editable': self.editable,
             'error': self.error,
             'fill': self.fill,
             'grid': self.grid,
+            'hideTimeOverride': self.hideTimeOverride,
             'id': self.id,
             'isNew': self.isNew,
             'legend': self.legend,
             'lines': self.lines,
             'linewidth': self.lineWidth,
             'links': self.links,
+            'maxDataPoints': self.maxDataPoints,
             'minSpan': self.minSpan,
             'nullPointMode': self.nullPointMode,
             'percentage': self.percentage,
@@ -1335,6 +1346,7 @@ class SingleStat(object):
     valueName = attr.ib(default=VTYPE_DEFAULT)
     valueMaps = attr.ib(default=attr.Factory(list))
     timeFrom = attr.ib(default=None)
+    timeShift = attr.ib(default=None)
 
     def to_json_data(self):
         return {
@@ -1376,6 +1388,7 @@ class SingleStat(object):
             'valueMaps': self.valueMaps,
             'valueName': self.valueName,
             'timeFrom': self.timeFrom,
+            'timeShift': self.timeShift,
         }
 
 
@@ -1525,6 +1538,7 @@ class Table(object):
 
     Grafana doc on table: http://docs.grafana.org/reference/table_panel/
 
+    :param cacheTimeout: metric query result cache ttl
     :param columns: table columns for Aggregations view
     :param dataSource: Grafana datasource name
     :param description: optional panel description
@@ -1534,6 +1548,8 @@ class Table(object):
     :param hideTimeOverride: hides time overrides
     :param id: panel id
     :param links: additional web links
+    :param maxDataPoints: maximum metric query results,
+        that will be used for rendering
     :param minSpan: minimum span number
     :param pageSize: rows per page (None is unlimited)
     :param scroll: scroll the table instead of displaying in full
@@ -1550,6 +1566,7 @@ class Table(object):
     dataSource = attr.ib()
     targets = attr.ib()
     title = attr.ib()
+    cacheTimeout = attr.ib(default=None)
     columns = attr.ib(default=attr.Factory(list))
     description = attr.ib(default=None)
     editable = attr.ib(default=True, validator=instance_of(bool))
@@ -1558,6 +1575,7 @@ class Table(object):
     hideTimeOverride = attr.ib(default=False, validator=instance_of(bool))
     id = attr.ib(default=None)
     links = attr.ib(default=attr.Factory(list))
+    maxDataPoints = attr.ib(default=100)
     minSpan = attr.ib(default=None)
     pageSize = attr.ib(default=None)
     repeat = attr.ib(default=None)
@@ -1568,6 +1586,7 @@ class Table(object):
         default=attr.Factory(ColumnSort), validator=instance_of(ColumnSort))
     styles = attr.ib()
     timeFrom = attr.ib(default=None)
+    timeShift = attr.ib(default=None)
 
     transform = attr.ib(default=COLUMNS_TRANSFORM)
     transparent = attr.ib(default=False, validator=instance_of(bool))
@@ -1609,6 +1628,7 @@ class Table(object):
 
     def to_json_data(self):
         return {
+            'cacheTimeout': self.cacheTimeout,
             'columns': self.columns,
             'datasource': self.dataSource,
             'description': self.description,
@@ -1618,6 +1638,7 @@ class Table(object):
             'hideTimeOverride': self.hideTimeOverride,
             'id': self.id,
             'links': self.links,
+            'maxDataPoints': self.maxDataPoints,
             'minSpan': self.minSpan,
             'pageSize': self.pageSize,
             'repeat': self.repeat,
@@ -1628,6 +1649,7 @@ class Table(object):
             'styles': self.styles,
             'targets': self.targets,
             'timeFrom': self.timeFrom,
+            'timeShift': self.timeShift,
             'title': self.title,
             'transform': self.transform,
             'transparent': self.transparent,
