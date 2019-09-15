@@ -8,7 +8,7 @@ Next release
 Changes
 -------
 
-TBA
+* Add ``BarGuage`` for creating bar guages panels in grafana 6
 
 0.5.4 (2019-08-30)
 =======
