@@ -8,7 +8,7 @@ Next release
 Changes
 -------
 
-TBA
+* Add ``GuagePanel`` for creating guages in grafana 6
 
 0.5.4 (2019-08-30)
 =======
