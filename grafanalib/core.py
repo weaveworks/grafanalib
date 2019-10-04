@@ -897,6 +897,7 @@ class Dashboard(object):
         default=attr.Factory(Annotations),
         validator=instance_of(Annotations),
     )
+    description = attr.ib(default="", validator=instance_of(str))
     editable = attr.ib(
         default=True,
         validator=instance_of(bool),
@@ -960,6 +961,7 @@ class Dashboard(object):
         return {
             '__inputs': self.inputs,
             'annotations': self.annotations,
+            "description": self.description,
             'editable': self.editable,
             'gnetId': self.gnetId,
             'hideControls': self.hideControls,
