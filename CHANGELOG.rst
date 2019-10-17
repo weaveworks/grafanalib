@@ -8,7 +8,8 @@ Next release
 Changes
 -------
 
-TBA
+* use ``converter`` instead of ``convert`` on ``attr.ib()``
+    * https://github.com/python-attrs/attrs/issues/307
 
 0.5.4 (2019-08-30)
 =======
