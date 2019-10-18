@@ -8,6 +8,8 @@ Next release
 Changes
 -------
 
+* Add InfluxDB data source
+
 TBA
 
 0.5.4 (2019-08-30)

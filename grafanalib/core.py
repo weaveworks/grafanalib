@@ -329,32 +329,6 @@ class Target(object):
         }
 
 @attr.s
-class InfluxDBTarget(object):
-    """
-    Metric to show.
-
-    :param target: Graphite way to select data
-    """
-
-    query = attr.ib(default="")
-    format = attr.ib(default=TIME_SERIES_TARGET_FORMAT)
-    alias = attr.ib(default="")
-    measurement = attr.ib(default="")
-    rawQuery = True
-    refId = attr.ib(default="")
-
-    def to_json_data(self):
-        return {
-            'query': self.query,
-            'resultFormat': self.format,
-            'alias': self.alias,
-            'measurement': self.measurement,
-            'rawQuery': self.rawQuery,
-            'refId': self.refId
-        }
-
-
-@attr.s
 class Tooltip(object):
 
     msResolution = attr.ib(default=True, validator=instance_of(bool))
