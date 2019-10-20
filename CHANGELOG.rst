@@ -7,6 +7,7 @@ Next release
 
 Changes
 -------
+* Add CloudWatch target
 
 TBA
 
