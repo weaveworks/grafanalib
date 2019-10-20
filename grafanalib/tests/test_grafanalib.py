@@ -25,10 +25,10 @@ def test_serialization():
             ),
         ],
         id=1,
-        yAxes=[
+        yAxes=G.YAxes(
             G.YAxis(format=G.SHORT_FORMAT, label="CPU seconds / second"),
             G.YAxis(format=G.SHORT_FORMAT),
-        ],
+        ),
     )
     stream = StringIO()
     _gen.write_dashboard(graph, stream)
@@ -51,10 +51,10 @@ def test_auto_id():
                             refId='A',
                         ),
                     ],
-                    yAxes=[
+                    yAxes=G.YAxes(
                         G.YAxis(format=G.SHORT_FORMAT, label="CPU seconds"),
                         G.YAxis(format=G.SHORT_FORMAT),
-                    ],
+                    ),
                 )
             ]),
         ],

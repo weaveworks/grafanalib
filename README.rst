@@ -57,10 +57,10 @@ percentile latency:
               refId='E',
             ),
           ],
-          yAxes=[
+          yAxes=G.YAxes(
             YAxis(format=OPS_FORMAT),
             YAxis(format=SHORT_FORMAT),
-          ],
+          ),
           alert=Alert(
             name="Too many 500s on Nginx",
             message="More than 5 QPS of 500s on Nginx for 5 minutes",
