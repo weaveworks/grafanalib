@@ -10,7 +10,9 @@ def create_attribute():
         default=None,
         validator=None,
         repr=True,
-        cmp=True,
+        cmp=None,
+        eq=True,
+        order=False,
         hash=True,
         init=True)
 
