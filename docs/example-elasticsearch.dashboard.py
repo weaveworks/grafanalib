@@ -38,7 +38,8 @@ g = Graph(
     dataSource="elasticsearch",
     targets=tgts,
     lines=False,
-    legend=Legend(alignAsTable=True, rightSide=True, total=True, current=True, max=True),
+    legend=Legend(alignAsTable=True, rightSide=True,
+                  total=True, current=True, max=True),
     lineWidth=1,
     nullPointMode=NULL_AS_NULL,
     seriesOverrides=[
@@ -68,7 +69,7 @@ g = Graph(
             "color": "#447EBC"
         },
     ],
-    yAxes=[
+    yAxes=G.YAxes(
         YAxis(
             label="Count",
             format=SHORT_FORMAT,
@@ -79,7 +80,7 @@ g = Graph(
             format=SECONDS_FORMAT,
             decimals=2
         ),
-    ],
+    ),
     transparent=True,
     span=12,
 )

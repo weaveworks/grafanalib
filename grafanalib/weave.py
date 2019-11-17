@@ -17,13 +17,13 @@ ORANGE = "#EF843C"
 RED = "#E24D42"
 
 ALIAS_COLORS = {
-  "1xx": YELLOW,
-  "2xx": GREEN,
-  "3xx": BLUE,
-  "4xx": ORANGE,
-  "5xx": RED,
-  "success": GREEN,
-  "error": RED,
+    "1xx": YELLOW,
+    "2xx": GREEN,
+    "3xx": BLUE,
+    "4xx": ORANGE,
+    "5xx": RED,
+    "success": GREEN,
+    "error": RED,
 }
 
 
@@ -46,10 +46,10 @@ def QPSGraph(data_source, title, expressions, **kwargs):
         title=title,
         expressions=exprs,
         aliasColors=ALIAS_COLORS,
-        yAxes=[
+        yAxes=G.YAxes(
             G.YAxis(format=G.OPS_FORMAT),
             G.YAxis(format=G.SHORT_FORMAT),
-        ],
+        ),
         **kwargs
     ))
 
