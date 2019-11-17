@@ -25,7 +25,7 @@ IMAGE_NAMES=$(foreach dir,$(DOCKER_IMAGE_DIRS),$(patsubst %,$(IMAGE_PREFIX)/%,$(
 
 # Python-specific stuff
 TOX := $(shell command -v tox 2> /dev/null)
-PIP := $(shell command -v pip 2> /dev/null)
+PIP := $(shell command -v pip3 2> /dev/null)
 FLAKE8 := $(shell command -v flake8 2> /dev/null)
 
 .ensure-tox: .ensure-pip
