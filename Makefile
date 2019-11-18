@@ -58,10 +58,8 @@ deps: setup.py .ensure-tox tox.ini
 
 $(VIRTUALENV_BIN)/flake8 $(VIRTUALENV_BIN)/py.test: $(DEPS_UPTODATE)
 
-gfdatasource/$(UPTODATE): gfdatasource/*
-
 lint: .ensure-flake8
-	$(FLAKE8) gfdatasource/gfdatasource grafanalib
+	$(FLAKE8) grafanalib
 
 test: .ensure-tox
 	$(TOX) --skip-missing-interpreters
