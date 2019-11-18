@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: weaveworks/build-golang:1.11.1-stretch
+      - image: weaveworks/build-golang:1.13.3-stretch
     working_directory: /go/src/github.com/weaveworks/grafanalib
     environment:
       GOPATH: /go
@@ -19,7 +19,11 @@ jobs:
     - run:
         name: Dependencies
         command: |
-          pip install tox flake8
+          git clone --depth 1 -b v1.2.15 https://github.com/pyenv/pyenv.git $HOME/.pyenv
+          $HOME/.pyenv/bin/pyenv install 2.7.16
+          $HOME/.pyenv/bin/pyenv install 3.5.8
+          $HOME/.pyenv/bin/pyenv install 3.7.5
+          pip3 install tox flake8
           make deps
     - run:
         name: make all
