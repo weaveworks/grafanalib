@@ -22,7 +22,7 @@ class CloudwatchTarget(object):
     :param region: CLoudwatch region
     :param refId: target reference id
     :param statistics: Cloudwatch mathematic statistic
-    :param checkParams: If false, disable cloudwatch checks (namespace, region and non empty dimensions)
+    :param checkParams: If false, disable cloudwatch checks
     """
     alias = attr.ib(default="")
     dimensions = attr.ib(default={}, validator=instance_of(dict))

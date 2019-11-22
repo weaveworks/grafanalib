@@ -328,6 +328,7 @@ class Target(object):
             'datasource': self.datasource,
         }
 
+
 @attr.s
 class InfluxDBTarget(object):
     """
