@@ -2,6 +2,7 @@
 
 import attr
 
+TIME_SERIES_TARGET_FORMAT = "time_series"
 
 @attr.s
 class InfluxDBTarget(object):
