@@ -21,7 +21,6 @@ def load_dashboard(path):
     :return: A ``Dashboard``
     """
     if sys.version_info[0] == 3 and sys.version_info[1] >= 5:
-        import importlib.util
         spec = importlib.util.spec_from_file_location("dashboard", path)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
