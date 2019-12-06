@@ -27,7 +27,7 @@ def load_dashboard(path):
         spec.loader.exec_module(module)
     else:
         import importlib
-        module = importlib.load_source("dashboard", path)    
+        module = importlib.load_source("dashboard", path)
     marker = object()
     dashboard = getattr(module, 'dashboard', marker)
     if dashboard is marker:

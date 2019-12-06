@@ -1,4 +1,4 @@
-FROM alpine:3.6
+FROM alpine:3.10
 RUN apk add --no-cache --upgrade python3
 RUN python3 -m ensurepip && pip3 install --upgrade pip
 COPY requirements.txt /
