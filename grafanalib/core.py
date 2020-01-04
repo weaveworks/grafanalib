@@ -5,13 +5,15 @@ encourage it by way of some defaults. Rather, they are ways of building
 arbitrary Grafana JSON.
 """
 
-import attr
-from attr.validators import instance_of, in_
 import itertools
 import math
-from numbers import Number
+
 import string
 import warnings
+from numbers import Number
+
+import attr
+from attr.validators import in_, instance_of
 
 
 @attr.s
@@ -115,6 +117,26 @@ SHORT_FORMAT = "short"
 BYTES_FORMAT = "bytes"
 BITS_PER_SEC_FORMAT = "bps"
 BYTES_PER_SEC_FORMAT = "Bps"
+NONE_FORMAT = "none"
+JOULE_FORMAT = "joule"
+WATTHOUR_FORMAT = "watth"
+WATT_FORMAT = "watt"
+KWATT_FORMAT = "kwatt"
+KWATTHOUR_FORMAT = "kwatth"
+VOLT_FORMAT = "volt"
+BAR_FORMAT = "pressurebar"
+PSI_FORMAT = "pressurepsi"
+CELSIUS_FORMAT = "celsius"
+KELVIN_FORMAT = "kelvin"
+GRAM_FORMAT = "massg"
+EUR_FORMAT = "currencyEUR"
+USD_FORMAT = "currencyUSD"
+METER_FORMAT = "lengthm"
+SQUARE_METER_FORMAT = "areaM2"
+CUBIC_METER_FORMAT = "m3"
+LITRE_FORMAT = "litre"
+PERCENT_FORMAT = "percent"
+VOLT_AMPERE_FORMAT = "voltamp"
 
 # Alert rule state
 STATE_NO_DATA = "no_data"
@@ -1885,27 +1907,6 @@ class Table(object):
 
 
 @attr.s
-class Threshold(object):
-    """Threshold for a gauge
-
-    :param color: color of threshold
-    :param index: index of color in gauge
-    :param value: when to use this color will be null if index is 0
-    """
-
-    color = attr.ib()
-    index = attr.ib(validator=instance_of(int))
-    value = attr.ib(validator=instance_of(float))
-
-    def to_json_data(self):
-        return {
-            "color": self.color,
-            "index": self.index,
-            "value": "null" if self.index == 0 else self.value,
-        }
-
-
-@attr.s
 class BarGauge(object):
     """Generates Bar Gauge panel json structure
 
@@ -2068,7 +2069,7 @@ class GaugePanel(object):
     :param links: additional web links
     :param max: maximum value of the gauge
     :param maxDataPoints: maximum metric query results,
-           that will be used for rendering
+        that will be used for rendering
     :param min: minimum value of the gauge
     :param minSpan: minimum span number
     :param rangeMaps: the list of value to text mappings
@@ -2575,4 +2576,48 @@ class PieChart(object):
             'type': PIE_CHART_TYPE,
             'timeFrom': self.timeFrom,
             'transparent': self.transparent
+        }
+
+
+@attr.s
+class Threshold(object):
+    """Threshold for a gauge
+
+    :param color: color of threshold
+    :param index: index of color in gauge
+    :param value: when to use this color will be null if index is 0
+    """
+
+    color = attr.ib()
+    index = attr.ib(validator=instance_of(int))
+    line = attr.ib(default=True, validator=instance_of(bool))
+    op = attr.ib(default="gt")
+    value = attr.ib(validator=instance_of(float))
+    yaxis = attr.ib(default="left")
+
+    def to_json_data(self):
+        return {
+            "op": self.op,
+            "yaxis": self.yaxis,
+            "color": self.color,
+            "line": self.line,
+            "index": self.index,
+            "value": "null" if self.index == 0 else self.value,
+        }
+
+
+class SeriesOverride(object):
+    alias = attr.ib()
+    bars = attr.ib(default=False)
+    lines = attr.ib(default=True)
+    yaxis = attr.ib(default=1)
+    color = attr.ib(default=None)
+
+    def to_json_data(self):
+        return {
+            "alias": self.alias,
+            "bars": self.bars,
+            "lines": self.lines,
+            "yaxis": self.yaxis,
+            "color": self.color,
         }
