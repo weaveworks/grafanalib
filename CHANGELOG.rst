@@ -103,6 +103,8 @@ Changes
 * Add ``STATE_OK`` for alerts
 * Add named values for the Template.hide parameter
 * Add cardinality metric aggregator for ElasticSearch
+* Add Threshold and Series Override types
+* Add more YAxis formats
 
 Many thanks to contributors @kevingessner, @2easy, @vicmarbev, @butlerx.
 

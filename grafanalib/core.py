@@ -2589,10 +2589,10 @@ class Threshold(object):
     """
 
     color = attr.ib()
+    value = attr.ib(validator=instance_of(float))
     index = attr.ib(validator=instance_of(int))
     line = attr.ib(default=True, validator=instance_of(bool))
     op = attr.ib(default="gt")
-    value = attr.ib(validator=instance_of(float))
     yaxis = attr.ib(default="left")
 
     def to_json_data(self):
