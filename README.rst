@@ -57,7 +57,7 @@ percentile latency:
               refId='E',
             ),
           ],
-          yAxes=G.YAxes(
+          yAxes=YAxes(
             YAxis(format=OPS_FORMAT),
             YAxis(format=SHORT_FORMAT),
           ),

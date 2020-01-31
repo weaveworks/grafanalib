@@ -8,7 +8,7 @@ Next release
 Changes
 -------
 
-TBA
+* Update README.rst to make the example work
 
 0.5.4 (2019-08-30)
 =======
