@@ -2,14 +2,26 @@
 Changelog
 =========
 
-Next release
+0.5.5 (2020-02-17)
 =======
+
+It's been a while since the last release and we are happy to get this one into your hands.
+0.5.5 is a maintenance release, most importantly it adds support for Python > 3.5.
+
+We are very delighted to welcome Matt Richter on board as maintainer.
 
 Changes
 -------
 
 * Automate publishing to PiPy with GitHub Actions
 * Update README.rst to make the example work
+* Bump Dockerfile to use Alpine 3.10 as base
+* Fix up ``load_source()`` call which doesn't exist in Python 3.5
+* Update versions of Python tested
+* Repair tests
+* pin to attrs 19.2 and fix deprecated arguments
+
+Many thanks to contributors @bboreham, @dholbach, @ducksecops, @kevingessner, @matthewmrichter, @uritau.
 
 0.5.4 (2019-08-30)
 =======
