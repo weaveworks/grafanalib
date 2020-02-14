@@ -8,6 +8,7 @@ Next release
 Changes
 -------
 
+* Automate publishing to PiPy with GitHub Actions
 * Update README.rst to make the example work
 
 0.5.4 (2019-08-30)
