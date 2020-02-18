@@ -1,10 +1,10 @@
-name: Publish Python 🐍 distributions 📦 to PyPI and TestPyPI
+name: Publish Python 🐍 distributions 📦 to PyPI
 
 on: push
 
 jobs:
   build-n-publish:
-    name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
+    name: Build and publish Python 🐍 distributions 📦 to PyPI
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@master
@@ -22,10 +22,3 @@ jobs:
       uses: pypa/gh-action-pypi-publish@master
       with:
         password: ${{ secrets.pypi_password }}
-
-## Test work-flow - might be useful until we confirmed this working?
-#    - name: Publish distribution 📦 to Test PyPI
-#      uses: pypa/gh-action-pypi-publish@master
-#      with:
-#        password: ${{ secrets.test_pypi_password }}
-#        repository_url: https://test.pypi.org/legacy/
