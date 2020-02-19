@@ -9,6 +9,7 @@ Changes
 -------
 
 * Add ``BarGuage`` for creating bar guages panels in grafana 6
+* Add ``GuagePanel`` for creating guages in grafana 6
 * TBA
 
 
