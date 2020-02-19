@@ -8,11 +8,11 @@ Next release
 Changes
 -------
 
+* Add ``GuagePanel`` for creating guages in grafana 6
 * TBA
 
 
 0.5.5 (2020-02-17)
-=======
 
 It's been a while since the last release and we are happy to get this one into your hands.
 0.5.5 is a maintenance release, most importantly it adds support for Python >= 3.5.
