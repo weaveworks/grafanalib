@@ -221,6 +221,7 @@ GAUGE_DISPLAY_MODE_BASIC = "basic"
 GAUGE_DISPLAY_MODE_LCD = "lcd"
 GAUGE_DISPLAY_MODE_GRADIENT = "gradient"
 
+
 @attr.s
 class Mapping(object):
 
@@ -1606,25 +1607,6 @@ class Table(object):
 class Threshold(object):
     """Threshold for a gauge
 
-    :param color: color of threshold
-    :param index: index of color in gauge
-    :param value: when to use this color will be null if index is 0
-    """
-
-    color = attr.ib()
-    index = attr.ib(validator=instance_of(int))
-    value = attr.ib(validator=instance_of(float))
-
-    def to_json_data(self):
-        return {
-            "color": self.color,
-            "index": self.index,
-            "value": "null" if self.index == 0 else self.value,
-        }
-
-@attr.s
-class Threshold(object):
-    """Threshold for a gauge
     :param color: color of threshold
     :param index: index of color in gauge
     :param value: when to use this color will be null if index is 0
