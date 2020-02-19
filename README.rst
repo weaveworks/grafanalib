@@ -57,7 +57,7 @@ percentile latency:
               refId='E',
             ),
           ],
-          yAxes=G.YAxes(
+          yAxes=YAxes(
             YAxis(format=OPS_FORMAT),
             YAxis(format=SHORT_FORMAT),
           ),
@@ -129,7 +129,7 @@ Support
 This library is in its very early stages. We'll probably make changes that
 break backwards compatibility, although we'll try hard not to.
 
-grafanalib works with Python 2.7, 3.4, 3.5, and 3.6.
+grafanalib works with Python 2.7, 3.4, 3.5, 3.6 and 3.7.
 
 Developing
 ==========
@@ -161,7 +161,7 @@ Getting Help
 If you have any questions about, feedback for or problems with ``grafanalib``:
 
 - Invite yourself to the `Weave Users Slack <https://slack.weave.works/>`_.
-- Ask a question on the `#general <https://weave-community.slack.com/messages/general/>`_ slack channel.
+- Ask a question on the `#grafanalib <https://weave-community.slack.com/messages/grafanalib/>`_ slack channel.
 - `File an issue <https://github.com/weaveworks/grafanalib/issues/new>`_.
 
 Your feedback is always welcome!
