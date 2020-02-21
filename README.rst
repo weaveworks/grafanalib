@@ -141,19 +141,12 @@ If you're working on the project, and need to build from source, it's done as fo
   $ . ./.env/bin/activate
   $ pip install -e .
 
-`gfdatasource`
-==============
+Configuring Grafana Datasources
+===============================
 
-This module also provides a script and docker image which can configure grafana
-with new sources, or enable app plugins.
-
-The script answers the `--help` with full usage information, but basic
-invocation looks like this:
-
-.. code-block:: console
-
-  $ <gfdatasource> --grafana-url http://grafana. datasource --data-source-url http://datasource
-  $ <gfdatasource> --grafana-url http://grafana. app --id my-plugin
+This repo used to contain a program `gfdatasource` for configuring
+Grafana data sources, but it has been retired since Grafana now has a
+built-in way to do it.  See https://grafana.com/docs/administration/provisioning/#datasources
 
 Getting Help
 ============
