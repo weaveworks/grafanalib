@@ -28,6 +28,8 @@ TOX := $(shell command -v tox 2> /dev/null)
 PIP := $(shell command -v pip3 2> /dev/null)
 FLAKE8 := $(shell command -v flake8 2> /dev/null)
 
+DOCS_PORT:=8000
+
 .ensure-tox: .ensure-pip
 ifndef TOX
 	rm -f .ensure-tox
@@ -72,7 +74,18 @@ clean:
 	rm -rf $(UPTODATE_FILES)
 	rm -rf grafanalib.egg-info
 	rm -f .ensure-pip .ensure-tox .ensure-flake8
+	rm -rf docs/api
 	find . -name '*.pyc' | xargs rm
 
 clean-deps:
 	rm -rf $(VIRTUALENV_DIR)
+
+build-docs:
+	docker build -t grafanalib-docs -f Dockerfile.docs .
+
+test-docs: build-docs
+	@docker run -it grafanalib-docs /usr/bin/linkchecker docs/build/html/index.html
+
+serve-docs: build-docs
+	@echo Starting docs website on http://localhost:${DOCS_PORT}/docs/build/html/index.html
+	@docker run -i -p ${DOCS_PORT}:8000 -e USER_ID=$$UID grafanalib-docs

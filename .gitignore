@@ -10,3 +10,7 @@ test-results/junit-*.xml
 .ensure-*
 /.tox
 /.coverage
+
+# Documentation
+docs/api
+docs/build

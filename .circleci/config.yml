@@ -6,6 +6,7 @@ jobs:
       - image: circleci/python:3.7.5
     steps:
     - checkout
+    - setup_remote_docker
     - run:
         name: Dependencies
         command: |
@@ -19,6 +20,8 @@ jobs:
         name: make all
         command: |
           make all
+    # Test that the documentation is okay
+    - run: make test-docs
     - store_test_results:
         path: test-results
     - store_artifacts:

@@ -1568,7 +1568,7 @@ class Table(object):
             The ColumnStyle may also be None.
         :param styles: An optional list of extra column styles that will be
             appended to the table's list of styles.
-        :param **kwargs: Other parameters to the Table constructor.
+        :param kwargs: Other parameters to the Table constructor.
         :return: A Table.
         """
         extraStyles = styles if styles else []

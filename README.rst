@@ -102,7 +102,9 @@ percentile latency:
 
 There is a fair bit of repetition here, but once you figure out what works for
 your needs, you can factor that out.
-See `our Weave-specific customizations <grafanalib/weave.py>`_ for inspiration.
+See `our Weave-specific customizations
+<https://github.com/weaveworks/grafanalib/blob/master/grafanalib/weave.py>`_
+for inspiration.
 
 Generating dashboards
 =====================
