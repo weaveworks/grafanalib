@@ -271,7 +271,7 @@ class ZabbixAggregateByFunction(object):
 
     Takes all timeseries and consolidate all its points falled in given
     interval into one point using function, which can be one of:
-        avg, min, max, median.
+    avg, min, max, median.
     http://docs.grafana-zabbix.org/reference/functions/#aggregateBy
     """
 
