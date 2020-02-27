@@ -6,6 +6,7 @@ jobs:
       - image: circleci/python:3.7.5
     steps:
     - checkout
+    - setup_remote_docker
     - run:
         name: Dependencies
         command: |
@@ -14,11 +15,14 @@ jobs:
           $HOME/.pyenv/bin/pyenv install 3.5.8
           $HOME/.pyenv/bin/pyenv install 3.7.5
           pip3 install --user tox flake8
+          pip3 install --user -r docs/requirements.txt
           make deps
     - run:
         name: make all
         command: |
           make all
+    # Test that the documentation is okay
+    - run: make test-docs
     - store_test_results:
         path: test-results
     - store_artifacts:
