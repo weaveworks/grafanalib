@@ -1556,7 +1556,7 @@ class Table(object):
                 type=DateColumnStyleType(),
             ),
             ColumnStyle(
-                alias="Time",
+                alias="time",
                 pattern="time",
                 type=DateColumnStyleType(),
             ),
