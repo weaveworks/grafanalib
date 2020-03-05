@@ -1556,6 +1556,11 @@ class Table(object):
                 type=DateColumnStyleType(),
             ),
             ColumnStyle(
+                alias="Time",
+                pattern="time",
+                type=DateColumnStyleType(),
+            ),
+            ColumnStyle(
                 pattern="/.*/",
             ),
         ]
