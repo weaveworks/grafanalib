@@ -13,6 +13,8 @@ Changes
 * Removed gfdatasource - feature is built in to Grafana since v5.
 * Generate API docs for readthedocs.org
 * Fix AlertList panel generation
+* Drop testing of Python 2.7, it has been EOL'ed and CI was broken
+  due to this.
 
 0.5.5 (2020-02-17)
 ==================
