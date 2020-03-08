@@ -1356,8 +1356,8 @@ class SingleStat(object):
 @attr.s
 class TableRangeMaps(object):
     fr = attr.ib(default = "")
-    to = attr.ib( default = "")
-    text = attr.ib(validator=instance_of(str), default = "")
+    to = attr.ib(default = "")
+    text = attr.ib(default = "", validator=instance_of(str))
 
     def to_json_data(self):
         return {
@@ -1370,7 +1370,7 @@ class TableRangeMaps(object):
 @attr.s
 class TableValueMaps(object):
     value = attr.ib(default = "")
-    text = attr.ib(validator=instance_of(str), default = "")
+    text = attr.ib(default = "", validator=instance_of(str))
 
     def to_json_data(self):
         return {
@@ -1423,20 +1423,10 @@ class StringColumnStyleType(object):
     sanitize = attr.ib(validator=instance_of(bool), default = False)
     unit = attr.ib(default=SHORT_FORMAT)
     mappingType = attr.ib(default=MAPPING_TYPE_VALUE_TO_TEXT)
-    valueMaps = attr.ib(validator=instance_of(list))
-    rangeMaps = attr.ib(validator=instance_of(list))
-
-    @valueMaps.default
-    def valueMaps_default(self):
-        return [
-            TableValueMaps()
-        ]
-    
-    @rangeMaps.default
-    def rangeMaps_default(self):
-        return [
-            TableRangeMaps()
-        ]
+    valueMaps = attr.ib(default = attr.Factory(
+        lambda: [TableValueMaps()]), validator=instance_of(list))
+    rangeMaps = attr.ib(default = attr.Factory(
+        lambda: [TableRangeMaps()]), validator=instance_of(list))
 
     def to_json_data(self):
         return {
