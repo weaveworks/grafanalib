@@ -821,7 +821,7 @@ class ZabbixTriggersPanel(object):
     transparent = attr.ib(default=False, validator=instance_of(bool))
     triggerSeverity = attr.ib(
         default=ZABBIX_SEVERITY_COLORS,
-        convert=convertZabbixSeverityColors,
+        converter=convertZabbixSeverityColors,
     )
     triggers = attr.ib(
         default=attr.Factory(ZabbixTrigger),
