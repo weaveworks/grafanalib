@@ -149,12 +149,24 @@ If you're working on the project, and need to build from source, it's done as fo
 Configuring Grafana Datasources
 ===============================
 
-This repo used to contain a program `gfdatasource` for configuring
+This repo used to contain a program ``gfdatasource`` for configuring
 Grafana data sources, but it has been retired since Grafana now has a
 built-in way to do it.  See https://grafana.com/docs/administration/provisioning/#datasources
 
+Community
+=========
+
+We'd like you to join the ``grafanalib`` community! Talk to us on Slack (see the links),
+or join us for one of our next meetings):
+
+- Next meeting: 2020-03-20 15:00 UTC
+- https://zoom.us/j/405935052
+- `Meeting minutes and agenda
+  <https://docs.google.com/document/d/1JxrSszyPHYhNbJDWYZehRKv6AO4U-zIBhuNmYQVOIHo/edit>`_
+
+
 Getting Help
-============
+------------
 
 If you have any questions about, feedback for or problems with ``grafanalib``:
 
