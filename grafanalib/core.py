@@ -538,7 +538,7 @@ def _balance_panels(panels):
 class Row(object):
     # TODO: jml would like to separate the balancing behaviour from this
     # layer.
-    panels = attr.ib(default=attr.Factory(list), convert=_balance_panels)
+    panels = attr.ib(default=attr.Factory(list), converter=_balance_panels)
     collapse = attr.ib(
         default=False, validator=instance_of(bool),
     )
@@ -550,7 +550,7 @@ class Row(object):
         validator=instance_of(Pixels),
     )
     showTitle = attr.ib(default=None)
-    title = attr.ib(default="")
+    title = attr.ib(default=None)
     repeat = attr.ib(default=None)
 
     def _iter_panels(self):
@@ -1103,7 +1103,7 @@ class Graph(object):
     # XXX: This isn't a *good* default, rather it's the default Grafana uses.
     yAxes = attr.ib(
         default=attr.Factory(YAxes),
-        convert=to_y_axes,
+        converter=to_y_axes,
         validator=instance_of(YAxes),
     )
     alert = attr.ib(default=None)

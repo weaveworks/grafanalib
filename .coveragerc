@@ -3,3 +3,5 @@ branch = True
 include =
     grafanalib/*.py
     grafanalib/**/*.py
+omit =
+    grafanalib/tests/*.py
