@@ -11,7 +11,6 @@ jobs:
         name: Dependencies
         command: |
           git clone --depth 1 -b v1.2.15 https://github.com/pyenv/pyenv.git $HOME/.pyenv
-          $HOME/.pyenv/bin/pyenv install 2.7.16
           $HOME/.pyenv/bin/pyenv install 3.5.8
           $HOME/.pyenv/bin/pyenv install 3.7.5
           pip3 install --user tox flake8
