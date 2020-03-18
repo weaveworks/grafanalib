@@ -19,6 +19,10 @@ setup(
     description='Library for building Grafana dashboards',
     long_description=open(README).read(),
     url='https://github.com/weaveworks/grafanalib',
+    project_urls={
+        "Documentation": "https://grafanalib.readthedocs.io",
+        "Source": "https://github.com/weaveworks/grafanalib",
+    },
     author='Weaveworks',
     author_email='help+grafanalib@weave.works',
     license='Apache',
