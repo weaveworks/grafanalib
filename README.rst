@@ -5,6 +5,11 @@ Getting Started with grafanalib
 .. image:: https://circleci.com/gh/weaveworks/grafanalib.svg?style=shield
     :target: https://circleci.com/gh/weaveworks/grafanalib
 
+.. image:: https://readthedocs.org/projects/grafanalib/badge/?version=latest
+    :alt: Documentation Status
+    :scale: 100%
+    :target: https://grafanalib.readthedocs.io/en/latest/?badge=latest
+
 Do you like `Grafana <http://grafana.org/>`_ but wish you could version your
 dashboard configuration? Do you find yourself repeating common patterns? If
 so, grafanalib is for you.
@@ -92,6 +97,7 @@ Getting Help
 
 If you have any questions about, feedback for or problems with ``grafanalib``:
 
+- Read the documentation at https://grafanalib.readthedocs.io
 - Invite yourself to the `Weave Users Slack <https://slack.weave.works/>`_.
 - Ask a question on the `#grafanalib <https://weave-community.slack.com/messages/grafanalib/>`_ slack channel.
 - `File an issue <https://github.com/weaveworks/grafanalib/issues/new>`_.
