@@ -649,6 +649,7 @@ class Template(object):
 
     name = attr.ib()
     query = attr.ib()
+    _current = attr.ib(init=False, default=attr.Factory(dict))
     default = attr.ib(default=None)
     dataSource = attr.ib(default=None)
     label = attr.ib(default=None)
@@ -661,6 +662,7 @@ class Template(object):
         default=False,
         validator=instance_of(bool),
     )
+    options = attr.ib(default=attr.Factory(list))
     regex = attr.ib(default=None)
     useTags = attr.ib(
         default=False,
@@ -674,21 +676,42 @@ class Template(object):
     hide = attr.ib(default=SHOW)
     sort = attr.ib(default=SORT_ALPHA_ASC)
 
-    def to_json_data(self):
-        return {
-            'allValue': self.allValue,
-            'current': {
+    def __attrs_post_init__(self):
+        if self.type == 'custom':
+            if len(self.options) == 0:
+                for value in self.query.split(','):
+                    is_default = value == self.default
+                    option = {
+                        "selected": is_default,
+                        "text": value,
+                        "value": value,
+                    }
+                    if is_default:
+                        self._current = option
+                    self.options.append(option)
+            else:
+                for option in self.options:
+                    if option['selected']:
+                        self._current = option
+                        break
+        else:
+            self._current = {
                 'text': self.default,
                 'value': self.default,
                 'tags': [],
-            },
+            }
+
+    def to_json_data(self):
+        return {
+            'allValue': self.allValue,
+            'current': self._current,
             'datasource': self.dataSource,
             'hide': self.hide,
             'includeAll': self.includeAll,
             'label': self.label,
             'multi': self.multi,
             'name': self.name,
-            'options': [],
+            'options': self.options,
             'query': self.query,
             'refresh': self.refresh,
             'regex': self.regex,
@@ -897,6 +920,7 @@ class Dashboard(object):
         default=attr.Factory(Annotations),
         validator=instance_of(Annotations),
     )
+    description = attr.ib(default="", validator=instance_of(str))
     editable = attr.ib(
         default=True,
         validator=instance_of(bool),
@@ -960,6 +984,7 @@ class Dashboard(object):
         return {
             '__inputs': self.inputs,
             'annotations': self.annotations,
+            "description": self.description,
             'editable': self.editable,
             'gnetId': self.gnetId,
             'hideControls': self.hideControls,
@@ -1570,7 +1595,7 @@ class Table(object):
         """Construct a table where each column has an associated style.
 
         :param columns: A list of (Column, ColumnStyle) pairs, where the
-            ColumnStyle is the style for the column and does **not** have a
+            ColumnStyle is the style for the column and does not have a
             pattern set (or the pattern is set to exactly the column name).
             The ColumnStyle may also be None.
         :param styles: An optional list of extra column styles that will be
@@ -1634,6 +1659,7 @@ class Threshold(object):
 @attr.s
 class BarGauge(object):
     """Generates Bar Gauge panel json structure
+
     :param allValue: If All values should be shown or a Calculation
     :param cacheTimeout: metric query result cache ttl
     :param calc: Calculation to perform on metrics
@@ -1771,6 +1797,7 @@ class BarGauge(object):
 @attr.s
 class GaugePanel(object):
     """Generates Gauge panel json structure
+
     :param allValue: If All values should be shown or a Calculation
     :param cacheTimeout: metric query result cache ttl
     :param calc: Calculation to perform on metrics
@@ -1788,7 +1815,7 @@ class GaugePanel(object):
     :param links: additional web links
     :param max: maximum value of the gauge
     :param maxDataPoints: maximum metric query results,
-        that will be used for rendering
+           that will be used for rendering
     :param min: minimum value of the gauge
     :param minSpan: minimum span number
     :param rangeMaps: the list of value to text mappings
