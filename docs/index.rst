@@ -10,7 +10,8 @@ Welcome to grafanalib's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   ../README
+   getting-started
+
    api/grafanalib
    api/modules
 

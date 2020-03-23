@@ -108,9 +108,9 @@ class Filter(object):
 
     def to_json_data(self):
         return {
-                'label': self.label,
-                'query': self.query,
-                }
+            'label': self.label,
+            'query': self.query,
+        }
 
 
 @attr.s
@@ -127,12 +127,12 @@ class FiltersGroupBy(object):
 
     def to_json_data(self):
         return {
-                'id': str(self.id),
-                'settings': {
-                             'filters': self.filters,
-                             },
-                'type': 'filters',
-                }
+            'id': str(self.id),
+            'settings': {
+                'filters': self.filters,
+            },
+            'type': 'filters',
+        }
 
 
 @attr.s
