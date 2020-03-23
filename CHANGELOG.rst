@@ -15,6 +15,11 @@ Changes
 * Fix AlertList panel generation
 * Drop testing of Python 2.7, it has been EOL'ed and CI was broken
   due to this.
+* Automatically test documentation examples.
+* Point to dev meeting resources.
+* Add description attribute to Dashboard.
+* Add support for custom variables.
+* Point out documentation on readthedocs more clearly.
 
 0.5.5 (2020-02-17)
 ==================
