@@ -21,7 +21,7 @@ How it works
 
 Take a look at `the examples directory
 <https://github.com/weaveworks/grafanalib/blob/master/grafanalib/tests/examples/>`_,
-e.g. ` this dashboard
+e.g. `this dashboard
 <https://github.com/weaveworks/grafanalib/blob/master/grafanalib/tests/examples/example.dashboard.py>`_
 will configure a dashboard with a single row, with one QPS graph broken down
 by status code and another latency graph showing median and 99th percentile
@@ -60,7 +60,7 @@ Support
 This library is in its very early stages. We'll probably make changes that
 break backwards compatibility, although we'll try hard not to.
 
-grafanalib works with Python 3.4, 3.5, 3.6 and 3.7.
+grafanalib works with Python 3.4 through 3.8.
 
 Developing
 ==========

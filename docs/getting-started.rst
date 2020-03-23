@@ -27,9 +27,6 @@ See `our Weave-specific customizations
 <https://github.com/weaveworks/grafanalib/blob/master/grafanalib/weave.py>`_
 for inspiration.
 
-You can read the entire grafanlib documentation on `readthedocs.io
-<https://grafanalib.readthedocs.io/en/latest/>`_.
-
 Generating dashboards
 =====================
 
