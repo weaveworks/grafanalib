@@ -21,7 +21,7 @@ How it works
 
 Take a look at `the examples directory
 <https://github.com/weaveworks/grafanalib/blob/master/grafanalib/tests/examples/>`_,
-e.g. ` this dashboard
+e.g. `this dashboard
 <https://github.com/weaveworks/grafanalib/blob/master/grafanalib/tests/examples/example.dashboard.py>`_
 will configure a dashboard with a single row, with one QPS graph broken down
 by status code and another latency graph showing median and 99th percentile
