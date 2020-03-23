@@ -1590,7 +1590,7 @@ class Table(object):
         """Construct a table where each column has an associated style.
 
         :param columns: A list of (Column, ColumnStyle) pairs, where the
-            ColumnStyle is the style for the column and does **not** have a
+            ColumnStyle is the style for the column and does not have a
             pattern set (or the pattern is set to exactly the column name).
             The ColumnStyle may also be None.
         :param styles: An optional list of extra column styles that will be
@@ -1654,6 +1654,7 @@ class Threshold(object):
 @attr.s
 class BarGauge(object):
     """Generates Bar Gauge panel json structure
+
     :param allValue: If All values should be shown or a Calculation
     :param cacheTimeout: metric query result cache ttl
     :param calc: Calculation to perform on metrics
@@ -1791,6 +1792,7 @@ class BarGauge(object):
 @attr.s
 class GaugePanel(object):
     """Generates Gauge panel json structure
+
     :param allValue: If All values should be shown or a Calculation
     :param cacheTimeout: metric query result cache ttl
     :param calc: Calculation to perform on metrics
@@ -1808,7 +1810,7 @@ class GaugePanel(object):
     :param links: additional web links
     :param max: maximum value of the gauge
     :param maxDataPoints: maximum metric query results,
-        that will be used for rendering
+           that will be used for rendering
     :param min: minimum value of the gauge
     :param minSpan: minimum span number
     :param rangeMaps: the list of value to text mappings
