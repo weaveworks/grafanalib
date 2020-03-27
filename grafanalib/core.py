@@ -1954,9 +1954,7 @@ class Heatmap(object):
     """Generates Heatmap panel json structure (https://grafana.com/docs/grafana/latest/features/panels/heatmap/)
 
     :param heatmap
-    :param cards: A heatmap card object: containing:
-        "cardPadding"
-        "cardRound"
+    :param cards: A heatmap card object: keys "cardPadding", "cardRound"
     :param color: Heatmap color object
     :param dataFormat: 'timeseries' or 'tsbuckets'
     :param yBucketBound: 'auto', 'upper', 'middle', 'lower'
