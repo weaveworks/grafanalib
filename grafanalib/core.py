@@ -77,6 +77,7 @@ TEXT_TYPE = 'text'
 ALERTLIST_TYPE = "alertlist"
 BARGAUGE_TYPE = "bargauge"
 GAUGE_TYPE = "gauge"
+HEATMAP_TYPE = "heatmap"
 
 DEFAULT_FILL = 1
 DEFAULT_REFRESH = '10s'
@@ -1911,4 +1912,134 @@ class GaugePanel(object):
             "title": self.title,
             "transparent": self.transparent,
             "type": GAUGE_TYPE,
+        }
+
+@attr.s
+class HeatmapColor(object):
+    """A Color object for heatmaps
+
+    :param cardColor
+    :param colorScale
+    :param colorScheme
+    :param exponent
+    :param max
+    :param min
+    :param mode
+    """
+
+    # Maybe cardColor should validate to RGBA object, not sure
+    cardColor = attr.ib(default='#b4ff00', validator=instance_of(str))
+    colorScale = attr.ib(default='sqrt', validator=instance_of(str))
+    colorScheme = attr.ib(default='interpolateOranges')
+    exponent = attr.ib(default=0.5, validator=instance_of(float))
+    mode = attr.ib(default="spectrum", validator=instance_of(str))
+    max = attr.ib(default=None)
+    min = attr.ib(default=None)
+
+
+    def to_json_data(self):
+        return {
+            "mode": self.mode,
+            "cardColor": self.cardColor,
+            "colorScale": self.colorScale,
+            "exponent": self.exponent,
+            "colorScheme": self.colorScheme,
+            "max": self.max,
+            "min": self.min,
+        }
+
+@attr.s
+class Heatmap(object):
+    """Generates Heatmap panel json structure
+    (https://grafana.com/docs/grafana/latest/features/panels/heatmap/)
+
+    :param heatmap
+    :param cards: A heatmap card object: containing:
+        "cardPadding"
+        "cardRound"
+    :param color: Heatmap color object
+    :param dataFormat: 'timeseries' or 'tsbuckets'
+    :param yBucketBound: 'auto', 'upper', 'middle', 'lower'
+    :param reverseYBuckets: boolean
+    :param xBucketSize
+    :param xBucketNumber
+    :param yBucketSize
+    :param yBucketNumber
+    :param highlightCards: boolean
+    :param hideZeroBuckets: boolean
+    """
+
+    title = attr.ib()
+    description = attr.ib(default=None)
+    id = attr.ib(default=None)
+    # The below does not really like the Legend class we have defined above
+    legend = attr.ib(default={"show": False})
+    links = attr.ib(default=None)
+    targets = attr.ib(default=None)
+    tooltip = attr.ib(
+        default=attr.Factory(Tooltip),
+        validator=instance_of(Tooltip),
+    )
+    span = attr.ib(default=None)
+
+    cards = attr.ib(default={
+        "cardPadding": None,
+        "cardRound": None
+      })
+
+    color = attr.ib(
+        default=attr.Factory(HeatmapColor),
+        validator=instance_of(HeatmapColor),
+    )
+
+    dataFormat = attr.ib(default='timeseries')
+    datasource = attr.ib(default=None)
+    heatmap = {}
+    hideZeroBuckets = attr.ib(default=False)
+    highlightCards = attr.ib(default=True)
+    options = attr.ib(default=None)
+
+    xAxis = attr.ib(
+        default=attr.Factory(XAxis),
+        validator=instance_of(XAxis)
+    )
+    xBucketNumber = attr.ib(default=None)
+    xBucketSize = attr.ib(default=None)
+
+    yAxis = attr.ib(
+        default=attr.Factory(YAxis),
+        validator=instance_of(YAxis)
+    )
+    yBucketBound = attr.ib(default=None)
+    yBucketNumber = attr.ib(default=None)
+    yBucketSize = attr.ib(default=None)
+    reverseYBuckets = attr.ib(default=False)
+
+    def to_json_data(self):
+        return {
+            'cards': self.cards,
+            'color': self.color,
+            'dataFormat': self.dataFormat,
+            'datasource': self.datasource,
+            'description': self.description,
+            'heatmap': self.heatmap,
+            'hideZeroBuckets': self.hideZeroBuckets,
+            'highlightCards': self.highlightCards,
+            'id': self.id,
+            'legend': self.legend,
+            'links': self.links,
+            'options': self.options,
+            'reverseYBuckets': self.reverseYBuckets,
+            'span': self.span,
+            'targets': self.targets,
+            'title': self.title,
+            'tooltip': self.tooltip,
+            'type': HEATMAP_TYPE,
+            'xAxis': self.xAxis,
+            'xBucketNumber': self.xBucketNumber,
+            'xBucketSize': self.xBucketSize,
+            'yAxis': self.yAxis,
+            'yBucketBound': self.yBucketBound,
+            'yBucketNumber': self.yBucketNumber,
+            'yBucketSize': self.yBucketSize
         }
