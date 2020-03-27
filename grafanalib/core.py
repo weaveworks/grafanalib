@@ -1914,6 +1914,7 @@ class GaugePanel(object):
             "type": GAUGE_TYPE,
         }
 
+
 @attr.s
 class HeatmapColor(object):
     """A Color object for heatmaps
@@ -1947,6 +1948,7 @@ class HeatmapColor(object):
             "max": self.max,
             "min": self.min,
         }
+
 
 @attr.s
 class Heatmap(object):
@@ -1985,7 +1987,8 @@ class Heatmap(object):
     cards = attr.ib(default={
         "cardPadding": None,
         "cardRound": None
-      })
+        }
+    )
 
     color = attr.ib(
         default=attr.Factory(HeatmapColor),
