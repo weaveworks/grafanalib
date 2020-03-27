@@ -1937,7 +1937,6 @@ class HeatmapColor(object):
     max = attr.ib(default=None)
     min = attr.ib(default=None)
 
-
     def to_json_data(self):
         return {
             "mode": self.mode,
@@ -1984,9 +1983,10 @@ class Heatmap(object):
     )
     span = attr.ib(default=None)
 
-    cards = attr.ib(default={
-        "cardPadding": None,
-        "cardRound": None
+    cards = attr.ib(
+        default={
+            "cardPadding": None,
+            "cardRound": None
         }
     )
 
