@@ -1951,8 +1951,7 @@ class HeatmapColor(object):
 
 @attr.s
 class Heatmap(object):
-    """Generates Heatmap panel json structure
-    (https://grafana.com/docs/grafana/latest/features/panels/heatmap/)
+    """Generates Heatmap panel json structure (https://grafana.com/docs/grafana/latest/features/panels/heatmap/)
 
     :param heatmap
     :param cards: A heatmap card object: containing:
