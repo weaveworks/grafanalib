@@ -75,6 +75,8 @@ SINGLESTAT_TYPE = 'singlestat'
 TABLE_TYPE = 'table'
 TEXT_TYPE = 'text'
 ALERTLIST_TYPE = "alertlist"
+BARGAUGE_TYPE = "bargauge"
+GAUGE_TYPE = "gauge"
 
 DEFAULT_FILL = 1
 DEFAULT_REFRESH = '10s'
@@ -196,6 +198,28 @@ SORT_NUMERIC_ASC = 3
 SORT_NUMERIC_DESC = 4
 SORT_ALPHA_IGNORE_CASE_ASC = 5
 SORT_ALPHA_IGNORE_CASE_DESC = 6
+
+GAUGE_CALC_LAST = "last"
+GAUGE_CALC_FIRST = "first"
+GAUGE_CALC_MIN = "min"
+GAUGE_CALC_MAX = "max"
+GAUGE_CALC_MEAN = "mean"
+GAUGE_CALC_TOTAL = "total"
+GAUGE_CALC_COUNT = "count"
+GAUGE_CALC_RANGE = "range"
+GAUGE_CALC_DELTA = "delta"
+GAUGE_CALC_STEP = "step"
+GAUGE_CALC_DIFFERENCE = "difference"
+GAUGE_CALC_LOGMIN = "logmin"
+GAUGE_CALC_CHANGE_COUNT = "changeCount"
+GAUGE_CALC_DISTINCT_COUNT = "distinctCount"
+
+ORIENTATION_HORIZONTAL = "horizontal"
+ORIENTATION_VERTICAL = "vertical"
+
+GAUGE_DISPLAY_MODE_BASIC = "basic"
+GAUGE_DISPLAY_MODE_LCD = "lcd"
+GAUGE_DISPLAY_MODE_GRADIENT = "gradient"
 
 
 @attr.s
@@ -651,6 +675,7 @@ class Template(object):
 
     name = attr.ib()
     query = attr.ib()
+    _current = attr.ib(init=False, default=attr.Factory(dict))
     default = attr.ib(default=None)
     dataSource = attr.ib(default=None)
     label = attr.ib(default=None)
@@ -663,6 +688,7 @@ class Template(object):
         default=False,
         validator=instance_of(bool),
     )
+    options = attr.ib(default=attr.Factory(list))
     regex = attr.ib(default=None)
     useTags = attr.ib(
         default=False,
@@ -676,21 +702,42 @@ class Template(object):
     hide = attr.ib(default=SHOW)
     sort = attr.ib(default=SORT_ALPHA_ASC)
 
-    def to_json_data(self):
-        return {
-            'allValue': self.allValue,
-            'current': {
+    def __attrs_post_init__(self):
+        if self.type == 'custom':
+            if len(self.options) == 0:
+                for value in self.query.split(','):
+                    is_default = value == self.default
+                    option = {
+                        "selected": is_default,
+                        "text": value,
+                        "value": value,
+                    }
+                    if is_default:
+                        self._current = option
+                    self.options.append(option)
+            else:
+                for option in self.options:
+                    if option['selected']:
+                        self._current = option
+                        break
+        else:
+            self._current = {
                 'text': self.default,
                 'value': self.default,
                 'tags': [],
-            },
+            }
+
+    def to_json_data(self):
+        return {
+            'allValue': self.allValue,
+            'current': self._current,
             'datasource': self.dataSource,
             'hide': self.hide,
             'includeAll': self.includeAll,
             'label': self.label,
             'multi': self.multi,
             'name': self.name,
-            'options': [],
+            'options': self.options,
             'query': self.query,
             'refresh': self.refresh,
             'regex': self.regex,
@@ -899,6 +946,7 @@ class Dashboard(object):
         default=attr.Factory(Annotations),
         validator=instance_of(Annotations),
     )
+    description = attr.ib(default="", validator=instance_of(str))
     editable = attr.ib(
         default=True,
         validator=instance_of(bool),
@@ -962,6 +1010,7 @@ class Dashboard(object):
         return {
             '__inputs': self.inputs,
             'annotations': self.annotations,
+            "description": self.description,
             'editable': self.editable,
             'gnetId': self.gnetId,
             'hideControls': self.hideControls,
@@ -1192,6 +1241,7 @@ class AlertList(object):
     onlyAlertsOnDashboard = attr.ib(default=True, validator=instance_of(bool))
     show = attr.ib(default=ALERTLIST_SHOW_CURRENT)
     sortOrder = attr.ib(default=SORT_ASC, validator=in_([1, 2, 3]))
+    span = attr.ib(default=6)
     stateFilter = attr.ib(default=attr.Factory(list))
     title = attr.ib(default="")
     transparent = attr.ib(default=False, validator=instance_of(bool))
@@ -1205,6 +1255,7 @@ class AlertList(object):
             'onlyAlertsOnDashboard': self.onlyAlertsOnDashboard,
             'show': self.show,
             'sortOrder': self.sortOrder,
+            'span': self.span,
             'stateFilter': self.stateFilter,
             'title': self.title,
             'transparent': self.transparent,
@@ -1552,6 +1603,11 @@ class Table(object):
         return [
             ColumnStyle(
                 alias="Time",
+                pattern="Time",
+                type=DateColumnStyleType(),
+            ),
+            ColumnStyle(
+                alias="time",
                 pattern="time",
                 type=DateColumnStyleType(),
             ),
@@ -1565,12 +1621,12 @@ class Table(object):
         """Construct a table where each column has an associated style.
 
         :param columns: A list of (Column, ColumnStyle) pairs, where the
-            ColumnStyle is the style for the column and does **not** have a
+            ColumnStyle is the style for the column and does not have a
             pattern set (or the pattern is set to exactly the column name).
             The ColumnStyle may also be None.
         :param styles: An optional list of extra column styles that will be
             appended to the table's list of styles.
-        :param **kwargs: Other parameters to the Table constructor.
+        :param kwargs: Other parameters to the Table constructor.
         :return: A Table.
         """
         extraStyles = styles if styles else []
@@ -1602,4 +1658,283 @@ class Table(object):
             'transform': self.transform,
             'transparent': self.transparent,
             'type': TABLE_TYPE,
+        }
+
+
+@attr.s
+class Threshold(object):
+    """Threshold for a gauge
+
+    :param color: color of threshold
+    :param index: index of color in gauge
+    :param value: when to use this color will be null if index is 0
+    """
+
+    color = attr.ib()
+    index = attr.ib(validator=instance_of(int))
+    value = attr.ib(validator=instance_of(float))
+
+    def to_json_data(self):
+        return {
+            "color": self.color,
+            "index": self.index,
+            "value": "null" if self.index == 0 else self.value,
+        }
+
+
+@attr.s
+class BarGauge(object):
+    """Generates Bar Gauge panel json structure
+
+    :param allValue: If All values should be shown or a Calculation
+    :param cacheTimeout: metric query result cache ttl
+    :param calc: Calculation to perform on metrics
+    :param dataSource: Grafana datasource name
+    :param decimals: override automatic decimal precision for legend/tooltips
+    :param description: optional panel description
+    :param displayMode: style to display bar gauge in
+    :param editable: defines if panel is editable via web interfaces
+    :param format: defines value units
+    :param height: defines panel height
+    :param hideTimeOverride: hides time overrides
+    :param id: panel id
+    :param interval: defines time interval between metric queries
+    :param labels: oprion to show gauge level labels
+    :param limit: limit of number of values to show when not Calculating
+    :param links: additional web links
+    :param max: maximum value of the gauge
+    :param maxDataPoints: maximum metric query results,
+        that will be used for rendering
+    :param min: minimum value of the gauge
+    :param minSpan: minimum span number
+    :param orientation: orientation of the bar gauge
+    :param rangeMaps: the list of value to text mappings
+    :param span: defines the number of spans that will be used for panel
+    :param targets: list of metric requests for chosen datasource
+    :param thresholdLabel: label for gauge. Template Variables:
+        "$__series_namei" "$__field_name" "$__cell_{N} / $__calc"
+    :param thresholdMarkers: option to show marker of level on gauge
+    :param thresholds: single stat thresholds
+    :param timeFrom: time range that Override relative time
+    :param title: panel title
+    :param transparent: defines if panel should be transparent
+    :param valueMaps: the list of value to text mappings
+    """
+
+    title = attr.ib()
+    targets = attr.ib()
+    allValues = attr.ib(default=False, validator=instance_of(bool))
+    cacheTimeout = attr.ib(default=None)
+    calc = attr.ib(default=GAUGE_CALC_MEAN)
+    dataSource = attr.ib(default=None)
+    decimals = attr.ib(default=None)
+    description = attr.ib(default=None)
+    displayMode = attr.ib(
+        default=GAUGE_DISPLAY_MODE_LCD,
+        validator=in_(
+            [
+                GAUGE_DISPLAY_MODE_LCD,
+                GAUGE_DISPLAY_MODE_BASIC,
+                GAUGE_DISPLAY_MODE_GRADIENT,
+            ]
+        ),
+    )
+    editable = attr.ib(default=True, validator=instance_of(bool))
+    format = attr.ib(default="none")
+    height = attr.ib(default=None)
+    hideTimeOverride = attr.ib(default=False, validator=instance_of(bool))
+    id = attr.ib(default=None)
+    interval = attr.ib(default=None)
+    label = attr.ib(default=None)
+    limit = attr.ib(default=None)
+    links = attr.ib(default=attr.Factory(list))
+    max = attr.ib(default=100)
+    maxDataPoints = attr.ib(default=100)
+    min = attr.ib(default=0)
+    minSpan = attr.ib(default=None)
+    orientation = attr.ib(
+        default=ORIENTATION_HORIZONTAL,
+        validator=in_([ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL]),
+    )
+    rangeMaps = attr.ib(default=attr.Factory(list))
+    repeat = attr.ib(default=None)
+    span = attr.ib(default=6)
+    thresholdLabels = attr.ib(default=False, validator=instance_of(bool))
+    thresholdMarkers = attr.ib(default=True, validator=instance_of(bool))
+    thresholds = attr.ib(
+        default=attr.Factory(
+            lambda: [
+                Threshold("green", 0, 0),
+                Threshold("red", 1, 80)
+            ]
+        ),
+        validator=instance_of(list),
+    )
+    timeFrom = attr.ib(default=None)
+    timeShift = attr.ib(default=None)
+    transparent = attr.ib(default=False, validator=instance_of(bool))
+    valueMaps = attr.ib(default=attr.Factory(list))
+
+    def to_json_data(self):
+        return {
+            "cacheTimeout": self.cacheTimeout,
+            "datasource": self.dataSource,
+            "description": self.description,
+            "editable": self.editable,
+            "height": self.height,
+            "hideTimeOverride": self.hideTimeOverride,
+            "id": self.id,
+            "interval": self.interval,
+            "links": self.links,
+            "maxDataPoints": self.maxDataPoints,
+            "minSpan": self.minSpan,
+            "options": {
+                "displayMode": self.displayMode,
+                "fieldOptions": {
+                    "calcs": [self.calc],
+                    "defaults": {
+                        "decimals": self.decimals,
+                        "max": self.max,
+                        "min": self.min,
+                        "title": self.label,
+                        "unit": self.format,
+                    },
+                    "limit": self.limit,
+                    "mappings": self.valueMaps,
+                    "override": {},
+                    "thresholds": self.thresholds,
+                    "values": self.allValues,
+                },
+                "orientation": self.orientation,
+                "showThresholdLabels": self.thresholdLabels,
+                "showThresholdMarkers": self.thresholdMarkers,
+            },
+            "repeat": self.repeat,
+            "span": self.span,
+            "targets": self.targets,
+            "timeFrom": self.timeFrom,
+            "timeShift": self.timeShift,
+            "title": self.title,
+            "transparent": self.transparent,
+            "type": BARGAUGE_TYPE,
+        }
+
+
+@attr.s
+class GaugePanel(object):
+    """Generates Gauge panel json structure
+
+    :param allValue: If All values should be shown or a Calculation
+    :param cacheTimeout: metric query result cache ttl
+    :param calc: Calculation to perform on metrics
+    :param dataSource: Grafana datasource name
+    :param decimals: override automatic decimal precision for legend/tooltips
+    :param description: optional panel description
+    :param editable: defines if panel is editable via web interfaces
+    :param format: defines value units
+    :param height: defines panel height
+    :param hideTimeOverride: hides time overrides
+    :param id: panel id
+    :param interval: defines time interval between metric queries
+    :param labels: oprion to show gauge level labels
+    :param limit: limit of number of values to show when not Calculating
+    :param links: additional web links
+    :param max: maximum value of the gauge
+    :param maxDataPoints: maximum metric query results,
+           that will be used for rendering
+    :param min: minimum value of the gauge
+    :param minSpan: minimum span number
+    :param rangeMaps: the list of value to text mappings
+    :param span: defines the number of spans that will be used for panel
+    :param targets: list of metric requests for chosen datasource
+    :param thresholdLabel: label for gauge. Template Variables:
+        "$__series_namei" "$__field_name" "$__cell_{N} / $__calc"
+    :param thresholdMarkers: option to show marker of level on gauge
+    :param thresholds: single stat thresholds
+    :param timeFrom: time range that Override relative time
+    :param title: panel title
+    :param transparent: defines if panel should be transparent
+    :param valueMaps: the list of value to text mappings
+    """
+
+    title = attr.ib()
+    targets = attr.ib()
+    allValues = attr.ib(default=False, validator=instance_of(bool))
+    cacheTimeout = attr.ib(default=None)
+    calc = attr.ib(default=GAUGE_CALC_MEAN)
+    dataSource = attr.ib(default=None)
+    decimals = attr.ib(default=None)
+    description = attr.ib(default=None)
+    editable = attr.ib(default=True, validator=instance_of(bool))
+    format = attr.ib(default="none")
+    height = attr.ib(default=None)
+    hideTimeOverride = attr.ib(default=False, validator=instance_of(bool))
+    id = attr.ib(default=None)
+    interval = attr.ib(default=None)
+    label = attr.ib(default=None)
+    limit = attr.ib(default=None)
+    links = attr.ib(default=attr.Factory(list))
+    max = attr.ib(default=100)
+    maxDataPoints = attr.ib(default=100)
+    min = attr.ib(default=0)
+    minSpan = attr.ib(default=None)
+    rangeMaps = attr.ib(default=attr.Factory(list))
+    repeat = attr.ib(default=None)
+    span = attr.ib(default=6)
+    thresholdLabels = attr.ib(default=False, validator=instance_of(bool))
+    thresholdMarkers = attr.ib(default=True, validator=instance_of(bool))
+    thresholds = attr.ib(
+        default=attr.Factory(
+            lambda: [
+                Threshold("green", 0, 0),
+                Threshold("red", 1, 80)
+            ]
+        ),
+        validator=instance_of(list),
+    )
+    timeFrom = attr.ib(default=None)
+    timeShift = attr.ib(default=None)
+    transparent = attr.ib(default=False, validator=instance_of(bool))
+    valueMaps = attr.ib(default=attr.Factory(list))
+
+    def to_json_data(self):
+        return {
+            "cacheTimeout": self.cacheTimeout,
+            "datasource": self.dataSource,
+            "description": self.description,
+            "editable": self.editable,
+            "height": self.height,
+            "hideTimeOverride": self.hideTimeOverride,
+            "id": self.id,
+            "interval": self.interval,
+            "links": self.links,
+            "maxDataPoints": self.maxDataPoints,
+            "minSpan": self.minSpan,
+            "options": {
+                "fieldOptions": {
+                    "calcs": [self.calc],
+                    "defaults": {
+                        "decimals": self.decimals,
+                        "max": self.max,
+                        "min": self.min,
+                        "title": self.label,
+                        "unit": self.format,
+                    },
+                    "limit": self.limit,
+                    "mappings": self.valueMaps,
+                    "override": {},
+                    "thresholds": self.thresholds,
+                    "values": self.allValues,
+                },
+                "showThresholdLabels": self.thresholdLabels,
+                "showThresholdMarkers": self.thresholdMarkers,
+            },
+            "repeat": self.repeat,
+            "span": self.span,
+            "targets": self.targets,
+            "timeFrom": self.timeFrom,
+            "timeShift": self.timeShift,
+            "title": self.title,
+            "transparent": self.transparent,
+            "type": GAUGE_TYPE,
         }
