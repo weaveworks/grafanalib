@@ -178,7 +178,7 @@ class TermsGroupBy(object):
             'settings': {
                 'min_doc_count': self.minDocCount,
                 'order': self.order,
-                'order_by': self.orderBy,
+                'orderBy': self.orderBy,
                 'size': self.size,
             },
         }
