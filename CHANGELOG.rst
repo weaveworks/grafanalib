@@ -23,6 +23,7 @@ Changes
 * Add support for custom variables.
 * Point out documentation on readthedocs more clearly.
 * Add average metric aggregation for elastic search
+* Added all parameters for StringColumnStyle
 
 0.5.5 (2020-02-17)
 ==================
