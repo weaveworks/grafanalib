@@ -1352,32 +1352,7 @@ class SingleStat(object):
             'valueName': self.valueName,
             'timeFrom': self.timeFrom,
         }
-
-@attr.s
-class TableRangeMaps(object):
-    fr = attr.ib(default = "")
-    to = attr.ib(default = "")
-    text = attr.ib(default = "", validator=instance_of(str))
-
-    def to_json_data(self):
-        return {
-            'from': self.fr,
-            'to': self.to,
-            'text': self.text
-        }
-
-
-@attr.s
-class TableValueMaps(object):
-    value = attr.ib(default = "")
-    text = attr.ib(default = "", validator=instance_of(str))
-
-    def to_json_data(self):
-        return {
-            'value': self.value,
-            'text': self.text
-        }
-
+        
 @attr.s
 class DateColumnStyleType(object):
     TYPE = 'date'
@@ -1423,11 +1398,8 @@ class StringColumnStyleType(object):
     sanitize = attr.ib(validator=instance_of(bool), default = False)
     unit = attr.ib(default=SHORT_FORMAT)
     mappingType = attr.ib(default=MAPPING_TYPE_VALUE_TO_TEXT)
-    valueMaps = attr.ib(default = attr.Factory(
-        lambda: [TableValueMaps()]), validator=instance_of(list))
-    rangeMaps = attr.ib(default = attr.Factory(
-        lambda: [TableRangeMaps()]), validator=instance_of(list))
-
+    valueMaps = attr.ib(default = attr.Factory(list))
+    rangeMaps = attr.ib(default = attr.Factory(list))
     def to_json_data(self):
         return {
             'decimals' : self.decimals,

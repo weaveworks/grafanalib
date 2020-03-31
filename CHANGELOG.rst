@@ -13,6 +13,7 @@ Changes
 * Removed gfdatasource - feature is built in to Grafana since v5.
 * Generate API docs for readthedocs.org
 * Fix AlertList panel generation
+* Added all parameters for StringColumnStyle
 
 0.5.5 (2020-02-17)
 ==================
