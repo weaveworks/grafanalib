@@ -62,6 +62,21 @@ class CardinalityMetricAgg(object):
 
 
 @attr.s
+class AverageMetricAgg(object):
+    """An aggregator that provides the average. value among the values.
+
+    https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-avg-aggregation.html
+
+    :param field: name of elasticsearch field to provide the maximum for
+    """
+
+    field = attr.ib(default="", validator=instance_of(str))
+
+    def to_json_data(self):
+        return {"type": "avg", "field": self.field, "settings": {}, "meta": {}}
+
+
+@attr.s
 class DateHistogramGroupBy(object):
     """A bucket aggregator that groups results by date.
 
@@ -108,9 +123,9 @@ class Filter(object):
 
     def to_json_data(self):
         return {
-                'label': self.label,
-                'query': self.query,
-                }
+            'label': self.label,
+            'query': self.query,
+        }
 
 
 @attr.s
@@ -127,12 +142,12 @@ class FiltersGroupBy(object):
 
     def to_json_data(self):
         return {
-                'id': str(self.id),
-                'settings': {
-                             'filters': self.filters,
-                             },
-                'type': 'filters',
-                }
+            'id': str(self.id),
+            'settings': {
+                'filters': self.filters,
+            },
+            'type': 'filters',
+        }
 
 
 @attr.s

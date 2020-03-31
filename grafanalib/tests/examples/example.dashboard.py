@@ -1,4 +1,8 @@
-from grafanalib.core import *
+from grafanalib.core import (
+    Alert, AlertCondition, Dashboard, Graph,
+    GreaterThan, OP_AND, OPS_FORMAT, Row, RTYPE_SUM, SECONDS_FORMAT,
+    SHORT_FORMAT, single_y_axis, Target, TimeRange, YAxes, YAxis
+)
 
 
 dashboard = Dashboard(
@@ -35,7 +39,7 @@ dashboard = Dashboard(
                     refId='E',
                 ),
             ],
-            yAxes=G.YAxes(
+            yAxes=YAxes(
                 YAxis(format=OPS_FORMAT),
                 YAxis(format=SHORT_FORMAT),
             ),

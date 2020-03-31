@@ -8,12 +8,22 @@ Next release
 Changes
 -------
 
+* Add ``Heatmap`` class (and ``HeatmapColor``) to support the Heatmap panel (#170)
 * Add ``BarGuage`` for creating bar guages panels in grafana 6
 * Add ``GuagePanel`` for creating guages in grafana 6
 * Removed gfdatasource - feature is built in to Grafana since v5.
 * Generate API docs for readthedocs.org
 * Fix AlertList panel generation
 * Added all parameters for StringColumnStyle
+* Add both upper and lower case `"time"` pattern for time_series column format in Table class
+* Drop testing of Python 2.7, it has been EOL'ed and CI was broken
+  due to this.
+* Automatically test documentation examples.
+* Point to dev meeting resources.
+* Add description attribute to Dashboard.
+* Add support for custom variables.
+* Point out documentation on readthedocs more clearly.
+* Add average metric aggregation for elastic search
 
 0.5.5 (2020-02-17)
 ==================
