@@ -77,6 +77,7 @@ TEXT_TYPE = 'text'
 ALERTLIST_TYPE = "alertlist"
 BARGAUGE_TYPE = "bargauge"
 GAUGE_TYPE = "gauge"
+HEATMAP_TYPE = "heatmap"
 
 DEFAULT_FILL = 1
 DEFAULT_REFRESH = '10s'
@@ -649,6 +650,7 @@ class Template(object):
 
     name = attr.ib()
     query = attr.ib()
+    _current = attr.ib(init=False, default=attr.Factory(dict))
     default = attr.ib(default=None)
     dataSource = attr.ib(default=None)
     label = attr.ib(default=None)
@@ -661,6 +663,7 @@ class Template(object):
         default=False,
         validator=instance_of(bool),
     )
+    options = attr.ib(default=attr.Factory(list))
     regex = attr.ib(default=None)
     useTags = attr.ib(
         default=False,
@@ -674,21 +677,42 @@ class Template(object):
     hide = attr.ib(default=SHOW)
     sort = attr.ib(default=SORT_ALPHA_ASC)
 
-    def to_json_data(self):
-        return {
-            'allValue': self.allValue,
-            'current': {
+    def __attrs_post_init__(self):
+        if self.type == 'custom':
+            if len(self.options) == 0:
+                for value in self.query.split(','):
+                    is_default = value == self.default
+                    option = {
+                        "selected": is_default,
+                        "text": value,
+                        "value": value,
+                    }
+                    if is_default:
+                        self._current = option
+                    self.options.append(option)
+            else:
+                for option in self.options:
+                    if option['selected']:
+                        self._current = option
+                        break
+        else:
+            self._current = {
                 'text': self.default,
                 'value': self.default,
                 'tags': [],
-            },
+            }
+
+    def to_json_data(self):
+        return {
+            'allValue': self.allValue,
+            'current': self._current,
             'datasource': self.dataSource,
             'hide': self.hide,
             'includeAll': self.includeAll,
             'label': self.label,
             'multi': self.multi,
             'name': self.name,
-            'options': [],
+            'options': self.options,
             'query': self.query,
             'refresh': self.refresh,
             'regex': self.regex,
@@ -897,6 +921,7 @@ class Dashboard(object):
         default=attr.Factory(Annotations),
         validator=instance_of(Annotations),
     )
+    description = attr.ib(default="", validator=instance_of(str))
     editable = attr.ib(
         default=True,
         validator=instance_of(bool),
@@ -960,6 +985,7 @@ class Dashboard(object):
         return {
             '__inputs': self.inputs,
             'annotations': self.annotations,
+            "description": self.description,
             'editable': self.editable,
             'gnetId': self.gnetId,
             'hideControls': self.hideControls,
@@ -1575,6 +1601,11 @@ class Table(object):
         return [
             ColumnStyle(
                 alias="Time",
+                pattern="Time",
+                type=DateColumnStyleType(),
+            ),
+            ColumnStyle(
+                alias="time",
                 pattern="time",
                 type=DateColumnStyleType(),
             ),
@@ -1588,7 +1619,7 @@ class Table(object):
         """Construct a table where each column has an associated style.
 
         :param columns: A list of (Column, ColumnStyle) pairs, where the
-            ColumnStyle is the style for the column and does **not** have a
+            ColumnStyle is the style for the column and does not have a
             pattern set (or the pattern is set to exactly the column name).
             The ColumnStyle may also be None.
         :param styles: An optional list of extra column styles that will be
@@ -1652,6 +1683,7 @@ class Threshold(object):
 @attr.s
 class BarGauge(object):
     """Generates Bar Gauge panel json structure
+
     :param allValue: If All values should be shown or a Calculation
     :param cacheTimeout: metric query result cache ttl
     :param calc: Calculation to perform on metrics
@@ -1789,6 +1821,7 @@ class BarGauge(object):
 @attr.s
 class GaugePanel(object):
     """Generates Gauge panel json structure
+
     :param allValue: If All values should be shown or a Calculation
     :param cacheTimeout: metric query result cache ttl
     :param calc: Calculation to perform on metrics
@@ -1806,7 +1839,7 @@ class GaugePanel(object):
     :param links: additional web links
     :param max: maximum value of the gauge
     :param maxDataPoints: maximum metric query results,
-        that will be used for rendering
+           that will be used for rendering
     :param min: minimum value of the gauge
     :param minSpan: minimum span number
     :param rangeMaps: the list of value to text mappings
@@ -1902,4 +1935,134 @@ class GaugePanel(object):
             "title": self.title,
             "transparent": self.transparent,
             "type": GAUGE_TYPE,
+        }
+
+
+@attr.s
+class HeatmapColor(object):
+    """A Color object for heatmaps
+
+    :param cardColor
+    :param colorScale
+    :param colorScheme
+    :param exponent
+    :param max
+    :param min
+    :param mode
+    """
+
+    # Maybe cardColor should validate to RGBA object, not sure
+    cardColor = attr.ib(default='#b4ff00', validator=instance_of(str))
+    colorScale = attr.ib(default='sqrt', validator=instance_of(str))
+    colorScheme = attr.ib(default='interpolateOranges')
+    exponent = attr.ib(default=0.5, validator=instance_of(float))
+    mode = attr.ib(default="spectrum", validator=instance_of(str))
+    max = attr.ib(default=None)
+    min = attr.ib(default=None)
+
+    def to_json_data(self):
+        return {
+            "mode": self.mode,
+            "cardColor": self.cardColor,
+            "colorScale": self.colorScale,
+            "exponent": self.exponent,
+            "colorScheme": self.colorScheme,
+            "max": self.max,
+            "min": self.min,
+        }
+
+
+@attr.s
+class Heatmap(object):
+    """Generates Heatmap panel json structure (https://grafana.com/docs/grafana/latest/features/panels/heatmap/)
+
+    :param heatmap
+    :param cards: A heatmap card object: keys "cardPadding", "cardRound"
+    :param color: Heatmap color object
+    :param dataFormat: 'timeseries' or 'tsbuckets'
+    :param yBucketBound: 'auto', 'upper', 'middle', 'lower'
+    :param reverseYBuckets: boolean
+    :param xBucketSize
+    :param xBucketNumber
+    :param yBucketSize
+    :param yBucketNumber
+    :param highlightCards: boolean
+    :param hideZeroBuckets: boolean
+    """
+
+    title = attr.ib()
+    description = attr.ib(default=None)
+    id = attr.ib(default=None)
+    # The below does not really like the Legend class we have defined above
+    legend = attr.ib(default={"show": False})
+    links = attr.ib(default=None)
+    targets = attr.ib(default=None)
+    tooltip = attr.ib(
+        default=attr.Factory(Tooltip),
+        validator=instance_of(Tooltip),
+    )
+    span = attr.ib(default=None)
+
+    cards = attr.ib(
+        default={
+            "cardPadding": None,
+            "cardRound": None
+        }
+    )
+
+    color = attr.ib(
+        default=attr.Factory(HeatmapColor),
+        validator=instance_of(HeatmapColor),
+    )
+
+    dataFormat = attr.ib(default='timeseries')
+    datasource = attr.ib(default=None)
+    heatmap = {}
+    hideZeroBuckets = attr.ib(default=False)
+    highlightCards = attr.ib(default=True)
+    options = attr.ib(default=None)
+
+    xAxis = attr.ib(
+        default=attr.Factory(XAxis),
+        validator=instance_of(XAxis)
+    )
+    xBucketNumber = attr.ib(default=None)
+    xBucketSize = attr.ib(default=None)
+
+    yAxis = attr.ib(
+        default=attr.Factory(YAxis),
+        validator=instance_of(YAxis)
+    )
+    yBucketBound = attr.ib(default=None)
+    yBucketNumber = attr.ib(default=None)
+    yBucketSize = attr.ib(default=None)
+    reverseYBuckets = attr.ib(default=False)
+
+    def to_json_data(self):
+        return {
+            'cards': self.cards,
+            'color': self.color,
+            'dataFormat': self.dataFormat,
+            'datasource': self.datasource,
+            'description': self.description,
+            'heatmap': self.heatmap,
+            'hideZeroBuckets': self.hideZeroBuckets,
+            'highlightCards': self.highlightCards,
+            'id': self.id,
+            'legend': self.legend,
+            'links': self.links,
+            'options': self.options,
+            'reverseYBuckets': self.reverseYBuckets,
+            'span': self.span,
+            'targets': self.targets,
+            'title': self.title,
+            'tooltip': self.tooltip,
+            'type': HEATMAP_TYPE,
+            'xAxis': self.xAxis,
+            'xBucketNumber': self.xBucketNumber,
+            'xBucketSize': self.xBucketSize,
+            'yAxis': self.yAxis,
+            'yBucketBound': self.yBucketBound,
+            'yBucketNumber': self.yBucketNumber,
+            'yBucketSize': self.yBucketSize
         }

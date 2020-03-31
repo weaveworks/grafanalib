@@ -3,17 +3,17 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:3.7.5
+      - image: circleci/python:3.8.2
     steps:
     - checkout
     - setup_remote_docker
     - run:
         name: Dependencies
         command: |
-          git clone --depth 1 -b v1.2.15 https://github.com/pyenv/pyenv.git $HOME/.pyenv
-          $HOME/.pyenv/bin/pyenv install 2.7.16
+          git clone --depth 1 -b v1.2.17 https://github.com/pyenv/pyenv.git $HOME/.pyenv
           $HOME/.pyenv/bin/pyenv install 3.5.8
           $HOME/.pyenv/bin/pyenv install 3.7.5
+          $HOME/.pyenv/bin/pyenv install 3.8.2
           pip3 install --user tox flake8
           pip3 install --user -r docs/requirements.txt
           make deps

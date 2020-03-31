@@ -5,122 +5,39 @@ Getting Started with grafanalib
 .. image:: https://circleci.com/gh/weaveworks/grafanalib.svg?style=shield
     :target: https://circleci.com/gh/weaveworks/grafanalib
 
+.. image:: https://readthedocs.org/projects/grafanalib/badge/?version=latest
+    :alt: Documentation Status
+    :scale: 100%
+    :target: https://grafanalib.readthedocs.io/en/latest/?badge=latest
+
 Do you like `Grafana <http://grafana.org/>`_ but wish you could version your
 dashboard configuration? Do you find yourself repeating common patterns? If
 so, grafanalib is for you.
 
 grafanalib lets you generate Grafana dashboards from simple Python scripts.
 
-Writing dashboards
-==================
+How it works
+============
 
-The following will configure a dashboard with a single row, with one QPS graph
-broken down by status code and another latency graph showing median and 99th
-percentile latency:
+Take a look at `the examples directory
+<https://github.com/weaveworks/grafanalib/blob/master/grafanalib/tests/examples/>`_,
+e.g. `this dashboard
+<https://github.com/weaveworks/grafanalib/blob/master/grafanalib/tests/examples/example.dashboard.py>`_
+will configure a dashboard with a single row, with one QPS graph broken down
+by status code and another latency graph showing median and 99th percentile
+latency.
 
-.. code-block:: python
-
-  from grafanalib.core import *
-
-
-  dashboard = Dashboard(
-    title="Frontend Stats",
-    rows=[
-      Row(panels=[
-        Graph(
-          title="Frontend QPS",
-          dataSource='My Prometheus',
-          targets=[
-            Target(
-              expr='sum(irate(nginx_http_requests_total{job="default/frontend",status=~"1.."}[1m]))',
-              legendFormat="1xx",
-              refId='A',
-            ),
-            Target(
-              expr='sum(irate(nginx_http_requests_total{job="default/frontend",status=~"2.."}[1m]))',
-              legendFormat="2xx",
-              refId='B',
-            ),
-            Target(
-              expr='sum(irate(nginx_http_requests_total{job="default/frontend",status=~"3.."}[1m]))',
-              legendFormat="3xx",
-              refId='C',
-            ),
-            Target(
-              expr='sum(irate(nginx_http_requests_total{job="default/frontend",status=~"4.."}[1m]))',
-              legendFormat="4xx",
-              refId='D',
-            ),
-            Target(
-              expr='sum(irate(nginx_http_requests_total{job="default/frontend",status=~"5.."}[1m]))',
-              legendFormat="5xx",
-              refId='E',
-            ),
-          ],
-          yAxes=YAxes(
-            YAxis(format=OPS_FORMAT),
-            YAxis(format=SHORT_FORMAT),
-          ),
-          alert=Alert(
-            name="Too many 500s on Nginx",
-            message="More than 5 QPS of 500s on Nginx for 5 minutes",
-            alertConditions=[
-              AlertCondition(
-                Target(
-                  expr='sum(irate(nginx_http_requests_total{job="default/frontend",status=~"5.."}[1m]))',
-                  legendFormat="5xx",
-                  refId='A',
-                ),
-                timeRange=TimeRange("5m", "now"),
-                evaluator=GreaterThan(5),
-                operator=OP_AND,
-                reducerType=RTYPE_SUM,
-              ),
-            ],
-          )
-        ),
-        Graph(
-          title="Frontend latency",
-          dataSource='My Prometheus',
-          targets=[
-            Target(
-              expr='histogram_quantile(0.5, sum(irate(nginx_http_request_duration_seconds_bucket{job="default/frontend"}[1m])) by (le))',
-              legendFormat="0.5 quantile",
-              refId='A',
-            ),
-            Target(
-              expr='histogram_quantile(0.99, sum(irate(nginx_http_request_duration_seconds_bucket{job="default/frontend"}[1m])) by (le))',
-              legendFormat="0.99 quantile",
-              refId='B',
-            ),
-          ],
-          yAxes=single_y_axis(format=SECONDS_FORMAT),
-        ),
-      ]),
-    ],
-  ).auto_panel_ids()
-
-There is a fair bit of repetition here, but once you figure out what works for
-your needs, you can factor that out.
+In the code is a fair bit of repetition here, but once you figure out what
+works for your needs, you can factor that out.
 See `our Weave-specific customizations
 <https://github.com/weaveworks/grafanalib/blob/master/grafanalib/weave.py>`_
 for inspiration.
 
 You can read the entire grafanlib documentation on `readthedocs.io
-<https://grafanalib.readthedocs.io/en/latest/>`_.
+<https://grafanalib.readthedocs.io/>`_.
 
-Generating dashboards
-=====================
-
-If you save the above as ``frontend.dashboard.py`` (the suffix must be
-``.dashboard.py``), you can then generate the JSON dashboard with:
-
-.. code-block:: console
-
-  $ generate-dashboard -o frontend.json frontend.dashboard.py
-
-Installation
-============
+Getting started
+===============
 
 grafanalib is just a Python package, so:
 
@@ -128,13 +45,22 @@ grafanalib is just a Python package, so:
 
   $ pip install grafanalib
 
+
+Generate the JSON dashboard like so:
+
+.. code-block:: console
+
+  $ curl https://raw.githubusercontent.com/weaveworks/grafanalib/master/grafanalib/tests/examples/example.dashboard.py
+  $ generate-dashboard -o frontend.json example.dashboard.py
+
+
 Support
 =======
 
 This library is in its very early stages. We'll probably make changes that
 break backwards compatibility, although we'll try hard not to.
 
-grafanalib works with Python 2.7, 3.4, 3.5, 3.6 and 3.7.
+grafanalib works with Python 3.4 through 3.8.
 
 Developing
 ==========
@@ -149,15 +75,29 @@ If you're working on the project, and need to build from source, it's done as fo
 Configuring Grafana Datasources
 ===============================
 
-This repo used to contain a program `gfdatasource` for configuring
+This repo used to contain a program ``gfdatasource`` for configuring
 Grafana data sources, but it has been retired since Grafana now has a
 built-in way to do it.  See https://grafana.com/docs/administration/provisioning/#datasources
 
+Community
+=========
+
+We'd like you to join the ``grafanalib`` community! Talk to us on Slack (see the links),
+or join us for one of our next meetings):
+
+- Meetings take place monthly: third Friday of the month 15:00 UTC
+- https://zoom.us/j/405935052
+- `Meeting minutes and agenda
+  <https://docs.google.com/document/d/1JxrSszyPHYhNbJDWYZehRKv6AO4U-zIBhuNmYQVOIHo/edit>`_
+  (includes links to meeting recordings)
+
+
 Getting Help
-============
+------------
 
 If you have any questions about, feedback for or problems with ``grafanalib``:
 
+- Read the documentation at https://grafanalib.readthedocs.io
 - Invite yourself to the `Weave Users Slack <https://slack.weave.works/>`_.
 - Ask a question on the `#grafanalib <https://weave-community.slack.com/messages/grafanalib/>`_ slack channel.
 - `File an issue <https://github.com/weaveworks/grafanalib/issues/new>`_.
