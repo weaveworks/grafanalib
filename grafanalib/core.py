@@ -1417,12 +1417,27 @@ class NumberColumnStyleType(object):
 @attr.s
 class StringColumnStyleType(object):
     TYPE = 'string'
-
-    preserveFormat = attr.ib(validator=instance_of(bool))
-    sanitize = attr.ib(validator=instance_of(bool))
+    decimals = attr.ib(default=2, validator=instance_of(int))
+    colorMode = attr.ib(default=None)
+    colors = attr.ib(default=attr.Factory(lambda: [GREEN, ORANGE, RED]))
+    thresholds = attr.ib(default=attr.Factory(list))
+    preserveFormat = attr.ib(validator=instance_of(bool), default=False)
+    sanitize = attr.ib(validator=instance_of(bool), default=False)
+    unit = attr.ib(default=SHORT_FORMAT)
+    mappingType = attr.ib(default=MAPPING_TYPE_VALUE_TO_TEXT)
+    valueMaps = attr.ib(default=attr.Factory(list))
+    rangeMaps = attr.ib(default=attr.Factory(list))
 
     def to_json_data(self):
         return {
+            'decimals': self.decimals,
+            'colorMode': self.colorMode,
+            'colors': self.colors,
+            'thresholds': self.thresholds,
+            'unit': self.unit,
+            'mappingType': self.mappingType,
+            'valueMaps': self.valueMaps,
+            'rangeMaps': self.rangeMaps,
             'preserveFormat': self.preserveFormat,
             'sanitize': self.sanitize,
             'type': self.TYPE,
@@ -1444,6 +1459,12 @@ class ColumnStyle(object):
 
     alias = attr.ib(default="")
     pattern = attr.ib(default="")
+    align = attr.ib(default="auto", validator=in_(
+        ["auto", "left", "right", "center"]))
+    link = attr.ib(validator=instance_of(bool), default=False)
+    linkOpenInNewTab = attr.ib(validator=instance_of(bool), default=False)
+    linkUrl = attr.ib(validator=instance_of(str), default="")
+    linkTooltip = attr.ib(validator=instance_of(str), default="")
     type = attr.ib(
         default=attr.Factory(NumberColumnStyleType),
         validator=instance_of((
@@ -1458,6 +1479,11 @@ class ColumnStyle(object):
         data = {
             'alias': self.alias,
             'pattern': self.pattern,
+            'align': self.align,
+            'link': self.link,
+            'linkTargetBlank': self.linkOpenInNewTab,
+            'linkUrl': self.linkUrl,
+            'linkTooltip': self.linkTooltip,
         }
         data.update(self.type.to_json_data())
         return data
