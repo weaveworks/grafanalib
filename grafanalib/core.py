@@ -2158,9 +2158,9 @@ class Statusmap(object):
 
     isNew = attr.ib(default=True, validator=instance_of(bool))
     legend = attr.ib(
-                default=attr.Factory(Legend),
-                validator=instance_of(Legend),
-            )
+        default=attr.Factory(Legend),
+        validator=instance_of(Legend),
+    )
     links = attr.ib(default=attr.Factory(list))
     minSpan = attr.ib(default=None)
     nullPointMode = attr.ib(default=NULL_AS_ZERO)
@@ -2173,14 +2173,13 @@ class Statusmap(object):
     )
     transparent = attr.ib(default=False, validator=instance_of(bool))
     xAxis = attr.ib(
-                default=attr.Factory(XAxis),
-                validator=instance_of(XAxis)
-            )
+        default=attr.Factory(XAxis),
+        validator=instance_of(XAxis)
+    )
     yAxis = attr.ib(
-                default=attr.Factory(YAxis),
-                validator=instance_of(YAxis)
-            )
-
+        default=attr.Factory(YAxis),
+        validator=instance_of(YAxis)
+    )
 
     def to_json_data(self):
         graphObject = {
