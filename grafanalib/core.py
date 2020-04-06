@@ -2113,7 +2113,7 @@ class StatusmapColor(object):
 class Statusmap(object):
     """Generates json structure for the flant-statusmap-panel visualisation plugin (https://grafana.com/grafana/plugins/flant-statusmap-panel/).
 
-    :param alert: List of alerts to apply to the panel
+    :param alert
     :param cards: A statusmap card object: keys "cardRound", "cardMinWidth", "cardHSpacing", "cardVSpacing"
     :param color: A StatusmapColor object
     :param dataSource: Name of the datasource to use
