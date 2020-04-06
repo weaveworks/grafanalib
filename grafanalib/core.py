@@ -78,6 +78,7 @@ ALERTLIST_TYPE = "alertlist"
 BARGAUGE_TYPE = "bargauge"
 GAUGE_TYPE = "gauge"
 HEATMAP_TYPE = "heatmap"
+STATUSMAP_TYPE = "flant-statusmap-panel"
 
 DEFAULT_FILL = 1
 DEFAULT_REFRESH = '10s'
@@ -2069,3 +2070,141 @@ class Heatmap(object):
             'yBucketNumber': self.yBucketNumber,
             'yBucketSize': self.yBucketSize
         }
+
+
+@attr.s
+class StatusmapColor(object):
+    """A Color object for Statusmaps
+    :param cardColor
+    :param colorScale
+    :param colorScheme
+    :param exponent
+    :param max
+    :param min
+    :param mode
+    """
+
+    # Maybe cardColor should validate to RGBA object, not sure
+    cardColor = attr.ib(default='#b4ff00', validator=instance_of(str))
+    colorScale = attr.ib(default='sqrt', validator=instance_of(str))
+    colorScheme = attr.ib(default='GnYlRd', validator=instance_of(str))
+    exponent = attr.ib(default=0.5, validator=instance_of(float))
+    mode = attr.ib(default="spectrum", validator=instance_of(str))
+    thresholds = attr.ib(default=[], validator=instance_of(list))
+    max = attr.ib(default=None)
+    min = attr.ib(default=None)
+
+    def to_json_data(self):
+        return {
+            "mode": self.mode,
+            "cardColor": self.cardColor,
+            "colorScale": self.colorScale,
+            "exponent": self.exponent,
+            "colorScheme": self.colorScheme,
+            "max": self.max,
+            "min": self.min,
+            "thresholds": self.thresholds
+        }
+
+
+@attr.s
+class Statusmap(object):
+    """
+    Generates json structure for the flant-statusmap-panel visualisation plugin:
+    https://grafana.com/grafana/plugins/flant-statusmap-panel/
+
+    :param alert: List of alerts to apply to the panel
+    :param cards: A statusmap card object: keys: "cardRound", "cardMinWidth", "cardHSpacing", "cardVSpacing"
+    :param color: A StatusmapColor object
+    :param dataSource: Name of the datasource to use
+    :param description: Description of the panel
+    :param editable
+    :param id
+    :param isNew
+    :param legend
+    :param links
+    :param minSpan
+    :param nullPointMode
+    :param span
+    :param targets
+    :param timeFrom
+    :param timeShift
+    :param title: Title of the panel
+    :param tooltip
+    :param transparent: Set panel transparency on/off
+    :param xAxis
+    :param yAxis
+    """
+    targets = attr.ib()
+    title = attr.ib()
+
+    alert = attr.ib(default=None)
+    cards = attr.ib(
+        default={
+            "cardRound": None,
+            "cardMinWidth": 5,
+            "cardHSpacing": 2,
+            "cardVSpacing": 2,
+        }, validator=instance_of(dict))
+
+    color = attr.ib(
+        default=attr.Factory(StatusmapColor),
+        validator=instance_of(StatusmapColor),
+    )
+    dataSource = attr.ib(default=None)
+    description = attr.ib(default=None)
+    editable = attr.ib(default=True, validator=instance_of(bool))
+    id = attr.ib(default=None)
+
+    isNew = attr.ib(default=True, validator=instance_of(bool))
+    legend = attr.ib(
+                default=attr.Factory(Legend),
+                validator=instance_of(Legend),
+            )
+    links = attr.ib(default=attr.Factory(list))
+    minSpan = attr.ib(default=None)
+    nullPointMode = attr.ib(default=NULL_AS_ZERO)
+    span = attr.ib(default=None)
+    timeFrom = attr.ib(default=None)
+    timeShift = attr.ib(default=None)
+    tooltip = attr.ib(
+        default=attr.Factory(Tooltip),
+        validator=instance_of(Tooltip),
+    )
+    transparent = attr.ib(default=False, validator=instance_of(bool))
+    xAxis = attr.ib(
+                default=attr.Factory(XAxis),
+                validator=instance_of(XAxis)
+            )
+    yAxis = attr.ib(
+                default=attr.Factory(YAxis),
+                validator=instance_of(YAxis)
+            )
+
+
+    def to_json_data(self):
+        graphObject = {
+            'datasource': self.dataSource,
+            'description': self.description,
+            'editable': self.editable,
+            'color': self.color,
+            'id': self.id,
+            'isNew': self.isNew,
+            'legend': self.legend,
+            'links': self.links,
+            'minSpan': self.minSpan,
+            'nullPointMode': self.nullPointMode,
+            'span': self.span,
+            'targets': self.targets,
+            'timeFrom': self.timeFrom,
+            'timeShift': self.timeShift,
+            'title': self.title,
+            'tooltip': self.tooltip,
+            'transparent': self.transparent,
+            'type': STATUSMAP_TYPE,
+            'xaxis': self.xAxis,
+            'yaxis': self.yAxis,
+        }
+        if self.alert:
+            graphObject['alert'] = self.alert
+        return graphObject
