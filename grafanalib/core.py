@@ -2135,6 +2135,7 @@ class Statusmap(object):
     :param xAxis
     :param yAxis
     """
+
     targets = attr.ib()
     title = attr.ib()
 
