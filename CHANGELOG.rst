@@ -25,6 +25,7 @@ Changes
 * Add average metric aggregation for elastic search
 * Bugfix to query ordering in Elasticsearch TermsGroupBy
 * Added all parameters for StringColumnStyle
+* Add ``Statusmap`` class (and ``StatusmapColor``) to support the Statusmap panel plugin
 
 0.5.5 (2020-02-17)
 ==================
