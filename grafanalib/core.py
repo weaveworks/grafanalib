@@ -2075,6 +2075,7 @@ class Heatmap(object):
 @attr.s
 class StatusmapColor(object):
     """A Color object for Statusmaps
+
     :param cardColor
     :param colorScale
     :param colorScheme
@@ -2082,6 +2083,7 @@ class StatusmapColor(object):
     :param max
     :param min
     :param mode
+    :param thresholds
     """
 
     # Maybe cardColor should validate to RGBA object, not sure
@@ -2110,8 +2112,7 @@ class StatusmapColor(object):
 @attr.s
 class Statusmap(object):
     """
-    Generates json structure for the flant-statusmap-panel visualisation plugin:
-    https://grafana.com/grafana/plugins/flant-statusmap-panel/
+    Generates json structure for the flant-statusmap-panel visualisation plugin (https://grafana.com/grafana/plugins/flant-statusmap-panel/).
 
     :param alert: List of alerts to apply to the panel
     :param cards: A statusmap card object: keys: "cardRound", "cardMinWidth", "cardHSpacing", "cardVSpacing"
