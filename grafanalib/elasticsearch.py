@@ -16,9 +16,13 @@ class CountMetricAgg(object):
     https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-valuecount-aggregation.html
 
     It's the default aggregator for elasticsearch queries.
+    :param hide: show/hide the metric in the final panel display
     """
+    hide = attr.ib(default=False, validator=instance_of(bool))
+
     def to_json_data(self):
         return {
+            'hide': self.hide,
             'type': 'count',
             'field': 'select field',
             'settings': {},
@@ -32,11 +36,14 @@ class MaxMetricAgg(object):
     https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-max-aggregation.html
 
     :param field: name of elasticsearch field to provide the maximum for
+    :param hide: show/hide the metric in the final panel display
     """
     field = attr.ib(default="", validator=instance_of(str))
+    hide = attr.ib(default=False, validator=instance_of(bool))
 
     def to_json_data(self):
         return {
+            'hide': self.hide,
             'type': 'max',
             'field': self.field,
             'settings': {},
@@ -50,11 +57,14 @@ class CardinalityMetricAgg(object):
     https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-cardinality-aggregation.html
 
     :param field: name of elasticsearch field to provide the maximum for
+    :param hide: show/hide the metric in the final panel display
     """
     field = attr.ib(default="", validator=instance_of(str))
+    hide = attr.ib(default=False, validator=instance_of(bool))
 
     def to_json_data(self):
         return {
+            'hide': self.hide,
             'type': 'cardinality',
             'field': self.field,
             'settings': {},
@@ -68,12 +78,20 @@ class AverageMetricAgg(object):
     https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-avg-aggregation.html
 
     :param field: name of elasticsearch field to provide the maximum for
+    :param hide: show/hide the metric in the final panel display
     """
 
     field = attr.ib(default="", validator=instance_of(str))
+    hide = attr.ib(default=False, validator=instance_of(bool))
 
     def to_json_data(self):
-        return {"type": "avg", "field": self.field, "settings": {}, "meta": {}}
+        return {
+            "hide": self.hide,
+            "type": "avg",
+            "field": self.field,
+            "settings": {},
+            "meta": {}
+        }
 
 
 @attr.s
