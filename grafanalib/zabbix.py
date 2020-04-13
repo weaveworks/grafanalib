@@ -271,7 +271,7 @@ class ZabbixAggregateByFunction(object):
 
     Takes all timeseries and consolidate all its points falled in given
     interval into one point using function, which can be one of:
-        avg, min, max, median.
+    avg, min, max, median.
     http://docs.grafana-zabbix.org/reference/functions/#aggregateBy
     """
 
@@ -821,7 +821,7 @@ class ZabbixTriggersPanel(object):
     transparent = attr.ib(default=False, validator=instance_of(bool))
     triggerSeverity = attr.ib(
         default=ZABBIX_SEVERITY_COLORS,
-        convert=convertZabbixSeverityColors,
+        converter=convertZabbixSeverityColors,
     )
     triggers = attr.ib(
         default=attr.Factory(ZabbixTrigger),

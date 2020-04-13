@@ -25,8 +25,10 @@ IMAGE_NAMES=$(foreach dir,$(DOCKER_IMAGE_DIRS),$(patsubst %,$(IMAGE_PREFIX)/%,$(
 
 # Python-specific stuff
 TOX := $(shell command -v tox 2> /dev/null)
-PIP := $(shell command -v pip 2> /dev/null)
+PIP := $(shell command -v pip3 2> /dev/null)
 FLAKE8 := $(shell command -v flake8 2> /dev/null)
+
+DOCS_PORT:=8000
 
 .ensure-tox: .ensure-pip
 ifndef TOX
@@ -58,10 +60,8 @@ deps: setup.py .ensure-tox tox.ini
 
 $(VIRTUALENV_BIN)/flake8 $(VIRTUALENV_BIN)/py.test: $(DEPS_UPTODATE)
 
-gfdatasource/$(UPTODATE): gfdatasource/*
-
 lint: .ensure-flake8
-	$(FLAKE8) gfdatasource/gfdatasource grafanalib
+	$(FLAKE8) grafanalib
 
 test: .ensure-tox
 	$(TOX) --skip-missing-interpreters
@@ -78,3 +78,16 @@ clean:
 
 clean-deps:
 	rm -rf $(VIRTUALENV_DIR)
+
+update-docs-modules:
+	sphinx-apidoc -f grafanalib -o docs/api
+
+build-docs: update-docs-modules
+	docker build -t grafanalib-docs -f Dockerfile.docs .
+
+test-docs: build-docs
+	@docker run -it grafanalib-docs /usr/bin/linkchecker docs/build/html/index.html
+
+serve-docs: build-docs
+	@echo Starting docs website on http://localhost:${DOCS_PORT}/docs/build/html/index.html
+	@docker run -i -p ${DOCS_PORT}:8000 -e USER_ID=$$UID grafanalib-docs

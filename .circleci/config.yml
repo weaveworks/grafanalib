@@ -3,35 +3,27 @@ version: 2
 jobs:
   build:
     docker:
-      - image: weaveworks/build-golang:1.11.1-stretch
-    working_directory: /go/src/github.com/weaveworks/grafanalib
-    environment:
-      GOPATH: /go
+      - image: circleci/python:3.8.2
     steps:
     - checkout
-    - run:
-        name: Install Docker client
-        command: |
-          curl -L -o /tmp/docker.tgz https://download.docker.com/linux/static/stable/x86_64/docker-18.09.6.tgz
-          tar -xz -C /tmp -f /tmp/docker.tgz
-          mv /tmp/docker/* /usr/bin
     - setup_remote_docker
     - run:
         name: Dependencies
         command: |
-          pip install tox flake8
+          git clone --depth 1 -b v1.2.17 https://github.com/pyenv/pyenv.git $HOME/.pyenv
+          $HOME/.pyenv/bin/pyenv install 3.5.8
+          $HOME/.pyenv/bin/pyenv install 3.7.5
+          $HOME/.pyenv/bin/pyenv install 3.8.2
+          pip3 install --user tox flake8
+          pip3 install --user -r docs/requirements.txt
           make deps
     - run:
         name: make all
         command: |
           make all
+    # Test that the documentation is okay
+    - run: make test-docs
     - store_test_results:
         path: test-results
     - store_artifacts:
         path: test-results
-    - deploy:
-        command: |
-          if [ "${CIRCLE_BRANCH}" == "master" ]; then
-            echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USER" --password-stdin
-            docker push weaveworks/gfdatasource:$(./tools/image-tag)
-          fi

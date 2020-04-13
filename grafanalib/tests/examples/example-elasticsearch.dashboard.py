@@ -7,8 +7,15 @@ The graph shows the following metrics for HTTP requests to the URL path "/login"
 - Max. response time per point of time of HTTP requests
 """
 
-from grafanalib.core import *
-from grafanalib.elasticsearch import *
+from grafanalib.core import (
+    Dashboard, Graph, Legend, NULL_AS_NULL, Row, SECONDS_FORMAT,
+    SHORT_FORMAT, YAxes, YAxis
+)
+
+from grafanalib.elasticsearch import (
+    DateHistogramGroupBy, ElasticsearchTarget, Filter,
+    FiltersGroupBy, MaxMetricAgg
+)
 
 suc_label = "Success (200-300)"
 clt_err_label = "Client Errors (400-500)"
@@ -38,7 +45,8 @@ g = Graph(
     dataSource="elasticsearch",
     targets=tgts,
     lines=False,
-    legend=Legend(alignAsTable=True, rightSide=True, total=True, current=True, max=True),
+    legend=Legend(alignAsTable=True, rightSide=True,
+                  total=True, current=True, max=True),
     lineWidth=1,
     nullPointMode=NULL_AS_NULL,
     seriesOverrides=[
@@ -68,7 +76,7 @@ g = Graph(
             "color": "#447EBC"
         },
     ],
-    yAxes=[
+    yAxes=YAxes(
         YAxis(
             label="Count",
             format=SHORT_FORMAT,
@@ -79,7 +87,7 @@ g = Graph(
             format=SECONDS_FORMAT,
             decimals=2
         ),
-    ],
+    ),
     transparent=True,
     span=12,
 )
