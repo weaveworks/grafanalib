@@ -540,6 +540,20 @@ class Annotations(object):
 
 
 @attr.s
+class DataLink(object):
+    title = attr.ib()
+    linkUrl = attr.ib(default="", validator=instance_of(str))
+    isNewTab = attr.ib(default=False, validator=instance_of(bool))
+
+    def to_json_data(self):
+        return {
+            'title': self.title,
+            'url': self.linkUrl,
+            'targetBlank': self.isNewTab,
+        }
+
+
+@attr.s
 class DataSourceInput(object):
     name = attr.ib()
     label = attr.ib()
@@ -1012,6 +1026,7 @@ class Graph(object):
     """
     Generates Graph panel json structure.
 
+    :param dataLinks: list of data links hooked to datapoints on the graph
     :param dataSource: DataSource's name
     :param minSpan: Minimum width for each panel
     :param repeat: Template's name to repeat Graph on
@@ -1021,6 +1036,7 @@ class Graph(object):
     targets = attr.ib()
     aliasColors = attr.ib(default=attr.Factory(dict))
     bars = attr.ib(default=False, validator=instance_of(bool))
+    dataLinks = attr.ib(validator=instance_of(list))
     dataSource = attr.ib(default=None)
     description = attr.ib(default=None)
     editable = attr.ib(default=True, validator=instance_of(bool))
@@ -1081,6 +1097,9 @@ class Graph(object):
             'links': self.links,
             'minSpan': self.minSpan,
             'nullPointMode': self.nullPointMode,
+            'options': {
+                'dataLinks': self.dataLinks,
+            },
             'percentage': self.percentage,
             'pointradius': self.pointRadius,
             'points': self.points,
@@ -1690,6 +1709,7 @@ class BarGauge(object):
     :param allValue: If All values should be shown or a Calculation
     :param cacheTimeout: metric query result cache ttl
     :param calc: Calculation to perform on metrics
+    :param dataLinks: list of data links hooked to datapoints on the graph
     :param dataSource: Grafana datasource name
     :param decimals: override automatic decimal precision for legend/tooltips
     :param description: optional panel description
@@ -1727,6 +1747,7 @@ class BarGauge(object):
     allValues = attr.ib(default=False, validator=instance_of(bool))
     cacheTimeout = attr.ib(default=None)
     calc = attr.ib(default=GAUGE_CALC_MEAN)
+    dataLinks = attr.ib(validator=instance_of(list))
     dataSource = attr.ib(default=None)
     decimals = attr.ib(default=None)
     description = attr.ib(default=None)
@@ -1799,6 +1820,7 @@ class BarGauge(object):
                         "min": self.min,
                         "title": self.label,
                         "unit": self.format,
+                        "links": self.dataLinks,
                     },
                     "limit": self.limit,
                     "mappings": self.valueMaps,
@@ -1828,6 +1850,7 @@ class GaugePanel(object):
     :param allValue: If All values should be shown or a Calculation
     :param cacheTimeout: metric query result cache ttl
     :param calc: Calculation to perform on metrics
+    :param dataLinks: list of data links hooked to datapoints on the graph
     :param dataSource: Grafana datasource name
     :param decimals: override automatic decimal precision for legend/tooltips
     :param description: optional panel description
@@ -1863,6 +1886,7 @@ class GaugePanel(object):
     allValues = attr.ib(default=False, validator=instance_of(bool))
     cacheTimeout = attr.ib(default=None)
     calc = attr.ib(default=GAUGE_CALC_MEAN)
+    dataLinks = attr.ib(validator=instance_of(list))
     dataSource = attr.ib(default=None)
     decimals = attr.ib(default=None)
     description = attr.ib(default=None)
@@ -1920,6 +1944,7 @@ class GaugePanel(object):
                         "min": self.min,
                         "title": self.label,
                         "unit": self.format,
+                        "links": self.dataLinks,
                     },
                     "limit": self.limit,
                     "mappings": self.valueMaps,
