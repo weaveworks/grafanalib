@@ -96,36 +96,36 @@ UTC = 'utc'
 SCHEMA_VERSION = 12
 
 # Y Axis formats
-# more here: https://github.com/grafana/grafana/blob/master/packages/grafana-ui/src/utils/valueFormats/categories.ts
+# more here: https://github.com/grafana/grafana/blob/master/packages/grafana-ui/src/utils/valueFormats/categories.ts # noqa: E501
 
 # MISC
 NO_FORMAT = "none"
 SHORT_FORMAT = "short"
-PERCENT_FORMAT = "percent" # 1%, 80%, etc
-PERCENT_UNIT_FORMAT = "percentunit" # 0.01, 0.8
+PERCENT_FORMAT = "percent"  # 1%, 80%, etc
+PERCENT_UNIT_FORMAT = "percentunit"  # 0.01, 0.8
 
 # Date
-DATE_TIME_ISO_FORMAT = "dateTimeAsIso" # YYYY-MM-DD HH:mm:ss
-DATE_TIME_US_FORMAT = "dateTimeAsUS" # DD/MM/YYYY h:mm:ss a
+DATE_TIME_ISO_FORMAT = "dateTimeAsIso"  # YYYY-MM-DD HH:mm:ss
+DATE_TIME_US_FORMAT = "dateTimeAsUS"  # DD/MM/YYYY h:mm:ss a
 DATE_TIME_NOW = "dateTimeFromNow"
 
 # Time
 HERTZ_FORMAT = "hertz"
 NANOSECONDS_FORMAT = "ns"
-MICROSECONDS_FORMAT = "µs" # on a Mac: opt + m
+MICROSECONDS_FORMAT = "µs"  # on a Mac: opt + m
 MILLISECONDS_FORMAT = "ms"
 SECONDS_FORMAT = "s"
 MINUTES_FORMAT = "m"
 HOURS_FORMAT = "h"
 DAYS_FORMAT = "d"
-DURATION_MS_FORMAT = "dtdurationms" # duration in milliseconds
-DURATION_FORMAT = "dtdurations" # duration in seconds
+DURATION_MS_FORMAT = "dtdurationms"  # duration in milliseconds
+DURATION_FORMAT = "dtdurations"  # duration in seconds
 TIMETICKS_FORMAT = "timeticks"
 CLOCK_MS_FORMAT = "clockms"
 CLOCK_S_FORMAT = "clocks"
 
 # Throughput
-OPS_FORMAT = "ops" # ops per second
+OPS_FORMAT = "ops"  # ops per second
 REQ_PER_SEC_FORMAT = "reqps"
 READS_PER_SEC_FORMAT = "rps"
 WRITES_PER_SEC_FORMAT = "wps"
@@ -138,13 +138,13 @@ WRITES_PER_MIN = "wpm"
 # Data
 BITS_FORMAT = "bits"
 BYTES_FORMAT = "bytes"
-KIBIBYTES_FORMAT = "kbytes" # 2^10
-MEBIBYTES_FORMAT = "mbytes" # 2^20
-GIBIBYTES_FORMAT = "gbytes" # 2^30
+KIBIBYTES_FORMAT = "kbytes"  # 2^10
+MEBIBYTES_FORMAT = "mbytes"  # 2^20
+GIBIBYTES_FORMAT = "gbytes"  # 2^30
 
-KILOBYTES_FORMAT = "deckbytes" # 10^3
-MEGABYTES_FORMAT = "decmbytes" # 10^6
-GIGABYTES_FORMAT = "decgbytes" # 10^9
+KILOBYTES_FORMAT = "deckbytes"  # 10^3
+MEGABYTES_FORMAT = "decmbytes"  # 10^6
+GIGABYTES_FORMAT = "decgbytes"  # 10^9
 
 # Data rate
 PACKETS_PER_SEC_FORMAT = "pps"
@@ -1160,17 +1160,21 @@ class Graph(object):
     def auto_ref_ids(self):
         """Give unique IDs all the panels without IDs.
 
-        Returns a new ``Graph`` that is the same as this one, except all
-        of the metrics have their ``refId`` property set. Any panels which had an
-        ``refId`` property set will keep that property, all others will have
-        auto-generated IDs provided for them.
+        Returns a new ``Graph`` that is the same as this one, except all of
+        the metrics have their ``refId`` property set. Any panels which had
+        an ``refId`` property set will keep that property, all others will
+        have auto-generated IDs provided for them.
         """
-        ref_ids = set([target.refId for target in self._iter_targets() if target.refId])
-        candidate_ref_ids = itertools.chain(string.ascii_uppercase, itertools.product(string.ascii_uppercase, repeat=2))
+        ref_ids = set(
+            [target.refId for target in self._iter_targets() if target.refId])
+        candidate_ref_ids = itertools.chain(
+            string.ascii_uppercase,
+            itertools.product(string.ascii_uppercase, repeat=2)
+        )
         auto_ref_ids = (i for i in candidate_ref_ids if i not in ref_ids)
 
         def set_refid(target):
-            return target if target.refId else attr.assoc(target, refId=next(auto_ref_ids))
+            return target if target.refId else attr.assoc(target, refId=next(auto_ref_ids))  # noqa: E501
         return self._map_targets(set_refid)
 
 
@@ -1273,6 +1277,7 @@ class Text(object):
             'type': TEXT_TYPE,
         }
 
+
 @attr.s
 class AjaxPanel(object):
     """Generates the Ajax Plugin Panel."""
@@ -1300,28 +1305,29 @@ class AjaxPanel(object):
 
     def to_json_data(self):
         return {
-           'method': self.method,
-           'params_js': self.params_js,
-           'title': self.title,
-           'url': self.url,
-           'datasource': self.datasource,
-           'header_js': self.header_js,
-           'id': self.id,
-           'minSpan': self.minSpan,
-           'mode': self.mode,
-           'responseType': self.responseType,
-           'skipSameURL': self.skipSameURL,
-           'showTime': self.showTime,
-           'showTimeFormat': self.showTimeFormat,
-           'showTimePrefix': self.showTimePrefix,
-           'showTimeValue': self.showTimeValue,
-           'span': self.span,
-           'targets': self.targets,
-           'templateResponse': self.templateResponse,
-           'transparent': self.transparent,
-           'type': self.type,
-           'withCredentials': self.withCredentials
+            'method': self.method,
+            'params_js': self.params_js,
+            'title': self.title,
+            'url': self.url,
+            'datasource': self.datasource,
+            'header_js': self.header_js,
+            'id': self.id,
+            'minSpan': self.minSpan,
+            'mode': self.mode,
+            'responseType': self.responseType,
+            'skipSameURL': self.skipSameURL,
+            'showTime': self.showTime,
+            'showTimeFormat': self.showTimeFormat,
+            'showTimePrefix': self.showTimePrefix,
+            'showTimeValue': self.showTimeValue,
+            'span': self.span,
+            'targets': self.targets,
+            'templateResponse': self.templateResponse,
+            'transparent': self.transparent,
+            'type': self.type,
+            'withCredentials': self.withCredentials
         }
+
 
 @attr.s
 class AlertList(object):
@@ -1750,8 +1756,9 @@ class Table(object):
 @attr.s
 class Annotation(object):
     """
-    Annotation creates a new dashboard annotation.  Annotations can be defined to query a
-    datasource and overlay information related to key events, such as container exits or deploys.
+    Annotation creates a new dashboard annotation. Annotations can be defined
+    to query a datasource and overlay information related to key events, such
+    as container exits or deploys.
 
         :param default: the default value for the variable
         :param datasource: where to fetch the values for the variable from
@@ -1773,7 +1780,7 @@ class Annotation(object):
             interval, datasource, custom, constant, adhoc.
         :param hide: Hide this variable in the dashboard, can be one of:
             SHOW (default), HIDE_LABEL, HIDE_VARIABLE
-    """
+    """  # noqa: E501
     name = attr.ib()
     expr = attr.ib(default=None)
     target = attr.ib(default=None)

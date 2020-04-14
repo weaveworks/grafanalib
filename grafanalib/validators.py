@@ -33,10 +33,10 @@ def is_interval(instance, attribute, value):
     A validator that raises a :exc:`ValueError` if the attribute value is not
     matching regular expression.
     """
-    if not re.match("^[+-]?\d*[smhdMY]$", value):
+    if not re.match(r"^[+-]?\d*[smhdMY]$", value):
         raise ValueError(
             "valid interval should be a string "
-            "matching an expression: ^[+-]?\d*[smhdMY]$. "
+            r"matching an expression: ^[+-]?\d*[smhdMY]$. "
             "Examples: 24h 7d 1M +24h -24h")
 
 
