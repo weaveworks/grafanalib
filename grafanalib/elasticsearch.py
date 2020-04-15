@@ -113,7 +113,6 @@ class DerivativeMetricAgg(object):
     pipelineAgg = attr.ib(default=1, validator=instance_of(int))
     unit = attr.ib(default="", validator=instance_of(str))
 
-
     def to_json_data(self):
         settings = {}
         if self.unit != "":
