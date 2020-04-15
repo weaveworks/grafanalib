@@ -105,20 +105,27 @@ class DerivativeMetricAgg(object):
     :param hide: show/hide the metric in the final panel display
     :param id: id of the metric
     :param pipelineAgg: pipeline aggregator id
+    :param unit: derivative units
     """
     field = attr.ib(default="", validator=instance_of(str))
     hide = attr.ib(default=False, validator=instance_of(bool))
     id = attr.ib(default=0, validator=instance_of(int))
     pipelineAgg = attr.ib(default=1, validator=instance_of(int))
+    unit = attr.ib(default="", validator=instance_of(str))
+
 
     def to_json_data(self):
+        settings = {}
+        if self.unit != "":
+            settings["unit"] = self.unit
+
         return {
             'id': str(self.id),
             'pipelineAgg': str(self.pipelineAgg),
             'hide': self.hide,
             'type': 'derivative',
             'field': self.field,
-            'settings': {},
+            'settings': settings,
         }
 
 
