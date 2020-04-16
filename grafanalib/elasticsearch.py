@@ -17,6 +17,7 @@ class CountMetricAgg(object):
 
     It's the default aggregator for elasticsearch queries.
     """
+
     def to_json_data(self):
         return {
             'type': 'count',
@@ -82,6 +83,7 @@ class AverageMetricAgg(object):
             "meta": {}
         }
 
+
 @attr.s
 class SumMetricAgg(object):
     """An aggregator that provides the sum of the values.
@@ -102,7 +104,6 @@ class SumMetricAgg(object):
             'field': self.field,
             'settings': {},
         }
-
 
 
 @attr.s
