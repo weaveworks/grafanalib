@@ -25,6 +25,7 @@ Changes
 * Add average metric aggregation for elastic search
 * Bugfix to query ordering in Elasticsearch TermsGroupBy
 * Added all parameters for StringColumnStyle
+* Bugfix to update default ``Threshold`` values for ``GaugePanel`` and ``BarGauge``
 
 0.5.5 (2020-02-17)
 ==================

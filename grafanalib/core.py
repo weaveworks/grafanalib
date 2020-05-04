@@ -1765,8 +1765,8 @@ class BarGauge(object):
     thresholds = attr.ib(
         default=attr.Factory(
             lambda: [
-                Threshold("green", 0, 0),
-                Threshold("red", 1, 80)
+                Threshold("green", 0, 0.0),
+                Threshold("red", 1, 80.0)
             ]
         ),
         validator=instance_of(list),
@@ -1887,8 +1887,8 @@ class GaugePanel(object):
     thresholds = attr.ib(
         default=attr.Factory(
             lambda: [
-                Threshold("green", 0, 0),
-                Threshold("red", 1, 80)
+                Threshold("green", 0, 0.0),
+                Threshold("red", 1, 80.0)
             ]
         ),
         validator=instance_of(list),
