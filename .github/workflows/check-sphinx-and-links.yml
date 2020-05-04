@@ -1,0 +1,34 @@
+name: "Check docs and links"
+on:
+- pull_request
+- push
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+
+    - name: "Install prerequisites"
+      run: |
+        pip3 install -r docs/requirements.txt
+
+    - uses: ammaraskar/sphinx-action@master
+      with:
+        docs-folder: "docs/"
+        pre-build-command: |
+          sphinx-apidoc -f grafanalib -o docs/api
+          python setup.py install --user
+        build-command: "make html"
+
+    - name: Link Checker
+      id: lc
+      uses: peter-evans/link-checker@v1
+      with:
+        args: -x 'github.com/weaveworks/grafanalib/(issue|pull)' -r docs/build/html/*
+    - name: Fail if there were link errors
+      run: exit ${{ steps.lc.outputs.exit_code }}

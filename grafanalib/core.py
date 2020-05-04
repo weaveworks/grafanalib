@@ -1550,7 +1550,7 @@ def _style_columns(columns):
 class Table(object):
     """Generates Table panel json structure
 
-    Grafana doc on table: http://docs.grafana.org/reference/table_panel/
+    Grafana doc on table: https://grafana.com/docs/grafana/latest/features/panels/table_panel/#table-panel
 
     :param columns: table columns for Aggregations view
     :param dataSource: Grafana datasource name
