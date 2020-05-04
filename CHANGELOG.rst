@@ -26,6 +26,7 @@ Changes
 * Bugfix to query ordering in Elasticsearch TermsGroupBy
 * Added all parameters for StringColumnStyle
 * Add ``Statusmap`` class (and ``StatusmapColor``) to support the Statusmap panel plugin
+* Bugfix to update default ``Threshold`` values for ``GaugePanel`` and ``BarGauge``
 
 0.5.5 (2020-02-17)
 ==================

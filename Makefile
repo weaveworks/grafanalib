@@ -78,16 +78,3 @@ clean:
 
 clean-deps:
 	rm -rf $(VIRTUALENV_DIR)
-
-update-docs-modules:
-	sphinx-apidoc -f grafanalib -o docs/api
-
-build-docs: update-docs-modules
-	docker build -t grafanalib-docs -f Dockerfile.docs .
-
-test-docs: build-docs
-	@docker run -it grafanalib-docs /usr/bin/linkchecker docs/build/html/index.html
-
-serve-docs: build-docs
-	@echo Starting docs website on http://localhost:${DOCS_PORT}/docs/build/html/index.html
-	@docker run -i -p ${DOCS_PORT}:8000 -e USER_ID=$$UID grafanalib-docs

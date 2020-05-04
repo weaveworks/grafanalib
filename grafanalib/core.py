@@ -1551,7 +1551,7 @@ def _style_columns(columns):
 class Table(object):
     """Generates Table panel json structure
 
-    Grafana doc on table: http://docs.grafana.org/reference/table_panel/
+    Grafana doc on table: https://grafana.com/docs/grafana/latest/features/panels/table_panel/#table-panel
 
     :param columns: table columns for Aggregations view
     :param dataSource: Grafana datasource name
@@ -1766,8 +1766,8 @@ class BarGauge(object):
     thresholds = attr.ib(
         default=attr.Factory(
             lambda: [
-                Threshold("green", 0, 0),
-                Threshold("red", 1, 80)
+                Threshold("green", 0, 0.0),
+                Threshold("red", 1, 80.0)
             ]
         ),
         validator=instance_of(list),
@@ -1888,8 +1888,8 @@ class GaugePanel(object):
     thresholds = attr.ib(
         default=attr.Factory(
             lambda: [
-                Threshold("green", 0, 0),
-                Threshold("red", 1, 80)
+                Threshold("green", 0, 0.0),
+                Threshold("red", 1, 80.0)
             ]
         ),
         validator=instance_of(list),
