@@ -32,6 +32,8 @@ Changes
 * Update ``BarGauge`` and ``GaugePanel`` default Threshold values.
 * Update release instructions.
 
+Thanks a lot to the contributions from @DWalker487, @bboreham, @butlerx, @dholbach, @franzs, @jaychitalia95, @matthewmrichter and @number492 for this release!
+
 0.5.5 (2020-02-17)
 ==================
 
