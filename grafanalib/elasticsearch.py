@@ -239,7 +239,7 @@ class ElasticsearchTarget(object):
     refId = attr.ib(default="", validator=instance_of(str))
 
     def _map_bucket_aggs(self, f):
-        return attr.assoc(self, bucketAggs=list(map(f, self.bucketAggs)))
+        return attr.evolve(self, bucketAggs=list(map(f, self.bucketAggs)))
 
     def auto_bucket_agg_ids(self):
         """Give unique IDs all bucketAggs without ID.

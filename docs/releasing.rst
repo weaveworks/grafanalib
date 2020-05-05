@@ -6,8 +6,8 @@ Pre-release
 -----------
 
 * Pick a new version number (e.g. ``X.Y.Z``)
-* Update `CHANGELOG <../CHANGELOG.rst>`_ with that number
-* Update `setup.py <../setup.py>`_ with that number
+* Update `CHANGELOG <https://github.com/weaveworks/grafanalib/blob/master/CHANGELOG.rst>`_ with that number
+* Update `setup.py <https://github.com/weaveworks/grafanalib/blob/master/setup.py>`_ with that number
 
 Smoke-testing
 -------------
@@ -19,7 +19,7 @@ Smoke-testing
          $ python setup.py install
 
 * Check ``~/.local/bin/generate-dashboard`` for the update version.
-* Try the example on `README <../README.rst>`_.
+* Try the example on `README <https://github.com/weaveworks/grafanalib/blob/master/README.rst>`_.
 
 Releasing
 ---------
