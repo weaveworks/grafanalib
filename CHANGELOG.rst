@@ -25,6 +25,7 @@ Changes
 * Add average metric aggregation for elastic search
 * Bugfix to query ordering in Elasticsearch TermsGroupBy
 * Added all parameters for StringColumnStyle
+* Add Elasticsearch Sum metric aggregator
 * Add ``Statusmap`` class (and ``StatusmapColor``) to support the Statusmap panel plugin
 * Bugfix to update default ``Threshold`` values for ``GaugePanel`` and ``BarGauge``
 * Use Github Actions for CI.
