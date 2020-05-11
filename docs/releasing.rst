@@ -16,7 +16,7 @@ Smoke-testing
 
       .. code-block:: console
 
-         $ python setup.py install
+         $ python setup.py install --user
 
 * Check ``~/.local/bin/generate-dashboard`` for the update version.
 * Try the example on `README <https://github.com/weaveworks/grafanalib/blob/master/README.rst>`_.

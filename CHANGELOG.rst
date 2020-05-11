@@ -2,13 +2,17 @@
 Changelog
 =========
 
-0.5.7 (TBD)
+0.5.7 (2020-05-11)
 ===========
 
 Changes
 -------
 
-* <...>
+* Fix crasher instatiating elasticsearch panels.
+* Remove unused ``tools/`` directory.
+
+Thanks a lot for your contributions to this release, @DWalker487, @dholbach and @matthewmrichter.
+
 
 0.5.6 (2020-05-05)
 ==================
