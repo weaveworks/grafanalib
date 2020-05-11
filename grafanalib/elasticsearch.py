@@ -72,6 +72,8 @@ class AverageMetricAgg(object):
     """
 
     field = attr.ib(default="", validator=instance_of(str))
+    id = attr.ib(default=0, validator=instance_of(int))
+    hide = attr.ib(default=False, validator=instance_of(bool))
 
     def to_json_data(self):
         return {
