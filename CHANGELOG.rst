@@ -9,6 +9,7 @@ Changelog
 Changes
 -------
 
+* Add Elasticsearch bucket script pipeline aggregator
 * ...
 
 
