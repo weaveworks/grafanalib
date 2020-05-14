@@ -2,9 +2,6 @@
 Getting Started with grafanalib
 ===============================
 
-.. image:: https://circleci.com/gh/weaveworks/grafanalib.svg?style=shield
-    :target: https://circleci.com/gh/weaveworks/grafanalib
-
 .. image:: https://readthedocs.org/projects/grafanalib/badge/?version=latest
     :alt: Documentation Status
     :scale: 100%

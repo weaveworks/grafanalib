@@ -20,6 +20,7 @@ class CountMetricAgg(object):
     """
     hide = attr.ib(default=False, validator=instance_of(bool))
 
+
     def to_json_data(self):
         return {
             'hide': self.hide,
@@ -82,15 +83,39 @@ class AverageMetricAgg(object):
     """
 
     field = attr.ib(default="", validator=instance_of(str))
+    id = attr.ib(default=0, validator=instance_of(int))
     hide = attr.ib(default=False, validator=instance_of(bool))
 
     def to_json_data(self):
         return {
+            'id': str(self.id),
             "hide": self.hide,
             "type": "avg",
             "field": self.field,
             "settings": {},
             "meta": {}
+        }
+
+
+@attr.s
+class SumMetricAgg(object):
+    """An aggregator that provides the sum of the values.
+    https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-sum-aggregation.html
+    :param field: name of elasticsearch field to provide the sum over
+    :param hide: show/hide the metric in the final panel display
+    :param id: id of the metric
+    """
+    field = attr.ib(default="", validator=instance_of(str))
+    id = attr.ib(default=0, validator=instance_of(int))
+    hide = attr.ib(default=False, validator=instance_of(bool))
+
+    def to_json_data(self):
+        return {
+            'type': 'sum',
+            'id': str(self.id),
+            'hide': self.hide,
+            'field': self.field,
+            'settings': {},
         }
 
 
@@ -227,7 +252,7 @@ class ElasticsearchTarget(object):
     refId = attr.ib(default="", validator=instance_of(str))
 
     def _map_bucket_aggs(self, f):
-        return attr.assoc(self, bucketAggs=list(map(f, self.bucketAggs)))
+        return attr.evolve(self, bucketAggs=list(map(f, self.bucketAggs)))
 
     def auto_bucket_agg_ids(self):
         """Give unique IDs all bucketAggs without ID.
