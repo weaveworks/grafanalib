@@ -20,7 +20,6 @@ class CountMetricAgg(object):
     """
     hide = attr.ib(default=False, validator=instance_of(bool))
 
-
     def to_json_data(self):
         return {
             'hide': self.hide,
