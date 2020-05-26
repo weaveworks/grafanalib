@@ -21,7 +21,7 @@ class CountMetricAgg(object):
     """
     id = attr.ib(default=0, validator=instance_of(int))
     hide = attr.ib(default=False, validator=instance_of(bool))
-    
+
     def to_json_data(self):
         return {
             'id': str(self.id),
@@ -45,7 +45,7 @@ class MaxMetricAgg(object):
     field = attr.ib(default="", validator=instance_of(str))
     id = attr.ib(default=0, validator=instance_of(int))
     hide = attr.ib(default=False, validator=instance_of(bool))
-    
+
     def to_json_data(self):
         return {
             'id': str(self.id),
@@ -69,7 +69,7 @@ class CardinalityMetricAgg(object):
     field = attr.ib(default="", validator=instance_of(str))
     id = attr.ib(default=0, validator=instance_of(int))
     hide = attr.ib(default=False, validator=instance_of(bool))
-    
+
     def to_json_data(self):
         return {
             'id': str(self.id),
@@ -136,8 +136,10 @@ class DerivativeMetricAgg(object):
             'type': 'derivative',
             'field': self.field,
             'settings': settings,
+            }
 
 
+@attr.s
 class SumMetricAgg(object):
     """An aggregator that provides the sum of the values.
     https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-sum-aggregation.html
