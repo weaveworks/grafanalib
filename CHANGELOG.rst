@@ -2,8 +2,33 @@
 Changelog
 =========
 
-Next release
-============
+
+0.5.8 (TBD)
+===========
+
+Changes
+-------
+
+* Add Elasticsearch bucket script pipeline aggregator
+* Added ability to hide metrics for Elasticsearch MetricAggs
+* Add derivative metric aggregation for Elasticsearch
+* ...
+
+
+0.5.7 (2020-05-11)
+===========
+
+Changes
+-------
+
+* Fix crasher instatiating elasticsearch panels.
+* Remove unused ``tools/`` directory.
+
+Thanks a lot for your contributions to this release, @DWalker487, @dholbach and @matthewmrichter.
+
+
+0.5.6 (2020-05-05)
+==================
 
 Changes
 -------
@@ -25,7 +50,15 @@ Changes
 * Add average metric aggregation for elastic search
 * Bugfix to query ordering in Elasticsearch TermsGroupBy
 * Added all parameters for StringColumnStyle
-* Add derivative metric aggregation for Elasticsearch
+* Add Elasticsearch Sum metric aggregator
+* Add ``Statusmap`` class (and ``StatusmapColor``) to support the Statusmap panel plugin
+* Bugfix to update default ``Threshold`` values for ``GaugePanel`` and ``BarGauge``
+* Use Github Actions for CI.
+* Fix test warnings.
+* Update ``BarGauge`` and ``GaugePanel`` default Threshold values.
+* Update release instructions.
+
+Thanks a lot to the contributions from @DWalker487, @bboreham, @butlerx, @dholbach, @franzs, @jaychitalia95, @matthewmrichter and @number492 for this release!
 
 0.5.5 (2020-02-17)
 ==================
