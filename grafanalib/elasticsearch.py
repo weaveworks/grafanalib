@@ -136,7 +136,7 @@ class DerivativeMetricAgg(object):
             'type': 'derivative',
             'field': self.field,
             'settings': settings,
-            }
+        }
 
 
 @attr.s
