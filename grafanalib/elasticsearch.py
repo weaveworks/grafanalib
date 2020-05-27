@@ -17,11 +17,14 @@ class CountMetricAgg(object):
 
     It's the default aggregator for elasticsearch queries.
     :param hide: show/hide the metric in the final panel display
+    :param id: id of the metric
     """
+    id = attr.ib(default=0, validator=instance_of(int))
     hide = attr.ib(default=False, validator=instance_of(bool))
 
     def to_json_data(self):
         return {
+            'id': str(self.id),
             'hide': self.hide,
             'type': 'count',
             'field': 'select field',
@@ -37,12 +40,15 @@ class MaxMetricAgg(object):
 
     :param field: name of elasticsearch field to provide the maximum for
     :param hide: show/hide the metric in the final panel display
+    :param id: id of the metric
     """
     field = attr.ib(default="", validator=instance_of(str))
+    id = attr.ib(default=0, validator=instance_of(int))
     hide = attr.ib(default=False, validator=instance_of(bool))
 
     def to_json_data(self):
         return {
+            'id': str(self.id),
             'hide': self.hide,
             'type': 'max',
             'field': self.field,
@@ -57,13 +63,16 @@ class CardinalityMetricAgg(object):
     https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-cardinality-aggregation.html
 
     :param field: name of elasticsearch field to provide the maximum for
+    :param id: id of the metric
     :param hide: show/hide the metric in the final panel display
     """
     field = attr.ib(default="", validator=instance_of(str))
+    id = attr.ib(default=0, validator=instance_of(int))
     hide = attr.ib(default=False, validator=instance_of(bool))
 
     def to_json_data(self):
         return {
+            'id': str(self.id),
             'hide': self.hide,
             'type': 'cardinality',
             'field': self.field,
@@ -78,6 +87,7 @@ class AverageMetricAgg(object):
     https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-avg-aggregation.html
 
     :param field: name of elasticsearch field to provide the maximum for
+    :param id: id of the metric
     :param hide: show/hide the metric in the final panel display
     """
 
@@ -93,6 +103,39 @@ class AverageMetricAgg(object):
             "field": self.field,
             "settings": {},
             "meta": {}
+        }
+
+
+@attr.s
+class DerivativeMetricAgg(object):
+    """An aggregator that takes the derivative of another metric aggregator.
+
+    https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-pipeline-derivative-aggregation.html
+
+    :param field: id of elasticsearch metric aggregator to provide the derivative of
+    :param hide: show/hide the metric in the final panel display
+    :param id: id of the metric
+    :param pipelineAgg: pipeline aggregator id
+    :param unit: derivative units
+    """
+    field = attr.ib(default="", validator=instance_of(str))
+    hide = attr.ib(default=False, validator=instance_of(bool))
+    id = attr.ib(default=0, validator=instance_of(int))
+    pipelineAgg = attr.ib(default=1, validator=instance_of(int))
+    unit = attr.ib(default="", validator=instance_of(str))
+
+    def to_json_data(self):
+        settings = {}
+        if self.unit != "":
+            settings["unit"] = self.unit
+
+        return {
+            'id': str(self.id),
+            'pipelineAgg': str(self.pipelineAgg),
+            'hide': self.hide,
+            'type': 'derivative',
+            'field': self.field,
+            'settings': settings,
         }
 
 
