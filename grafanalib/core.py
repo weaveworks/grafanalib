@@ -1243,12 +1243,15 @@ class AlertList(object):
 class SingleStat(object):
     """Generates Single Stat panel json structure
 
+    Grafana doc on singlestat: https://grafana.com/docs/grafana/latest/features/panels/singlestat/
+
     :param dataSource: Grafana datasource name
     :param targets: list of metric requests for chosen datasource
     :param title: panel title
     :param cacheTimeout: metric query result cache ttl
     :param colors: the list of colors that can be used for coloring
-        panel value or background.
+        panel value or background. Additional info on coloring in docs:
+        https://grafana.com/docs/grafana/latest/features/panels/singlestat/#coloring
     :param colorBackground: defines if grafana will color panel background
     :param colorValue: defines if grafana will color panel value
     :param description: optional panel description
@@ -1262,6 +1265,8 @@ class SingleStat(object):
     :param interval: defines time interval between metric queries
     :param links: additional web links
     :param mappingType: defines panel mapping type.
+        Additional info can be found in docs:
+        https://grafana.com/docs/grafana/latest/features/panels/singlestat/#value-to-text-mapping
     :param mappingTypes: the list of available mapping types for panel
     :param maxDataPoints: maximum metric query results,
         that will be used for rendering
@@ -1275,6 +1280,8 @@ class SingleStat(object):
     :param rangeMaps: the list of value to text mappings
     :param span: defines the number of spans that will be used for panel
     :param sparkline: defines if grafana should draw an additional sparkline.
+        Sparkline grafana documentation:
+        https://grafana.com/docs/grafana/latest/features/panels/singlestat/#spark-lines
     :param thresholds: single stat thresholds
     :param transparent: defines if panel should be transparent
     :param valueFontSize: defines value font size
