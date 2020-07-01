@@ -12,6 +12,7 @@ Changes
 * Add Elasticsearch bucket script pipeline aggregator
 * Added ability to hide metrics for Elasticsearch MetricAggs
 * Add derivative metric aggregation for Elasticsearch
+* Add ``Stat`` class (and ``StatMapping``, ``StatValueMapping``, ``StatRangeMapping``) to support the Stat panel
 * ...
 
 

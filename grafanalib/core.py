@@ -71,6 +71,7 @@ FLOT = 'flot'
 ABSOLUTE_TYPE = 'absolute'
 DASHBOARD_TYPE = 'dashboard'
 GRAPH_TYPE = 'graph'
+STAT_TYPE = 'stat'
 SINGLESTAT_TYPE = 'singlestat'
 TABLE_TYPE = 'table'
 TEXT_TYPE = 'text'
@@ -1240,8 +1241,173 @@ class AlertList(object):
 
 
 @attr.s
+class Stat(object):
+    """Generates Stat panel json structure
+
+    Grafana doc on stat: https://grafana.com/docs/grafana/latest/panels/visualizations/stat-panel/
+
+    :param dataSource: Grafana datasource name
+    :param targets: list of metric requests for chosen datasource
+    :param title: panel title
+    :param colorMode: defines if Grafana will color panel background: keys "value" "background"
+    :param graphMode: defines if Grafana will draw graph: keys 'area' 'none'
+    :param orientation: Stacking direction in case of multiple series or fields: keys 'auto' 'horizontal' 'vertical'
+    :param alignment: defines value & title positioning: keys 'auto' 'centre'
+    :param description: optional panel description
+    :param editable: defines if panel is editable via web interfaces
+    :param format: defines value units
+    :param height: defines panel height
+    :param id: panel id
+    :param decimals: number of decimals to display
+    :param interval: defines time interval between metric queries
+    :param links: additional web links
+    :param mappings: the list of values to text mappings
+        This should be a list of StatMapping objects
+        https://grafana.com/docs/grafana/latest/panels/field-configuration-options/#value-mapping
+    :param reduceCalc: algorithm for reduction to a single value: keys
+        'mean' 'lastNotNull' 'last' 'first' 'firstNotNull' 'min' 'max' 'sum' 'total'
+    :param span: defines the number of spans that will be used for panel
+    :param thresholds: single stat thresholds
+    """
+
+    dataSource = attr.ib()
+    targets = attr.ib()
+    title = attr.ib()
+    description = attr.ib(default=None)
+    colorMode = attr.ib(default='value')
+    graphMode = attr.ib(default='area')
+    orientation = attr.ib(default='auto')
+    alignment = attr.ib(default='auto')
+    editable = attr.ib(default=True, validator=instance_of(bool))
+    format = attr.ib(default='none')
+    height = attr.ib(default=None)
+    id = attr.ib(default=None)
+    links = attr.ib(default=attr.Factory(list))
+    mappings = attr.ib(default=attr.Factory(list))
+    span = attr.ib(default=6)
+    thresholds = attr.ib(default='')
+    timeFrom = attr.ib(default=None)
+    reduceCalc = attr.ib(default='mean', type=str)
+    decimals = attr.ib(default=None)
+
+    def to_json_data(self):
+        return {
+            'datasource': self.dataSource,
+            'description': self.description,
+            'editable': self.editable,
+            'id': self.id,
+            'links': self.links,
+            'height': self.height,
+            'fieldConfig': {
+                'defaults': {
+                    'custom': {},
+                    'decimals': self.decimals,
+                    'mappings': self.mappings,
+                    'thresholds': {
+                        'mode': 'absolute',
+                        'steps': self.thresholds,
+                    },
+                    'unit': self.format
+                }
+            },
+            'options': {
+                'colorMode': self.colorMode,
+                'graphMode': self.graphMode,
+                'justifyMode': self.alignment,
+                'orientation': self.orientation,
+                'reduceOptions': {
+                    'calcs': [
+                        self.reduceCalc
+                    ],
+                    'fields': '',
+                    'values': False
+                }
+            },
+            'span': self.span,
+            'targets': self.targets,
+            'title': self.title,
+            'type': STAT_TYPE,
+            'timeFrom': self.timeFrom,
+        }
+
+
+@attr.s
+class StatMapping(object):
+    """
+    Generates json structure for the value mapping for the Stat panel:
+    :param text: Sting that will replace input value
+    :param value: Value to be replaced
+    :param startValue: When using a range, the start value of the range
+    :param endValue: When using a range, the end value of the range
+    :param id: panel id
+    """
+
+    text = attr.ib()
+    mapValue = attr.ib(default="", validator=instance_of(str))
+    startValue = attr.ib(default="", validator=instance_of(str))
+    endValue = attr.ib(default="", validator=instance_of(str))
+    id = attr.ib(default=None)
+
+    def to_json_data(self):
+        mappingType = MAPPING_TYPE_VALUE_TO_TEXT if self.mapValue else MAPPING_TYPE_RANGE_TO_TEXT
+
+        return {
+            'operator': "",
+            'text': self.text,
+            'type': mappingType,
+            'value': self.mapValue,
+            'from': self.startValue,
+            'to': self.endValue,
+            'id': self.id
+        }
+
+
+@attr.s
+class StatValueMapping(object):
+    """
+    Generates json structure for the value mappings for the StatPanel:
+    :param text: Sting that will replace input value
+    :param value: Value to be replaced
+    :param id: panel id
+    """
+
+    text = attr.ib()
+    mapValue = attr.ib(default="", validator=instance_of(str))
+    id = attr.ib(default=None)
+
+    def to_json_data(self):
+        return StatMapping(self.text, mapValue=self.mapValue, id=self.id)
+
+
+@attr.s
+class StatRangeMapping(object):
+    """
+    Generates json structure for the value mappings for the StatPanel:
+    :param text: Sting that will replace input value
+    :param startValue: When using a range, the start value of the range
+    :param endValue: When using a range, the end value of the range
+    :param id: panel id
+    """
+
+    text = attr.ib()
+    startValue = attr.ib(default="", validator=instance_of(str))
+    endValue = attr.ib(default="", validator=instance_of(str))
+    id = attr.ib(default=None)
+
+    def to_json_data(self):
+        return StatMapping(
+            self.text,
+            startValue=self.startValue,
+            endValue=self.endValue,
+            id=self.id
+        )
+
+
+@attr.s
 class SingleStat(object):
     """Generates Single Stat panel json structure
+
+    This panel was deprecated in Grafana 7.0, please use Stat instead
 
     Grafana doc on singlestat: https://grafana.com/docs/grafana/latest/features/panels/singlestat/
 
