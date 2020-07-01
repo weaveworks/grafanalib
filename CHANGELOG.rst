@@ -12,7 +12,7 @@ Changes
 * Add Elasticsearch bucket script pipeline aggregator
 * Added ability to hide metrics for Elasticsearch MetricAggs
 * Add derivative metric aggregation for Elasticsearch
-* Add ``SVG`` class to support the SVG panel
+* Add ``Svg`` class to support the SVG panel
 * ...
 
 

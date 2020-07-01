@@ -2210,6 +2210,7 @@ class Statusmap(object):
             graphObject['alert'] = self.alert
         return graphObject
 
+
 @attr.s
 class Svg(object):
     """Generates SVG panel json structure
@@ -2269,7 +2270,7 @@ class Svg(object):
             'id': self.id,
             'links': self.links,
             'height': self.height,
-            "format": self.format,
+            'format': self.format,
             'js_code': js_code,
             'js_init_code': js_init_code,
             'span': self.span,
