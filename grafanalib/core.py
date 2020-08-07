@@ -80,6 +80,7 @@ BARGAUGE_TYPE = "bargauge"
 GAUGE_TYPE = "gauge"
 HEATMAP_TYPE = "heatmap"
 STATUSMAP_TYPE = "flant-statusmap-panel"
+SVG_TYPE = 'marcuscalidus-svg-panel'
 
 DEFAULT_FILL = 1
 DEFAULT_REFRESH = '10s'
@@ -538,6 +539,20 @@ class Annotations(object):
     def to_json_data(self):
         return {
             'list': self.list,
+        }
+
+
+@attr.s
+class DataLink(object):
+    title = attr.ib()
+    linkUrl = attr.ib(default="", validator=instance_of(str))
+    isNewTab = attr.ib(default=False, validator=instance_of(bool))
+
+    def to_json_data(self):
+        return {
+            'title': self.title,
+            'url': self.linkUrl,
+            'targetBlank': self.isNewTab,
         }
 
 
@@ -1014,6 +1029,7 @@ class Graph(object):
     """
     Generates Graph panel json structure.
 
+    :param dataLinks: list of data links hooked to datapoints on the graph
     :param dataSource: DataSource's name
     :param minSpan: Minimum width for each panel
     :param repeat: Template's name to repeat Graph on
@@ -1023,6 +1039,7 @@ class Graph(object):
     targets = attr.ib()
     aliasColors = attr.ib(default=attr.Factory(dict))
     bars = attr.ib(default=False, validator=instance_of(bool))
+    dataLinks = attr.ib(default=attr.Factory(list))
     dataSource = attr.ib(default=None)
     description = attr.ib(default=None)
     editable = attr.ib(default=True, validator=instance_of(bool))
@@ -1083,6 +1100,9 @@ class Graph(object):
             'links': self.links,
             'minSpan': self.minSpan,
             'nullPointMode': self.nullPointMode,
+            'options': {
+                'dataLinks': self.dataLinks,
+            },
             'percentage': self.percentage,
             'pointradius': self.pointRadius,
             'points': self.points,
@@ -1857,6 +1877,7 @@ class BarGauge(object):
     :param allValue: If All values should be shown or a Calculation
     :param cacheTimeout: metric query result cache ttl
     :param calc: Calculation to perform on metrics
+    :param dataLinks: list of data links hooked to datapoints on the graph
     :param dataSource: Grafana datasource name
     :param decimals: override automatic decimal precision for legend/tooltips
     :param description: optional panel description
@@ -1894,6 +1915,7 @@ class BarGauge(object):
     allValues = attr.ib(default=False, validator=instance_of(bool))
     cacheTimeout = attr.ib(default=None)
     calc = attr.ib(default=GAUGE_CALC_MEAN)
+    dataLinks = attr.ib(default=attr.Factory(list))
     dataSource = attr.ib(default=None)
     decimals = attr.ib(default=None)
     description = attr.ib(default=None)
@@ -1966,6 +1988,7 @@ class BarGauge(object):
                         "min": self.min,
                         "title": self.label,
                         "unit": self.format,
+                        "links": self.dataLinks,
                     },
                     "limit": self.limit,
                     "mappings": self.valueMaps,
@@ -1995,6 +2018,7 @@ class GaugePanel(object):
     :param allValue: If All values should be shown or a Calculation
     :param cacheTimeout: metric query result cache ttl
     :param calc: Calculation to perform on metrics
+    :param dataLinks: list of data links hooked to datapoints on the graph
     :param dataSource: Grafana datasource name
     :param decimals: override automatic decimal precision for legend/tooltips
     :param description: optional panel description
@@ -2030,6 +2054,7 @@ class GaugePanel(object):
     allValues = attr.ib(default=False, validator=instance_of(bool))
     cacheTimeout = attr.ib(default=None)
     calc = attr.ib(default=GAUGE_CALC_MEAN)
+    dataLinks = attr.ib(default=attr.Factory(list))
     dataSource = attr.ib(default=None)
     decimals = attr.ib(default=None)
     description = attr.ib(default=None)
@@ -2087,6 +2112,7 @@ class GaugePanel(object):
                         "min": self.min,
                         "title": self.label,
                         "unit": self.format,
+                        "links": self.dataLinks,
                     },
                     "limit": self.limit,
                     "mappings": self.valueMaps,
@@ -2374,3 +2400,74 @@ class Statusmap(object):
         if self.alert:
             graphObject['alert'] = self.alert
         return graphObject
+
+
+@attr.s
+class Svg(object):
+    """Generates SVG panel json structure
+
+    Grafana doc on SVG: https://grafana.com/grafana/plugins/marcuscalidus-svg-panel
+
+    :param dataSource: Grafana datasource name
+    :param targets: list of metric requests for chosen datasource
+    :param title: panel title
+    :param description: optional panel description
+    :param editable: defines if panel is editable via web interfaces
+    :param format: defines value units
+    :param jsCodeFilePath: path to javascript file to be run on dashboard refresh
+    :param jsCodeInitFilePath: path to javascript file to be run after the first initialization of the SVG
+    :param height: defines panel height
+    :param id: panel id
+    :param interval: defines time interval between metric queries
+    :param links: additional web links
+    :param reduceCalc: algorithm for reduction to a single value: keys 'mean' 'lastNotNull' 'last' 'first' 'firstNotNull' 'min' 'max' 'sum' 'total'
+    :param span: defines the number of spans that will be used for panel
+    :param svgFilePath: path to SVG image file to be displayed
+    """
+
+    dataSource = attr.ib()
+    targets = attr.ib()
+    title = attr.ib()
+    description = attr.ib(default=None)
+    editable = attr.ib(default=True, validator=instance_of(bool))
+    format = attr.ib(default="none")
+    jsCodeFilePath = attr.ib(default="", validator=instance_of(str))
+    jsCodeInitFilePath = attr.ib(default="", validator=instance_of(str))
+    height = attr.ib(default=None)
+    id = attr.ib(default=None)
+    links = attr.ib(default=attr.Factory(list))
+    span = attr.ib(default=6)
+    svgFilePath = attr.ib(default="", validator=instance_of(str))
+
+    @staticmethod
+    def read_file(file_path):
+        if file_path:
+            with open(file_path) as f:
+                read_data = f.read()
+            return read_data
+        else:
+            return ""
+
+    def to_json_data(self):
+
+        js_code = self.read_file(self.jsCodeFilePath)
+        js_init_code = self.read_file(self.jsCodeInitFilePath)
+        svg_data = self.read_file(self.svgFilePath)
+
+        return {
+            'datasource': self.dataSource,
+            'description': self.description,
+            'editable': self.editable,
+            'id': self.id,
+            'links': self.links,
+            'height': self.height,
+            'format': self.format,
+            'js_code': js_code,
+            'js_init_code': js_init_code,
+            'span': self.span,
+            'svg_data': svg_data,
+            'targets': self.targets,
+            'title': self.title,
+            'type': SVG_TYPE,
+            'useSVGBuilder': False
+        }
