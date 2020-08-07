@@ -37,6 +37,7 @@ Changes
 * Add ``Heatmap`` class (and ``HeatmapColor``) to support the Heatmap panel (#170)
 * Add ``BarGuage`` for creating bar guages panels in grafana 6
 * Add ``GuagePanel`` for creating guages in grafana 6
+* Add data links support to ``Graph``, ``BarGuage``, and ``GuagePanel`` panels
 * Removed gfdatasource - feature is built in to Grafana since v5.
 * Generate API docs for readthedocs.org
 * Fix AlertList panel generation
