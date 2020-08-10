@@ -81,6 +81,7 @@ GAUGE_TYPE = "gauge"
 HEATMAP_TYPE = "heatmap"
 STATUSMAP_TYPE = "flant-statusmap-panel"
 SVG_TYPE = 'marcuscalidus-svg-panel'
+PIE_CHART_TYPE = 'grafana-piechart-panel'
 
 DEFAULT_FILL = 1
 DEFAULT_REFRESH = '10s'
@@ -2405,9 +2406,7 @@ class Statusmap(object):
 @attr.s
 class Svg(object):
     """Generates SVG panel json structure
-
     Grafana doc on SVG: https://grafana.com/grafana/plugins/marcuscalidus-svg-panel
-
     :param dataSource: Grafana datasource name
     :param targets: list of metric requests for chosen datasource
     :param title: panel title
@@ -2470,4 +2469,70 @@ class Svg(object):
             'title': self.title,
             'type': SVG_TYPE,
             'useSVGBuilder': False
+        }
+
+
+@attr.s
+class PieChart(object):
+    """Generates Pie Chart panel json structure
+    Grafana doc on Pie Chart: https://grafana.com/grafana/plugins/grafana-piechart-panel
+    :param dataSource: Grafana datasource name
+    :param targets: list of metric requests for chosen datasource
+    :param title: panel title
+    :param description: optional panel description
+    :param editable: defines if panel is editable via web interfaces
+    :param format: defines value units
+    :param height: defines panel height
+    :param id: panel id
+    :param pieType: defines the shape of the pie chart (pie or donut)
+    :param showLegend: defines if the legend should be shown
+    :param showLegend: defines if the legend should show values
+    :param legendType: defines where the legend position
+    :param links: additional web links
+    :param span: defines the number of spans that will be used for panel
+    """
+
+    dataSource = attr.ib()
+    targets = attr.ib()
+    title = attr.ib()
+    description = attr.ib(default=None)
+    editable = attr.ib(default=True, validator=instance_of(bool))
+    format = attr.ib(default='none')
+    height = attr.ib(default=None)
+    id = attr.ib(default=None)
+    links = attr.ib(default=attr.Factory(list))
+    legendType = attr.ib(default='Right side')
+    pieType = attr.ib(default='pie')
+    showLegend = attr.ib(default=True)
+    showLegendValues = attr.ib(default=True)
+    span = attr.ib(default=6)
+    thresholds = attr.ib(default='')
+    timeFrom = attr.ib(default=None)
+
+    def to_json_data(self):
+        return {
+            'datasource': self.dataSource,
+            'description': self.description,
+            'editable': self.editable,
+            'format': self.format,
+            'id': self.id,
+            'links': self.links,
+            'pieType': self.pieType,
+            'height': self.height,
+            'fieldConfig': {
+                'defaults': {
+                    'custom': {},
+                },
+                'overrides': []
+            },
+            'legend': {
+                'show': self.showLegend,
+                'values': self.showLegendValues
+            },
+            'legendType': self.legendType,
+            'span': self.span,
+            'targets': self.targets,
+            'title': self.title,
+            'type': PIE_CHART_TYPE,
+            'timeFrom': self.timeFrom,
         }
