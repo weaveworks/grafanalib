@@ -14,11 +14,12 @@ Changes
 * Add derivative metric aggregation for Elasticsearch
 * Add ``Stat`` class (and ``StatMapping``, ``StatValueMapping``, ``StatRangeMapping``) to support the Stat panel
 * Add ``Svg`` class to support the SVG panel
+* Add ``PieChart`` class for creating Pie Chart panels
 * ...
 
 
 0.5.7 (2020-05-11)
-===========
+==================
 
 Changes
 -------
