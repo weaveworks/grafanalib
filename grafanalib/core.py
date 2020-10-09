@@ -1289,6 +1289,7 @@ class Stat(object):
         'mean' 'lastNotNull' 'last' 'first' 'firstNotNull' 'min' 'max' 'sum' 'total'
     :param span: defines the number of spans that will be used for panel
     :param thresholds: single stat thresholds
+    :param transparent: defines if the panel should be transparent
     """
 
     dataSource = attr.ib()
@@ -1308,6 +1309,7 @@ class Stat(object):
     span = attr.ib(default=6)
     thresholds = attr.ib(default='')
     timeFrom = attr.ib(default=None)
+    transparent = attr.ib(default=False, validator=instance_of(bool))
     reduceCalc = attr.ib(default='mean', type=str)
     decimals = attr.ib(default=None)
 
@@ -1347,6 +1349,7 @@ class Stat(object):
             'span': self.span,
             'targets': self.targets,
             'title': self.title,
+            'transparent': self.transparent,
             'type': STAT_TYPE,
             'timeFrom': self.timeFrom,
         }
@@ -2185,6 +2188,7 @@ class Heatmap(object):
     :param yBucketNumber
     :param highlightCards: boolean
     :param hideZeroBuckets: boolean
+    :param transparent: defines if the panel should be transparent
     """
 
     title = attr.ib()
@@ -2218,6 +2222,7 @@ class Heatmap(object):
     hideZeroBuckets = attr.ib(default=False)
     highlightCards = attr.ib(default=True)
     options = attr.ib(default=None)
+    transparent = attr.ib(default=False, validator=instance_of(bool))
 
     xAxis = attr.ib(
         default=attr.Factory(XAxis),
@@ -2254,6 +2259,7 @@ class Heatmap(object):
             'targets': self.targets,
             'title': self.title,
             'tooltip': self.tooltip,
+            'transparent': self.transparent,
             'type': HEATMAP_TYPE,
             'xAxis': self.xAxis,
             'xBucketNumber': self.xBucketNumber,
@@ -2490,6 +2496,7 @@ class PieChart(object):
     :param legendType: defines where the legend position
     :param links: additional web links
     :param span: defines the number of spans that will be used for panel
+    :param transparent: defines if the panel is transparent
     """
 
     dataSource = attr.ib()
@@ -2508,6 +2515,7 @@ class PieChart(object):
     span = attr.ib(default=6)
     thresholds = attr.ib(default='')
     timeFrom = attr.ib(default=None)
+    transparent = attr.ib(default=False, validator=instance_of(bool))
 
     def to_json_data(self):
         return {
@@ -2535,4 +2543,5 @@ class PieChart(object):
             'title': self.title,
             'type': PIE_CHART_TYPE,
             'timeFrom': self.timeFrom,
+            'transparent': self.transparent
         }

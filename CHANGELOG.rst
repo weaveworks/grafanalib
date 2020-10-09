@@ -15,6 +15,7 @@ Changes
 * Add ``Stat`` class (and ``StatMapping``, ``StatValueMapping``, ``StatRangeMapping``) to support the Stat panel
 * Add ``Svg`` class to support the SVG panel
 * Add ``PieChart`` class for creating Pie Chart panels
+* Add `transparent` setting to classes that were missing it (Heatmap, PieChart)
 * ...
 
 
