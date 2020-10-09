@@ -9,6 +9,8 @@ Changelog
 Changes
 -------
 
+TBA
+=======
 * Add Elasticsearch bucket script pipeline aggregator
 * Added ability to hide metrics for Elasticsearch MetricAggs
 * Add derivative metric aggregation for Elasticsearch
@@ -16,6 +18,7 @@ Changes
 * Add ``Svg`` class to support the SVG panel
 * Add ``PieChart`` class for creating Pie Chart panels
 * Add `transparent` setting to classes that were missing it (Heatmap, PieChart)
+* Add InfluxDB data source
 * ...
 
 
