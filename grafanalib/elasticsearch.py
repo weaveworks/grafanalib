@@ -16,9 +16,16 @@ class CountMetricAgg(object):
     https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-valuecount-aggregation.html
 
     It's the default aggregator for elasticsearch queries.
+    :param hide: show/hide the metric in the final panel display
+    :param id: id of the metric
     """
+    id = attr.ib(default=0, validator=instance_of(int))
+    hide = attr.ib(default=False, validator=instance_of(bool))
+
     def to_json_data(self):
         return {
+            'id': str(self.id),
+            'hide': self.hide,
             'type': 'count',
             'field': 'select field',
             'settings': {},
@@ -32,11 +39,17 @@ class MaxMetricAgg(object):
     https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-max-aggregation.html
 
     :param field: name of elasticsearch field to provide the maximum for
+    :param hide: show/hide the metric in the final panel display
+    :param id: id of the metric
     """
     field = attr.ib(default="", validator=instance_of(str))
+    id = attr.ib(default=0, validator=instance_of(int))
+    hide = attr.ib(default=False, validator=instance_of(bool))
 
     def to_json_data(self):
         return {
+            'id': str(self.id),
+            'hide': self.hide,
             'type': 'max',
             'field': self.field,
             'settings': {},
@@ -50,12 +63,99 @@ class CardinalityMetricAgg(object):
     https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-cardinality-aggregation.html
 
     :param field: name of elasticsearch field to provide the maximum for
+    :param id: id of the metric
+    :param hide: show/hide the metric in the final panel display
     """
     field = attr.ib(default="", validator=instance_of(str))
+    id = attr.ib(default=0, validator=instance_of(int))
+    hide = attr.ib(default=False, validator=instance_of(bool))
 
     def to_json_data(self):
         return {
+            'id': str(self.id),
+            'hide': self.hide,
             'type': 'cardinality',
+            'field': self.field,
+            'settings': {},
+        }
+
+
+@attr.s
+class AverageMetricAgg(object):
+    """An aggregator that provides the average. value among the values.
+
+    https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-avg-aggregation.html
+
+    :param field: name of elasticsearch field to provide the maximum for
+    :param id: id of the metric
+    :param hide: show/hide the metric in the final panel display
+    """
+
+    field = attr.ib(default="", validator=instance_of(str))
+    id = attr.ib(default=0, validator=instance_of(int))
+    hide = attr.ib(default=False, validator=instance_of(bool))
+
+    def to_json_data(self):
+        return {
+            'id': str(self.id),
+            "hide": self.hide,
+            "type": "avg",
+            "field": self.field,
+            "settings": {},
+            "meta": {}
+        }
+
+
+@attr.s
+class DerivativeMetricAgg(object):
+    """An aggregator that takes the derivative of another metric aggregator.
+
+    https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-pipeline-derivative-aggregation.html
+
+    :param field: id of elasticsearch metric aggregator to provide the derivative of
+    :param hide: show/hide the metric in the final panel display
+    :param id: id of the metric
+    :param pipelineAgg: pipeline aggregator id
+    :param unit: derivative units
+    """
+    field = attr.ib(default="", validator=instance_of(str))
+    hide = attr.ib(default=False, validator=instance_of(bool))
+    id = attr.ib(default=0, validator=instance_of(int))
+    pipelineAgg = attr.ib(default=1, validator=instance_of(int))
+    unit = attr.ib(default="", validator=instance_of(str))
+
+    def to_json_data(self):
+        settings = {}
+        if self.unit != "":
+            settings["unit"] = self.unit
+
+        return {
+            'id': str(self.id),
+            'pipelineAgg': str(self.pipelineAgg),
+            'hide': self.hide,
+            'type': 'derivative',
+            'field': self.field,
+            'settings': settings,
+        }
+
+
+@attr.s
+class SumMetricAgg(object):
+    """An aggregator that provides the sum of the values.
+    https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-sum-aggregation.html
+    :param field: name of elasticsearch field to provide the sum over
+    :param hide: show/hide the metric in the final panel display
+    :param id: id of the metric
+    """
+    field = attr.ib(default="", validator=instance_of(str))
+    id = attr.ib(default=0, validator=instance_of(int))
+    hide = attr.ib(default=False, validator=instance_of(bool))
+
+    def to_json_data(self):
+        return {
+            'type': 'sum',
+            'id': str(self.id),
+            'hide': self.hide,
             'field': self.field,
             'settings': {},
         }
@@ -95,6 +195,42 @@ class DateHistogramGroupBy(object):
 
 
 @attr.s
+class BucketScriptAgg(object):
+    """An aggregator that applies a bucket script to the results of previous aggregations.
+    https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-pipeline-bucket-script-aggregation.html
+
+    :param fields: dictionary of field names mapped to aggregation IDs to be used in the bucket script
+                   e.g. { "field1":1 }, which allows the output of aggregate ID 1 to be referenced as
+                        params.field1 in the bucket script
+    :param script: script to apply to the data using the variables specified in 'fields'
+    :param id: id of the aggregator
+    :param hide: show/hide the metric in the final panel display
+    """
+    fields = attr.ib(default={}, validator=instance_of(dict))
+    id = attr.ib(default=0, validator=instance_of(int))
+    hide = attr.ib(default=False, validator=instance_of(bool))
+    script = attr.ib(default="", validator=instance_of(str))
+
+    def to_json_data(self):
+        pipelineVars = []
+        for field in self.fields:
+            pipelineVars.append({
+                "name": str(field),
+                "pipelineAgg": str(self.fields[field])
+            })
+
+        return {
+            'type': 'bucket_script',
+            'id': str(self.id),
+            'hide': self.hide,
+            'pipelineVariables': pipelineVars,
+            'settings': {
+                'script': self.script
+            },
+        }
+
+
+@attr.s
 class Filter(object):
     """ A Filter for a FilterGroupBy aggregator.
 
@@ -108,9 +244,9 @@ class Filter(object):
 
     def to_json_data(self):
         return {
-                'label': self.label,
-                'query': self.query,
-                }
+            'label': self.label,
+            'query': self.query,
+        }
 
 
 @attr.s
@@ -127,12 +263,12 @@ class FiltersGroupBy(object):
 
     def to_json_data(self):
         return {
-                'id': str(self.id),
-                'settings': {
-                             'filters': self.filters,
-                             },
-                'type': 'filters',
-                }
+            'id': str(self.id),
+            'settings': {
+                'filters': self.filters,
+            },
+            'type': 'filters',
+        }
 
 
 @attr.s
@@ -163,7 +299,7 @@ class TermsGroupBy(object):
             'settings': {
                 'min_doc_count': self.minDocCount,
                 'order': self.order,
-                'order_by': self.orderBy,
+                'orderBy': self.orderBy,
                 'size': self.size,
             },
         }
@@ -194,7 +330,7 @@ class ElasticsearchTarget(object):
     refId = attr.ib(default="", validator=instance_of(str))
 
     def _map_bucket_aggs(self, f):
-        return attr.assoc(self, bucketAggs=list(map(f, self.bucketAggs)))
+        return attr.evolve(self, bucketAggs=list(map(f, self.bucketAggs)))
 
     def auto_bucket_agg_ids(self):
         """Give unique IDs all bucketAggs without ID.

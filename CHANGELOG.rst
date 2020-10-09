@@ -2,18 +2,95 @@
 Changelog
 =========
 
-Next release
-=======
+
+0.5.8 (TBD)
+===========
 
 Changes
 -------
 
-* Add InfluxDB data source
-
 TBA
+=======
+* Add Elasticsearch bucket script pipeline aggregator
+* Added ability to hide metrics for Elasticsearch MetricAggs
+* Add derivative metric aggregation for Elasticsearch
+* Add ``Stat`` class (and ``StatMapping``, ``StatValueMapping``, ``StatRangeMapping``) to support the Stat panel
+* Add ``Svg`` class to support the SVG panel
+* Add ``PieChart`` class for creating Pie Chart panels
+* Add `transparent` setting to classes that were missing it (Heatmap, PieChart)
+* Add InfluxDB data source
+* ...
+
+
+0.5.7 (2020-05-11)
+==================
+
+Changes
+-------
+
+* Fix crasher instatiating elasticsearch panels.
+* Remove unused ``tools/`` directory.
+
+Thanks a lot for your contributions to this release, @DWalker487, @dholbach and @matthewmrichter.
+
+
+0.5.6 (2020-05-05)
+==================
+
+Changes
+-------
+
+* Add ``Heatmap`` class (and ``HeatmapColor``) to support the Heatmap panel (#170)
+* Add ``BarGuage`` for creating bar guages panels in grafana 6
+* Add ``GuagePanel`` for creating guages in grafana 6
+* Add data links support to ``Graph``, ``BarGuage``, and ``GuagePanel`` panels
+* Removed gfdatasource - feature is built in to Grafana since v5.
+* Generate API docs for readthedocs.org
+* Fix AlertList panel generation
+* Add both upper and lower case `"time"` pattern for time_series column format in Table class
+* Drop testing of Python 2.7, it has been EOL'ed and CI was broken
+  due to this.
+* Automatically test documentation examples.
+* Point to dev meeting resources.
+* Add description attribute to Dashboard.
+* Add support for custom variables.
+* Point out documentation on readthedocs more clearly.
+* Add average metric aggregation for elastic search
+* Bugfix to query ordering in Elasticsearch TermsGroupBy
+* Added all parameters for StringColumnStyle
+* Add Elasticsearch Sum metric aggregator
+* Add ``Statusmap`` class (and ``StatusmapColor``) to support the Statusmap panel plugin
+* Bugfix to update default ``Threshold`` values for ``GaugePanel`` and ``BarGauge``
+* Use Github Actions for CI.
+* Fix test warnings.
+* Update ``BarGauge`` and ``GaugePanel`` default Threshold values.
+* Update release instructions.
+
+Thanks a lot to the contributions from @DWalker487, @bboreham, @butlerx, @dholbach, @franzs, @jaychitalia95, @matthewmrichter and @number492 for this release!
+
+0.5.5 (2020-02-17)
+==================
+
+It's been a while since the last release and we are happy to get this one into your hands.
+0.5.5 is a maintenance release, most importantly it adds support for Python >= 3.5.
+
+We are very delighted to welcome Matt Richter on board as maintainer.
+
+Changes
+-------
+
+* Automate publishing to PyPI with GitHub Actions
+* Update README.rst to make the example work
+* Bump Dockerfile to use Alpine 3.10 as base
+* Fix up ``load_source()`` call which doesn't exist in Python 3.5
+* Update versions of Python tested
+* Repair tests
+* pin to attrs 19.2 and fix deprecated arguments
+
+Many thanks to contributors @bboreham, @dholbach, @ducksecops, @kevingessner, @matthewmrichter, @uritau.
 
 0.5.4 (2019-08-30)
-=======
+==================
 
 Changes
 -------
