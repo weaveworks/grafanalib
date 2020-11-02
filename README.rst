@@ -82,8 +82,8 @@ Community
 We'd like you to join the ``grafanalib`` community! Talk to us on Slack (see the links),
 or join us for one of our next meetings):
 
-- Meetings take place monthly: third Friday of the month 15:00 UTC
-- https://meet.google.com/cys-jyto-rju
+- Meetings take place monthly: fourth Friday of the month 15:00 UTC
+- https://weaveworks.zoom.us/j/96824669060
 - `Meeting minutes and agenda
   <https://docs.google.com/document/d/1JxrSszyPHYhNbJDWYZehRKv6AO4U-zIBhuNmYQVOIHo/edit>`_
   (includes links to meeting recordings)
