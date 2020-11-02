@@ -201,7 +201,7 @@ class BucketScriptAgg(object):
 
     :param fields: dictionary of field names mapped to aggregation IDs to be used in the bucket script
                    e.g. { "field1":1 }, which allows the output of aggregate ID 1 to be referenced as
-                        params.field1 in the bucket script
+                   params.field1 in the bucket script
     :param script: script to apply to the data using the variables specified in 'fields'
     :param id: id of the aggregator
     :param hide: show/hide the metric in the final panel display
