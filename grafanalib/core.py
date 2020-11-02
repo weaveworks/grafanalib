@@ -2589,8 +2589,8 @@ class Threshold(object):
     """
 
     color = attr.ib()
-    value = attr.ib(validator=instance_of(float))
     index = attr.ib(validator=instance_of(int))
+    value = attr.ib(validator=instance_of(float))
     line = attr.ib(default=True, validator=instance_of(bool))
     op = attr.ib(default="gt")
     yaxis = attr.ib(default="left")
