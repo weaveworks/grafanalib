@@ -2,6 +2,14 @@
 Changelog
 =========
 
+0.5.9 (TBD)
+===========
+
+Changes
+-------
+
+* Change supported python versions from 3.6 to 3.9
+
 0.5.8 (2020-11-02)
 ==================
 
