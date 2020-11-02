@@ -27,12 +27,12 @@ for inspiration.
 Generating dashboards
 =====================
 
-If you save the above as ``frontend.dashboard.py`` (the suffix must be
+If you save the above as ``example.dashboard.py`` (the suffix must be
 ``.dashboard.py``), you can then generate the JSON dashboard with:
 
 .. code-block:: console
 
-  $ generate-dashboard -o frontend.json frontend.dashboard.py
+  $ generate-dashboard -o frontend.json example.dashboard.py
 
 Installation
 ============
