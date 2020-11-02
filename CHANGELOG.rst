@@ -2,15 +2,18 @@
 Changelog
 =========
 
+0.5.8 (2020-11-02)
+==================
 
-0.5.8 (TBD)
-===========
+This release adds quite a few new classes to grafanalib, ElasticSearch support was improved and support for InfluxDB data sources was added.
+
+We would also very much like to welcome James Gibson as new maintainer of grafanalib. Thanks a lot for stepping up to this role!
 
 Changes
 -------
 
-TBA
-=======
+* Added more YAxis formats, added Threshold and SeriesOverride types
+* dataLinks support in graphs
 * Add Elasticsearch bucket script pipeline aggregator
 * Added ability to hide metrics for Elasticsearch MetricAggs
 * Add derivative metric aggregation for Elasticsearch
@@ -20,7 +23,8 @@ TBA
 * Add `transparent` setting to classes that were missing it (Heatmap, PieChart)
 * Add InfluxDB data source
 * Add ``auto_ref_ids`` to ``Graph``s
-* ...
+
+Thanks a lot for your contributions to this release, @DWalker487, @JamesGibo, @daveworth, @dholbach, @fauust, @larsderidder, @matthewmrichter.
 
 
 0.5.7 (2020-05-11)
