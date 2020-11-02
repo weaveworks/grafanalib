@@ -4,9 +4,9 @@ import attr
 import itertools
 from attr.validators import instance_of
 
-DATE_HISTOGRAM_DEFAULT_FIELD = "time_iso8601"
-ORDER_ASC = "asc"
-ORDER_DESC = "desc"
+DATE_HISTOGRAM_DEFAULT_FIELD = 'time_iso8601'
+ORDER_ASC = 'asc'
+ORDER_DESC = 'desc'
 
 
 @attr.s
@@ -98,11 +98,11 @@ class AverageMetricAgg(object):
     def to_json_data(self):
         return {
             'id': str(self.id),
-            "hide": self.hide,
-            "type": "avg",
-            "field": self.field,
-            "settings": {},
-            "meta": {}
+            'hide': self.hide,
+            'type': 'avg',
+            'field': self.field,
+            'settings': {},
+            'meta': {}
         }
 
 
@@ -127,7 +127,7 @@ class DerivativeMetricAgg(object):
     def to_json_data(self):
         settings = {}
         if self.unit != "":
-            settings["unit"] = self.unit
+            settings['unit'] = self.unit
 
         return {
             'id': str(self.id),
@@ -178,7 +178,7 @@ class DateHistogramGroupBy(object):
         default=DATE_HISTOGRAM_DEFAULT_FIELD,
         validator=instance_of(str),
     )
-    interval = attr.ib(default="auto", validator=instance_of(str))
+    interval = attr.ib(default='auto', validator=instance_of(str))
     minDocCount = attr.ib(default=0, validator=instance_of(int))
 
     def to_json_data(self):
@@ -215,8 +215,8 @@ class BucketScriptAgg(object):
         pipelineVars = []
         for field in self.fields:
             pipelineVars.append({
-                "name": str(field),
-                "pipelineAgg": str(self.fields[field])
+                'name': str(field),
+                'pipelineAgg': str(self.fields[field])
             })
 
         return {
@@ -288,7 +288,7 @@ class TermsGroupBy(object):
     id = attr.ib(default=0, validator=instance_of(int))
     minDocCount = attr.ib(default=1, validator=instance_of(int))
     order = attr.ib(default=ORDER_DESC, validator=instance_of(str))
-    orderBy = attr.ib(default="_term", validator=instance_of(str))
+    orderBy = attr.ib(default='_term', validator=instance_of(str))
     size = attr.ib(default=0, validator=instance_of(int))
 
     def to_json_data(self):

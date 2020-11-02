@@ -22,12 +22,12 @@ def load_dashboard(path):
     """
     if sys.version_info[0] == 3 and sys.version_info[1] >= 5:
         import importlib.util
-        spec = importlib.util.spec_from_file_location("dashboard", path)
+        spec = importlib.util.spec_from_file_location('dashboard', path)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
     else:
         import importlib
-        module = importlib.load_source("dashboard", path)
+        module = importlib.load_source('dashboard', path)
     marker = object()
     dashboard = getattr(module, 'dashboard', marker)
     if dashboard is marker:

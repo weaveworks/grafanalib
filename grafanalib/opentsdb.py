@@ -5,36 +5,36 @@ from attr.validators import instance_of
 from grafanalib.validators import is_in
 
 # OpenTSDB aggregators
-OTSDB_AGG_AVG = "avg"
-OTSDB_AGG_COUNT = "count"
-OTSDB_AGG_DEV = "dev"
-OTSDB_AGG_EP50R3 = "ep50r3"
-OTSDB_AGG_EP50R7 = "ep50r7"
-OTSDB_AGG_EP75R3 = "ep75r3"
-OTSDB_AGG_EP75R7 = "ep75r7"
-OTSDB_AGG_EP90R3 = "ep90r3"
-OTSDB_AGG_EP90R7 = "ep90r7"
-OTSDB_AGG_EP95R3 = "ep95r3"
-OTSDB_AGG_EP95R7 = "ep95r7"
-OTSDB_AGG_EP99R3 = "ep99r3"
-OTSDB_AGG_EP99R7 = "ep99r7"
-OTSDB_AGG_EP999R3 = "ep999r3"
-OTSDB_AGG_EP999R7 = "ep999r7"
-OTSDB_AGG_FIRST = "first"
-OTSDB_AGG_LAST = "last"
-OTSDB_AGG_MIMMIN = "mimmin"
-OTSDB_AGG_MIMMAX = "mimmax"
-OTSDB_AGG_MIN = "min"
-OTSDB_AGG_MAX = "max"
-OTSDB_AGG_NONE = "none"
-OTSDB_AGG_P50 = "p50"
-OTSDB_AGG_P75 = "p75"
-OTSDB_AGG_P90 = "p90"
-OTSDB_AGG_P95 = "p95"
-OTSDB_AGG_P99 = "p99"
-OTSDB_AGG_P999 = "p999"
-OTSDB_AGG_SUM = "sum"
-OTSDB_AGG_ZIMSUM = "zimsum"
+OTSDB_AGG_AVG = 'avg'
+OTSDB_AGG_COUNT = 'count'
+OTSDB_AGG_DEV = 'dev'
+OTSDB_AGG_EP50R3 = 'ep50r3'
+OTSDB_AGG_EP50R7 = 'ep50r7'
+OTSDB_AGG_EP75R3 = 'ep75r3'
+OTSDB_AGG_EP75R7 = 'ep75r7'
+OTSDB_AGG_EP90R3 = 'ep90r3'
+OTSDB_AGG_EP90R7 = 'ep90r7'
+OTSDB_AGG_EP95R3 = 'ep95r3'
+OTSDB_AGG_EP95R7 = 'ep95r7'
+OTSDB_AGG_EP99R3 = 'ep99r3'
+OTSDB_AGG_EP99R7 = 'ep99r7'
+OTSDB_AGG_EP999R3 = 'ep999r3'
+OTSDB_AGG_EP999R7 = 'ep999r7'
+OTSDB_AGG_FIRST = 'first'
+OTSDB_AGG_LAST = 'last'
+OTSDB_AGG_MIMMIN = 'mimmin'
+OTSDB_AGG_MIMMAX = 'mimmax'
+OTSDB_AGG_MIN = 'min'
+OTSDB_AGG_MAX = 'max'
+OTSDB_AGG_NONE = 'none'
+OTSDB_AGG_P50 = 'p50'
+OTSDB_AGG_P75 = 'p75'
+OTSDB_AGG_P90 = 'p90'
+OTSDB_AGG_P95 = 'p95'
+OTSDB_AGG_P99 = 'p99'
+OTSDB_AGG_P999 = 'p999'
+OTSDB_AGG_SUM = 'sum'
+OTSDB_AGG_ZIMSUM = 'zimsum'
 
 OTSDB_DOWNSAMPLING_FILL_POLICIES = ('none', 'nan', 'null', 'zero')
 OTSDB_DOWNSAMPLING_FILL_POLICY_DEFAULT = 'none'
@@ -106,7 +106,7 @@ class OpenTSDBTarget(object):
 
     metric = attr.ib()
     refId = attr.ib(default="")
-    aggregator = attr.ib(default="sum")
+    aggregator = attr.ib(default='sum')
     alias = attr.ib(default=None)
     isCounter = attr.ib(default=False, validator=instance_of(bool))
     counterMax = attr.ib(default=None)
