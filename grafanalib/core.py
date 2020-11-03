@@ -42,7 +42,7 @@ class Pixels(object):
     num = attr.ib(validator=instance_of(int))
 
     def to_json_data(self):
-        return '{}px'.format(self.num)
+        return "{}px".format(self.num)
 
 
 @attr.s
@@ -50,7 +50,7 @@ class Percent(object):
     num = attr.ib(default=100, validator=instance_of(Number))
 
     def to_json_data(self):
-        return '{}%'.format(self.num)
+        return "{}%".format(self.num)
 
 
 GREY1 = RGBA(216, 200, 27, 0.27)
@@ -78,11 +78,11 @@ STAT_TYPE = 'stat'
 SINGLESTAT_TYPE = 'singlestat'
 TABLE_TYPE = 'table'
 TEXT_TYPE = 'text'
-ALERTLIST_TYPE = "alertlist"
-BARGAUGE_TYPE = "bargauge"
-GAUGE_TYPE = "gauge"
-HEATMAP_TYPE = "heatmap"
-STATUSMAP_TYPE = "flant-statusmap-panel"
+ALERTLIST_TYPE = 'alertlist'
+BARGAUGE_TYPE = 'bargauge'
+GAUGE_TYPE = 'gauge'
+HEATMAP_TYPE = 'heatmap'
+STATUSMAP_TYPE = 'flant-statusmap-panel'
 SVG_TYPE = 'marcuscalidus-svg-panel'
 PIE_CHART_TYPE = 'grafana-piechart-panel'
 
@@ -104,108 +104,108 @@ UTC = 'utc'
 SCHEMA_VERSION = 12
 
 # Y Axis formats
-DURATION_FORMAT = "dtdurations"
-NO_FORMAT = "none"
-OPS_FORMAT = "ops"
-PERCENT_UNIT_FORMAT = "percentunit"
-DAYS_FORMAT = "d"
-HOURS_FORMAT = "h"
-MINUTES_FORMAT = "m"
-SECONDS_FORMAT = "s"
-MILLISECONDS_FORMAT = "ms"
-SHORT_FORMAT = "short"
-BYTES_FORMAT = "bytes"
-BITS_PER_SEC_FORMAT = "bps"
-BYTES_PER_SEC_FORMAT = "Bps"
-NONE_FORMAT = "none"
-JOULE_FORMAT = "joule"
-WATTHOUR_FORMAT = "watth"
-WATT_FORMAT = "watt"
-KWATT_FORMAT = "kwatt"
-KWATTHOUR_FORMAT = "kwatth"
-VOLT_FORMAT = "volt"
-BAR_FORMAT = "pressurebar"
-PSI_FORMAT = "pressurepsi"
-CELSIUS_FORMAT = "celsius"
-KELVIN_FORMAT = "kelvin"
-GRAM_FORMAT = "massg"
-EUR_FORMAT = "currencyEUR"
-USD_FORMAT = "currencyUSD"
-METER_FORMAT = "lengthm"
-SQUARE_METER_FORMAT = "areaM2"
-CUBIC_METER_FORMAT = "m3"
-LITRE_FORMAT = "litre"
-PERCENT_FORMAT = "percent"
-VOLT_AMPERE_FORMAT = "voltamp"
+DURATION_FORMAT = 'dtdurations'
+NO_FORMAT = 'none'
+OPS_FORMAT = 'ops'
+PERCENT_UNIT_FORMAT = 'percentunit'
+DAYS_FORMAT = 'd'
+HOURS_FORMAT = 'h'
+MINUTES_FORMAT = 'm'
+SECONDS_FORMAT = 's'
+MILLISECONDS_FORMAT = 'ms'
+SHORT_FORMAT = 'short'
+BYTES_FORMAT = 'bytes'
+BITS_PER_SEC_FORMAT = 'bps'
+BYTES_PER_SEC_FORMAT = 'Bps'
+NONE_FORMAT = 'none'
+JOULE_FORMAT = 'joule'
+WATTHOUR_FORMAT = 'watth'
+WATT_FORMAT = 'watt'
+KWATT_FORMAT = 'kwatt'
+KWATTHOUR_FORMAT = 'kwatth'
+VOLT_FORMAT = 'volt'
+BAR_FORMAT = 'pressurebar'
+PSI_FORMAT = 'pressurepsi'
+CELSIUS_FORMAT = 'celsius'
+KELVIN_FORMAT = 'kelvin'
+GRAM_FORMAT = 'massg'
+EUR_FORMAT = 'currencyEUR'
+USD_FORMAT = 'currencyUSD'
+METER_FORMAT = 'lengthm'
+SQUARE_METER_FORMAT = 'areaM2'
+CUBIC_METER_FORMAT = 'm3'
+LITRE_FORMAT = 'litre'
+PERCENT_FORMAT = 'percent'
+VOLT_AMPERE_FORMAT = 'voltamp'
 
 # Alert rule state
-STATE_NO_DATA = "no_data"
-STATE_ALERTING = "alerting"
-STATE_KEEP_LAST_STATE = "keep_state"
-STATE_OK = "ok"
+STATE_NO_DATA = 'no_data'
+STATE_ALERTING = 'alerting'
+STATE_KEEP_LAST_STATE = 'keep_state'
+STATE_OK = 'ok'
 
 # Evaluator
-EVAL_GT = "gt"
-EVAL_LT = "lt"
-EVAL_WITHIN_RANGE = "within_range"
-EVAL_OUTSIDE_RANGE = "outside_range"
-EVAL_NO_VALUE = "no_value"
+EVAL_GT = 'gt'
+EVAL_LT = 'lt'
+EVAL_WITHIN_RANGE = 'within_range'
+EVAL_OUTSIDE_RANGE = 'outside_range'
+EVAL_NO_VALUE = 'no_value'
 
 # Reducer Type
 # avg/min/max/sum/count/last/median/diff/percent_diff/count_non_null
-RTYPE_AVG = "avg"
-RTYPE_MIN = "min"
-RTYPE_MAX = "max"
-RTYPE_SUM = "sum"
-RTYPE_COUNT = "count"
-RTYPE_LAST = "last"
-RTYPE_MEDIAN = "median"
-RTYPE_DIFF = "diff"
-RTYPE_PERCENT_DIFF = "percent_diff"
-RTYPE_COUNT_NON_NULL = "count_non_null"
+RTYPE_AVG = 'avg'
+RTYPE_MIN = 'min'
+RTYPE_MAX = 'max'
+RTYPE_SUM = 'sum'
+RTYPE_COUNT = 'count'
+RTYPE_LAST = 'last'
+RTYPE_MEDIAN = 'median'
+RTYPE_DIFF = 'diff'
+RTYPE_PERCENT_DIFF = 'percent_diff'
+RTYPE_COUNT_NON_NULL = 'count_non_null'
 
 # Condition Type
-CTYPE_QUERY = "query"
+CTYPE_QUERY = 'query'
 
 # Operator
-OP_AND = "and"
-OP_OR = "or"
+OP_AND = 'and'
+OP_OR = 'or'
 
 # Text panel modes
-TEXT_MODE_MARKDOWN = "markdown"
-TEXT_MODE_HTML = "html"
-TEXT_MODE_TEXT = "text"
+TEXT_MODE_MARKDOWN = 'markdown'
+TEXT_MODE_HTML = 'html'
+TEXT_MODE_TEXT = 'text'
 
 # Datasource plugins
-PLUGIN_ID_GRAPHITE = "graphite"
-PLUGIN_ID_PROMETHEUS = "prometheus"
-PLUGIN_ID_INFLUXDB = "influxdb"
-PLUGIN_ID_OPENTSDB = "opentsdb"
-PLUGIN_ID_ELASTICSEARCH = "elasticsearch"
-PLUGIN_ID_CLOUDWATCH = "cloudwatch"
+PLUGIN_ID_GRAPHITE = 'graphite'
+PLUGIN_ID_PROMETHEUS = 'prometheus'
+PLUGIN_ID_INFLUXDB = 'influxdb'
+PLUGIN_ID_OPENTSDB = 'opentsdb'
+PLUGIN_ID_ELASTICSEARCH = 'elasticsearch'
+PLUGIN_ID_CLOUDWATCH = 'cloudwatch'
 
 # Target formats
-TIME_SERIES_TARGET_FORMAT = "time_series"
-TABLE_TARGET_FORMAT = "table"
+TIME_SERIES_TARGET_FORMAT = 'time_series'
+TABLE_TARGET_FORMAT = 'table'
 
 # Table Transforms
-AGGREGATIONS_TRANSFORM = "timeseries_aggregations"
-ANNOTATIONS_TRANSFORM = "annotations"
-COLUMNS_TRANSFORM = "timeseries_to_columns"
-JSON_TRANSFORM = "json"
-ROWS_TRANSFORM = "timeseries_to_rows"
-TABLE_TRANSFORM = "table"
+AGGREGATIONS_TRANSFORM = 'timeseries_aggregations'
+ANNOTATIONS_TRANSFORM = 'annotations'
+COLUMNS_TRANSFORM = 'timeseries_to_columns'
+JSON_TRANSFORM = 'json'
+ROWS_TRANSFORM = 'timeseries_to_rows'
+TABLE_TRANSFORM = 'table'
 
 # AlertList show selections
-ALERTLIST_SHOW_CURRENT = "current"
-ALERTLIST_SHOW_CHANGES = "changes"
+ALERTLIST_SHOW_CURRENT = 'current'
+ALERTLIST_SHOW_CHANGES = 'changes'
 
 # AlertList state filter options
-ALERTLIST_STATE_OK = "ok"
-ALERTLIST_STATE_PAUSED = "paused"
-ALERTLIST_STATE_NO_DATA = "no_data"
-ALERTLIST_STATE_EXECUTION_ERROR = "execution_error"
-ALERTLIST_STATE_ALERTING = "alerting"
+ALERTLIST_STATE_OK = 'ok'
+ALERTLIST_STATE_PAUSED = 'paused'
+ALERTLIST_STATE_NO_DATA = 'no_data'
+ALERTLIST_STATE_EXECUTION_ERROR = 'execution_error'
+ALERTLIST_STATE_ALERTING = 'alerting'
 
 # Display Sort Order
 SORT_ASC = 1
@@ -227,27 +227,27 @@ SORT_NUMERIC_DESC = 4
 SORT_ALPHA_IGNORE_CASE_ASC = 5
 SORT_ALPHA_IGNORE_CASE_DESC = 6
 
-GAUGE_CALC_LAST = "last"
-GAUGE_CALC_FIRST = "first"
-GAUGE_CALC_MIN = "min"
-GAUGE_CALC_MAX = "max"
-GAUGE_CALC_MEAN = "mean"
-GAUGE_CALC_TOTAL = "total"
-GAUGE_CALC_COUNT = "count"
-GAUGE_CALC_RANGE = "range"
-GAUGE_CALC_DELTA = "delta"
-GAUGE_CALC_STEP = "step"
-GAUGE_CALC_DIFFERENCE = "difference"
-GAUGE_CALC_LOGMIN = "logmin"
-GAUGE_CALC_CHANGE_COUNT = "changeCount"
-GAUGE_CALC_DISTINCT_COUNT = "distinctCount"
+GAUGE_CALC_LAST = 'last'
+GAUGE_CALC_FIRST = 'first'
+GAUGE_CALC_MIN = 'min'
+GAUGE_CALC_MAX = 'max'
+GAUGE_CALC_MEAN = 'mean'
+GAUGE_CALC_TOTAL = 'total'
+GAUGE_CALC_COUNT = 'count'
+GAUGE_CALC_RANGE = 'range'
+GAUGE_CALC_DELTA = 'delta'
+GAUGE_CALC_STEP = 'step'
+GAUGE_CALC_DIFFERENCE = 'difference'
+GAUGE_CALC_LOGMIN = 'logmin'
+GAUGE_CALC_CHANGE_COUNT = 'changeCount'
+GAUGE_CALC_DISTINCT_COUNT = 'distinctCount'
 
-ORIENTATION_HORIZONTAL = "horizontal"
-ORIENTATION_VERTICAL = "vertical"
+ORIENTATION_HORIZONTAL = 'horizontal'
+ORIENTATION_VERTICAL = 'vertical'
 
-GAUGE_DISPLAY_MODE_BASIC = "basic"
-GAUGE_DISPLAY_MODE_LCD = "lcd"
-GAUGE_DISPLAY_MODE_GRADIENT = "gradient"
+GAUGE_DISPLAY_MODE_BASIC = 'basic'
+GAUGE_DISPLAY_MODE_LCD = 'lcd'
+GAUGE_DISPLAY_MODE_GRADIENT = 'gradient'
 
 
 @attr.s
@@ -266,20 +266,20 @@ class Mapping(object):
 MAPPING_TYPE_VALUE_TO_TEXT = 1
 MAPPING_TYPE_RANGE_TO_TEXT = 2
 
-MAPPING_VALUE_TO_TEXT = Mapping("value to text", MAPPING_TYPE_VALUE_TO_TEXT)
-MAPPING_RANGE_TO_TEXT = Mapping("range to text", MAPPING_TYPE_RANGE_TO_TEXT)
+MAPPING_VALUE_TO_TEXT = Mapping('value to text', MAPPING_TYPE_VALUE_TO_TEXT)
+MAPPING_RANGE_TO_TEXT = Mapping('range to text', MAPPING_TYPE_RANGE_TO_TEXT)
 
 
 # Value types min/max/avg/current/total/name/first/delta/range
-VTYPE_MIN = "min"
-VTYPE_MAX = "max"
-VTYPE_AVG = "avg"
-VTYPE_CURR = "current"
-VTYPE_TOTAL = "total"
-VTYPE_NAME = "name"
-VTYPE_FIRST = "first"
-VTYPE_DELTA = "delta"
-VTYPE_RANGE = "range"
+VTYPE_MIN = 'min'
+VTYPE_MAX = 'max'
+VTYPE_AVG = 'avg'
+VTYPE_CURR = 'current'
+VTYPE_TOTAL = 'total'
+VTYPE_NAME = 'name'
+VTYPE_FIRST = 'first'
+VTYPE_DELTA = 'delta'
+VTYPE_RANGE = 'range'
 VTYPE_DEFAULT = VTYPE_AVG
 
 
@@ -399,7 +399,7 @@ class Tooltip(object):
 
 
 def is_valid_xaxis_mode(instance, attribute, value):
-    XAXIS_MODES = ("time", "series")
+    XAXIS_MODES = ('time', 'series')
     if value not in XAXIS_MODES:
         raise ValueError("{attr} should be one of {choice}".format(
             attr=attribute, choice=XAXIS_MODES))
@@ -408,7 +408,7 @@ def is_valid_xaxis_mode(instance, attribute, value):
 @attr.s
 class XAxis(object):
 
-    mode = attr.ib(default="time", validator=is_valid_xaxis_mode)
+    mode = attr.ib(default='time', validator=is_valid_xaxis_mode)
     name = attr.ib(default=None)
     values = attr.ib(default=attr.Factory(list))
     show = attr.ib(validator=instance_of(bool), default=True)
@@ -590,12 +590,12 @@ class DataSourceInput(object):
 
     def to_json_data(self):
         return {
-            "description": self.description,
-            "label": self.label,
-            "name": self.name,
-            "pluginId": self.pluginId,
-            "pluginName": self.pluginName,
-            "type": "datasource",
+            'description': self.description,
+            'label': self.label,
+            'name': self.name,
+            'pluginId': self.pluginId,
+            'pluginName': self.pluginName,
+            'type': 'datasource',
         }
 
 
@@ -608,11 +608,11 @@ class ConstantInput(object):
 
     def to_json_data(self):
         return {
-            "description": self.description,
-            "label": self.label,
-            "name": self.name,
-            "type": "constant",
-            "value": self.value,
+            'description': self.description,
+            'label': self.label,
+            'name': self.name,
+            'type': 'constant',
+            'value': self.value,
         }
 
 
@@ -630,24 +630,24 @@ class DashboardLink(object):
     def to_json_data(self):
         title = self.dashboard if self.title is None else self.title
         return {
-            "dashUri": self.uri,
-            "dashboard": self.dashboard,
-            "keepTime": self.keepTime,
-            "title": title,
-            "type": self.type,
-            "url": self.uri,
+            'dashUri': self.uri,
+            'dashboard': self.dashboard,
+            'keepTime': self.keepTime,
+            'title': title,
+            'type': self.type,
+            'url': self.uri,
         }
 
 
 @attr.s
 class ExternalLink(object):
-    '''ExternalLink creates a top-level link attached to a dashboard.
+    """ExternalLink creates a top-level link attached to a dashboard.
 
         :param url: the URL to link to
         :param title: the text of the link
         :param keepTime: if true, the URL params for the dashboard's
             current time period are appended
-    '''
+    """
     uri = attr.ib()
     title = attr.ib()
     keepTime = attr.ib(
@@ -657,10 +657,10 @@ class ExternalLink(object):
 
     def to_json_data(self):
         return {
-            "keepTime": self.keepTime,
-            "title": self.title,
-            "type": 'link',
-            "url": self.uri,
+            'keepTime': self.keepTime,
+            'title': self.title,
+            'type': 'link',
+            'url': self.uri,
         }
 
 
@@ -724,9 +724,9 @@ class Template(object):
                 for value in self.query.split(','):
                     is_default = value == self.default
                     option = {
-                        "selected": is_default,
-                        "text": value,
-                        "value": value,
+                        'selected': is_default,
+                        'text': value,
+                        'value': value,
                     }
                     if is_default:
                         self._current = option
@@ -804,27 +804,27 @@ class TimePicker(object):
 
 DEFAULT_TIME_PICKER = TimePicker(
     refreshIntervals=[
-        "5s",
-        "10s",
-        "30s",
-        "1m",
-        "5m",
-        "15m",
-        "30m",
-        "1h",
-        "2h",
-        "1d"
+        '5s',
+        '10s',
+        '30s',
+        '1m',
+        '5m',
+        '15m',
+        '30m',
+        '1h',
+        '2h',
+        '1d'
     ],
     timeOptions=[
-        "5m",
-        "15m",
-        "1h",
-        "6h",
-        "12h",
-        "24h",
-        "2d",
-        "7d",
-        "30d"
+        '5m',
+        '15m',
+        '1h',
+        '6h',
+        '12h',
+        '24h',
+        '2d',
+        '7d',
+        '30d'
     ]
 )
 
@@ -836,8 +836,8 @@ class Evaluator(object):
 
     def to_json_data(self):
         return {
-            "type": self.type,
-            "params": self.params,
+            'type': self.type,
+            'params': self.params,
         }
 
 
@@ -910,19 +910,19 @@ class AlertCondition(object):
             self.target.refId, self.timeRange.from_time, self.timeRange.to_time
         ]
         return {
-            "evaluator": self.evaluator,
-            "operator": {
-                "type": self.operator,
+            'evaluator': self.evaluator,
+            'operator': {
+                'type': self.operator,
             },
-            "query": {
-                "model": self.target,
-                "params": queryParams,
+            'query': {
+                'model': self.target,
+                'params': queryParams,
             },
-            "reducer": {
-                "params": [],
-                "type": self.reducerType,
+            'reducer': {
+                'params': [],
+                'type': self.reducerType,
             },
-            "type": self.type,
+            'type': self.type,
         }
 
 
@@ -933,7 +933,7 @@ class Alert(object):
     message = attr.ib()
     alertConditions = attr.ib()
     executionErrorState = attr.ib(default=STATE_ALERTING)
-    frequency = attr.ib(default="60s")
+    frequency = attr.ib(default='60s')
     handler = attr.ib(default=1)
     noDataState = attr.ib(default=STATE_NO_DATA)
     notifications = attr.ib(default=attr.Factory(list))
@@ -941,15 +941,15 @@ class Alert(object):
 
     def to_json_data(self):
         return {
-            "conditions": self.alertConditions,
-            "executionErrorState": self.executionErrorState,
-            "frequency": self.frequency,
-            "handler": self.handler,
-            "message": self.message,
-            "name": self.name,
-            "noDataState": self.noDataState,
-            "notifications": self.notifications,
-            "for": self.gracePeriod,
+            'conditions': self.alertConditions,
+            'executionErrorState': self.executionErrorState,
+            'frequency': self.frequency,
+            'handler': self.handler,
+            'message': self.message,
+            'name': self.name,
+            'noDataState': self.noDataState,
+            'notifications': self.notifications,
+            'for': self.gracePeriod,
         }
 
 
@@ -1026,7 +1026,7 @@ class Dashboard(object):
         return {
             '__inputs': self.inputs,
             'annotations': self.annotations,
-            "description": self.description,
+            'description': self.description,
             'editable': self.editable,
             'gnetId': self.gnetId,
             'hideControls': self.hideControls,
@@ -1360,7 +1360,7 @@ class Stat(object):
     links = attr.ib(default=attr.Factory(list))
     mappings = attr.ib(default=attr.Factory(list))
     span = attr.ib(default=6)
-    thresholds = attr.ib(default='')
+    thresholds = attr.ib(default="")
     timeFrom = attr.ib(default=None)
     transparent = attr.ib(default=False, validator=instance_of(bool))
     reduceCalc = attr.ib(default='mean', type=str)
@@ -1429,7 +1429,7 @@ class StatMapping(object):
         mappingType = MAPPING_TYPE_VALUE_TO_TEXT if self.mapValue else MAPPING_TYPE_RANGE_TO_TEXT
 
         return {
-            'operator': "",
+            'operator': '',
             'text': self.text,
             'type': mappingType,
             'value': self.mapValue,
@@ -1544,7 +1544,7 @@ class SingleStat(object):
     description = attr.ib(default=None)
     decimals = attr.ib(default=None)
     editable = attr.ib(default=True, validator=instance_of(bool))
-    format = attr.ib(default="none")
+    format = attr.ib(default='none')
     gauge = attr.ib(default=attr.Factory(Gauge),
                     validator=instance_of(Gauge))
     height = attr.ib(default=None)
@@ -1562,11 +1562,11 @@ class SingleStat(object):
     maxDataPoints = attr.ib(default=100)
     minSpan = attr.ib(default=None)
     nullText = attr.ib(default=None)
-    nullPointMode = attr.ib(default="connected")
+    nullPointMode = attr.ib(default='connected')
     postfix = attr.ib(default="")
-    postfixFontSize = attr.ib(default="50%")
+    postfixFontSize = attr.ib(default='50%')
     prefix = attr.ib(default="")
-    prefixFontSize = attr.ib(default="50%")
+    prefixFontSize = attr.ib(default='50%')
     rangeMaps = attr.ib(default=attr.Factory(list))
     repeat = attr.ib(default=None)
     span = attr.ib(default=6)
@@ -1576,7 +1576,7 @@ class SingleStat(object):
     )
     thresholds = attr.ib(default="")
     transparent = attr.ib(default=False, validator=instance_of(bool))
-    valueFontSize = attr.ib(default="80%")
+    valueFontSize = attr.ib(default='80%')
     valueName = attr.ib(default=VTYPE_DEFAULT)
     valueMaps = attr.ib(default=attr.Factory(list))
     timeFrom = attr.ib(default=None)
@@ -1703,8 +1703,8 @@ class ColumnStyle(object):
 
     alias = attr.ib(default="")
     pattern = attr.ib(default="")
-    align = attr.ib(default="auto", validator=in_(
-        ["auto", "left", "right", "center"]))
+    align = attr.ib(default='auto', validator=in_(
+        ['auto', 'left', 'right', 'center']))
     link = attr.ib(validator=instance_of(bool), default=False)
     linkOpenInNewTab = attr.ib(validator=instance_of(bool), default=False)
     linkUrl = attr.ib(validator=instance_of(str), default="")
@@ -1753,8 +1753,8 @@ class Column(object):
     :param value: aggregation function
     """
 
-    text = attr.ib(default="Avg")
-    value = attr.ib(default="avg")
+    text = attr.ib(default='Avg')
+    value = attr.ib(default='avg')
 
     def to_json_data(self):
         return {
@@ -1824,7 +1824,7 @@ class Table(object):
     columns = attr.ib(default=attr.Factory(list))
     description = attr.ib(default=None)
     editable = attr.ib(default=True, validator=instance_of(bool))
-    fontSize = attr.ib(default="100%")
+    fontSize = attr.ib(default='100%')
     height = attr.ib(default=None)
     hideTimeOverride = attr.ib(default=False, validator=instance_of(bool))
     id = attr.ib(default=None)
@@ -1847,17 +1847,17 @@ class Table(object):
     def styles_default(self):
         return [
             ColumnStyle(
-                alias="Time",
-                pattern="Time",
+                alias='Time',
+                pattern='Time',
                 type=DateColumnStyleType(),
             ),
             ColumnStyle(
-                alias="time",
-                pattern="time",
+                alias='time',
+                pattern='time',
                 type=DateColumnStyleType(),
             ),
             ColumnStyle(
-                pattern="/.*/",
+                pattern='/.*/',
             ),
         ]
 
@@ -1966,7 +1966,7 @@ class BarGauge(object):
         ),
     )
     editable = attr.ib(default=True, validator=instance_of(bool))
-    format = attr.ib(default="none")
+    format = attr.ib(default='none')
     height = attr.ib(default=None)
     hideTimeOverride = attr.ib(default=False, validator=instance_of(bool))
     id = attr.ib(default=None)
@@ -1990,8 +1990,8 @@ class BarGauge(object):
     thresholds = attr.ib(
         default=attr.Factory(
             lambda: [
-                Threshold("green", 0, 0.0),
-                Threshold("red", 1, 80.0)
+                Threshold('green', 0, 0.0),
+                Threshold('red', 1, 80.0)
             ]
         ),
         validator=instance_of(list),
@@ -2003,47 +2003,47 @@ class BarGauge(object):
 
     def to_json_data(self):
         return {
-            "cacheTimeout": self.cacheTimeout,
-            "datasource": self.dataSource,
-            "description": self.description,
-            "editable": self.editable,
-            "height": self.height,
-            "hideTimeOverride": self.hideTimeOverride,
-            "id": self.id,
-            "interval": self.interval,
-            "links": self.links,
-            "maxDataPoints": self.maxDataPoints,
-            "minSpan": self.minSpan,
-            "options": {
-                "displayMode": self.displayMode,
-                "fieldOptions": {
-                    "calcs": [self.calc],
-                    "defaults": {
-                        "decimals": self.decimals,
-                        "max": self.max,
-                        "min": self.min,
-                        "title": self.label,
-                        "unit": self.format,
-                        "links": self.dataLinks,
+            'cacheTimeout': self.cacheTimeout,
+            'datasource': self.dataSource,
+            'description': self.description,
+            'editable': self.editable,
+            'height': self.height,
+            'hideTimeOverride': self.hideTimeOverride,
+            'id': self.id,
+            'interval': self.interval,
+            'links': self.links,
+            'maxDataPoints': self.maxDataPoints,
+            'minSpan': self.minSpan,
+            'options': {
+                'displayMode': self.displayMode,
+                'fieldOptions': {
+                    'calcs': [self.calc],
+                    'defaults': {
+                        'decimals': self.decimals,
+                        'max': self.max,
+                        'min': self.min,
+                        'title': self.label,
+                        'unit': self.format,
+                        'links': self.dataLinks,
                     },
-                    "limit": self.limit,
-                    "mappings": self.valueMaps,
-                    "override": {},
-                    "thresholds": self.thresholds,
-                    "values": self.allValues,
+                    'limit': self.limit,
+                    'mappings': self.valueMaps,
+                    'override': {},
+                    'thresholds': self.thresholds,
+                    'values': self.allValues,
                 },
-                "orientation": self.orientation,
-                "showThresholdLabels": self.thresholdLabels,
-                "showThresholdMarkers": self.thresholdMarkers,
+                'orientation': self.orientation,
+                'showThresholdLabels': self.thresholdLabels,
+                'showThresholdMarkers': self.thresholdMarkers,
             },
-            "repeat": self.repeat,
-            "span": self.span,
-            "targets": self.targets,
-            "timeFrom": self.timeFrom,
-            "timeShift": self.timeShift,
-            "title": self.title,
-            "transparent": self.transparent,
-            "type": BARGAUGE_TYPE,
+            'repeat': self.repeat,
+            'span': self.span,
+            'targets': self.targets,
+            'timeFrom': self.timeFrom,
+            'timeShift': self.timeShift,
+            'title': self.title,
+            'transparent': self.transparent,
+            'type': BARGAUGE_TYPE,
         }
 
 
@@ -2064,7 +2064,7 @@ class GaugePanel(object):
     :param hideTimeOverride: hides time overrides
     :param id: panel id
     :param interval: defines time interval between metric queries
-    :param labels: oprion to show gauge level labels
+    :param labels: option to show gauge level labels
     :param limit: limit of number of values to show when not Calculating
     :param links: additional web links
     :param max: maximum value of the gauge
@@ -2095,7 +2095,7 @@ class GaugePanel(object):
     decimals = attr.ib(default=None)
     description = attr.ib(default=None)
     editable = attr.ib(default=True, validator=instance_of(bool))
-    format = attr.ib(default="none")
+    format = attr.ib(default='none')
     height = attr.ib(default=None)
     hideTimeOverride = attr.ib(default=False, validator=instance_of(bool))
     id = attr.ib(default=None)
@@ -2115,8 +2115,8 @@ class GaugePanel(object):
     thresholds = attr.ib(
         default=attr.Factory(
             lambda: [
-                Threshold("green", 0, 0.0),
-                Threshold("red", 1, 80.0)
+                Threshold('green', 0, 0.0),
+                Threshold('red', 1, 80.0)
             ]
         ),
         validator=instance_of(list),
@@ -2128,45 +2128,45 @@ class GaugePanel(object):
 
     def to_json_data(self):
         return {
-            "cacheTimeout": self.cacheTimeout,
-            "datasource": self.dataSource,
-            "description": self.description,
-            "editable": self.editable,
-            "height": self.height,
-            "hideTimeOverride": self.hideTimeOverride,
-            "id": self.id,
-            "interval": self.interval,
-            "links": self.links,
-            "maxDataPoints": self.maxDataPoints,
-            "minSpan": self.minSpan,
-            "options": {
-                "fieldOptions": {
-                    "calcs": [self.calc],
-                    "defaults": {
-                        "decimals": self.decimals,
-                        "max": self.max,
-                        "min": self.min,
-                        "title": self.label,
-                        "unit": self.format,
-                        "links": self.dataLinks,
+            'cacheTimeout': self.cacheTimeout,
+            'datasource': self.dataSource,
+            'description': self.description,
+            'editable': self.editable,
+            'height': self.height,
+            'hideTimeOverride': self.hideTimeOverride,
+            'id': self.id,
+            'interval': self.interval,
+            'links': self.links,
+            'maxDataPoints': self.maxDataPoints,
+            'minSpan': self.minSpan,
+            'options': {
+                'fieldOptions': {
+                    'calcs': [self.calc],
+                    'defaults': {
+                        'decimals': self.decimals,
+                        'max': self.max,
+                        'min': self.min,
+                        'title': self.label,
+                        'unit': self.format,
+                        'links': self.dataLinks,
                     },
-                    "limit": self.limit,
-                    "mappings": self.valueMaps,
-                    "override": {},
-                    "thresholds": self.thresholds,
-                    "values": self.allValues,
+                    'limit': self.limit,
+                    'mappings': self.valueMaps,
+                    'override': {},
+                    'thresholds': self.thresholds,
+                    'values': self.allValues,
                 },
-                "showThresholdLabels": self.thresholdLabels,
-                "showThresholdMarkers": self.thresholdMarkers,
+                'showThresholdLabels': self.thresholdLabels,
+                'showThresholdMarkers': self.thresholdMarkers,
             },
-            "repeat": self.repeat,
-            "span": self.span,
-            "targets": self.targets,
-            "timeFrom": self.timeFrom,
-            "timeShift": self.timeShift,
-            "title": self.title,
-            "transparent": self.transparent,
-            "type": GAUGE_TYPE,
+            'repeat': self.repeat,
+            'span': self.span,
+            'targets': self.targets,
+            'timeFrom': self.timeFrom,
+            'timeShift': self.timeShift,
+            'title': self.title,
+            'transparent': self.transparent,
+            'type': GAUGE_TYPE,
         }
 
 
@@ -2188,19 +2188,19 @@ class HeatmapColor(object):
     colorScale = attr.ib(default='sqrt', validator=instance_of(str))
     colorScheme = attr.ib(default='interpolateOranges')
     exponent = attr.ib(default=0.5, validator=instance_of(float))
-    mode = attr.ib(default="spectrum", validator=instance_of(str))
+    mode = attr.ib(default='spectrum', validator=instance_of(str))
     max = attr.ib(default=None)
     min = attr.ib(default=None)
 
     def to_json_data(self):
         return {
-            "mode": self.mode,
-            "cardColor": self.cardColor,
-            "colorScale": self.colorScale,
-            "exponent": self.exponent,
-            "colorScheme": self.colorScheme,
-            "max": self.max,
-            "min": self.min,
+            'mode': self.mode,
+            'cardColor': self.cardColor,
+            'colorScale': self.colorScale,
+            'exponent': self.exponent,
+            'colorScheme': self.colorScheme,
+            'max': self.max,
+            'min': self.min,
         }
 
 
@@ -2227,7 +2227,7 @@ class Heatmap(object):
     description = attr.ib(default=None)
     id = attr.ib(default=None)
     # The below does not really like the Legend class we have defined above
-    legend = attr.ib(default={"show": False})
+    legend = attr.ib(default={'show': False})
     links = attr.ib(default=None)
     targets = attr.ib(default=None)
     tooltip = attr.ib(
@@ -2238,8 +2238,8 @@ class Heatmap(object):
 
     cards = attr.ib(
         default={
-            "cardPadding": None,
-            "cardRound": None
+            'cardPadding': None,
+            'cardRound': None
         }
     )
 
@@ -2322,21 +2322,21 @@ class StatusmapColor(object):
     colorScale = attr.ib(default='sqrt', validator=instance_of(str))
     colorScheme = attr.ib(default='GnYlRd', validator=instance_of(str))
     exponent = attr.ib(default=0.5, validator=instance_of(float))
-    mode = attr.ib(default="spectrum", validator=instance_of(str))
+    mode = attr.ib(default='spectrum', validator=instance_of(str))
     thresholds = attr.ib(default=[], validator=instance_of(list))
     max = attr.ib(default=None)
     min = attr.ib(default=None)
 
     def to_json_data(self):
         return {
-            "mode": self.mode,
-            "cardColor": self.cardColor,
-            "colorScale": self.colorScale,
-            "exponent": self.exponent,
-            "colorScheme": self.colorScheme,
-            "max": self.max,
-            "min": self.min,
-            "thresholds": self.thresholds
+            'mode': self.mode,
+            'cardColor': self.cardColor,
+            'colorScale': self.colorScale,
+            'exponent': self.exponent,
+            'colorScheme': self.colorScheme,
+            'max': self.max,
+            'min': self.min,
+            'thresholds': self.thresholds
         }
 
 
@@ -2345,7 +2345,7 @@ class Statusmap(object):
     """Generates json structure for the flant-statusmap-panel visualisation plugin (https://grafana.com/grafana/plugins/flant-statusmap-panel/).
 
     :param alert
-    :param cards: A statusmap card object: keys "cardRound", "cardMinWidth", "cardHSpacing", "cardVSpacing"
+    :param cards: A statusmap card object: keys 'cardRound', 'cardMinWidth', 'cardHSpacing', 'cardVSpacing'
     :param color: A StatusmapColor object
     :param dataSource: Name of the datasource to use
     :param description: Description of the panel
@@ -2373,10 +2373,10 @@ class Statusmap(object):
     alert = attr.ib(default=None)
     cards = attr.ib(
         default={
-            "cardRound": None,
-            "cardMinWidth": 5,
-            "cardHSpacing": 2,
-            "cardVSpacing": 2,
+            'cardRound': None,
+            'cardMinWidth': 5,
+            'cardHSpacing': 2,
+            'cardVSpacing': 2,
         }, validator=instance_of(dict))
 
     color = attr.ib(
@@ -2467,7 +2467,7 @@ class Svg(object):
     title = attr.ib()
     description = attr.ib(default=None)
     editable = attr.ib(default=True, validator=instance_of(bool))
-    format = attr.ib(default="none")
+    format = attr.ib(default='none')
     jsCodeFilePath = attr.ib(default="", validator=instance_of(str))
     jsCodeInitFilePath = attr.ib(default="", validator=instance_of(str))
     height = attr.ib(default=None)
@@ -2483,7 +2483,7 @@ class Svg(object):
                 read_data = f.read()
             return read_data
         else:
-            return ""
+            return ''
 
     def to_json_data(self):
 
@@ -2545,7 +2545,7 @@ class PieChart(object):
     showLegend = attr.ib(default=True)
     showLegendValues = attr.ib(default=True)
     span = attr.ib(default=6)
-    thresholds = attr.ib(default='')
+    thresholds = attr.ib(default="")
     timeFrom = attr.ib(default=None)
     transparent = attr.ib(default=False, validator=instance_of(bool))
 
@@ -2592,17 +2592,17 @@ class Threshold(object):
     index = attr.ib(validator=instance_of(int))
     value = attr.ib(validator=instance_of(float))
     line = attr.ib(default=True, validator=instance_of(bool))
-    op = attr.ib(default="gt")
-    yaxis = attr.ib(default="left")
+    op = attr.ib(default=EVAL_GT)
+    yaxis = attr.ib(default='left')
 
     def to_json_data(self):
         return {
-            "op": self.op,
-            "yaxis": self.yaxis,
-            "color": self.color,
-            "line": self.line,
-            "index": self.index,
-            "value": "null" if self.index == 0 else self.value,
+            'op': self.op,
+            'yaxis': self.yaxis,
+            'color': self.color,
+            'line': self.line,
+            'index': self.index,
+            'value': 'null' if self.index == 0 else self.value,
         }
 
 
@@ -2615,9 +2615,9 @@ class SeriesOverride(object):
 
     def to_json_data(self):
         return {
-            "alias": self.alias,
-            "bars": self.bars,
-            "lines": self.lines,
-            "yaxis": self.yaxis,
-            "color": self.color,
+            'alias': self.alias,
+            'bars': self.bars,
+            'lines': self.lines,
+            'yaxis': self.yaxis,
+            'color': self.color,
         }

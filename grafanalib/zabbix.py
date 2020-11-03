@@ -7,65 +7,65 @@ from grafanalib.core import (
     RGBA, Percent, Pixels, DashboardLink,
     DEFAULT_ROW_HEIGHT, BLANK, GREEN)
 
-ZABBIX_TRIGGERS_TYPE = "alexanderzobnin-zabbix-triggers-panel"
+ZABBIX_TRIGGERS_TYPE = 'alexanderzobnin-zabbix-triggers-panel'
 
 ZABBIX_QMODE_METRICS = 0
 ZABBIX_QMODE_SERVICES = 1
 ZABBIX_QMODE_TEXT = 2
 
 ZABBIX_SLA_PROP_STATUS = {
-    "name": "Status",
-    "property": "status"}
+    'name': 'Status',
+    'property': 'status'}
 
 ZABBIX_SLA_PROP_SLA = {
-    "name": "SLA",
-    "property": "sla"}
+    'name': 'SLA',
+    'property': 'sla'}
 
 ZABBIX_SLA_PROP_OKTIME = {
-    "name": "OK time",
-    "property": "okTime"}
+    'name': 'OK time',
+    'property': 'okTime'}
 
 ZABBIX_SLA_PROP_PROBTIME = {
-    "name": "Problem time",
-    "property": "problemTime"}
+    'name': 'Problem time',
+    'property': 'problemTime'}
 
 ZABBIX_SLA_PROP_DOWNTIME = {
-    "name": "Down time",
-    "property": "downtimeTime",
+    'name': 'Down time',
+    'property': 'downtimeTime',
 }
 
 ZABBIX_EVENT_PROBLEMS = {
-    "text": "Problems",
-    "value": [1]}
+    'text': 'Problems',
+    'value': [1]}
 
 ZABBIX_EVENT_OK = {
-    "text": "OK",
-    "value": [0]}
+    'text': 'OK',
+    'value': [0]}
 
 ZABBIX_EVENT_ALL = {
-    "text": "All",
-    "value": [0, 1]}
+    'text': 'All',
+    'value': [0, 1]}
 
-ZABBIX_TRIGGERS_SHOW_ALL = "all triggers"
-ZABBIX_TRIGGERS_SHOW_ACK = "acknowledged"
-ZABBIX_TRIGGERS_SHOW_NACK = "unacknowledged"
+ZABBIX_TRIGGERS_SHOW_ALL = 'all triggers'
+ZABBIX_TRIGGERS_SHOW_ACK = 'acknowledged'
+ZABBIX_TRIGGERS_SHOW_NACK = 'unacknowledged'
 
 ZABBIX_SORT_TRIGGERS_BY_CHANGE = {
-    "text": "last change",
-    "value": "lastchange",
+    'text': 'last change',
+    'value': 'lastchange',
 }
 ZABBIX_SORT_TRIGGERS_BY_SEVERITY = {
-    "text": "severity",
-    "value": "priority",
+    'text': 'severity',
+    'value': 'priority',
 }
 
 ZABBIX_SEVERITY_COLORS = (
-    ("#B7DBAB", "Not classified"),
-    ("#82B5D8", "Information"),
-    ("#E5AC0E", "Warning"),
-    ("#C15C17", "Average"),
-    ("#BF1B00", "High"),
-    ("#890F02", "Disaster"),
+    ('#B7DBAB', 'Not classified'),
+    ('#82B5D8', 'Information'),
+    ('#E5AC0E', 'Warning'),
+    ('#C15C17', 'Average'),
+    ('#BF1B00', 'High'),
+    ('#890F02', 'Disaster'),
 )
 
 
@@ -81,7 +81,7 @@ class ZabbixTargetOptions(object):
 
     def to_json_data(self):
         return {
-            "showDisabledItems": self.showDisabledItems
+            'showDisabledItems': self.showDisabledItems
         }
 
 
@@ -91,7 +91,7 @@ class ZabbixTargetField(object):
 
     def to_json_data(self):
         return {
-            "filter": self.filter
+            'filter': self.filter
         }
 
 
@@ -147,23 +147,23 @@ class ZabbixTarget(object):
 
     def to_json_data(self):
         obj = {
-            "application": ZabbixTargetField(self.application),
-            "expr": self.expr,
-            "functions": self.functions,
-            "group": ZabbixTargetField(self.group),
-            "host": ZabbixTargetField(self.host),
-            "intervalFactor": self.intervalFactor,
-            "item": ZabbixTargetField(self.item),
-            "mode": self.mode,
-            "options": self.options,
-            "refId": self.refId,
+            'application': ZabbixTargetField(self.application),
+            'expr': self.expr,
+            'functions': self.functions,
+            'group': ZabbixTargetField(self.group),
+            'host': ZabbixTargetField(self.host),
+            'intervalFactor': self.intervalFactor,
+            'item': ZabbixTargetField(self.item),
+            'mode': self.mode,
+            'options': self.options,
+            'refId': self.refId,
         }
         if self.mode == ZABBIX_QMODE_SERVICES:
-            obj["slaProperty"] = self.slaProperty,
-            obj["itservice"] = {"name": self.itService}
+            obj['slaProperty'] = self.slaProperty,
+            obj['itservice'] = {'name': self.itService}
         if self.mode == ZABBIX_QMODE_TEXT:
-            obj["textFilter"] = self.textFilter
-            obj["useCaptureGroups"] = self.useCaptureGroups
+            obj['textFilter'] = self.textFilter
+            obj['useCaptureGroups'] = self.useCaptureGroups
         return obj
 
 
@@ -179,15 +179,15 @@ class ZabbixDeltaFunction(object):
     def to_json_data(self):
         text = "delta()"
         definition = {
-            "category": "Transform",
-            "name": "delta",
-            "defaultParams": [],
-            "params": []}
+            'category': 'Transform',
+            'name': 'delta',
+            'defaultParams': [],
+            'params': []}
         return {
-            "added": self.added,
-            "text": text,
-            "def": definition,
-            "params": [],
+            'added': self.added,
+            'text': text,
+            'def': definition,
+            'params': [],
         }
 
 
@@ -200,9 +200,9 @@ class ZabbixGroupByFunction(object):
     http://docs.grafana-zabbix.org/reference/functions/#groupBy
     """
 
-    _options = ("avg", "min", "max", "median")
-    _default_interval = "1m"
-    _default_function = "avg"
+    _options = ('avg', 'min', 'max', 'median')
+    _default_interval = '1m'
+    _default_function = 'avg'
 
     added = attr.ib(default=False, validator=instance_of(bool))
     interval = attr.ib(default=_default_interval, validator=is_interval)
@@ -212,24 +212,24 @@ class ZabbixGroupByFunction(object):
     def to_json_data(self):
         text = "groupBy({interval}, {function})"
         definition = {
-            "category": "Transform",
-            "name": "groupBy",
-            "defaultParams": [
+            'category': 'Transform',
+            'name': 'groupBy',
+            'defaultParams': [
                 self._default_interval,
                 self._default_function,
             ],
-            "params": [
-                {"name": "interval",
-                 "type": "string"},
-                {"name": "function",
-                 "options": self._options,
-                 "type": "string"}]}
+            'params': [
+                {'name': 'interval',
+                 'type': 'string'},
+                {'name': 'function',
+                 'options': self._options,
+                 'type': 'string'}]}
         return {
-            "def": definition,
-            "text": text.format(
+            'def': definition,
+            'text': text.format(
                 interval=self.interval, function=self.function),
-            "params": [self.interval, self.function],
-            "added": self.added,
+            'params': [self.interval, self.function],
+            'added': self.added,
         }
 
 
@@ -249,19 +249,19 @@ class ZabbixScaleFunction(object):
     def to_json_data(self):
         text = "scale({factor})"
         definition = {
-            "category": "Transform",
-            "name": "scale",
-            "defaultParams": [self._default_factor],
-            "params": [
-                {"name": "factor",
-                 "options": [100, 0.01, 10, -1],
-                 "type": "float"}]
+            'category': 'Transform',
+            'name': 'scale',
+            'defaultParams': [self._default_factor],
+            'params': [
+                {'name': 'factor',
+                 'options': [100, 0.01, 10, -1],
+                 'type': 'float'}]
         }
         return {
-            "def": definition,
-            "text": text.format(factor=self.factor),
-            "params": [self.factor],
-            "added": self.added,
+            'def': definition,
+            'text': text.format(factor=self.factor),
+            'params': [self.factor],
+            'added': self.added,
         }
 
 
@@ -275,9 +275,9 @@ class ZabbixAggregateByFunction(object):
     http://docs.grafana-zabbix.org/reference/functions/#aggregateBy
     """
 
-    _options = ("avg", "min", "max", "median")
-    _default_interval = "1m"
-    _default_function = "avg"
+    _options = ('avg', 'min', 'max', 'median')
+    _default_interval = '1m'
+    _default_function = 'avg'
 
     added = attr.ib(default=False, validator=instance_of(bool))
     interval = attr.ib(default=_default_interval, validator=is_interval)
@@ -287,24 +287,24 @@ class ZabbixAggregateByFunction(object):
     def to_json_data(self):
         text = "aggregateBy({interval}, {function})"
         definition = {
-            "category": "Aggregate",
-            "name": "aggregateBy",
-            "defaultParams": [
+            'category': 'Aggregate',
+            'name': 'aggregateBy',
+            'defaultParams': [
                 self._default_interval,
                 self._default_function,
             ],
-            "params": [
-                {"name": "interval",
-                 "type": "string"},
-                {"name": "function",
-                 "options": self._options,
-                 "type": "string"}]}
+            'params': [
+                {'name': 'interval',
+                 'type': 'string'},
+                {'name': 'function',
+                 'options': self._options,
+                 'type': 'string'}]}
         return {
-            "def": definition,
-            "text": text.format(
+            'def': definition,
+            'text': text.format(
                 interval=self.interval, function=self.function),
-            "params": [self.interval, self.function],
-            "added": self.added,
+            'params': [self.interval, self.function],
+            'added': self.added,
         }
 
 
@@ -316,7 +316,7 @@ class ZabbixAverageFunction(object):
     http://docs.grafana-zabbix.org/reference/functions/#average
     """
 
-    _default_interval = "1m"
+    _default_interval = '1m'
 
     added = attr.ib(default=False, validator=instance_of(bool))
     interval = attr.ib(default=_default_interval, validator=is_interval)
@@ -324,21 +324,21 @@ class ZabbixAverageFunction(object):
     def to_json_data(self):
         text = "average({interval})"
         definition = {
-            "category": "Aggregate",
+            'category': "Aggregate",
             "name": "average",
             "defaultParams": [
                 self._default_interval,
             ],
-            "params": [
-                {"name": "interval",
-                 "type": "string"}]
+            'params': [
+                {'name': 'interval',
+                 'type': 'string'}]
         }
         return {
-            "def": definition,
-            "text": text.format(
+            'def': definition,
+            'text': text.format(
                 interval=self.interval),
-            "params": [self.interval],
-            "added": self.added,
+            'params': [self.interval],
+            'added': self.added,
         }
 
 
@@ -350,7 +350,7 @@ class ZabbixMaxFunction(object):
     http://docs.grafana-zabbix.org/reference/functions/#max
     """
 
-    _default_interval = "1m"
+    _default_interval = '1m'
 
     added = attr.ib(default=False, validator=instance_of(bool))
     interval = attr.ib(default=_default_interval, validator=is_interval)
@@ -358,21 +358,21 @@ class ZabbixMaxFunction(object):
     def to_json_data(self):
         text = "max({interval})"
         definition = {
-            "category": "Aggregate",
-            "name": "max",
-            "defaultParams": [
+            'category': 'Aggregate',
+            'name': 'max',
+            'defaultParams': [
                 self._default_interval,
             ],
-            "params": [
-                {"name": "interval",
-                 "type": "string"}]
+            'params': [
+                {'name': 'interval',
+                 'type': 'string'}]
         }
         return {
-            "def": definition,
-            "text": text.format(
+            'def': definition,
+            'text': text.format(
                 interval=self.interval),
-            "params": [self.interval],
-            "added": self.added,
+            'params': [self.interval],
+            'added': self.added,
         }
 
 
@@ -384,29 +384,29 @@ class ZabbixMedianFunction(object):
     http://docs.grafana-zabbix.org/reference/functions/#median
     """
 
-    _default_interval = "1m"
+    _default_interval = '1m'
 
     added = attr.ib(default=False, validator=instance_of(bool))
-    interval = attr.ib(default="1m", validator=is_interval)
+    interval = attr.ib(default='1m', validator=is_interval)
 
     def to_json_data(self):
         text = "median({interval})"
         definition = {
-            "category": "Aggregate",
-            "name": "median",
-            "defaultParams": [
+            'category': 'Aggregate',
+            'name': 'median',
+            'defaultParams': [
                 self._default_interval,
             ],
-            "params": [
-                {"name": "interval",
-                 "type": "string"}]
+            'params': [
+                {'name': 'interval',
+                 'type': 'string'}]
         }
         return {
-            "def": definition,
-            "text": text.format(
+            'def': definition,
+            'text': text.format(
                 interval=self.interval),
-            "params": [self.interval],
-            "added": self.added,
+            'params': [self.interval],
+            'added': self.added,
         }
 
 
@@ -418,7 +418,7 @@ class ZabbixMinFunction(object):
     http://docs.grafana-zabbix.org/reference/functions/#min
     """
 
-    _default_interval = "1m"
+    _default_interval = '1m'
 
     added = attr.ib(default=False, validator=instance_of(bool))
     interval = attr.ib(default=_default_interval, validator=is_interval)
@@ -426,21 +426,21 @@ class ZabbixMinFunction(object):
     def to_json_data(self):
         text = "min({interval})"
         definition = {
-            "category": "Aggregate",
-            "name": "min",
-            "defaultParams": [
+            'category': 'Aggregate',
+            'name': 'min',
+            'defaultParams': [
                 self._default_interval,
             ],
-            "params": [
-                {"name": "interval",
-                 "type": "string"}]
+            'params': [
+                {'name': 'interval',
+                 'type': 'string'}]
         }
         return {
-            "def": definition,
-            "text": text.format(
+            'def': definition,
+            'text': text.format(
                 interval=self.interval),
-            "params": [self.interval],
-            "added": self.added,
+            'params': [self.interval],
+            'added': self.added,
         }
 
 
@@ -459,24 +459,24 @@ class ZabbixSumSeriesFunction(object):
     def to_json_data(self):
         text = "sumSeries()"
         definition = {
-            "category": "Aggregate",
-            "name": "sumSeries",
-            "defaultParams": [],
-            "params": []}
+            'category': 'Aggregate',
+            'name': 'sumSeries',
+            'defaultParams': [],
+            'params': []}
         return {
-            "added": self.added,
-            "text": text,
-            "def": definition,
-            "params": [],
+            'added': self.added,
+            'text': text,
+            'def': definition,
+            'params': [],
         }
 
 
 @attr.s
 class ZabbixBottomFunction(object):
 
-    _options = ("avg", "min", "max", "median")
+    _options = ('avg', 'min', 'max', 'median')
     _default_number = 5
-    _default_function = "avg"
+    _default_function = 'avg'
 
     added = attr.ib(default=False, validator=instance_of(bool))
     number = attr.ib(default=_default_number, validator=instance_of(int))
@@ -486,33 +486,33 @@ class ZabbixBottomFunction(object):
     def to_json_data(self):
         text = "bottom({number}, {function})"
         definition = {
-            "category": "Filter",
-            "name": "bottom",
-            "defaultParams": [
+            'category': 'Filter',
+            'name': 'bottom',
+            'defaultParams': [
                 self._default_number,
                 self._default_function,
             ],
-            "params": [
-                {"name": "number",
-                 "type": "string"},
-                {"name": "function",
-                 "options": self._options,
-                 "type": "string"}]}
+            'params': [
+                {'name': 'number',
+                 'type': 'string'},
+                {'name': 'function',
+                 'options': self._options,
+                 'type': 'string'}]}
         return {
-            "def": definition,
-            "text": text.format(
+            'def': definition,
+            'text': text.format(
                 number=self.number, function=self.function),
-            "params": [self.number, self.function],
-            "added": self.added,
+            'params': [self.number, self.function],
+            'added': self.added,
         }
 
 
 @attr.s
 class ZabbixTopFunction(object):
 
-    _options = ("avg", "min", "max", "median")
+    _options = ('avg', 'min', 'max', 'median')
     _default_number = 5
-    _default_function = "avg"
+    _default_function = 'avg'
 
     added = attr.ib(default=False, validator=instance_of(bool))
     number = attr.ib(default=_default_number, validator=instance_of(int))
@@ -522,24 +522,24 @@ class ZabbixTopFunction(object):
     def to_json_data(self):
         text = "top({number}, {function})"
         definition = {
-            "category": "Filter",
-            "name": "top",
-            "defaultParams": [
+            'category': 'Filter',
+            'name': 'top',
+            'defaultParams': [
                 self._default_number,
                 self._default_function,
             ],
-            "params": [
-                {"name": "number",
-                 "type": "string"},
-                {"name": "function",
-                 "options": self._options,
-                 "type": "string"}]}
+            'params': [
+                {'name': 'number',
+                 'type': 'string'},
+                {'name': 'function',
+                 'options': self._options,
+                 'type': 'string'}]}
         return {
-            "def": definition,
-            "text": text.format(
+            'def': definition,
+            'text': text.format(
                 number=self.number, function=self.function),
-            "params": [self.number, self.function],
-            "added": self.added,
+            'params': [self.number, self.function],
+            'added': self.added,
         }
 
 
@@ -553,7 +553,7 @@ class ZabbixTrendValueFunction(object):
     """
 
     _options = ('avg', 'min', 'max')
-    _default_type = "avg"
+    _default_type = 'avg'
     added = attr.ib(default=False, validator=instance_of(bool))
     type = attr.ib(default=_default_type,
                    validator=is_in(_options))
@@ -561,21 +561,21 @@ class ZabbixTrendValueFunction(object):
     def to_json_data(self):
         text = "trendValue({type})"
         definition = {
-            "category": "Trends",
-            "name": "trendValue",
-            "defaultParams": [
+            'category': 'Trends',
+            'name': 'trendValue',
+            'defaultParams': [
                 self._default_type,
             ],
-            "params": [
-                {"name": "type",
-                 "options": self._options,
-                 "type": "string"}]}
+            'params': [
+                {'name': 'type',
+                 'options': self._options,
+                 'type': 'string'}]}
         return {
-            "def": definition,
-            "text": text.format(
+            'def': definition,
+            'text': text.format(
                 type=self.type),
-            "params": [self.type],
-            "added": self.added,
+            'params': [self.type],
+            'added': self.added,
         }
 
 
@@ -590,8 +590,8 @@ class ZabbixTimeShiftFunction(object):
     http://docs.grafana-zabbix.org/reference/functions/#timeShift
     """
 
-    _options = ("24h", "7d", "1M", "+24h", "-24h")
-    _default_interval = "24h"
+    _options = ('24h', '7d', '1M', '+24h', '-24h')
+    _default_interval = '24h'
 
     added = attr.ib(default=False, validator=instance_of(bool))
     interval = attr.ib(default=_default_interval)
@@ -599,21 +599,21 @@ class ZabbixTimeShiftFunction(object):
     def to_json_data(self):
         text = "timeShift({interval})"
         definition = {
-            "category": "Time",
-            "name": "timeShift",
-            "defaultParams": [
+            'category': 'Time',
+            'name': 'timeShift',
+            'defaultParams': [
                 self._default_interval,
             ],
-            "params": [
-                {"name": "interval",
-                 "options": self._options,
-                 "type": "string"}]}
+            'params': [
+                {'name': 'interval',
+                 'options': self._options,
+                 'type': 'string'}]}
         return {
-            "def": definition,
-            "text": text.format(
+            'def': definition,
+            'text': text.format(
                 interval=self.interval),
-            "params": [self.interval],
-            "added": self.added,
+            'params': [self.interval],
+            'added': self.added,
         }
 
 
@@ -630,17 +630,17 @@ class ZabbixSetAliasFunction(object):
     def to_json_data(self):
         text = "setAlias({alias})"
         definition = {
-            "category": "Alias",
-            "name": "setAlias",
-            "defaultParams": [],
-            "params": [
-                {"name": "alias",
-                 "type": "string"}]}
+            'category': 'Alias',
+            'name': 'setAlias',
+            'defaultParams': [],
+            'params': [
+                {'name': 'alias',
+                 'type': 'string'}]}
         return {
-            "def": definition,
-            "text": text.format(alias=self.alias),
-            "params": [self.alias],
-            "added": self.added,
+            'def': definition,
+            'text': text.format(alias=self.alias),
+            'params': [self.alias],
+            'added': self.added,
         }
 
 
@@ -658,17 +658,17 @@ class ZabbixSetAliasByRegexFunction(object):
     def to_json_data(self):
         text = "setAliasByRegex({regexp})"
         definition = {
-            "category": "Alias",
-            "name": "setAliasByRegex",
-            "defaultParams": [],
-            "params": [
-                {"name": "aliasByRegex",
-                 "type": "string"}]}
+            'category': 'Alias',
+            'name': 'setAliasByRegex',
+            'defaultParams': [],
+            'params': [
+                {'name': 'aliasByRegex',
+                 'type': 'string'}]}
         return {
-            "def": definition,
-            "text": text.format(regexp=self.regexp),
-            "params": [self.regexp],
-            "added": self.added,
+            'def': definition,
+            'text': text.format(regexp=self.regexp),
+            'params': [self.regexp],
+            'added': self.added,
         }
 
 
@@ -713,10 +713,10 @@ class ZabbixColor(object):
 
     def to_json_data(self):
         return {
-            "color": self.color,
-            "priority": self.priority,
-            "severity": self.severity,
-            "show": self.show,
+            'color': self.color,
+            'priority': self.priority,
+            'severity': self.severity,
+            'show': self.show,
         }
 
 
@@ -730,10 +730,10 @@ class ZabbixTrigger(object):
 
     def to_json_data(self):
         return {
-            "application": ZabbixTargetField(self.application),
-            "group": ZabbixTargetField(self.group),
-            "host": ZabbixTargetField(self.host),
-            "trigger": ZabbixTargetField(self.trigger),
+            'application': ZabbixTargetField(self.application),
+            'group': ZabbixTargetField(self.group),
+            'host': ZabbixTargetField(self.host),
+            'trigger': ZabbixTargetField(self.trigger),
         }
 
 
@@ -830,37 +830,37 @@ class ZabbixTriggersPanel(object):
 
     def to_json_data(self):
         return {
-            "type": ZABBIX_TRIGGERS_TYPE,
-            "datasource": self.dataSource,
-            "title": self.title,
-            "ackEventColor": self.ackEventColor,
-            "ageField": self.ageField,
-            "customLastChangeFormat": self.customLastChangeFormat,
-            "description": self.description,
-            "fontSize": self.fontSize,
-            "height": self.height,
-            "hideHostsInMaintenance": self.hideHostsInMaintenance,
-            "hostField": self.hostField,
-            "hostTechNameField": self.hostTechNameField,
-            "id": self.id,
-            "infoField": self.infoField,
-            "lastChangeField": self.lastChangeField,
-            "lastChangeFormat": self.lastChangeFormat,
-            "limit": self.limit,
-            "links": self.links,
-            "markAckEvents": self.markAckEvents,
-            "minSpan": self.minSpan,
-            "okEventColor": self.okEventColor,
-            "pageSize": self.pageSize,
-            "repeat": self.repeat,
-            "scroll": self.scroll,
-            "severityField": self.severityField,
-            "showEvents": self.showEvents,
-            "showTriggers": self.showTriggers,
-            "sortTriggersBy": self.sortTriggersBy,
-            "span": self.span,
-            "statusField": self.statusField,
-            "transparent": self.transparent,
-            "triggers": self.triggers,
-            "triggerSeverity": self.triggerSeverity,
+            'type': ZABBIX_TRIGGERS_TYPE,
+            'datasource': self.dataSource,
+            'title': self.title,
+            'ackEventColor': self.ackEventColor,
+            'ageField': self.ageField,
+            'customLastChangeFormat': self.customLastChangeFormat,
+            'description': self.description,
+            'fontSize': self.fontSize,
+            'height': self.height,
+            'hideHostsInMaintenance': self.hideHostsInMaintenance,
+            'hostField': self.hostField,
+            'hostTechNameField': self.hostTechNameField,
+            'id': self.id,
+            'infoField': self.infoField,
+            'lastChangeField': self.lastChangeField,
+            'lastChangeFormat': self.lastChangeFormat,
+            'limit': self.limit,
+            'links': self.links,
+            'markAckEvents': self.markAckEvents,
+            'minSpan': self.minSpan,
+            'okEventColor': self.okEventColor,
+            'pageSize': self.pageSize,
+            'repeat': self.repeat,
+            'scroll': self.scroll,
+            'severityField': self.severityField,
+            'showEvents': self.showEvents,
+            'showTriggers': self.showTriggers,
+            'sortTriggersBy': self.sortTriggersBy,
+            'span': self.span,
+            'statusField': self.statusField,
+            'transparent': self.transparent,
+            'triggers': self.triggers,
+            'triggerSeverity': self.triggerSeverity,
         }

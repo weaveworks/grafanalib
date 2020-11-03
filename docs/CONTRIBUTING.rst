@@ -33,6 +33,9 @@ Conventions
 * Local variables are ``snake_cased``
 * We're kind of fussy about indentation:
   4 spaces everywhere, follow the examples in `core.py`_ if you're uncertain
+* Triple Double quotes `"""` for docstrings
+* Double quotes "" for human readable message or when string used for interpolation
+* Single quotes '' for symbol like strings
 
 Testing
 -------
