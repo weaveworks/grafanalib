@@ -1061,6 +1061,7 @@ class Graph(object):
 
     title = attr.ib()
     targets = attr.ib()
+    alertThreshold = attr.ib(default=True, validator=instance_of(bool))
     aliasColors = attr.ib(default=attr.Factory(dict))
     bars = attr.ib(default=False, validator=instance_of(bool))
     dataLinks = attr.ib(default=attr.Factory(list))
@@ -1126,6 +1127,7 @@ class Graph(object):
             'nullPointMode': self.nullPointMode,
             'options': {
                 'dataLinks': self.dataLinks,
+                'alertThreshold': self.alertThreshold,
             },
             'percentage': self.percentage,
             'pointradius': self.pointRadius,
