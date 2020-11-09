@@ -5,6 +5,8 @@ Changelog
 0.5.9 (TBD)
 ===========
 
+* Added Alert Threshold enabled/disabled to Graphs.
+
 Changes
 -------
 
