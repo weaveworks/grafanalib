@@ -103,7 +103,7 @@ UTC = 'utc'
 
 SCHEMA_VERSION = 12
 
-# Y Axis formats
+# (DEPRECATED: use formatunits.py) Y Axis formats
 DURATION_FORMAT = 'dtdurations'
 NO_FORMAT = 'none'
 OPS_FORMAT = 'ops'

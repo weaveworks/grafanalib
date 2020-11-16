@@ -6,6 +6,7 @@ Changelog
 ===========
 
 * Added Alert Threshold enabled/disabled to Graphs.
+* Added constants for all Grafana value formats
 
 Changes
 -------
