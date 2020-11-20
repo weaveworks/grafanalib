@@ -346,6 +346,26 @@ class Legend(object):
         }
 
 
+def is_valid_max_per_row(instance, attribute, value):
+    if ((value != None) and not isinstance(value, int)):
+        raise ValueError("{attr} should either be None or an integer".format(
+            attr=attribute))
+
+
+@attr.s
+class Repeat(object):
+   """
+   Panel repetition settings.
+
+   :param direction: The direction into which to repeat ('h' or 'v')
+   :param variable: The name of the variable over whose values to repeat
+   :param maxPerRow: The maximum number of panels per row in horizontal repetition
+   """
+
+   direction = attr.ib(default=None)
+   variable = attr.ib(default=None)
+   maxPerRow = attr.ib(default=None, validator=is_valid_max_per_row)
+
 @attr.s
 class Target(object):
     """
@@ -1346,6 +1366,7 @@ class Stat(object):
     :param span: defines the number of spans that will be used for panel
     :param thresholds: single stat thresholds
     :param transparent: defines if the panel should be transparent
+    :param repeat: defines how the panel should be repeated
     """
 
     dataSource = attr.ib()
@@ -1368,6 +1389,7 @@ class Stat(object):
     transparent = attr.ib(default=False, validator=instance_of(bool))
     reduceCalc = attr.ib(default='mean', type=str)
     decimals = attr.ib(default=None)
+    repeat = attr.ib(default=attr.Factory(Repeat), validator=instance_of(Repeat))
 
     def to_json_data(self):
         return {
@@ -1408,6 +1430,9 @@ class Stat(object):
             'transparent': self.transparent,
             'type': STAT_TYPE,
             'timeFrom': self.timeFrom,
+            'repeat': self.repeat.variable,
+            'repeatDirection': self.repeat.direction,
+            'maxPerRow': self.repeat.maxPerRow
         }
 
 
