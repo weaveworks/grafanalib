@@ -61,6 +61,7 @@ GREEN = RGBA(50, 172, 45, 0.97)
 ORANGE = RGBA(237, 129, 40, 0.89)
 RED = RGBA(245, 54, 54, 0.9)
 BLANK = RGBA(0, 0, 0, 0.0)
+WHITE = RGB(255, 255, 255)
 
 INDIVIDUAL = 'individual'
 CUMULATIVE = 'cumulative'
@@ -103,7 +104,7 @@ UTC = 'utc'
 
 SCHEMA_VERSION = 12
 
-# Y Axis formats
+# (DEPRECATED: use formatunits.py) Y Axis formats
 DURATION_FORMAT = 'dtdurations'
 NO_FORMAT = 'none'
 OPS_FORMAT = 'ops'
