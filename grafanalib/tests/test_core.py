@@ -88,9 +88,9 @@ def test_stat_no_repeat():
         ]
     )
 
-    assert t.to_json_data()['repeat'] == None
-    assert t.to_json_data()['repeatDirection'] == None
-    assert t.to_json_data()['maxPerRow'] == None
+    assert t.to_json_data()['repeat'] is None
+    assert t.to_json_data()['repeatDirection'] is None
+    assert t.to_json_data()['maxPerRow'] is None
 
 
 def test_stat_with_repeat():
