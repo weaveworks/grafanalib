@@ -354,17 +354,18 @@ def is_valid_max_per_row(instance, attribute, value):
 
 @attr.s
 class Repeat(object):
-   """
-   Panel repetition settings.
+    """
+    Panel repetition settings.
 
-   :param direction: The direction into which to repeat ('h' or 'v')
-   :param variable: The name of the variable over whose values to repeat
-   :param maxPerRow: The maximum number of panels per row in horizontal repetition
-   """
+    :param direction: The direction into which to repeat ('h' or 'v')
+    :param variable: The name of the variable over whose values to repeat
+    :param maxPerRow: The maximum number of panels per row in horizontal repetition
+    """
 
-   direction = attr.ib(default=None)
-   variable = attr.ib(default=None)
-   maxPerRow = attr.ib(default=None, validator=is_valid_max_per_row)
+    direction = attr.ib(default=None)
+    variable = attr.ib(default=None)
+    maxPerRow = attr.ib(default=None, validator=is_valid_max_per_row)
+
 
 @attr.s
 class Target(object):
