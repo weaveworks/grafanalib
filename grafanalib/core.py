@@ -347,7 +347,7 @@ class Legend(object):
 
 
 def is_valid_max_per_row(instance, attribute, value):
-    if ((value != None) and not isinstance(value, int)):
+    if ((value is not None) and not isinstance(value, int)):
         raise ValueError("{attr} should either be None or an integer".format(
             attr=attribute))
 
