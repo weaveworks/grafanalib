@@ -79,6 +79,39 @@ def test_table_styled_columns():
     ]
 
 
+def test_stat_no_repeat():
+    t = G.Stat(
+        title='dummy',
+        dataSource='data source',
+        targets=[
+            G.Target(expr='some expr')
+        ]
+    )
+
+    assert t.to_json_data()['repeat'] is None
+    assert t.to_json_data()['repeatDirection'] is None
+    assert t.to_json_data()['maxPerRow'] is None
+
+
+def test_stat_with_repeat():
+    t = G.Stat(
+        title='dummy',
+        dataSource='data source',
+        targets=[
+            G.Target(expr='some expr')
+        ],
+        repeat=G.Repeat(
+            variable="repetitionVariable",
+            direction='h',
+            maxPerRow=10
+        )
+    )
+
+    assert t.to_json_data()['repeat'] == 'repetitionVariable'
+    assert t.to_json_data()['repeatDirection'] == 'h'
+    assert t.to_json_data()['maxPerRow'] == 10
+
+
 def test_single_stat():
     data_source = 'dummy data source'
     targets = ['dummy_prom_query']
