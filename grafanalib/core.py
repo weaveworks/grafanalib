@@ -377,6 +377,7 @@ class Target(object):
 
     expr = attr.ib(default="")
     format = attr.ib(default=TIME_SERIES_TARGET_FORMAT)
+    hide = attr.ib(default=False, validator=instance_of(bool))
     legendFormat = attr.ib(default="")
     interval = attr.ib(default="", validator=instance_of(str))
     intervalFactor = attr.ib(default=2)
@@ -392,6 +393,7 @@ class Target(object):
             'expr': self.expr,
             'target': self.target,
             'format': self.format,
+            'hide': self.hide,
             'interval': self.interval,
             'intervalFactor': self.intervalFactor,
             'legendFormat': self.legendFormat,
