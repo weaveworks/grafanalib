@@ -2637,6 +2637,7 @@ class Threshold(object):
         }
 
 
+@attr.s
 class SeriesOverride(object):
     alias = attr.ib()
     bars = attr.ib(default=False)
