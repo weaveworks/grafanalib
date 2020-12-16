@@ -1382,6 +1382,7 @@ class Stat(Panel):
     :param dataSource: Grafana datasource name
     :param targets: list of metric requests for chosen datasource
     :param title: panel title
+    :param textMode: define Grafana will show name or value: keys: 'auto' 'name' 'none' 'value' 'value_and_name'
     :param colorMode: defines if Grafana will color panel background: keys "value" "background"
     :param graphMode: defines if Grafana will draw graph: keys 'area' 'none'
     :param orientation: Stacking direction in case of multiple series or fields: keys 'auto' 'horizontal' 'vertical'
@@ -1405,6 +1406,7 @@ class Stat(Panel):
     :param repeat: defines how the panel should be repeated
     """
 
+    textMode = attr.ib(default='auto')
     colorMode = attr.ib(default='value')
     graphMode = attr.ib(default='area')
     orientation = attr.ib(default='auto')
@@ -1433,6 +1435,7 @@ class Stat(Panel):
                     }
                 },
                 'options': {
+                    'textMode': self.textMode,
                     'colorMode': self.colorMode,
                     'graphMode': self.graphMode,
                     'justifyMode': self.alignment,

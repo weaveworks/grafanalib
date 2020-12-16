@@ -8,7 +8,9 @@ Changelog
 * Added Alert Threshold enabled/disabled to Graphs.
 * Added constants for all Grafana value formats
 * Added support for repetitions to Stat Panels (https://grafana.com/docs/grafana/latest/variables/repeat-panels-or-rows/)
+* Added textMode option to Stat Panels
 * Add Panel object for all panels to inherit from
+
 
 Changes
 -------
