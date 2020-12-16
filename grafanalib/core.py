@@ -1419,7 +1419,7 @@ class Stat(Panel):
     decimals = attr.ib(default=None)
     repeat = attr.ib(default=attr.Factory(Repeat), validator=instance_of(Repeat))
 
-    def to_json_data(self): 
+    def to_json_data(self):
         return self.panel_json(
             {
                 'fieldConfig': {
