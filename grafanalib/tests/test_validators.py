@@ -14,7 +14,8 @@ def create_attribute():
         eq=True,
         order=False,
         hash=True,
-        init=True)
+        init=True,
+        inherited=False)
 
 
 def test_is_in():
