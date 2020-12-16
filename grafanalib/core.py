@@ -1073,7 +1073,77 @@ class Dashboard(object):
 
 
 @attr.s
-class Graph(object):
+class Panel(object):
+    """
+    Generic panel for shared defaults
+    :param cacheTimeout: metric query result cache ttl
+    :param dataSource: Grafana datasource name
+    :param description: optional panel description
+    :param editable: defines if panel is editable via web interfaces
+    :param height: defines panel height
+    :param hideTimeOverride: hides time overrides
+    :param id: panel id
+    :param interval: defines time interval between metric queries
+    :param links: additional web links
+    :param maxDataPoints: maximum metric query results,
+           that will be used for rendering
+    :param minSpan: minimum span number
+    :param repeat: Template's name to repeat Graph on
+    :param span: defines the number of spans that will be used for panel
+    :param targets: list of metric requests for chosen datasource
+    :param timeFrom: time range that Override relative time
+    :param title: of the panel
+    :param transparent: defines if panel should be transparent
+    """
+
+    dataSource = attr.ib(default=None)
+    targets = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+    title = attr.ib(default="")
+    cacheTimeout = attr.ib(default=None)
+    description = attr.ib(default=None)
+    editable = attr.ib(default=True, validator=instance_of(bool))
+    error = attr.ib(default=False, validator=instance_of(bool))
+    height = attr.ib(default=None)
+    hideTimeOverride = attr.ib(default=False, validator=instance_of(bool))
+    id = attr.ib(default=None)
+    interval = attr.ib(default=None)
+    links = attr.ib(default=attr.Factory(list))
+    maxDataPoints = attr.ib(default=100)
+    minSpan = attr.ib(default=None)
+    repeat = attr.ib(default=None)
+    span = attr.ib(default=None)
+    timeFrom = attr.ib(default=None)
+    timeShift = attr.ib(default=None)
+    transparent = attr.ib(default=False, validator=instance_of(bool))
+
+    def panel_json(self, overrides):
+        res = {
+            "cacheTimeout": self.cacheTimeout,
+            "datasource": self.dataSource,
+            "description": self.description,
+            "editable": self.editable,
+            "error": self.error,
+            "height": self.height,
+            "hideTimeOverride": self.hideTimeOverride,
+            "id": self.id,
+            "interval": self.interval,
+            "links": self.links,
+            "maxDataPoints": self.maxDataPoints,
+            "minSpan": self.minSpan,
+            "repeat": self.repeat,
+            "span": self.span,
+            "targets": self.targets,
+            "timeFrom": self.timeFrom,
+            "timeShift": self.timeShift,
+            "title": self.title,
+            "transparent": self.transparent,
+        }
+        res.update(overrides)
+        return res
+
+
+@attr.s
+class Graph(Panel):
     """
     Generates Graph panel json structure.
 
@@ -1083,19 +1153,13 @@ class Graph(object):
     :param repeat: Template's name to repeat Graph on
     """
 
-    title = attr.ib()
-    targets = attr.ib()
     alertThreshold = attr.ib(default=True, validator=instance_of(bool))
     aliasColors = attr.ib(default=attr.Factory(dict))
     bars = attr.ib(default=False, validator=instance_of(bool))
     dataLinks = attr.ib(default=attr.Factory(list))
-    dataSource = attr.ib(default=None)
-    description = attr.ib(default=None)
-    editable = attr.ib(default=True, validator=instance_of(bool))
     error = attr.ib(default=False, validator=instance_of(bool))
     fill = attr.ib(default=1, validator=instance_of(int))
     grid = attr.ib(default=attr.Factory(Grid), validator=instance_of(Grid))
-    id = attr.ib(default=None)
     isNew = attr.ib(default=True, validator=instance_of(bool))
     legend = attr.ib(
         default=attr.Factory(Legend),
@@ -1103,25 +1167,18 @@ class Graph(object):
     )
     lines = attr.ib(default=True, validator=instance_of(bool))
     lineWidth = attr.ib(default=DEFAULT_LINE_WIDTH)
-    links = attr.ib(default=attr.Factory(list))
-    minSpan = attr.ib(default=None)
     nullPointMode = attr.ib(default=NULL_CONNECTED)
     percentage = attr.ib(default=False, validator=instance_of(bool))
     pointRadius = attr.ib(default=DEFAULT_POINT_RADIUS)
     points = attr.ib(default=False, validator=instance_of(bool))
     renderer = attr.ib(default=DEFAULT_RENDERER)
-    repeat = attr.ib(default=None)
     seriesOverrides = attr.ib(default=attr.Factory(list))
-    span = attr.ib(default=None)
     stack = attr.ib(default=False, validator=instance_of(bool))
     steppedLine = attr.ib(default=False, validator=instance_of(bool))
-    timeFrom = attr.ib(default=None)
-    timeShift = attr.ib(default=None)
     tooltip = attr.ib(
         default=attr.Factory(Tooltip),
         validator=instance_of(Tooltip),
     )
-    transparent = attr.ib(default=False, validator=instance_of(bool))
     xAxis = attr.ib(default=attr.Factory(XAxis), validator=instance_of(XAxis))
     # XXX: This isn't a *good* default, rather it's the default Grafana uses.
     yAxes = attr.ib(
@@ -1135,18 +1192,13 @@ class Graph(object):
         graphObject = {
             'aliasColors': self.aliasColors,
             'bars': self.bars,
-            'datasource': self.dataSource,
-            'description': self.description,
-            'editable': self.editable,
             'error': self.error,
             'fill': self.fill,
             'grid': self.grid,
-            'id': self.id,
             'isNew': self.isNew,
             'legend': self.legend,
             'lines': self.lines,
             'linewidth': self.lineWidth,
-            'links': self.links,
             'minSpan': self.minSpan,
             'nullPointMode': self.nullPointMode,
             'options': {
@@ -1157,24 +1209,17 @@ class Graph(object):
             'pointradius': self.pointRadius,
             'points': self.points,
             'renderer': self.renderer,
-            'repeat': self.repeat,
             'seriesOverrides': self.seriesOverrides,
-            'span': self.span,
             'stack': self.stack,
             'steppedLine': self.steppedLine,
-            'targets': self.targets,
-            'timeFrom': self.timeFrom,
-            'timeShift': self.timeShift,
-            'title': self.title,
             'tooltip': self.tooltip,
-            'transparent': self.transparent,
             'type': GRAPH_TYPE,
             'xaxis': self.xAxis,
             'yaxes': self.yAxes,
         }
         if self.alert:
             graphObject['alert'] = self.alert
-        return graphObject
+        return self.panel_json(graphObject)
 
     def _iter_targets(self):
         for target in self.targets:
@@ -1277,34 +1322,22 @@ class Gauge(object):
 
 
 @attr.s
-class Text(object):
+class Text(Panel):
     """Generates a Text panel."""
 
-    content = attr.ib()
-    editable = attr.ib(default=True, validator=instance_of(bool))
+    content = attr.ib(default="")
     error = attr.ib(default=False, validator=instance_of(bool))
-    height = attr.ib(default=None)
-    id = attr.ib(default=None)
-    links = attr.ib(default=attr.Factory(list))
     mode = attr.ib(default=TEXT_MODE_MARKDOWN)
-    span = attr.ib(default=None)
-    title = attr.ib(default="")
-    transparent = attr.ib(default=False, validator=instance_of(bool))
 
     def to_json_data(self):
-        return {
-            'content': self.content,
-            'editable': self.editable,
-            'error': self.error,
-            'height': self.height,
-            'id': self.id,
-            'links': self.links,
-            'mode': self.mode,
-            'span': self.span,
-            'title': self.title,
-            'transparent': self.transparent,
-            'type': TEXT_TYPE,
-        }
+        return self.panel_json(
+            {
+                'content': self.content,
+                'error': self.error,
+                'mode': self.mode,
+                'type': TEXT_TYPE,
+            }
+        )
 
 
 @attr.s
@@ -1341,7 +1374,7 @@ class AlertList(object):
 
 
 @attr.s
-class Stat(object):
+class Stat(Panel):
     """Generates Stat panel json structure
 
     Grafana doc on stat: https://grafana.com/docs/grafana/latest/panels/visualizations/stat-panel/
@@ -1372,71 +1405,52 @@ class Stat(object):
     :param repeat: defines how the panel should be repeated
     """
 
-    dataSource = attr.ib()
-    targets = attr.ib()
-    title = attr.ib()
-    description = attr.ib(default=None)
     colorMode = attr.ib(default='value')
     graphMode = attr.ib(default='area')
     orientation = attr.ib(default='auto')
     alignment = attr.ib(default='auto')
-    editable = attr.ib(default=True, validator=instance_of(bool))
     format = attr.ib(default='none')
-    height = attr.ib(default=None)
-    id = attr.ib(default=None)
-    links = attr.ib(default=attr.Factory(list))
     mappings = attr.ib(default=attr.Factory(list))
     span = attr.ib(default=6)
     thresholds = attr.ib(default="")
-    timeFrom = attr.ib(default=None)
-    transparent = attr.ib(default=False, validator=instance_of(bool))
     reduceCalc = attr.ib(default='mean', type=str)
     decimals = attr.ib(default=None)
     repeat = attr.ib(default=attr.Factory(Repeat), validator=instance_of(Repeat))
 
     def to_json_data(self):
-        return {
-            'datasource': self.dataSource,
-            'description': self.description,
-            'editable': self.editable,
-            'id': self.id,
-            'links': self.links,
-            'height': self.height,
-            'fieldConfig': {
-                'defaults': {
-                    'custom': {},
-                    'decimals': self.decimals,
-                    'mappings': self.mappings,
-                    'thresholds': {
-                        'mode': 'absolute',
-                        'steps': self.thresholds,
-                    },
-                    'unit': self.format
-                }
-            },
-            'options': {
-                'colorMode': self.colorMode,
-                'graphMode': self.graphMode,
-                'justifyMode': self.alignment,
-                'orientation': self.orientation,
-                'reduceOptions': {
-                    'calcs': [
-                        self.reduceCalc
-                    ],
-                    'fields': '',
-                    'values': False
-                }
-            },
-            'span': self.span,
-            'targets': self.targets,
-            'title': self.title,
-            'transparent': self.transparent,
-            'type': STAT_TYPE,
-            'timeFrom': self.timeFrom,
-            'repeat': self.repeat.variable,
-            'repeatDirection': self.repeat.direction,
-            'maxPerRow': self.repeat.maxPerRow
-        }
+        return self.panel_json(
+            {
+                'fieldConfig': {
+                    'defaults': {
+                        'custom': {},
+                        'decimals': self.decimals,
+                        'mappings': self.mappings,
+                        'thresholds': {
+                            'mode': 'absolute',
+                            'steps': self.thresholds,
+                        },
+                        'unit': self.format
+                    }
+                },
+                'options': {
+                    'colorMode': self.colorMode,
+                    'graphMode': self.graphMode,
+                    'justifyMode': self.alignment,
+                    'orientation': self.orientation,
+                    'reduceOptions': {
+                        'calcs': [
+                            self.reduceCalc
+                        ],
+                        'fields': '',
+                        'values': False
+                    }
+                },
+                'type': STAT_TYPE,
+                'repeat': self.repeat.variable,
+                'repeatDirection': self.repeat.direction,
+                'maxPerRow': self.repeat.maxPerRow
+            }
+        )
 
 
 @attr.s
@@ -1512,7 +1526,7 @@ class StatRangeMapping(object):
 
 
 @attr.s
-class SingleStat(object):
+class SingleStat(Panel):
     """Generates Single Stat panel json structure
 
     This panel was deprecated in Grafana 7.0, please use Stat instead
@@ -1565,24 +1579,16 @@ class SingleStat(object):
     :param timeFrom: time range that Override relative time
     """
 
-    dataSource = attr.ib()
-    targets = attr.ib()
-    title = attr.ib()
     cacheTimeout = attr.ib(default=None)
     colors = attr.ib(default=attr.Factory(lambda: [GREEN, ORANGE, RED]))
     colorBackground = attr.ib(default=False, validator=instance_of(bool))
     colorValue = attr.ib(default=False, validator=instance_of(bool))
-    description = attr.ib(default=None)
     decimals = attr.ib(default=None)
-    editable = attr.ib(default=True, validator=instance_of(bool))
     format = attr.ib(default='none')
     gauge = attr.ib(default=attr.Factory(Gauge),
                     validator=instance_of(Gauge))
-    height = attr.ib(default=None)
     hideTimeOverride = attr.ib(default=False, validator=instance_of(bool))
-    id = attr.ib(default=None)
     interval = attr.ib(default=None)
-    links = attr.ib(default=attr.Factory(list))
     mappingType = attr.ib(default=MAPPING_TYPE_VALUE_TO_TEXT)
     mappingTypes = attr.ib(
         default=attr.Factory(lambda: [
@@ -1599,60 +1605,46 @@ class SingleStat(object):
     prefix = attr.ib(default="")
     prefixFontSize = attr.ib(default='50%')
     rangeMaps = attr.ib(default=attr.Factory(list))
-    repeat = attr.ib(default=None)
-    span = attr.ib(default=6)
     sparkline = attr.ib(
         default=attr.Factory(SparkLine),
         validator=instance_of(SparkLine),
     )
     thresholds = attr.ib(default="")
-    transparent = attr.ib(default=False, validator=instance_of(bool))
     valueFontSize = attr.ib(default='80%')
     valueName = attr.ib(default=VTYPE_DEFAULT)
     valueMaps = attr.ib(default=attr.Factory(list))
-    timeFrom = attr.ib(default=None)
 
     def to_json_data(self):
-        return {
-            'cacheTimeout': self.cacheTimeout,
-            'colorBackground': self.colorBackground,
-            'colorValue': self.colorValue,
-            'colors': self.colors,
-            'datasource': self.dataSource,
-            'decimals': self.decimals,
-            'description': self.description,
-            'editable': self.editable,
-            'format': self.format,
-            'gauge': self.gauge,
-            'id': self.id,
-            'interval': self.interval,
-            'links': self.links,
-            'height': self.height,
-            'hideTimeOverride': self.hideTimeOverride,
-            'mappingType': self.mappingType,
-            'mappingTypes': self.mappingTypes,
-            'maxDataPoints': self.maxDataPoints,
-            'minSpan': self.minSpan,
-            'nullPointMode': self.nullPointMode,
-            'nullText': self.nullText,
-            'postfix': self.postfix,
-            'postfixFontSize': self.postfixFontSize,
-            'prefix': self.prefix,
-            'prefixFontSize': self.prefixFontSize,
-            'rangeMaps': self.rangeMaps,
-            'repeat': self.repeat,
-            'span': self.span,
-            'sparkline': self.sparkline,
-            'targets': self.targets,
-            'thresholds': self.thresholds,
-            'title': self.title,
-            'transparent': self.transparent,
-            'type': SINGLESTAT_TYPE,
-            'valueFontSize': self.valueFontSize,
-            'valueMaps': self.valueMaps,
-            'valueName': self.valueName,
-            'timeFrom': self.timeFrom,
-        }
+        return self.panel_json(
+            {
+                'cacheTimeout': self.cacheTimeout,
+                'colorBackground': self.colorBackground,
+                'colorValue': self.colorValue,
+                'colors': self.colors,
+                'decimals': self.decimals,
+                'format': self.format,
+                'gauge': self.gauge,
+                'interval': self.interval,
+                'hideTimeOverride': self.hideTimeOverride,
+                'mappingType': self.mappingType,
+                'mappingTypes': self.mappingTypes,
+                'maxDataPoints': self.maxDataPoints,
+                'minSpan': self.minSpan,
+                'nullPointMode': self.nullPointMode,
+                'nullText': self.nullText,
+                'postfix': self.postfix,
+                'postfixFontSize': self.postfixFontSize,
+                'prefix': self.prefix,
+                'prefixFontSize': self.prefixFontSize,
+                'rangeMaps': self.rangeMaps,
+                'sparkline': self.sparkline,
+                'thresholds': self.thresholds,
+                'type': SINGLESTAT_TYPE,
+                'valueFontSize': self.valueFontSize,
+                'valueMaps': self.valueMaps,
+                'valueName': self.valueName,
+            }
+        )
 
 
 @attr.s
@@ -1822,7 +1814,7 @@ def _style_columns(columns):
 
 
 @attr.s
-class Table(object):
+class Table(Panel):
     """Generates Table panel json structure
 
     Grafana doc on table: https://grafana.com/docs/grafana/latest/features/panels/table_panel/#table-panel
@@ -1849,30 +1841,19 @@ class Table(object):
     :param transparent: defines if panel should be transparent
     """
 
-    dataSource = attr.ib()
-    targets = attr.ib()
-    title = attr.ib()
     columns = attr.ib(default=attr.Factory(list))
-    description = attr.ib(default=None)
-    editable = attr.ib(default=True, validator=instance_of(bool))
     fontSize = attr.ib(default='100%')
-    height = attr.ib(default=None)
     hideTimeOverride = attr.ib(default=False, validator=instance_of(bool))
-    id = attr.ib(default=None)
-    links = attr.ib(default=attr.Factory(list))
     minSpan = attr.ib(default=None)
     pageSize = attr.ib(default=None)
-    repeat = attr.ib(default=None)
     scroll = attr.ib(default=True, validator=instance_of(bool))
     showHeader = attr.ib(default=True, validator=instance_of(bool))
     span = attr.ib(default=6)
     sort = attr.ib(
         default=attr.Factory(ColumnSort), validator=instance_of(ColumnSort))
     styles = attr.ib()
-    timeFrom = attr.ib(default=None)
 
     transform = attr.ib(default=COLUMNS_TRANSFORM)
-    transparent = attr.ib(default=False, validator=instance_of(bool))
 
     @styles.default
     def styles_default(self):
@@ -1910,35 +1891,25 @@ class Table(object):
         return cls(columns=columns, styles=styles + extraStyles, **kwargs)
 
     def to_json_data(self):
-        return {
-            'columns': self.columns,
-            'datasource': self.dataSource,
-            'description': self.description,
-            'editable': self.editable,
-            'fontSize': self.fontSize,
-            'height': self.height,
-            'hideTimeOverride': self.hideTimeOverride,
-            'id': self.id,
-            'links': self.links,
-            'minSpan': self.minSpan,
-            'pageSize': self.pageSize,
-            'repeat': self.repeat,
-            'scroll': self.scroll,
-            'showHeader': self.showHeader,
-            'span': self.span,
-            'sort': self.sort,
-            'styles': self.styles,
-            'targets': self.targets,
-            'timeFrom': self.timeFrom,
-            'title': self.title,
-            'transform': self.transform,
-            'transparent': self.transparent,
-            'type': TABLE_TYPE,
-        }
+        return self.panel_json(
+            {
+                'columns': self.columns,
+                'fontSize': self.fontSize,
+                'hideTimeOverride': self.hideTimeOverride,
+                'minSpan': self.minSpan,
+                'pageSize': self.pageSize,
+                'scroll': self.scroll,
+                'showHeader': self.showHeader,
+                'sort': self.sort,
+                'styles': self.styles,
+                'transform': self.transform,
+                'type': TABLE_TYPE,
+            }
+        )
 
 
 @attr.s
-class BarGauge(object):
+class BarGauge(Panel):
     """Generates Bar Gauge panel json structure
 
     :param allValue: If All values should be shown or a Calculation
@@ -1955,7 +1926,7 @@ class BarGauge(object):
     :param hideTimeOverride: hides time overrides
     :param id: panel id
     :param interval: defines time interval between metric queries
-    :param labels: oprion to show gauge level labels
+    :param labels: option to show gauge level labels
     :param limit: limit of number of values to show when not Calculating
     :param links: additional web links
     :param max: maximum value of the gauge
@@ -1977,15 +1948,11 @@ class BarGauge(object):
     :param valueMaps: the list of value to text mappings
     """
 
-    title = attr.ib()
-    targets = attr.ib()
     allValues = attr.ib(default=False, validator=instance_of(bool))
     cacheTimeout = attr.ib(default=None)
     calc = attr.ib(default=GAUGE_CALC_MEAN)
     dataLinks = attr.ib(default=attr.Factory(list))
-    dataSource = attr.ib(default=None)
     decimals = attr.ib(default=None)
-    description = attr.ib(default=None)
     displayMode = attr.ib(
         default=GAUGE_DISPLAY_MODE_LCD,
         validator=in_(
@@ -1996,15 +1963,11 @@ class BarGauge(object):
             ]
         ),
     )
-    editable = attr.ib(default=True, validator=instance_of(bool))
     format = attr.ib(default='none')
-    height = attr.ib(default=None)
     hideTimeOverride = attr.ib(default=False, validator=instance_of(bool))
-    id = attr.ib(default=None)
     interval = attr.ib(default=None)
     label = attr.ib(default=None)
     limit = attr.ib(default=None)
-    links = attr.ib(default=attr.Factory(list))
     max = attr.ib(default=100)
     maxDataPoints = attr.ib(default=100)
     min = attr.ib(default=0)
@@ -2014,8 +1977,6 @@ class BarGauge(object):
         validator=in_([ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL]),
     )
     rangeMaps = attr.ib(default=attr.Factory(list))
-    repeat = attr.ib(default=None)
-    span = attr.ib(default=6)
     thresholdLabels = attr.ib(default=False, validator=instance_of(bool))
     thresholdMarkers = attr.ib(default=True, validator=instance_of(bool))
     thresholds = attr.ib(
@@ -2027,59 +1988,45 @@ class BarGauge(object):
         ),
         validator=instance_of(list),
     )
-    timeFrom = attr.ib(default=None)
-    timeShift = attr.ib(default=None)
-    transparent = attr.ib(default=False, validator=instance_of(bool))
     valueMaps = attr.ib(default=attr.Factory(list))
 
     def to_json_data(self):
-        return {
-            'cacheTimeout': self.cacheTimeout,
-            'datasource': self.dataSource,
-            'description': self.description,
-            'editable': self.editable,
-            'height': self.height,
-            'hideTimeOverride': self.hideTimeOverride,
-            'id': self.id,
-            'interval': self.interval,
-            'links': self.links,
-            'maxDataPoints': self.maxDataPoints,
-            'minSpan': self.minSpan,
-            'options': {
-                'displayMode': self.displayMode,
-                'fieldOptions': {
-                    'calcs': [self.calc],
-                    'defaults': {
-                        'decimals': self.decimals,
-                        'max': self.max,
-                        'min': self.min,
-                        'title': self.label,
-                        'unit': self.format,
-                        'links': self.dataLinks,
+        return self.panel_json(
+            {
+                'cacheTimeout': self.cacheTimeout,
+                'hideTimeOverride': self.hideTimeOverride,
+                'interval': self.interval,
+                'maxDataPoints': self.maxDataPoints,
+                'minSpan': self.minSpan,
+                'options': {
+                    'displayMode': self.displayMode,
+                    'fieldOptions': {
+                        'calcs': [self.calc],
+                        'defaults': {
+                            'decimals': self.decimals,
+                            'max': self.max,
+                            'min': self.min,
+                            'title': self.label,
+                            'unit': self.format,
+                            'links': self.dataLinks,
+                        },
+                        'limit': self.limit,
+                        'mappings': self.valueMaps,
+                        'override': {},
+                        'thresholds': self.thresholds,
+                        'values': self.allValues,
                     },
-                    'limit': self.limit,
-                    'mappings': self.valueMaps,
-                    'override': {},
-                    'thresholds': self.thresholds,
-                    'values': self.allValues,
+                    'orientation': self.orientation,
+                    'showThresholdLabels': self.thresholdLabels,
+                    'showThresholdMarkers': self.thresholdMarkers,
                 },
-                'orientation': self.orientation,
-                'showThresholdLabels': self.thresholdLabels,
-                'showThresholdMarkers': self.thresholdMarkers,
-            },
-            'repeat': self.repeat,
-            'span': self.span,
-            'targets': self.targets,
-            'timeFrom': self.timeFrom,
-            'timeShift': self.timeShift,
-            'title': self.title,
-            'transparent': self.transparent,
-            'type': BARGAUGE_TYPE,
-        }
+                'type': BARGAUGE_TYPE,
+            }
+        )
 
 
 @attr.s
-class GaugePanel(object):
+class GaugePanel(Panel):
     """Generates Gauge panel json structure
 
     :param allValue: If All values should be shown or a Calculation
@@ -2116,31 +2063,21 @@ class GaugePanel(object):
     :param valueMaps: the list of value to text mappings
     """
 
-    title = attr.ib()
-    targets = attr.ib()
     allValues = attr.ib(default=False, validator=instance_of(bool))
     cacheTimeout = attr.ib(default=None)
     calc = attr.ib(default=GAUGE_CALC_MEAN)
     dataLinks = attr.ib(default=attr.Factory(list))
-    dataSource = attr.ib(default=None)
     decimals = attr.ib(default=None)
-    description = attr.ib(default=None)
-    editable = attr.ib(default=True, validator=instance_of(bool))
     format = attr.ib(default='none')
-    height = attr.ib(default=None)
     hideTimeOverride = attr.ib(default=False, validator=instance_of(bool))
-    id = attr.ib(default=None)
     interval = attr.ib(default=None)
     label = attr.ib(default=None)
     limit = attr.ib(default=None)
-    links = attr.ib(default=attr.Factory(list))
     max = attr.ib(default=100)
     maxDataPoints = attr.ib(default=100)
     min = attr.ib(default=0)
     minSpan = attr.ib(default=None)
     rangeMaps = attr.ib(default=attr.Factory(list))
-    repeat = attr.ib(default=None)
-    span = attr.ib(default=6)
     thresholdLabels = attr.ib(default=False, validator=instance_of(bool))
     thresholdMarkers = attr.ib(default=True, validator=instance_of(bool))
     thresholds = attr.ib(
@@ -2152,53 +2089,39 @@ class GaugePanel(object):
         ),
         validator=instance_of(list),
     )
-    timeFrom = attr.ib(default=None)
-    timeShift = attr.ib(default=None)
-    transparent = attr.ib(default=False, validator=instance_of(bool))
     valueMaps = attr.ib(default=attr.Factory(list))
 
     def to_json_data(self):
-        return {
-            'cacheTimeout': self.cacheTimeout,
-            'datasource': self.dataSource,
-            'description': self.description,
-            'editable': self.editable,
-            'height': self.height,
-            'hideTimeOverride': self.hideTimeOverride,
-            'id': self.id,
-            'interval': self.interval,
-            'links': self.links,
-            'maxDataPoints': self.maxDataPoints,
-            'minSpan': self.minSpan,
-            'options': {
-                'fieldOptions': {
-                    'calcs': [self.calc],
-                    'defaults': {
-                        'decimals': self.decimals,
-                        'max': self.max,
-                        'min': self.min,
-                        'title': self.label,
-                        'unit': self.format,
-                        'links': self.dataLinks,
+        return self.panel_json(
+            {
+                'cacheTimeout': self.cacheTimeout,
+                'hideTimeOverride': self.hideTimeOverride,
+                'interval': self.interval,
+                'maxDataPoints': self.maxDataPoints,
+                'minSpan': self.minSpan,
+                'options': {
+                    'fieldOptions': {
+                        'calcs': [self.calc],
+                        'defaults': {
+                            'decimals': self.decimals,
+                            'max': self.max,
+                            'min': self.min,
+                            'title': self.label,
+                            'unit': self.format,
+                            'links': self.dataLinks,
+                        },
+                        'limit': self.limit,
+                        'mappings': self.valueMaps,
+                        'override': {},
+                        'thresholds': self.thresholds,
+                        'values': self.allValues,
                     },
-                    'limit': self.limit,
-                    'mappings': self.valueMaps,
-                    'override': {},
-                    'thresholds': self.thresholds,
-                    'values': self.allValues,
+                    'showThresholdLabels': self.thresholdLabels,
+                    'showThresholdMarkers': self.thresholdMarkers,
                 },
-                'showThresholdLabels': self.thresholdLabels,
-                'showThresholdMarkers': self.thresholdMarkers,
-            },
-            'repeat': self.repeat,
-            'span': self.span,
-            'targets': self.targets,
-            'timeFrom': self.timeFrom,
-            'timeShift': self.timeShift,
-            'title': self.title,
-            'transparent': self.transparent,
-            'type': GAUGE_TYPE,
-        }
+                'type': GAUGE_TYPE,
+            }
+        )
 
 
 @attr.s
@@ -2236,7 +2159,7 @@ class HeatmapColor(object):
 
 
 @attr.s
-class Heatmap(object):
+class Heatmap(Panel):
     """Generates Heatmap panel json structure (https://grafana.com/docs/grafana/latest/features/panels/heatmap/)
 
     :param heatmap
@@ -2254,19 +2177,12 @@ class Heatmap(object):
     :param transparent: defines if the panel should be transparent
     """
 
-    title = attr.ib()
-    description = attr.ib(default=None)
-    id = attr.ib(default=None)
     # The below does not really like the Legend class we have defined above
     legend = attr.ib(default={'show': False})
-    links = attr.ib(default=None)
-    targets = attr.ib(default=None)
     tooltip = attr.ib(
         default=attr.Factory(Tooltip),
         validator=instance_of(Tooltip),
     )
-    span = attr.ib(default=None)
-
     cards = attr.ib(
         default={
             'cardPadding': None,
@@ -2280,12 +2196,10 @@ class Heatmap(object):
     )
 
     dataFormat = attr.ib(default='timeseries')
-    datasource = attr.ib(default=None)
     heatmap = {}
     hideZeroBuckets = attr.ib(default=False)
     highlightCards = attr.ib(default=True)
     options = attr.ib(default=None)
-    transparent = attr.ib(default=False, validator=instance_of(bool))
 
     xAxis = attr.ib(
         default=attr.Factory(XAxis),
@@ -2304,34 +2218,28 @@ class Heatmap(object):
     reverseYBuckets = attr.ib(default=False)
 
     def to_json_data(self):
-        return {
-            'cards': self.cards,
-            'color': self.color,
-            'dataFormat': self.dataFormat,
-            'datasource': self.datasource,
-            'description': self.description,
-            'heatmap': self.heatmap,
-            'hideZeroBuckets': self.hideZeroBuckets,
-            'highlightCards': self.highlightCards,
-            'id': self.id,
-            'legend': self.legend,
-            'links': self.links,
-            'options': self.options,
-            'reverseYBuckets': self.reverseYBuckets,
-            'span': self.span,
-            'targets': self.targets,
-            'title': self.title,
-            'tooltip': self.tooltip,
-            'transparent': self.transparent,
-            'type': HEATMAP_TYPE,
-            'xAxis': self.xAxis,
-            'xBucketNumber': self.xBucketNumber,
-            'xBucketSize': self.xBucketSize,
-            'yAxis': self.yAxis,
-            'yBucketBound': self.yBucketBound,
-            'yBucketNumber': self.yBucketNumber,
-            'yBucketSize': self.yBucketSize
-        }
+        return self.panel_json(
+            {
+                'cards': self.cards,
+                'color': self.color,
+                'dataFormat': self.dataFormat,
+                'heatmap': self.heatmap,
+                'hideZeroBuckets': self.hideZeroBuckets,
+                'highlightCards': self.highlightCards,
+                'legend': self.legend,
+                'options': self.options,
+                'reverseYBuckets': self.reverseYBuckets,
+                'tooltip': self.tooltip,
+                'type': HEATMAP_TYPE,
+                'xAxis': self.xAxis,
+                'xBucketNumber': self.xBucketNumber,
+                'xBucketSize': self.xBucketSize,
+                'yAxis': self.yAxis,
+                'yBucketBound': self.yBucketBound,
+                'yBucketNumber': self.yBucketNumber,
+                'yBucketSize': self.yBucketSize
+            }
+        )
 
 
 @attr.s
@@ -2372,7 +2280,7 @@ class StatusmapColor(object):
 
 
 @attr.s
-class Statusmap(object):
+class Statusmap(Panel):
     """Generates json structure for the flant-statusmap-panel visualisation plugin (https://grafana.com/grafana/plugins/flant-statusmap-panel/).
 
     :param alert
@@ -2398,9 +2306,6 @@ class Statusmap(object):
     :param yAxis
     """
 
-    targets = attr.ib()
-    title = attr.ib()
-
     alert = attr.ib(default=None)
     cards = attr.ib(
         default={
@@ -2414,27 +2319,18 @@ class Statusmap(object):
         default=attr.Factory(StatusmapColor),
         validator=instance_of(StatusmapColor),
     )
-    dataSource = attr.ib(default=None)
-    description = attr.ib(default=None)
-    editable = attr.ib(default=True, validator=instance_of(bool))
-    id = attr.ib(default=None)
 
     isNew = attr.ib(default=True, validator=instance_of(bool))
     legend = attr.ib(
         default=attr.Factory(Legend),
         validator=instance_of(Legend),
     )
-    links = attr.ib(default=attr.Factory(list))
     minSpan = attr.ib(default=None)
     nullPointMode = attr.ib(default=NULL_AS_ZERO)
-    span = attr.ib(default=None)
-    timeFrom = attr.ib(default=None)
-    timeShift = attr.ib(default=None)
     tooltip = attr.ib(
         default=attr.Factory(Tooltip),
         validator=instance_of(Tooltip),
     )
-    transparent = attr.ib(default=False, validator=instance_of(bool))
     xAxis = attr.ib(
         default=attr.Factory(XAxis),
         validator=instance_of(XAxis)
@@ -2446,34 +2342,23 @@ class Statusmap(object):
 
     def to_json_data(self):
         graphObject = {
-            'datasource': self.dataSource,
-            'description': self.description,
-            'editable': self.editable,
             'color': self.color,
-            'id': self.id,
             'isNew': self.isNew,
             'legend': self.legend,
-            'links': self.links,
             'minSpan': self.minSpan,
             'nullPointMode': self.nullPointMode,
-            'span': self.span,
-            'targets': self.targets,
-            'timeFrom': self.timeFrom,
-            'timeShift': self.timeShift,
-            'title': self.title,
             'tooltip': self.tooltip,
-            'transparent': self.transparent,
             'type': STATUSMAP_TYPE,
             'xaxis': self.xAxis,
             'yaxis': self.yAxis,
         }
         if self.alert:
             graphObject['alert'] = self.alert
-        return graphObject
+        return self.panel_json(graphObject)
 
 
 @attr.s
-class Svg(object):
+class Svg(Panel):
     """Generates SVG panel json structure
     Grafana doc on SVG: https://grafana.com/grafana/plugins/marcuscalidus-svg-panel
     :param dataSource: Grafana datasource name
@@ -2493,18 +2378,10 @@ class Svg(object):
     :param svgFilePath: path to SVG image file to be displayed
     """
 
-    dataSource = attr.ib()
-    targets = attr.ib()
-    title = attr.ib()
-    description = attr.ib(default=None)
-    editable = attr.ib(default=True, validator=instance_of(bool))
     format = attr.ib(default='none')
     jsCodeFilePath = attr.ib(default="", validator=instance_of(str))
     jsCodeInitFilePath = attr.ib(default="", validator=instance_of(str))
     height = attr.ib(default=None)
-    id = attr.ib(default=None)
-    links = attr.ib(default=attr.Factory(list))
-    span = attr.ib(default=6)
     svgFilePath = attr.ib(default="", validator=instance_of(str))
 
     @staticmethod
@@ -2522,27 +2399,20 @@ class Svg(object):
         js_init_code = self.read_file(self.jsCodeInitFilePath)
         svg_data = self.read_file(self.svgFilePath)
 
-        return {
-            'datasource': self.dataSource,
-            'description': self.description,
-            'editable': self.editable,
-            'id': self.id,
-            'links': self.links,
-            'height': self.height,
-            'format': self.format,
-            'js_code': js_code,
-            'js_init_code': js_init_code,
-            'span': self.span,
-            'svg_data': svg_data,
-            'targets': self.targets,
-            'title': self.title,
-            'type': SVG_TYPE,
-            'useSVGBuilder': False
-        }
+        return self.panel_json(
+            {
+                'format': self.format,
+                'js_code': js_code,
+                'js_init_code': js_init_code,
+                'svg_data': svg_data,
+                'type': SVG_TYPE,
+                'useSVGBuilder': False
+            }
+        )
 
 
 @attr.s
-class PieChart(object):
+class PieChart(Panel):
     """Generates Pie Chart panel json structure
     Grafana doc on Pie Chart: https://grafana.com/grafana/plugins/grafana-piechart-panel
     :param dataSource: Grafana datasource name
@@ -2562,52 +2432,33 @@ class PieChart(object):
     :param transparent: defines if the panel is transparent
     """
 
-    dataSource = attr.ib()
-    targets = attr.ib()
-    title = attr.ib()
-    description = attr.ib(default=None)
-    editable = attr.ib(default=True, validator=instance_of(bool))
     format = attr.ib(default='none')
-    height = attr.ib(default=None)
-    id = attr.ib(default=None)
-    links = attr.ib(default=attr.Factory(list))
     legendType = attr.ib(default='Right side')
     pieType = attr.ib(default='pie')
     showLegend = attr.ib(default=True)
     showLegendValues = attr.ib(default=True)
-    span = attr.ib(default=6)
     thresholds = attr.ib(default="")
-    timeFrom = attr.ib(default=None)
-    transparent = attr.ib(default=False, validator=instance_of(bool))
 
     def to_json_data(self):
-        return {
-            'datasource': self.dataSource,
-            'description': self.description,
-            'editable': self.editable,
-            'format': self.format,
-            'id': self.id,
-            'links': self.links,
-            'pieType': self.pieType,
-            'height': self.height,
-            'fieldConfig': {
-                'defaults': {
-                    'custom': {},
+        return self.panel_json(
+            {
+                'format': self.format,
+                'pieType': self.pieType,
+                'height': self.height,
+                'fieldConfig': {
+                    'defaults': {
+                        'custom': {},
+                    },
+                    'overrides': []
                 },
-                'overrides': []
-            },
-            'legend': {
-                'show': self.showLegend,
-                'values': self.showLegendValues
-            },
-            'legendType': self.legendType,
-            'span': self.span,
-            'targets': self.targets,
-            'title': self.title,
-            'type': PIE_CHART_TYPE,
-            'timeFrom': self.timeFrom,
-            'transparent': self.transparent
-        }
+                'legend': {
+                    'show': self.showLegend,
+                    'values': self.showLegendValues
+                },
+                'legendType': self.legendType,
+                'type': PIE_CHART_TYPE,
+            }
+        )
 
 
 @attr.s
