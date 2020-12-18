@@ -82,6 +82,7 @@ TEXT_TYPE = 'text'
 ALERTLIST_TYPE = 'alertlist'
 BARGAUGE_TYPE = 'bargauge'
 GAUGE_TYPE = 'gauge'
+DASHBOARDLIST_TYPE = 'dashlist'
 HEATMAP_TYPE = 'heatmap'
 STATUSMAP_TYPE = 'flant-statusmap-panel'
 SVG_TYPE = 'marcuscalidus-svg-panel'
@@ -2460,6 +2461,57 @@ class PieChart(Panel):
                 },
                 'legendType': self.legendType,
                 'type': PIE_CHART_TYPE,
+            }
+        )
+
+
+@attr.s
+class DashboardList(Panel):
+    """Generates Dashboard list panel json structure
+    Grafana doc on Dashboard list: https://grafana.com/docs/grafana/latest/panels/visualizations/dashboard-list-panel/
+    :param title: panel title
+    :param description: optional panel description
+    :param editable: defines if panel is editable via web interfaces
+    :param height: defines panel height
+    :param id: panel id
+    :param links: additional web links
+    :param span: defines the number of spans that will be used for panel
+    :param transparent: defines if the panel is transparent
+
+    :param showHeadings: The chosen list selection (Starred, Recently viewed, Search) is shown as a heading
+    :param showSearch: Display dashboards by search query or tags. Requires you to enter at least one value in Query or Tags
+    :param showRecent: Display recently viewed dashboards in alphabetical order
+    :param showStarred: Display starred dashboards in alphabetical order
+    :param maxItems: Sets the maximum number of items to list per section
+    :param searchQuery: Enter the query you want to search by
+    :param searchTags: List of tags you want to search by
+    """
+    showHeadings = attr.ib(default=True)
+    showSearch = attr.ib(default=False)
+    showRecent = attr.ib(default=False)
+    showStarred = attr.ib(default=True)
+    maxItems = attr.ib(default=10, validator=instance_of(int))
+    searchQuery = attr.ib(default='', validator=instance_of(str))
+    searchTags = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+
+    def to_json_data(self):
+        return self.panel_json(
+            {
+                'height': self.height,
+                'fieldConfig': {
+                    'defaults': {
+                        'custom': {},
+                    },
+                    'overrides': []
+                },
+                'headings': self.showHeadings,
+                'search': self.showSearch,
+                'recent': self.showRecent,
+                'starred': self.showStarred,
+                'limit': self.maxItems,
+                'query': self.searchQuery,
+                'tags': self.searchTags,
+                'type': DASHBOARDLIST_TYPE,
             }
         )
 
