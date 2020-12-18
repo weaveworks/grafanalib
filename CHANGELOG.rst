@@ -18,6 +18,9 @@ Changes
 
 * Change supported python versions from 3.6 to 3.9
 * Added hide parameter to Target
+* Updated dependencies (docs, build, CI)
+* Consistent coding style
+
 
 0.5.8 (2020-11-02)
 ==================
