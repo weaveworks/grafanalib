@@ -121,3 +121,13 @@ def test_single_stat():
     assert data['targets'] == targets
     assert data['datasource'] == data_source
     assert data['title'] == title
+
+
+def test_dashboard_list():
+    title = 'dummy title'
+    dashboard_list = G.DashboardList(title=title)
+    data = dashboard_list.to_json_data()
+    assert data['targets'] == []
+    assert data['datasource'] is None
+    assert data['title'] == title
+    assert data['starred'] is True

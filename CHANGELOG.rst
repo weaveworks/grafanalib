@@ -10,6 +10,7 @@ Changelog
 * Added support for repetitions to Stat Panels (https://grafana.com/docs/grafana/latest/variables/repeat-panels-or-rows/)
 * Added textMode option to Stat Panels
 * Add Panel object for all panels to inherit from
+* Add Dashboard list panel (https://grafana.com/docs/grafana/latest/panels/visualizations/dashboard-list-panel/)
 
 
 Changes
