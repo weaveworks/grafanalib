@@ -2486,10 +2486,10 @@ class DashboardList(Panel):
     :param searchQuery: Enter the query you want to search by
     :param searchTags: List of tags you want to search by
     """
-    showHeadings = attr.ib(default=True)
-    showSearch = attr.ib(default=False)
-    showRecent = attr.ib(default=False)
-    showStarred = attr.ib(default=True)
+    showHeadings = attr.ib(default=True, validator=instance_of(bool))
+    showSearch = attr.ib(default=False, validator=instance_of(bool))
+    showRecent = attr.ib(default=False, validator=instance_of(bool))
+    showStarred = attr.ib(default=True, validator=instance_of(bool))
     maxItems = attr.ib(default=10, validator=instance_of(int))
     searchQuery = attr.ib(default='', validator=instance_of(str))
     searchTags = attr.ib(default=attr.Factory(list), validator=instance_of(list))
