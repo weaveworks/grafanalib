@@ -2,8 +2,8 @@
 Changelog
 =========
 
-0.5.9 (TBD)
-===========
+0.5.9 (2020-12-18)
+==================
 
 * Added Alert Threshold enabled/disabled to Graphs.
 * Added constants for all Grafana value formats
