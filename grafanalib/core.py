@@ -83,6 +83,7 @@ ALERTLIST_TYPE = 'alertlist'
 BARGAUGE_TYPE = 'bargauge'
 GAUGE_TYPE = 'gauge'
 DASHBOARDLIST_TYPE = 'dashlist'
+LOGS_TYPE = 'logs'
 HEATMAP_TYPE = 'heatmap'
 STATUSMAP_TYPE = 'flant-statusmap-panel'
 SVG_TYPE = 'marcuscalidus-svg-panel'
@@ -2497,7 +2498,6 @@ class DashboardList(Panel):
     def to_json_data(self):
         return self.panel_json(
             {
-                'height': self.height,
                 'fieldConfig': {
                     'defaults': {
                         'custom': {},
@@ -2512,6 +2512,49 @@ class DashboardList(Panel):
                 'query': self.searchQuery,
                 'tags': self.searchTags,
                 'type': DASHBOARDLIST_TYPE,
+            }
+        )
+
+
+@attr.s
+class Logs(Panel):
+    """Generates Logs panel json structure
+    Grafana doc on Logs panel: https://grafana.com/docs/grafana/latest/panels/visualizations/logs-panel/
+    :param title: panel title
+    :param description: optional panel description
+    :param editable: defines if panel is editable via web interfaces
+    :param height: defines panel height
+    :param id: panel id
+    :param links: additional web links
+    :param span: defines the number of spans that will be used for panel
+    :param transparent: defines if the panel is transparent
+
+    :param showLabels: Show or hide the unique labels column, which shows only non-common labels
+    :param showTime: Show or hide the log timestamp column
+    :param wrapLogMessages: Toggle line wrapping
+    :param sortOrder: Display results in 'Descending' or 'Ascending' time order. The default is Descending, showing the newest logs first.
+    """
+    showLabels = attr.ib(default=False, validator=instance_of(bool))
+    showTime = attr.ib(default=False, validator=instance_of(bool))
+    wrapLogMessages = attr.ib(default=False, validator=instance_of(bool))
+    sortOrder = attr.ib(default='Descending', validator=instance_of(str))
+
+    def to_json_data(self):
+        return self.panel_json(
+            {
+                'fieldConfig': {
+                    'defaults': {
+                        'custom': {},
+                    },
+                    'overrides': []
+                },
+                'options': {
+                    'showLabels': self.showLabels,
+                    'showTime': self.showTime,
+                    'sortOrder': self.sortOrder,
+                    'wrapLogMessage': self.wrapLogMessages
+                },
+                'type': LOGS_TYPE,
             }
         )
 
