@@ -131,3 +131,18 @@ def test_dashboard_list():
     assert data['datasource'] is None
     assert data['title'] == title
     assert data['starred'] is True
+
+
+def test_logs_panel():
+    data_source = 'dummy data source'
+    targets = ['dummy_prom_query']
+    title = 'dummy title'
+    logs = G.Logs(data_source, targets, title)
+    data = logs.to_json_data()
+    assert data['targets'] == targets
+    assert data['datasource'] == data_source
+    assert data['title'] == title
+    assert data['options']['showLabels'] is False
+    assert data['options']['showTime'] is False
+    assert data['options']['wrapLogMessage'] is False
+    assert data['options']['sortOrder'] == 'Descending'

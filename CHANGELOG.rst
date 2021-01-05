@@ -5,6 +5,7 @@ Changelog
 0.x.x (TBD)
 ===========
 
+* Added Logs panel (https://grafana.com/docs/grafana/latest/panels/visualizations/logs-panel/)
 * ...
 
 Changes
