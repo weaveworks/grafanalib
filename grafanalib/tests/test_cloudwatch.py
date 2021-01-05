@@ -11,13 +11,13 @@ else:
     from io import StringIO
 
 
-def test_serialization_cloudwatch_target():
+def test_serialization_cloudwatch_metrics_target():
     """Serializing a graph doesn't explode."""
     graph = G.Graph(
         title="Lambda Duration",
         dataSource="Cloudwatch data source",
         targets=[
-            C.CloudwatchTarget(),
+            C.CloudwatchMetricsTarget(),
         ],
         id=1,
         yAxes=G.YAxes(

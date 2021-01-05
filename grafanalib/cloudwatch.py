@@ -6,7 +6,7 @@ from attr.validators import instance_of
 
 
 @attr.s
-class CloudwatchTarget(object):
+class CloudwatchMetricsTarget(object):
     """
     Generates Cloudwatch target JSON structure.
 
