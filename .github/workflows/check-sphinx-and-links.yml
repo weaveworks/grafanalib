@@ -27,8 +27,8 @@ jobs:
 
     - name: Link Checker
       id: lc
-      uses: lycheeverse/lychee-action@v1
+      uses: peter-evans/link-checker@v1
       with:
-        args: --exclude 'github.com/weaveworks/grafanalib/(issue|pull)|sphinx-doc.org' docs/build/html/*
+        args: -x 'github.com/weaveworks/grafanalib/(issue|pull)|sphinx-doc.org' -r docs/build/html/*
     - name: Fail if there were link errors
       run: exit ${{ steps.lc.outputs.exit_code }}
