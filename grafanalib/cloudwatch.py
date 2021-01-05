@@ -11,7 +11,7 @@ class CloudwatchMetricsTarget(object):
     Generates Cloudwatch target JSON structure.
 
     Grafana docs on using Cloudwatch:
-    https://grafana.com/docs/features/datasources/cloudwatch/
+    https://grafana.com/docs/grafana/latest/datasources/cloudwatch/
 
     AWS docs on Cloudwatch metrics:
     https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/aws-services-cloudwatch-metrics.html
