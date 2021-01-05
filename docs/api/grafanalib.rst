@@ -4,6 +4,14 @@ grafanalib package
 Submodules
 ----------
 
+grafanalib.cloudwatch module
+----------------------------
+
+.. automodule:: grafanalib.cloudwatch
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 grafanalib.core module
 ----------------------
 
@@ -16,6 +24,22 @@ grafanalib.elasticsearch module
 -------------------------------
 
 .. automodule:: grafanalib.elasticsearch
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+grafanalib.formatunits module
+-----------------------------
+
+.. automodule:: grafanalib.formatunits
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+grafanalib.influxdb module
+--------------------------
+
+.. automodule:: grafanalib.influxdb
    :members:
    :undoc-members:
    :show-inheritance:
@@ -59,7 +83,6 @@ grafanalib.zabbix module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 Module contents
 ---------------
