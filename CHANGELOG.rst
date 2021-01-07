@@ -6,7 +6,7 @@ Changelog
 ===========
 
 * Added Logs panel (https://grafana.com/docs/grafana/latest/panels/visualizations/logs-panel/)
-* Added Cloudwatch Metrics (https://grafana.com/docs/grafana/latest/datasources/cloudwatch/)
+* Added Cloudwatch metrics datasource (https://grafana.com/docs/grafana/latest/datasources/cloudwatch/)
 
 Changes
 -------
