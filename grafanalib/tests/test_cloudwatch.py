@@ -3,12 +3,7 @@
 import grafanalib.core as G
 import grafanalib.cloudwatch as C
 from grafanalib import _gen
-
-import sys
-if sys.version_info[0] < 3:
-    from io import BytesIO as StringIO
-else:
-    from io import StringIO
+from io import StringIO
 
 
 def test_serialization_cloudwatch_metrics_target():
