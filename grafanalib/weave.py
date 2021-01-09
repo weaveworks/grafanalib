@@ -56,7 +56,7 @@ def QPSGraph(data_source, title, expressions, **kwargs):
 
 def stacked(graph):
     """Turn a graph into a stacked graph."""
-    return attr.assoc(
+    return attr.evolve(
         graph,
         lineWidth=0,
         nullPointMode=G.NULL_AS_ZERO,

@@ -11,7 +11,7 @@ Changelog
 Changes
 -------
 
-* ...
+* Replace deprecated attr.assoc with attr.evolve
 
 
 
