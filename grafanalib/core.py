@@ -818,13 +818,24 @@ DEFAULT_TIME = Time('now-1h', 'now')
 
 @attr.s
 class TimePicker(object):
+    """
+    Time Picker
+    :param refreshIntervals: dashboard auto-refresh interval options
+    :param timeOptions: dashboard time range options
+    :param hidden: hide the time picker from dashboard
+    """
     refreshIntervals = attr.ib()
     timeOptions = attr.ib()
+    hidden = attr.ib(
+        default=False,
+        validator=instance_of(bool),
+    )
 
     def to_json_data(self):
         return {
             'refresh_intervals': self.refreshIntervals,
             'time_options': self.timeOptions,
+            'hidden': self.hidden
         }
 
 

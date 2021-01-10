@@ -7,6 +7,7 @@ Changelog
 
 * Added Logs panel (https://grafana.com/docs/grafana/latest/panels/visualizations/logs-panel/)
 * Added Cloudwatch metrics datasource (https://grafana.com/docs/grafana/latest/datasources/cloudwatch/)
+* Added option to hide dashboard time picker
 
 Changes
 -------
