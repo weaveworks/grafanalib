@@ -1228,7 +1228,7 @@ class Graph(Panel):
             yield target
 
     def _map_targets(self, f):
-        return attr.assoc(self, targets=[f(t) for t in self.targets])
+        return attr.evolve(self, targets=[f(t) for t in self.targets])
 
     def auto_ref_ids(self):
         """Give unique IDs all the panels without IDs.
@@ -1250,7 +1250,7 @@ class Graph(Panel):
         auto_ref_ids = (i for i in candidate_ref_ids if i not in ref_ids)
 
         def set_refid(t):
-            return t if t.refId else attr.assoc(t, refId=next(auto_ref_ids))
+            return t if t.refId else attr.evolve(t, refId=next(auto_ref_ids))
         return self._map_targets(set_refid)
 
 
