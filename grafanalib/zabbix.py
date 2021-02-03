@@ -819,10 +819,16 @@ class ZabbixTriggersPanel(object):
     span = attr.ib(default=None)
     statusField = attr.ib(default=False, validator=instance_of(bool))
     transparent = attr.ib(default=False, validator=instance_of(bool))
-    triggerSeverity = attr.ib(
-        default=ZABBIX_SEVERITY_COLORS,
-        converter=convertZabbixSeverityColors,
-    )
+    try:
+        triggerSeverity = attr.ib(
+            default=ZABBIX_SEVERITY_COLORS,
+            converter=convertZabbixSeverityColors,
+        )
+    except TypeError:
+        triggerSeverity = attr.ib(
+            default=ZABBIX_SEVERITY_COLORS,
+            convert=convertZabbixSeverityColors,
+        )
     triggers = attr.ib(
         default=attr.Factory(ZabbixTrigger),
         validator=instance_of(ZabbixTrigger),
