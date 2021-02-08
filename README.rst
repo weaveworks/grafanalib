@@ -88,6 +88,7 @@ or join us for one of our next meetings):
   <https://docs.google.com/document/d/1JxrSszyPHYhNbJDWYZehRKv6AO4U-zIBhuNmYQVOIHo/edit>`_
   (includes links to meeting recordings)
 
+We follow the `CNCF Code of Conduct </docs/CODE_OF_CONDUCT.rst>`_.
 
 Getting Help
 ------------
