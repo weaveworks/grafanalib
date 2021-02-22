@@ -558,6 +558,42 @@ def _balance_panels(panels):
 
 @attr.s
 class Panel(object):
+    """Generates Gauge panel json structure
+
+    :param allValue: If All values should be shown or a Calculation
+    :param cacheTimeout: metric query result cache ttl
+    :param calc: Calculation to perform on metrics
+    :param dataLinks: list of data links hooked to datapoints on the graph
+    :param dataSource: Grafana datasource name
+    :param decimals: override automatic decimal precision for legend/tooltips
+    :param description: optional panel description
+    :param editable: defines if panel is editable via web interfaces
+    :param format: defines value units
+    :param height: defines panel height
+    :param hideTimeOverride: hides time overrides
+    :param id: panel id
+    :param interval: defines time interval between metric queries
+    :param labels: option to show gauge level labels
+    :param limit: limit of number of values to show when not Calculating
+    :param links: additional web links
+    :param max: maximum value of the gauge
+    :param maxDataPoints: maximum metric query results,
+        that will be used for rendering
+    :param min: minimum value of the gauge
+    :param minSpan: minimum span number
+    :param rangeMaps: the list of value to text mappings
+    :param span: defines the number of spans that will be used for panel
+    :param targets: list of metric requests for chosen datasource
+    :param thresholdLabel: label for gauge. Template Variables:
+        "$__series_namei" "$__field_name" "$__cell_{N} / $__calc"
+    :param thresholdMarkers: option to show marker of level on gauge
+    :param thresholds: single stat thresholds
+    :param timeFrom: time range that Override relative time
+    :param title: panel title
+    :param transparent: defines if panel should be transparent
+    :param valueMaps: the list of value to text mappings
+    """
+
     gridPos = attr.ib(validator=instance_of(GridPos))
 
     id = attr.ib(default=None)
@@ -582,10 +618,12 @@ class Panel(object):
         default=attr.Factory(list), validator=instance_of(list)
     )
     pluginVersion = attr.ib(default=None)
-
+    cacheTimeout = attr.ib(default=None)
+    error = attr.ib(default=False, validator=instance_of(bool))
     snapshotData = attr.ib(
         default=attr.Factory(list), validator=instance_of(list)
     )
+    height = attr.ib(default=None)
     timeFrom = attr.ib(default=None)
     timeShift = attr.ib(default=None)
     hideTimeOverride = attr.ib(default=None)
@@ -596,6 +634,35 @@ class Panel(object):
     description = attr.ib(default=None)
     links = attr.ib(default=attr.Factory(list), validator=instance_of(list))
     transparent = attr.ib(default=False, validator=instance_of(bool))
+    minSpan = attr.ib(default=None)
+
+    def panel_json(self, overrides):
+        res = {
+            "gridPos": self.gridPos,
+            "cacheTimeout": self.cacheTimeout,
+            "datasource": self.dataSource,
+            "description": self.description,
+            "editable": self.editable,
+            "error": self.error,
+            "height": self.height,
+            "hideTimeOverride": self.hideTimeOverride,
+            "id": self.id,
+            "interval": self.interval,
+            "links": self.links,
+            "maxDataPoints": self.maxDataPoints,
+            "minSpan": self.minSpan,
+            "repeat": self.repeat,
+            "span": self.span,
+            "targets": self.targets,
+            "timeFrom": self.timeFrom,
+            "timeShift": self.timeShift,
+            "title": self.title,
+            "transparent": self.transparent,
+        }
+        res.update(overrides)
+        return res
+
+
 
 @attr.s
 class Row(Panel):
@@ -1125,78 +1192,6 @@ class Dashboard(object):
             'version': self.version,
             'uid': self.uid,
         }
-
-
-@attr.s
-<<<<<<< HEAD
-class Panel(object):
-    """
-    Generic panel for shared defaults
-    :param cacheTimeout: metric query result cache ttl
-    :param dataSource: Grafana datasource name
-    :param description: optional panel description
-    :param editable: defines if panel is editable via web interfaces
-    :param height: defines panel height
-    :param hideTimeOverride: hides time overrides
-    :param id: panel id
-    :param interval: defines time interval between metric queries
-    :param links: additional web links
-    :param maxDataPoints: maximum metric query results,
-           that will be used for rendering
-    :param minSpan: minimum span number
-    :param repeat: Template's name to repeat Graph on
-    :param span: defines the number of spans that will be used for panel
-    :param targets: list of metric requests for chosen datasource
-    :param timeFrom: time range that Override relative time
-    :param title: of the panel
-    :param transparent: defines if panel should be transparent
-    """
-
-    dataSource = attr.ib(default=None)
-    targets = attr.ib(default=attr.Factory(list), validator=instance_of(list))
-    title = attr.ib(default="")
-    cacheTimeout = attr.ib(default=None)
-    description = attr.ib(default=None)
-    editable = attr.ib(default=True, validator=instance_of(bool))
-    error = attr.ib(default=False, validator=instance_of(bool))
-    height = attr.ib(default=None)
-    hideTimeOverride = attr.ib(default=False, validator=instance_of(bool))
-    id = attr.ib(default=None)
-    interval = attr.ib(default=None)
-    links = attr.ib(default=attr.Factory(list))
-    maxDataPoints = attr.ib(default=100)
-    minSpan = attr.ib(default=None)
-    repeat = attr.ib(default=None)
-    span = attr.ib(default=None)
-    timeFrom = attr.ib(default=None)
-    timeShift = attr.ib(default=None)
-    transparent = attr.ib(default=False, validator=instance_of(bool))
-
-    def panel_json(self, overrides):
-        res = {
-            "cacheTimeout": self.cacheTimeout,
-            "datasource": self.dataSource,
-            "description": self.description,
-            "editable": self.editable,
-            "error": self.error,
-            "height": self.height,
-            "hideTimeOverride": self.hideTimeOverride,
-            "id": self.id,
-            "interval": self.interval,
-            "links": self.links,
-            "maxDataPoints": self.maxDataPoints,
-            "minSpan": self.minSpan,
-            "repeat": self.repeat,
-            "span": self.span,
-            "targets": self.targets,
-            "timeFrom": self.timeFrom,
-            "timeShift": self.timeShift,
-            "title": self.title,
-            "transparent": self.transparent,
-        }
-        res.update(overrides)
-        return res
-
 
 @attr.s
 class Graph(Panel):
@@ -2123,42 +2118,6 @@ class BarGauge(Panel):
 
 @attr.s
 class GaugePanel(Panel):
-    """Generates Gauge panel json structure
-
-    :param allValue: If All values should be shown or a Calculation
-    :param cacheTimeout: metric query result cache ttl
-    :param calc: Calculation to perform on metrics
-    :param dataLinks: list of data links hooked to datapoints on the graph
-    :param dataSource: Grafana datasource name
-    :param decimals: override automatic decimal precision for legend/tooltips
-    :param description: optional panel description
-    :param editable: defines if panel is editable via web interfaces
-    :param format: defines value units
-    :param height: defines panel height
-    :param hideTimeOverride: hides time overrides
-    :param id: panel id
-    :param interval: defines time interval between metric queries
-    :param labels: option to show gauge level labels
-    :param limit: limit of number of values to show when not Calculating
-    :param links: additional web links
-    :param max: maximum value of the gauge
-    :param maxDataPoints: maximum metric query results,
-        that will be used for rendering
-    :param min: minimum value of the gauge
-    :param minSpan: minimum span number
-    :param rangeMaps: the list of value to text mappings
-    :param span: defines the number of spans that will be used for panel
-    :param targets: list of metric requests for chosen datasource
-    :param thresholdLabel: label for gauge. Template Variables:
-        "$__series_namei" "$__field_name" "$__cell_{N} / $__calc"
-    :param thresholdMarkers: option to show marker of level on gauge
-    :param thresholds: single stat thresholds
-    :param timeFrom: time range that Override relative time
-    :param title: panel title
-    :param transparent: defines if panel should be transparent
-    :param valueMaps: the list of value to text mappings
-    """
-
     allValues = attr.ib(default=False, validator=instance_of(bool))
     cacheTimeout = attr.ib(default=None)
     calc = attr.ib(default=GAUGE_CALC_MEAN)
