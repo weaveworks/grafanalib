@@ -10,7 +10,7 @@ README = local_file('README.rst')
 
 
 setup(
-    name='grafanalib',
+    name='grafanalib_with_grid_pos',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
@@ -18,7 +18,7 @@ setup(
     version='0.5.9',
     description='Library for building Grafana dashboards',
     long_description=open(README).read(),
-    url='https://github.com/weaveworks/grafanalib',
+    url='https://github.com/charlieoconor/grafanalib',
     project_urls={
         "Documentation": "https://grafanalib.readthedocs.io",
         "Source": "https://github.com/weaveworks/grafanalib",
