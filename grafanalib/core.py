@@ -991,6 +991,17 @@ class Alert(object):
 
 
 @attr.s
+class Notification(object):
+
+    uid = attr.ib()
+
+    def to_json_data(self):
+        return {
+            'uid': self.uid,
+        }
+
+
+@attr.s
 class Dashboard(object):
 
     title = attr.ib()
