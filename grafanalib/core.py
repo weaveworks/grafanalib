@@ -1211,6 +1211,7 @@ class Graph(Panel):
         validator=instance_of(YAxes),
     )
     alert = attr.ib(default=None)
+    alertRuleTags = attr.ib(default=attr.Factory(dict))
 
     def to_json_data(self):
         graphObject = {
@@ -1243,6 +1244,7 @@ class Graph(Panel):
         }
         if self.alert:
             graphObject['alert'] = self.alert
+            graphObject['alertRuleTags'] = self.alertRuleTags
         return self.panel_json(graphObject)
 
     def _iter_targets(self):
