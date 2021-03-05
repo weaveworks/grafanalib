@@ -9,6 +9,7 @@ Changelog
 * Added Cloudwatch metrics datasource (https://grafana.com/docs/grafana/latest/datasources/cloudwatch/)
 * Added option to hide dashboard time picker
 * Added Notification for Alert
+* Added alertRuleTags field to the graph panel
 
 Changes
 -------
