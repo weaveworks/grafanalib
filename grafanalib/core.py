@@ -74,6 +74,7 @@ FLOT = 'flot'
 
 ABSOLUTE_TYPE = 'absolute'
 DASHBOARD_TYPE = 'dashboard'
+ROW_TYPE = 'row'
 GRAPH_TYPE = 'graph'
 STAT_TYPE = 'stat'
 SINGLESTAT_TYPE = 'singlestat'
@@ -539,46 +540,18 @@ def _balance_panels(panels):
 
 
 @attr.s
-class Row(object):
-    # TODO: jml would like to separate the balancing behaviour from this
-    # layer.
-    panels = attr.ib(default=attr.Factory(list), converter=_balance_panels)
-    collapse = attr.ib(
-        default=False, validator=instance_of(bool),
-    )
-    editable = attr.ib(
-        default=True, validator=instance_of(bool),
-    )
-    height = attr.ib(
-        default=attr.Factory(lambda: DEFAULT_ROW_HEIGHT),
-        validator=instance_of(Pixels),
-    )
-    showTitle = attr.ib(default=None)
-    title = attr.ib(default=None)
-    repeat = attr.ib(default=None)
-
-    def _iter_panels(self):
-        return iter(self.panels)
-
-    def _map_panels(self, f):
-        return attr.evolve(self, panels=list(map(f, self.panels)))
+class GridPos(object):
+    h = attr.ib()
+    w = attr.ib()
+    x = attr.ib()
+    y = attr.ib()
 
     def to_json_data(self):
-        showTitle = False
-        title = "New row"
-        if self.title is not None:
-            showTitle = True
-            title = self.title
-        if self.showTitle is not None:
-            showTitle = self.showTitle
         return {
-            'collapse': self.collapse,
-            'editable': self.editable,
-            'height': self.height,
-            'panels': self.panels,
-            'showTitle': showTitle,
-            'title': title,
-            'repeat': self.repeat,
+            'h': self.h,
+            'w': self.w,
+            'x': self.x,
+            'y': self.y
         }
 
 
@@ -1005,7 +978,6 @@ class Notification(object):
 class Dashboard(object):
 
     title = attr.ib()
-    rows = attr.ib()
     annotations = attr.ib(
         default=attr.Factory(Annotations),
         validator=instance_of(Annotations),
@@ -1023,7 +995,9 @@ class Dashboard(object):
     id = attr.ib(default=None)
     inputs = attr.ib(default=attr.Factory(list))
     links = attr.ib(default=attr.Factory(list))
+    panels = attr.ib(default=attr.Factory(list), validator=instance_of(list))
     refresh = attr.ib(default=DEFAULT_REFRESH)
+    rows = attr.ib(default=attr.Factory(list), validator=instance_of(list))
     schemaVersion = attr.ib(default=SCHEMA_VERSION)
     sharedCrosshair = attr.ib(
         default=False,
@@ -1080,6 +1054,7 @@ class Dashboard(object):
             'hideControls': self.hideControls,
             'id': self.id,
             'links': self.links,
+            'panels': self.panels if not self.rows else [],
             'refresh': self.refresh,
             'rows': self.rows,
             'schemaVersion': self.schemaVersion,
@@ -1128,6 +1103,8 @@ class Panel(object):
     editable = attr.ib(default=True, validator=instance_of(bool))
     error = attr.ib(default=False, validator=instance_of(bool))
     height = attr.ib(default=None)
+    #gridPos = attr.ib(default=None, validator=instance_of(GridPos))
+    gridPos = attr.ib(default=None)
     hideTimeOverride = attr.ib(default=False, validator=instance_of(bool))
     id = attr.ib(default=None)
     interval = attr.ib(default=None)
@@ -1142,28 +1119,97 @@ class Panel(object):
 
     def panel_json(self, overrides):
         res = {
-            "cacheTimeout": self.cacheTimeout,
-            "datasource": self.dataSource,
-            "description": self.description,
-            "editable": self.editable,
-            "error": self.error,
-            "height": self.height,
-            "hideTimeOverride": self.hideTimeOverride,
-            "id": self.id,
-            "interval": self.interval,
-            "links": self.links,
-            "maxDataPoints": self.maxDataPoints,
-            "minSpan": self.minSpan,
-            "repeat": self.repeat,
-            "span": self.span,
-            "targets": self.targets,
-            "timeFrom": self.timeFrom,
-            "timeShift": self.timeShift,
-            "title": self.title,
-            "transparent": self.transparent,
+            'cacheTimeout': self.cacheTimeout,
+            'datasource': self.dataSource,
+            'description': self.description,
+            'editable': self.editable,
+            'error': self.error,
+            'height': self.height,
+            'gridpos': self.gridPos,
+            'hideTimeOverride': self.hideTimeOverride,
+            'id': self.id,
+            'interval': self.interval,
+            'links': self.links,
+            'maxDataPoints': self.maxDataPoints,
+            'minSpan': self.minSpan,
+            'repeat': self.repeat,
+            'span': self.span,
+            'targets': self.targets,
+            'timeFrom': self.timeFrom,
+            'timeShift': self.timeShift,
+            'title': self.title,
+            'transparent': self.transparent,
         }
         res.update(overrides)
         return res
+
+
+@attr.s
+class RowPanel(Panel):
+    """
+    Generates Row panel json structure.
+
+    :param title: title of the panel
+    :param panels: list of panels in the row
+    """
+
+    panels = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+
+    def to_json_data(self):
+        return self.panel_json(
+            {
+                'collapsed': False,
+                'panels': self.panels,
+                'type': ROW_TYPE
+            }
+        )
+
+
+@attr.s
+class Row(object):
+    """
+    Legacy support for old row, when not used with gridpos
+    """
+    # TODO: jml would like to separate the balancing behaviour from this
+    # layer.
+    panels = attr.ib(default=attr.Factory(list), converter=_balance_panels)
+    collapse = attr.ib(
+        default=False, validator=instance_of(bool),
+    )
+    editable = attr.ib(
+        default=True, validator=instance_of(bool),
+    )
+    height = attr.ib(
+        default=attr.Factory(lambda: DEFAULT_ROW_HEIGHT),
+        validator=instance_of(Pixels),
+    )
+    showTitle = attr.ib(default=None)
+    title = attr.ib(default=None)
+    repeat = attr.ib(default=None)
+
+    def _iter_panels(self):
+        return iter(self.panels)
+
+    def _map_panels(self, f):
+        return attr.evolve(self, panels=list(map(f, self.panels)))
+
+    def to_json_data(self):
+        showTitle = False
+        title = "New row"
+        if self.title is not None:
+            showTitle = True
+            title = self.title
+        if self.showTitle is not None:
+            showTitle = self.showTitle
+        return {
+            'collapse': self.collapse,
+            'editable': self.editable,
+            'height': self.height,
+            'panels': self.panels,
+            'showTitle': showTitle,
+            'title': title,
+            'repeat': self.repeat,
+        }
 
 
 @attr.s
