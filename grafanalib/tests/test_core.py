@@ -146,3 +146,10 @@ def test_logs_panel():
     assert data['options']['showTime'] is False
     assert data['options']['wrapLogMessage'] is False
     assert data['options']['sortOrder'] == 'Descending'
+
+
+def test_notification():
+    uid = 'notification_channel'
+    notification = G.Notification(uid)
+    data = notification.to_json_data()
+    assert data['uid'] == uid

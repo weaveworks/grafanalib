@@ -1,6 +1,6 @@
 from grafanalib.core import (
     Alert, AlertCondition, Dashboard, Graph,
-    GreaterThan, OP_AND, OPS_FORMAT, Row, RTYPE_SUM, SECONDS_FORMAT,
+    GreaterThan, Notification, OP_AND, OPS_FORMAT, Row, RTYPE_SUM, SECONDS_FORMAT,
     SHORT_FORMAT, single_y_axis, Target, TimeRange, YAxes, YAxis
 )
 
@@ -58,6 +58,9 @@ dashboard = Dashboard(
                         operator=OP_AND,
                         reducerType=RTYPE_SUM,
                     ),
+                ],
+                notifications=[
+                    Notification("notification_channel_uid"),
                 ],
             )
             ),
