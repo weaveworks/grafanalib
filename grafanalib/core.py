@@ -541,6 +541,16 @@ def _balance_panels(panels):
 
 @attr.s
 class GridPos(object):
+    """GridPos describes the panel size and position in grid coordinates.
+
+        :param h: height of the panel, grid height units each represents
+            30 pixels
+        :param w: width of the panel 1-24 (the width of the dashboard
+            is divided into 24 columns)
+        :param x: x cordinate of the panel, in same unit as w
+        :param y: y cordinate of the panel, in same unit as h
+    """
+
     h = attr.ib()
     w = attr.ib()
     x = attr.ib()
@@ -1026,8 +1036,23 @@ class Dashboard(object):
             for panel in row._iter_panels():
                 yield panel
 
+        for panel in self.panels:
+            if hasattr(panel, 'panels'):
+                yield panel
+                for row_panel in panel._iter_panels():
+                    yield panel
+            else:
+                yield panel
+
+    # def _map_panels(self, f):
+    #     return attr.evolve(self, rows=[r._map_panels(f) for r in self.rows])
+
     def _map_panels(self, f):
-        return attr.evolve(self, rows=[r._map_panels(f) for r in self.rows])
+        return attr.evolve(
+            self,
+            rows=[r._map_panels(f) for r in self.rows],
+            panels=[p._map_panels(f) for p in self.panels]
+        )
 
     def auto_panel_ids(self):
         """Give unique IDs all the panels without IDs.
@@ -1117,6 +1142,9 @@ class Panel(object):
     timeShift = attr.ib(default=None)
     transparent = attr.ib(default=False, validator=instance_of(bool))
 
+    def _map_panels(self, f):
+        return f(self)
+
     def panel_json(self, overrides):
         res = {
             'cacheTimeout': self.cacheTimeout,
@@ -1154,6 +1182,13 @@ class RowPanel(Panel):
     """
 
     panels = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+
+    def _iter_panels(self):
+        return iter(self.panels)
+
+    def _map_panels(self, f):
+        self = f(self)
+        return attr.evolve(self, panels=list(map(f, self.panels)))
 
     def to_json_data(self):
         return self.panel_json(

@@ -10,6 +10,7 @@ Changelog
 * Added option to hide dashboard time picker
 * Added Notification for Alert
 * Added alertRuleTags field to the graph panel
+* Added support for using gridPos for dashboard panels
 
 Changes
 -------
