@@ -1067,6 +1067,11 @@ class Dashboard(object):
         return self._map_panels(set_id)
 
     def to_json_data(self):
+        if self.panels and self.rows:
+            print(
+                "You are using both panels and rows in this dashboard, please use one or the other. "
+                "Panels should be used in preference over rows, see example dashboard for help."
+            )
         return {
             '__inputs': self.inputs,
             'annotations': self.annotations,
