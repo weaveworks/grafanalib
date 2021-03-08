@@ -1153,7 +1153,7 @@ class Panel(object):
             'editable': self.editable,
             'error': self.error,
             'height': self.height,
-            'gridpos': self.gridPos,
+            'gridPos': self.gridPos,
             'hideTimeOverride': self.hideTimeOverride,
             'id': self.id,
             'interval': self.interval,
