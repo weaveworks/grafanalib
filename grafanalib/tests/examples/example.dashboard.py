@@ -8,7 +8,10 @@ from grafanalib.core import (
 dashboard = Dashboard(
     title="Frontend Stats",
     panels=[
-        RowPanel(title="New row", gridPos=GridPos(h=1, w=24, x=0, y=8)),
+        RowPanel(
+            title="New row",
+            gridPos=GridPos(h=1, w=24, x=0, y=8)
+        ),
         Graph(
             title="Frontend QPS",
             dataSource='My Prometheus',

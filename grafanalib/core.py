@@ -1044,9 +1044,6 @@ class Dashboard(object):
             else:
                 yield panel
 
-    # def _map_panels(self, f):
-    #     return attr.evolve(self, rows=[r._map_panels(f) for r in self.rows])
-
     def _map_panels(self, f):
         return attr.evolve(
             self,
