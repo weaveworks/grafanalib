@@ -8,6 +8,14 @@ so, grafanalib is for you.
 
 grafanalib lets you generate Grafana dashboards from simple Python scripts.
 
+Grafana migrates dashboards to the latest Grafana schema version on import,
+meaning that dashboards created with grafanalib are supported by
+all versions of Grafana. You may find that some of the latest features are
+missing from grafanalib, please refer to the `module documentation
+<https://grafanalib.readthedocs.io/en/latest/api/modules.html>`_ for information
+about supported features. If you find a missing feature please raise an issue
+or submit a PR to the GitHub `repository <https://github.com/weaveworks/grafanalib>`_
+
 Writing dashboards
 ==================
 
