@@ -3,6 +3,7 @@
 import attr
 import itertools
 from attr.validators import instance_of
+from grafanalib.core import AlertCondition
 
 DATE_HISTOGRAM_DEFAULT_FIELD = 'time_iso8601'
 ORDER_ASC = 'asc'
@@ -362,3 +363,26 @@ class ElasticsearchTarget(object):
             'query': self.query,
             'refId': self.refId,
         }
+
+
+@attr.s
+class ElasticsearchAlertCondition(AlertCondition):
+    """
+    Override alert condition to support Elasticseach target.
+
+    See AlertCondition for more information.
+
+    :param Target target: Metric the alert condition is based on.
+    :param Evaluator evaluator: How we decide whether we should alert on the
+        metric. e.g. ``GreaterThan(5)`` means the metric must be greater than 5
+        to trigger the condition. See ``GreaterThan``, ``LowerThan``,
+        ``WithinRange``, ``OutsideRange``, ``NoValue``.
+    :param TimeRange timeRange: How long the condition must be true for before
+        we alert.
+    :param operator: One of ``OP_AND`` or ``OP_OR``. How this condition
+        combines with other conditions.
+    :param reducerType: RTYPE_*
+    :param type: CTYPE_*
+    """
+
+    target = attr.ib(validator=instance_of(ElasticsearchTarget))
