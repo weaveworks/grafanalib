@@ -27,7 +27,7 @@ jobs:
 
     - name: Link Checker
       id: lc
-      uses: lycheeverse/lychee-action@v1
+      uses: lycheeverse/lychee-action@v1.0.4
       with:
         args: --exclude 'github.com/weaveworks/grafanalib/(issue|pull)|sphinx-doc.org' docs/build/html/*
     - name: Fail if there were link errors
