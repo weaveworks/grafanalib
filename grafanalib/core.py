@@ -1130,7 +1130,6 @@ class Panel(object):
     editable = attr.ib(default=True, validator=instance_of(bool))
     error = attr.ib(default=False, validator=instance_of(bool))
     height = attr.ib(default=None)
-    # gridPos = attr.ib(default=None, validator=instance_of(GridPos))
     gridPos = attr.ib(default=None)
     hideTimeOverride = attr.ib(default=False, validator=instance_of(bool))
     id = attr.ib(default=None)
