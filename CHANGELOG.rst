@@ -2,6 +2,15 @@
 Changelog
 =========
 
+0.5.10 (2021-03-12)
+==================
+
+Changes
+-------
+
+* Added support for Humio Data Source. (https://grafana.com/grafana/plugins/humio-datasource/)
+
+
 0.x.x (TBD)
 ===========
 
