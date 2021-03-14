@@ -153,3 +153,45 @@ def test_notification():
     notification = G.Notification(uid)
     data = notification.to_json_data()
     assert data['uid'] == uid
+
+
+def test_graph_panel():
+    data_source = 'dummy data source'
+    targets = ['dummy_prom_query']
+    title = 'dummy title'
+    graph = G.Graph(data_source, targets, title)
+    data = graph.to_json_data()
+    assert data['targets'] == targets
+    assert data['datasource'] == data_source
+    assert data['title'] == title
+    assert 'alert' not in data
+
+
+def test_graph_panel_threshold():
+    data_source = 'dummy data source'
+    targets = ['dummy_prom_query']
+    title = 'dummy title'
+    thresholds = [
+        G.GraphThreshold(20.0),
+        G.GraphThreshold(40.2, colorMode="ok")
+    ]
+    graph = G.Graph(data_source, targets, title, thresholds=thresholds)
+    data = graph.to_json_data()
+    assert data['targets'] == targets
+    assert data['datasource'] == data_source
+    assert data['title'] == title
+    assert 'alert' not in data
+    assert data['thresholds'] == thresholds
+
+
+def test_graph_threshold():
+    value = 20.0
+    colorMode = "ok"
+    threshold = G.GraphThreshold(value, colorMode=colorMode)
+    data = threshold.to_json_data()
+
+    assert data['value'] == value
+    assert data['colorMode'] == colorMode
+    assert data['fill'] is True
+    assert data['line'] is True
+    assert data['op'] == G.EVAL_GT

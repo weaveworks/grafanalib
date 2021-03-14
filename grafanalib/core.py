@@ -2756,6 +2756,7 @@ class GraphThreshold(object):
             'lineColor': self.lineColor
         }
 
+
 @attr.s
 class SeriesOverride(object):
     alias = attr.ib()
