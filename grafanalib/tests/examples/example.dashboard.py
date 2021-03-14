@@ -1,16 +1,19 @@
 from grafanalib.core import (
-    Alert, AlertCondition, Dashboard, Graph,
-    GreaterThan, Notification, OP_AND, OPS_FORMAT, Row, RTYPE_SUM, SECONDS_FORMAT,
+    Alert, AlertCondition, Dashboard, Graph, GridPos,
+    GreaterThan, Notification, OP_AND, OPS_FORMAT, RowPanel, RTYPE_SUM, SECONDS_FORMAT,
     SHORT_FORMAT, single_y_axis, Target, TimeRange, YAxes, YAxis
 )
 
 
 dashboard = Dashboard(
     title="Frontend Stats",
-    rows=[
-        Row(panels=[
-          Graph(
-              title="Frontend QPS",
+    panels=[
+        RowPanel(
+            title="New row",
+            gridPos=GridPos(h=1, w=24, x=0, y=8)
+        ),
+        Graph(
+            title="Frontend QPS",
             dataSource='My Prometheus',
             targets=[
                 Target(
@@ -61,26 +64,27 @@ dashboard = Dashboard(
                 ],
                 notifications=[
                     Notification("notification_channel_uid"),
-                ],
-            )
+                ]
             ),
-          Graph(
-              title="Frontend latency",
-              dataSource='My Prometheus',
-              targets=[
-                  Target(
+            gridPos=GridPos(h=1, w=12, x=0, y=9)
+        ),
+        Graph(
+            title="Frontend latency",
+            dataSource='My Prometheus',
+            targets=[
+                Target(
                     expr='histogram_quantile(0.5, sum(irate(nginx_http_request_duration_seconds_bucket{job="default/frontend"}[1m])) by (le))',
                     legendFormat="0.5 quantile",
                     refId='A',
-                  ),
-                  Target(
-                      expr='histogram_quantile(0.99, sum(irate(nginx_http_request_duration_seconds_bucket{job="default/frontend"}[1m])) by (le))',
-                      legendFormat="0.99 quantile",
-                      refId='B',
-                  ),
-              ],
-              yAxes=single_y_axis(format=SECONDS_FORMAT),
-          ),
-        ]),
+                ),
+                Target(
+                    expr='histogram_quantile(0.99, sum(irate(nginx_http_request_duration_seconds_bucket{job="default/frontend"}[1m])) by (le))',
+                    legendFormat="0.99 quantile",
+                    refId='B',
+                ),
+            ],
+            yAxes=single_y_axis(format=SECONDS_FORMAT),
+            gridPos=GridPos(h=8, w=12, x=0, y=0)
+        )
     ],
 ).auto_panel_ids()
