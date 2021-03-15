@@ -1,6 +1,5 @@
-"""humioQuery: options.annotation.humioQuery,
-humioRepository: options.annotation.humioRepository,
-refId: options.annotation.refId"""
+"""Helpers to create Humio-specific Grafana queries."""
+
 import attr
 
 
@@ -14,7 +13,7 @@ class HumioTarget(object):
     Humio docs on query language https://docs.humio.com/reference/language-syntax/
 
     :param humioQuery: Query that will be executed on Humio
-    :param humioRepository: Repositry to execute query on.
+    :param humioRepository: Repository to execute query on.
     :param refId: target reference id
     """
 

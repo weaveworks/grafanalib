@@ -6,7 +6,7 @@ from grafanalib import _gen
 from io import StringIO
 
 
-def test_serialization_cloudwatch_metrics_target():
+def test_serialization_humio_metrics_target():
     """Serializing a graph doesn't explode."""
     graph = G.Graph(
         title="Humio Logs",
