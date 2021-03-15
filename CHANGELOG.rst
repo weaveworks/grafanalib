@@ -5,6 +5,17 @@ Changelog
 0.x.x (TBD)
 ===========
 
+* ...
+
+Changes
+-------
+
+* ...
+
+
+0.5.10 (2021-03-21)
+==================
+
 * Added Logs panel (https://grafana.com/docs/grafana/latest/panels/visualizations/logs-panel/)
 * Added Cloudwatch metrics datasource (https://grafana.com/docs/grafana/latest/datasources/cloudwatch/)
 * Added option to hide dashboard time picker
