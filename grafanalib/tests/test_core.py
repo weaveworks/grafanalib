@@ -184,6 +184,26 @@ def test_graph_panel_threshold():
     assert data['thresholds'] == thresholds
 
 
+def test_graph_panel_alert():
+    data_source = 'dummy data source'
+    targets = ['dummy_prom_query']
+    title = 'dummy title'
+    alert = [
+        G.AlertCondition(G.Target(), G.Evaluator('a', 'b'), G.TimeRange('5', '6'), 'd', 'e')
+    ]
+    thresholds = [
+        G.GraphThreshold(20.0),
+        G.GraphThreshold(40.2, colorMode="ok")
+    ]
+    graph = G.Graph(data_source, targets, title, thresholds=thresholds, alert=alert)
+    data = graph.to_json_data()
+    assert data['targets'] == targets
+    assert data['datasource'] == data_source
+    assert data['title'] == title
+    assert data['alert'] == alert
+    assert data['thresholds'] == []
+
+
 def test_graph_threshold():
     value = 20.0
     colorMode = "ok"

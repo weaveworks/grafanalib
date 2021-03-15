@@ -1332,6 +1332,7 @@ class Graph(Panel):
         if self.alert:
             graphObject['alert'] = self.alert
             graphObject['alertRuleTags'] = self.alertRuleTags
+            graphObject['thresholds'] = []
         if self.thresholds and self.alert:
             print("Warning: Graph threshold ignored as Alerts defined")
         return self.panel_json(graphObject)
