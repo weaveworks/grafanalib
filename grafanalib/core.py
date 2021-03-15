@@ -1069,7 +1069,7 @@ class Dashboard(object):
     def to_json_data(self):
         if self.panels and self.rows:
             print(
-                "You are using both panels and rows in this dashboard, please use one or the other. "
+                "Warning: You are using both panels and rows in this dashboard, please use one or the other. "
                 "Panels should be used in preference over rows, see example dashboard for help."
             )
         return {
@@ -2745,16 +2745,20 @@ class GraphThreshold(object):
     lineColor = attr.ib(default=RED)
 
     def to_json_data(self):
-        return {
+        data = {
             'value': self.value,
             'colorMode': self.colorMode,
             'fill': self.fill,
             'line': self.line,
             'op': self.op,
             'yaxis': self.yaxis,
-            'fillColor': self.fillColor,
-            'lineColor': self.lineColor
         }
+
+        if self.colorMode == "custom":
+            data['fillColor'] = self.fillColor
+            data['lineColor'] = self.lineColor
+
+        return data
 
 
 @attr.s

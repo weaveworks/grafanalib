@@ -195,3 +195,21 @@ def test_graph_threshold():
     assert data['fill'] is True
     assert data['line'] is True
     assert data['op'] == G.EVAL_GT
+    assert 'fillColor' not in data
+    assert 'lineColor' not in data
+
+
+def test_graph_threshold_custom():
+    value = 20.0
+    colorMode = "custom"
+    color = G.GREEN
+    threshold = G.GraphThreshold(value, colorMode=colorMode, fillColor=color)
+    data = threshold.to_json_data()
+
+    assert data['value'] == value
+    assert data['colorMode'] == colorMode
+    assert data['fill'] is True
+    assert data['line'] is True
+    assert data['op'] == G.EVAL_GT
+    assert data['fillColor'] == color
+    assert data['lineColor'] == G.RED
