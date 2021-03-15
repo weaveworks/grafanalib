@@ -2,15 +2,6 @@
 Changelog
 =========
 
-0.5.10 (2021-03-12)
-==================
-
-Changes
--------
-
-* Added support for Humio Data Source. (https://grafana.com/grafana/plugins/humio-datasource/)
-
-
 0.x.x (TBD)
 ===========
 
@@ -31,6 +22,8 @@ Changes
 * Added Notification for Alert
 * Added alertRuleTags field to the graph panel
 * Added support for using gridPos for dashboard panels
+* Added support for Humio Data Source. (https://grafana.com/grafana/plugins/humio-datasource/)
+
 
 Changes
 -------
