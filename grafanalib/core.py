@@ -923,7 +923,7 @@ class AlertCondition(object):
     timeRange = attr.ib(validator=instance_of(TimeRange))
     operator = attr.ib()
     reducerType = attr.ib()
-    type = attr.ib(default=CTYPE_QUERY)
+    type = attr.ib(default=CTYPE_QUERY, kw_only=True)
 
     def to_json_data(self):
         queryParams = [
