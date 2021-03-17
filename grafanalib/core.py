@@ -1069,7 +1069,7 @@ class Dashboard(object):
     def to_json_data(self):
         if self.panels and self.rows:
             print(
-                "You are using both panels and rows in this dashboard, please use one or the other. "
+                "Warning: You are using both panels and rows in this dashboard, please use one or the other. "
                 "Panels should be used in preference over rows, see example dashboard for help."
             )
         return {
@@ -1253,12 +1253,17 @@ class Graph(Panel):
     """
     Generates Graph panel json structure.
 
-    :param dataLinks: list of data links hooked to datapoints on the graph
+    :param alert: List of AlertConditions
+    :param alertRuleTags: Key Value pairs to be sent with Alert notifications
+    :param dataLinks: List of data links hooked to datapoints on the graph
     :param dataSource: DataSource's name
     :param minSpan: Minimum width for each panel
     :param repeat: Template's name to repeat Graph on
+    :param thresholds: List of GraphThresholds - Only valid when alert not defined
     """
 
+    alert = attr.ib(default=None)
+    alertRuleTags = attr.ib(default=attr.Factory(dict))
     alertThreshold = attr.ib(default=True, validator=instance_of(bool))
     aliasColors = attr.ib(default=attr.Factory(dict))
     bars = attr.ib(default=False, validator=instance_of(bool))
@@ -1285,6 +1290,7 @@ class Graph(Panel):
         default=attr.Factory(Tooltip),
         validator=instance_of(Tooltip),
     )
+    thresholds = attr.ib(default=attr.Factory(list))
     xAxis = attr.ib(default=attr.Factory(XAxis), validator=instance_of(XAxis))
     # XXX: This isn't a *good* default, rather it's the default Grafana uses.
     yAxes = attr.ib(
@@ -1292,8 +1298,6 @@ class Graph(Panel):
         converter=to_y_axes,
         validator=instance_of(YAxes),
     )
-    alert = attr.ib(default=None)
-    alertRuleTags = attr.ib(default=attr.Factory(dict))
 
     def to_json_data(self):
         graphObject = {
@@ -1320,6 +1324,7 @@ class Graph(Panel):
             'stack': self.stack,
             'steppedLine': self.steppedLine,
             'tooltip': self.tooltip,
+            'thresholds': self.thresholds,
             'type': GRAPH_TYPE,
             'xaxis': self.xAxis,
             'yaxes': self.yAxes,
@@ -1327,6 +1332,9 @@ class Graph(Panel):
         if self.alert:
             graphObject['alert'] = self.alert
             graphObject['alertRuleTags'] = self.alertRuleTags
+            graphObject['thresholds'] = []
+        if self.thresholds and self.alert:
+            print("Warning: Graph threshold ignored as Alerts defined")
         return self.panel_json(graphObject)
 
     def _iter_targets(self):
@@ -2392,7 +2400,8 @@ class StatusmapColor(object):
 
 @attr.s
 class Statusmap(Panel):
-    """Generates json structure for the flant-statusmap-panel visualisation plugin (https://grafana.com/grafana/plugins/flant-statusmap-panel/).
+    """Generates json structure for the flant-statusmap-panel visualisation plugin
+    (https://grafana.com/grafana/plugins/flant-statusmap-panel/).
 
     :param alert
     :param cards: A statusmap card object: keys 'cardRound', 'cardMinWidth', 'cardHSpacing', 'cardVSpacing'
@@ -2484,7 +2493,8 @@ class Svg(Panel):
     :param id: panel id
     :param interval: defines time interval between metric queries
     :param links: additional web links
-    :param reduceCalc: algorithm for reduction to a single value: keys 'mean' 'lastNotNull' 'last' 'first' 'firstNotNull' 'min' 'max' 'sum' 'total'
+    :param reduceCalc: algorithm for reduction to a single value:
+        keys 'mean' 'lastNotNull' 'last' 'first' 'firstNotNull' 'min' 'max' 'sum' 'total'
     :param span: defines the number of spans that will be used for panel
     :param svgFilePath: path to SVG image file to be displayed
     """
@@ -2586,7 +2596,8 @@ class DashboardList(Panel):
     :param transparent: defines if the panel is transparent
 
     :param showHeadings: The chosen list selection (Starred, Recently viewed, Search) is shown as a heading
-    :param showSearch: Display dashboards by search query or tags. Requires you to enter at least one value in Query or Tags
+    :param showSearch: Display dashboards by search query or tags.
+        Requires you to enter at least one value in Query or Tags
     :param showRecent: Display recently viewed dashboards in alphabetical order
     :param showStarred: Display starred dashboards in alphabetical order
     :param maxItems: Sets the maximum number of items to list per section
@@ -2638,7 +2649,8 @@ class Logs(Panel):
     :param showLabels: Show or hide the unique labels column, which shows only non-common labels
     :param showTime: Show or hide the log timestamp column
     :param wrapLogMessages: Toggle line wrapping
-    :param sortOrder: Display results in 'Descending' or 'Ascending' time order. The default is Descending, showing the newest logs first.
+    :param sortOrder: Display results in 'Descending' or 'Ascending' time order. The default is Descending,
+        showing the newest logs first.
     """
     showLabels = attr.ib(default=False, validator=instance_of(bool))
     showTime = attr.ib(default=False, validator=instance_of(bool))
@@ -2667,11 +2679,21 @@ class Logs(Panel):
 
 @attr.s
 class Threshold(object):
-    """Threshold for a gauge
+    """Threshold for for panels
+    (https://grafana.com/docs/grafana/latest/panels/thresholds/)
 
-    :param color: color of threshold
-    :param index: index of color in gauge
-    :param value: when to use this color will be null if index is 0
+    :param color: Color of threshold
+    :param index: Index of color in panel
+    :param line: Display Threshold line, defaults to True
+    :param value: When to use this color will be null if index is 0
+    :param op: EVAL_LT for less than or EVAL_GT for greater than to indicate what the threshold applies to.
+    :param yaxis: Choose left or right for panels
+
+    Example:
+        thresholds = [
+            Threshold('green', 0, 0.0),
+            Threshold('red', 1, 80.0)
+        ]
     """
 
     color = attr.ib()
@@ -2690,6 +2712,54 @@ class Threshold(object):
             'index': self.index,
             'value': 'null' if self.index == 0 else self.value,
         }
+
+
+@attr.s
+class GraphThreshold(object):
+    """Threshold for for Graph panel
+    (https://grafana.com/docs/grafana/latest/panels/thresholds/)
+
+    :param colorMode: Color mode of the threshold, value can be `ok`, `warning`, `critical` or `custom`.
+        If `custom` is selcted a lineColor and fillColor should be provided
+    :param fill: Display threshold fill, defaults to True
+    :param line: Display threshold line, defaults to True
+    :param value: When to use this color will be null if index is 0
+    :param op: EVAL_LT for less than or EVAL_GT for greater than to indicate what the threshold applies to.
+    :param yaxis: Choose left or right for Graph panels
+    :param fillColor: Fill color of the threshold, when colorMode = "custom"
+    :param lineColor: Line color of the threshold, when colorMode = "custom"
+
+    Example:
+        thresholds = [
+            GraphThreshold(colorMode="ok", value=10.0),
+            GrpahThreshold(colorMode="critical", value=90.0)
+        ]
+    """
+
+    value = attr.ib(validator=instance_of(float))
+    colorMode = attr.ib(default="critical")
+    fill = attr.ib(default=True, validator=instance_of(bool))
+    line = attr.ib(default=True, validator=instance_of(bool))
+    op = attr.ib(default=EVAL_GT)
+    yaxis = attr.ib(default='left')
+    fillColor = attr.ib(default=RED)
+    lineColor = attr.ib(default=RED)
+
+    def to_json_data(self):
+        data = {
+            'value': self.value,
+            'colorMode': self.colorMode,
+            'fill': self.fill,
+            'line': self.line,
+            'op': self.op,
+            'yaxis': self.yaxis,
+        }
+
+        if self.colorMode == "custom":
+            data['fillColor'] = self.fillColor
+            data['lineColor'] = self.lineColor
+
+        return data
 
 
 @attr.s
