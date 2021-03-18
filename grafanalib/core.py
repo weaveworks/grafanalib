@@ -1137,7 +1137,7 @@ class Panel(object):
     links = attr.ib(default=attr.Factory(list))
     maxDataPoints = attr.ib(default=100)
     minSpan = attr.ib(default=None)
-    repeat = attr.ib(default=None)
+    repeat = attr.ib(default=attr.Factory(Repeat), validator=instance_of(Repeat))
     span = attr.ib(default=None)
     timeFrom = attr.ib(default=None)
     timeShift = attr.ib(default=None)
@@ -1161,7 +1161,9 @@ class Panel(object):
             'links': self.links,
             'maxDataPoints': self.maxDataPoints,
             'minSpan': self.minSpan,
-            'repeat': self.repeat,
+            'repeat': self.repeat.variable,
+            'repeatDirection': self.repeat.direction,
+            'maxPerRow': self.repeat.maxPerRow,
             'span': self.span,
             'targets': self.targets,
             'timeFrom': self.timeFrom,
@@ -1575,9 +1577,6 @@ class Stat(Panel):
                     }
                 },
                 'type': STAT_TYPE,
-                'repeat': self.repeat.variable,
-                'repeatDirection': self.repeat.direction,
-                'maxPerRow': self.repeat.maxPerRow
             }
         )
 
