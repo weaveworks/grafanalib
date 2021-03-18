@@ -1208,7 +1208,10 @@ class Row(object):
     """
     # TODO: jml would like to separate the balancing behaviour from this
     # layer.
-    panels = attr.ib(default=attr.Factory(list), converter=_balance_panels)
+    try:
+        panels = attr.ib(default=attr.Factory(list), converter=_balance_panels)
+    except TypeError:
+        panels = attr.ib(default=attr.Factory(list), convert=_balance_panels)
     collapse = attr.ib(
         default=False, validator=instance_of(bool),
     )
@@ -1293,11 +1296,18 @@ class Graph(Panel):
     thresholds = attr.ib(default=attr.Factory(list))
     xAxis = attr.ib(default=attr.Factory(XAxis), validator=instance_of(XAxis))
     # XXX: This isn't a *good* default, rather it's the default Grafana uses.
-    yAxes = attr.ib(
-        default=attr.Factory(YAxes),
-        converter=to_y_axes,
-        validator=instance_of(YAxes),
-    )
+    try:
+        yAxes = attr.ib(
+            default=attr.Factory(YAxes),
+            converter=to_y_axes,
+            validator=instance_of(YAxes),
+        )
+    except TypeError:
+        yAxes = attr.ib(
+            default=attr.Factory(YAxes),
+            convert=to_y_axes,
+            validator=instance_of(YAxes),
+        )
 
     def to_json_data(self):
         graphObject = {

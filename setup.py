@@ -40,7 +40,7 @@ setup(
         'Topic :: System :: Monitoring',
     ],
     install_requires=[
-        'attrs==20.3.0',
+        'attrs>=15.2.0',
     ],
     extras_require={
         'dev': [
