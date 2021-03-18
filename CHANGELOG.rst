@@ -2,6 +2,15 @@
 Changelog
 =========
 
+0.5.10 (2021-03-12)
+==================
+
+Changes
+-------
+
+* Added support for Humio Data Source. (https://grafana.com/grafana/plugins/humio-datasource/)
+
+
 0.x.x (TBD)
 ===========
 
@@ -10,6 +19,8 @@ Changelog
 * Added option to hide dashboard time picker
 * Added Notification for Alert
 * Added alertRuleTags field to the graph panel
+* Added support for thresholds to graph panel
+* Added support for Elasticsearch alert condition
 * Added support for using gridPos for dashboard panels
 
 Changes

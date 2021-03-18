@@ -153,3 +153,83 @@ def test_notification():
     notification = G.Notification(uid)
     data = notification.to_json_data()
     assert data['uid'] == uid
+
+
+def test_graph_panel():
+    data_source = 'dummy data source'
+    targets = ['dummy_prom_query']
+    title = 'dummy title'
+    graph = G.Graph(data_source, targets, title)
+    data = graph.to_json_data()
+    assert data['targets'] == targets
+    assert data['datasource'] == data_source
+    assert data['title'] == title
+    assert 'alert' not in data
+
+
+def test_graph_panel_threshold():
+    data_source = 'dummy data source'
+    targets = ['dummy_prom_query']
+    title = 'dummy title'
+    thresholds = [
+        G.GraphThreshold(20.0),
+        G.GraphThreshold(40.2, colorMode="ok")
+    ]
+    graph = G.Graph(data_source, targets, title, thresholds=thresholds)
+    data = graph.to_json_data()
+    assert data['targets'] == targets
+    assert data['datasource'] == data_source
+    assert data['title'] == title
+    assert 'alert' not in data
+    assert data['thresholds'] == thresholds
+
+
+def test_graph_panel_alert():
+    data_source = 'dummy data source'
+    targets = ['dummy_prom_query']
+    title = 'dummy title'
+    alert = [
+        G.AlertCondition(G.Target(), G.Evaluator('a', 'b'), G.TimeRange('5', '6'), 'd', 'e')
+    ]
+    thresholds = [
+        G.GraphThreshold(20.0),
+        G.GraphThreshold(40.2, colorMode="ok")
+    ]
+    graph = G.Graph(data_source, targets, title, thresholds=thresholds, alert=alert)
+    data = graph.to_json_data()
+    assert data['targets'] == targets
+    assert data['datasource'] == data_source
+    assert data['title'] == title
+    assert data['alert'] == alert
+    assert data['thresholds'] == []
+
+
+def test_graph_threshold():
+    value = 20.0
+    colorMode = "ok"
+    threshold = G.GraphThreshold(value, colorMode=colorMode)
+    data = threshold.to_json_data()
+
+    assert data['value'] == value
+    assert data['colorMode'] == colorMode
+    assert data['fill'] is True
+    assert data['line'] is True
+    assert data['op'] == G.EVAL_GT
+    assert 'fillColor' not in data
+    assert 'lineColor' not in data
+
+
+def test_graph_threshold_custom():
+    value = 20.0
+    colorMode = "custom"
+    color = G.GREEN
+    threshold = G.GraphThreshold(value, colorMode=colorMode, fillColor=color)
+    data = threshold.to_json_data()
+
+    assert data['value'] == value
+    assert data['colorMode'] == colorMode
+    assert data['fill'] is True
+    assert data['line'] is True
+    assert data['op'] == G.EVAL_GT
+    assert data['fillColor'] == color
+    assert data['lineColor'] == G.RED
