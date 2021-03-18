@@ -2,17 +2,19 @@
 Changelog
 =========
 
-0.5.10 (2021-03-12)
-==================
+0.x.x (TBD)
+===========
+
+* ...
 
 Changes
 -------
 
-* Added support for Humio Data Source. (https://grafana.com/grafana/plugins/humio-datasource/)
+* ...
 
 
-0.x.x (TBD)
-===========
+0.5.10 (2021-03-21)
+==================
 
 * Added Logs panel (https://grafana.com/docs/grafana/latest/panels/visualizations/logs-panel/)
 * Added Cloudwatch metrics datasource (https://grafana.com/docs/grafana/latest/datasources/cloudwatch/)
@@ -22,6 +24,8 @@ Changes
 * Added support for thresholds to graph panel
 * Added support for Elasticsearch alert condition
 * Added support for using gridPos for dashboard panels
+* Added support for Humio Data Source. (https://grafana.com/grafana/plugins/humio-datasource/)
+
 
 Changes
 -------
