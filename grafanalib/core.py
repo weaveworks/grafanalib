@@ -1263,7 +1263,6 @@ class Graph(Panel):
     :param dataLinks: List of data links hooked to datapoints on the graph
     :param dataSource: DataSource's name
     :param minSpan: Minimum width for each panel
-    :param repeat: Template's name to repeat Graph on
     :param thresholds: List of GraphThresholds - Only valid when alert not defined
     """
 
@@ -1531,7 +1530,6 @@ class Stat(Panel):
     :param span: defines the number of spans that will be used for panel
     :param thresholds: single stat thresholds
     :param transparent: defines if the panel should be transparent
-    :param repeat: defines how the panel should be repeated
     """
 
     textMode = attr.ib(default='auto')
@@ -1545,7 +1543,6 @@ class Stat(Panel):
     thresholds = attr.ib(default="")
     reduceCalc = attr.ib(default='mean', type=str)
     decimals = attr.ib(default=None)
-    repeat = attr.ib(default=attr.Factory(Repeat), validator=instance_of(Repeat))
 
     def to_json_data(self):
         return self.panel_json(
