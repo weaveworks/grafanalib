@@ -25,6 +25,7 @@ Changes
 * Added support for Elasticsearch alert condition
 * Added support for using gridPos for dashboard panels
 * Added support for Humio Data Source. (https://grafana.com/grafana/plugins/humio-datasource/)
+* Added timeField field for the Elasticsearch target to allow the alert to change its state
 
 
 Changes
