@@ -5,7 +5,7 @@ Changelog
 0.x.x (TBD)
 ===========
 
-* ...
+* Added timeField field for the Elasticsearch target to allow the alert to change its state
 
 Changes
 -------

@@ -320,6 +320,7 @@ class ElasticsearchTarget(object):
     :param metricAggs: Metric Aggregators
     :param query: query
     :param refId: target reference id
+    :param timeField: name of the elasticsearch time field
     """
 
     alias = attr.ib(default=None)
@@ -329,6 +330,7 @@ class ElasticsearchTarget(object):
     metricAggs = attr.ib(default=attr.Factory(lambda: [CountMetricAgg()]))
     query = attr.ib(default="", validator=instance_of(str))
     refId = attr.ib(default="", validator=instance_of(str))
+    timeField = attr.ib(default="@timestamp", validator=instance_of(str))
 
     def _map_bucket_aggs(self, f):
         return attr.evolve(self, bucketAggs=list(map(f, self.bucketAggs)))
@@ -362,6 +364,7 @@ class ElasticsearchTarget(object):
             'metrics': self.metricAggs,
             'query': self.query,
             'refId': self.refId,
+            'timeField': self.timeField,
         }
 
 
