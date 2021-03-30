@@ -1474,6 +1474,7 @@ class AlertList(object):
 
     :param description: Panel description, supports markdown and links.
     :param limit: Max number of alerts that can be displayed in the list.
+    :param nameFilter: Show only alerts that contain this string in their name.
     :param onlyAlertsOnDashboard: If to show only alerts from the current dashboard.
     :param show: Show the current alert list (ALERTLIST_SHOW_CURRENT) or only the alerts that were
         changed (ALERTLIST_SHOW_CHANGES).
@@ -1487,13 +1488,14 @@ class AlertList(object):
         An empty list means all the statuses.
     :param title: The panel title.
     :param transparent: Defines if to display the panel without a background.
-    :param nameFilter: Show only alerts that contain this string in their name.
     """
 
     description = attr.ib(default="")
+    gridPos = attr.ib(default=None)
     id = attr.ib(default=None)
     limit = attr.ib(default=DEFAULT_LIMIT)
     links = attr.ib(default=attr.Factory(list))
+    nameFilter = attr.ib(default="", validator=instance_of(str))
     onlyAlertsOnDashboard = attr.ib(default=True, validator=instance_of(bool))
     show = attr.ib(default=ALERTLIST_SHOW_CURRENT)
     sortOrder = attr.ib(default=SORT_ASC, validator=in_([1, 2, 3]))
@@ -1501,14 +1503,16 @@ class AlertList(object):
     stateFilter = attr.ib(default=attr.Factory(list))
     title = attr.ib(default="")
     transparent = attr.ib(default=False, validator=instance_of(bool))
-    nameFilter = attr.ib(default="", validator=instance_of(str))
+    
 
     def to_json_data(self):
         return {
             'description': self.description,
+            'gridPos': self.gridPos,
             'id': self.id,
             'limit': self.limit,
             'links': self.links,
+            'nameFilter': self.nameFilter,
             'onlyAlertsOnDashboard': self.onlyAlertsOnDashboard,
             'show': self.show,
             'sortOrder': self.sortOrder,
@@ -1517,7 +1521,6 @@ class AlertList(object):
             'title': self.title,
             'transparent': self.transparent,
             'type': ALERTLIST_TYPE,
-            'nameFilter': self.nameFilter,
         }
 
 
