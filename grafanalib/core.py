@@ -210,6 +210,7 @@ ALERTLIST_STATE_PAUSED = 'paused'
 ALERTLIST_STATE_NO_DATA = 'no_data'
 ALERTLIST_STATE_EXECUTION_ERROR = 'execution_error'
 ALERTLIST_STATE_ALERTING = 'alerting'
+ALERTLIST_STATE_PENDING = 'pending'
 
 # Display Sort Order
 SORT_ASC = 1
@@ -1469,7 +1470,25 @@ class Text(Panel):
 
 @attr.s
 class AlertList(object):
-    """Generates the AlertList Panel."""
+    """Generates the AlertList Panel.
+
+    :param description: Panel description, supports markdown and links.
+    :param limit: Max number of alerts that can be displayed in the list.
+    :param onlyAlertsOnDashboard: If to show only alerts from the current dashboard.
+    :param show: Show the current alert list (ALERTLIST_SHOW_CURRENT) or only the alerts that were
+        changed (ALERTLIST_SHOW_CHANGES).
+    :param sortOrder: According to which order to sort the alerts: SORT_ASC, SORT_DESC or
+        SORT_IMPORTANCE.
+    :param span: Defines the number of spans that will be used for the panel.
+    :param stateFilter: A list of the statuses of the alerts to display in the list. A subset of the
+        following list:
+        [ALERTLIST_STATE_ALERTING, ALERTLIST_STATE_OK, ALERTLIST_STATE_NO_DATA,
+         ALERTLIST_STATE_PAUSED, ALERTLIST_STATE_EXECUTION_ERROR, ALERTLIST_STATE_PENDING].
+        An empty list means all the statuses.
+    :param title: The panel title.
+    :param transparent: Defines if to display the panel without a background.
+    :param nameFilter: Show only alerts that contain this string in their name.
+    """
 
     description = attr.ib(default="")
     id = attr.ib(default=None)
