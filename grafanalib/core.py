@@ -1495,22 +1495,22 @@ class AlertList(object):
     """
 
     dashboardTags = attr.ib(
-        default = attr.Factory(list),
-        validator = attr.validators.deep_iterable(attr.validators.instance_of(str)))
+        default=attr.Factory(list),
+        validator=attr.validators.deep_iterable(attr.validators.instance_of(str)))
     description = attr.ib(default="")
     gridPos = attr.ib(default=None)
     id = attr.ib(default=None)
     limit = attr.ib(default=DEFAULT_LIMIT)
     links = attr.ib(
-        default = attr.Factory(list),
-        validator = attr.validators.deep_iterable(attr.validators.instance_of(DataLink)))
+        default=attr.Factory(list),
+        validator=attr.validators.deep_iterable(attr.validators.instance_of(DataLink)))
     onlyAlertsOnDashboard = attr.ib(default=True, validator=instance_of(bool))
     show = attr.ib(default=ALERTLIST_SHOW_CURRENT)
     sortOrder = attr.ib(default=SORT_ASC, validator=in_([1, 2, 3]))
     span = attr.ib(default=6)
     stateFilter = attr.ib(default=attr.Factory(list))
     title = attr.ib(default="")
-    transparent = attr.ib(default = False, validator = instance_of(bool))
+    transparent = attr.ib(default=False, validator=instance_of(bool))
 
     def to_json_data(self):
         return {
