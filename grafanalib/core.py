@@ -1496,14 +1496,18 @@ class AlertList(object):
 
     dashboardTags = attr.ib(
         default=attr.Factory(list),
-        validator=attr.validators.deep_iterable(attr.validators.instance_of(str)))
+        validator=attr.validators.deep_iterable(
+            member_validator=attr.validators.instance_of(str),
+            iterable_validator=attr.validators.instance_of(list)))
     description = attr.ib(default="")
     gridPos = attr.ib(default=None)
     id = attr.ib(default=None)
     limit = attr.ib(default=DEFAULT_LIMIT)
     links = attr.ib(
         default=attr.Factory(list),
-        validator=attr.validators.deep_iterable(attr.validators.instance_of(DataLink)))
+        validator=attr.validators.deep_iterable(
+            member_validator=attr.validators.instance_of(DataLink),
+            iterable_validator=attr.validators.instance_of(list)))
     onlyAlertsOnDashboard = attr.ib(default=True, validator=instance_of(bool))
     show = attr.ib(default=ALERTLIST_SHOW_CURRENT)
     sortOrder = attr.ib(default=SORT_ASC, validator=in_([1, 2, 3]))
