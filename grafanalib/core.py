@@ -1472,40 +1472,49 @@ class Text(Panel):
 class AlertList(object):
     """Generates the AlertList Panel.
 
+    :param dashboardTags: A list of tags (strings) for the panel.
     :param description: Panel description, supports markdown and links.
+    :param id: panel id
     :param limit: Max number of alerts that can be displayed in the list.
-    :param nameFilter: Show only alerts that contain this string in their name.
-    :param onlyAlertsOnDashboard: If to show only alerts from the current dashboard.
+    :param nameFilter: Show only alerts that contain nameFilter in their name.
+    :param onlyAlertsOnDashboard: If true, shows only alerts from the current dashboard.
+    :param links: Additional web links to be presented in the panel. A list of instantiation of
+        DataLink objects.
     :param show: Show the current alert list (ALERTLIST_SHOW_CURRENT) or only the alerts that were
         changed (ALERTLIST_SHOW_CHANGES).
-    :param sortOrder: According to which order to sort the alerts: SORT_ASC, SORT_DESC or
-        SORT_IMPORTANCE.
+    :param sortOrder: Defines the sorting order of the alerts. Gets one of the following values as
+        input: SORT_ASC, SORT_DESC and SORT_IMPORTANCE.
     :param span: Defines the number of spans that will be used for the panel.
-    :param stateFilter: A list of the statuses of the alerts to display in the list. A subset of the
-        following list:
-        [ALERTLIST_STATE_ALERTING, ALERTLIST_STATE_OK, ALERTLIST_STATE_NO_DATA,
-         ALERTLIST_STATE_PAUSED, ALERTLIST_STATE_EXECUTION_ERROR, ALERTLIST_STATE_PENDING].
-        An empty list means all the statuses.
+    :param stateFilter: Show alerts with statuses from the stateFilter list. The list can contain a
+        subset of the following statuses:
+            [ALERTLIST_STATE_ALERTING, ALERTLIST_STATE_OK, ALERTLIST_STATE_NO_DATA,
+             ALERTLIST_STATE_PAUSED, ALERTLIST_STATE_EXECUTION_ERROR, ALERTLIST_STATE_PENDING].
+        An empty list means all alerts.
     :param title: The panel title.
-    :param transparent: Defines if to display the panel without a background.
+    :param transparent: If true, display the panel without a background.
     """
 
+    dashboardTags = attr.ib(
+        default = attr.Factory(list),
+        validator = attr.validators.deep_iterable(attr.validators.instance_of(str)))
     description = attr.ib(default="")
     gridPos = attr.ib(default=None)
     id = attr.ib(default=None)
     limit = attr.ib(default=DEFAULT_LIMIT)
-    links = attr.ib(default=attr.Factory(list))
-    nameFilter = attr.ib(default="", validator=instance_of(str))
+    links = attr.ib(
+        default = attr.Factory(list),
+        validator = attr.validators.deep_iterable(attr.validators.instance_of(DataLink)))
     onlyAlertsOnDashboard = attr.ib(default=True, validator=instance_of(bool))
     show = attr.ib(default=ALERTLIST_SHOW_CURRENT)
     sortOrder = attr.ib(default=SORT_ASC, validator=in_([1, 2, 3]))
     span = attr.ib(default=6)
     stateFilter = attr.ib(default=attr.Factory(list))
     title = attr.ib(default="")
-    transparent = attr.ib(default=False, validator=instance_of(bool))
+    transparent = attr.ib(default = False, validator = instance_of(bool))
 
     def to_json_data(self):
         return {
+            'dashboardTags': self.dashboardTags,
             'description': self.description,
             'gridPos': self.gridPos,
             'id': self.id,
