@@ -6,6 +6,9 @@ Changelog
 ===========
 
 * Added timeField field for the Elasticsearch target to allow the alert to change its state
+* Added nameFilter field for the AlertList panel
+* Added dashboardTags field for the AlertList panel
+
 
 Changes
 -------

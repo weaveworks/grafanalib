@@ -210,6 +210,7 @@ ALERTLIST_STATE_PAUSED = 'paused'
 ALERTLIST_STATE_NO_DATA = 'no_data'
 ALERTLIST_STATE_EXECUTION_ERROR = 'execution_error'
 ALERTLIST_STATE_ALERTING = 'alerting'
+ALERTLIST_STATE_PENDING = 'pending'
 
 # Display Sort Order
 SORT_ASC = 1
@@ -1469,12 +1470,44 @@ class Text(Panel):
 
 @attr.s
 class AlertList(object):
-    """Generates the AlertList Panel."""
+    """Generates the AlertList Panel.
 
+    :param dashboardTags: A list of tags (strings) for the panel.
+    :param description: Panel description, supports markdown and links.
+    :param id: panel id
+    :param limit: Max number of alerts that can be displayed in the list.
+    :param nameFilter: Show only alerts that contain nameFilter in their name.
+    :param onlyAlertsOnDashboard: If true, shows only alerts from the current dashboard.
+    :param links: Additional web links to be presented in the panel. A list of instantiation of
+        DataLink objects.
+    :param show: Show the current alert list (ALERTLIST_SHOW_CURRENT) or only the alerts that were
+        changed (ALERTLIST_SHOW_CHANGES).
+    :param sortOrder: Defines the sorting order of the alerts. Gets one of the following values as
+        input: SORT_ASC, SORT_DESC and SORT_IMPORTANCE.
+    :param span: Defines the number of spans that will be used for the panel.
+    :param stateFilter: Show alerts with statuses from the stateFilter list. The list can contain a
+        subset of the following statuses:
+            [ALERTLIST_STATE_ALERTING, ALERTLIST_STATE_OK, ALERTLIST_STATE_NO_DATA,
+             ALERTLIST_STATE_PAUSED, ALERTLIST_STATE_EXECUTION_ERROR, ALERTLIST_STATE_PENDING].
+        An empty list means all alerts.
+    :param title: The panel title.
+    :param transparent: If true, display the panel without a background.
+    """
+
+    dashboardTags = attr.ib(
+        default=attr.Factory(list),
+        validator=attr.validators.deep_iterable(
+            member_validator=attr.validators.instance_of(str),
+            iterable_validator=attr.validators.instance_of(list)))
     description = attr.ib(default="")
+    gridPos = attr.ib(default=None)
     id = attr.ib(default=None)
     limit = attr.ib(default=DEFAULT_LIMIT)
-    links = attr.ib(default=attr.Factory(list))
+    links = attr.ib(
+        default=attr.Factory(list),
+        validator=attr.validators.deep_iterable(
+            member_validator=attr.validators.instance_of(DataLink),
+            iterable_validator=attr.validators.instance_of(list)))
     onlyAlertsOnDashboard = attr.ib(default=True, validator=instance_of(bool))
     show = attr.ib(default=ALERTLIST_SHOW_CURRENT)
     sortOrder = attr.ib(default=SORT_ASC, validator=in_([1, 2, 3]))
@@ -1485,10 +1518,13 @@ class AlertList(object):
 
     def to_json_data(self):
         return {
+            'dashboardTags': self.dashboardTags,
             'description': self.description,
+            'gridPos': self.gridPos,
             'id': self.id,
             'limit': self.limit,
             'links': self.links,
+            'nameFilter': self.nameFilter,
             'onlyAlertsOnDashboard': self.onlyAlertsOnDashboard,
             'show': self.show,
             'sortOrder': self.sortOrder,
