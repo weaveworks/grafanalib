@@ -9,6 +9,7 @@ Changelog
 * Added nameFilter field for the AlertList panel
 * Added dashboardTags field for the AlertList panel
 
+Thanks a lot for your contributions to this release, @dafna-starkware
 
 0.5.10 (2021-03-21)
 ==================
