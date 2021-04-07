@@ -544,12 +544,12 @@ def _balance_panels(panels):
 class GridPos(object):
     """GridPos describes the panel size and position in grid coordinates.
 
-        :param h: height of the panel, grid height units each represents
-            30 pixels
-        :param w: width of the panel 1-24 (the width of the dashboard
-            is divided into 24 columns)
-        :param x: x cordinate of the panel, in same unit as w
-        :param y: y cordinate of the panel, in same unit as h
+    :param h: height of the panel, grid height units each represents
+        30 pixels
+    :param w: width of the panel 1-24 (the width of the dashboard
+        is divided into 24 columns)
+    :param x: x cordinate of the panel, in same unit as w
+    :param y: y cordinate of the panel, in same unit as h
     """
 
     h = attr.ib()
@@ -653,10 +653,10 @@ class DashboardLink(object):
 class ExternalLink(object):
     """ExternalLink creates a top-level link attached to a dashboard.
 
-        :param url: the URL to link to
-        :param title: the text of the link
-        :param keepTime: if true, the URL params for the dashboard's
-            current time period are appended
+    :param url: the URL to link to
+    :param title: the text of the link
+    :param keepTime: if true, the URL params for the dashboard's
+        current time period are appended
     """
     uri = attr.ib()
     title = attr.ib()
@@ -679,24 +679,24 @@ class Template(object):
     """Template create a new 'variable' for the dashboard, defines the variable
     name, human name, query to fetch the values and the default value.
 
-        :param default: the default value for the variable
-        :param dataSource: where to fetch the values for the variable from
-        :param label: the variable's human label
-        :param name: the variable's name
-        :param query: the query users to fetch the valid values of the variable
-        :param refresh: Controls when to update values in the dropdown
-        :param allValue: specify a custom all value with regex,
-            globs or lucene syntax.
-        :param includeAll: Add a special All option whose value includes
-            all options.
-        :param regex: Regex to filter or capture specific parts of the names
-            return by your data source query.
-        :param multi: If enabled, the variable will support the selection of
-            multiple options at the same time.
-        :param type: The template type, can be one of: query (default),
-            interval, datasource, custom, constant, adhoc.
-        :param hide: Hide this variable in the dashboard, can be one of:
-            SHOW (default), HIDE_LABEL, HIDE_VARIABLE
+    :param default: the default value for the variable
+    :param dataSource: where to fetch the values for the variable from
+    :param label: the variable's human label
+    :param name: the variable's name
+    :param query: the query users to fetch the valid values of the variable
+    :param refresh: Controls when to update values in the dropdown
+    :param allValue: specify a custom all value with regex,
+        globs or lucene syntax.
+    :param includeAll: Add a special All option whose value includes
+        all options.
+    :param regex: Regex to filter or capture specific parts of the names
+        return by your data source query.
+    :param multi: If enabled, the variable will support the selection of
+        multiple options at the same time.
+    :param type: The template type, can be one of: query (default),
+        interval, datasource, custom, constant, adhoc.
+    :param hide: Hide this variable in the dashboard, can be one of:
+        SHOW (default), HIDE_LABEL, HIDE_VARIABLE
     """
 
     name = attr.ib()
@@ -804,6 +804,7 @@ DEFAULT_TIME = Time('now-1h', 'now')
 class TimePicker(object):
     """
     Time Picker
+
     :param refreshIntervals: dashboard auto-refresh interval options
     :param timeOptions: dashboard time range options
     :param hidden: hide the time picker from dashboard
@@ -1103,6 +1104,7 @@ class Dashboard(object):
 class Panel(object):
     """
     Generic panel for shared defaults
+
     :param cacheTimeout: metric query result cache ttl
     :param dataSource: Grafana datasource name
     :param description: optional panel description
@@ -1618,6 +1620,7 @@ class Stat(Panel):
 class StatMapping(object):
     """
     Generates json structure for the value mapping for the Stat panel:
+
     :param text: Sting that will replace input value
     :param value: Value to be replaced
     :param startValue: When using a range, the start value of the range
@@ -1649,6 +1652,7 @@ class StatMapping(object):
 class StatValueMapping(object):
     """
     Generates json structure for the value mappings for the StatPanel:
+
     :param text: Sting that will replace input value
     :param value: Value to be replaced
     :param id: panel id
@@ -1666,6 +1670,7 @@ class StatValueMapping(object):
 class StatRangeMapping(object):
     """
     Generates json structure for the value mappings for the StatPanel:
+
     :param text: Sting that will replace input value
     :param startValue: When using a range, the start value of the range
     :param endValue: When using a range, the end value of the range
@@ -2731,7 +2736,10 @@ class Threshold(object):
     :param op: EVAL_LT for less than or EVAL_GT for greater than to indicate what the threshold applies to.
     :param yaxis: Choose left or right for panels
 
-    Example:
+    Care must be taken in the order in which the Threshold objects are specified,
+    Grafana expects the value to increase.
+
+    Example::
         thresholds = [
             Threshold('green', 0, 0.0),
             Threshold('red', 1, 80.0)
