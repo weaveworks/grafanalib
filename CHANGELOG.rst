@@ -2,19 +2,14 @@
 Changelog
 =========
 
-0.x.x (TBD)
+0.5.1 (2021-04-06)
 ===========
 
 * Added timeField field for the Elasticsearch target to allow the alert to change its state
 * Added nameFilter field for the AlertList panel
 * Added dashboardTags field for the AlertList panel
 
-
-Changes
--------
-
-* ...
-
+Thanks a lot for your contributions to this release, @dafna-starkware
 
 0.5.10 (2021-03-21)
 ==================
