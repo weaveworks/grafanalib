@@ -5,7 +5,12 @@ Changelog
 x.x.x (TBD)
 ==================
 
-* Added ...
+* Added EPICS Archiver Appliance data source support.  This data source
+  interfaces with a tool that provides historical time series data for process
+  variables exposed by way of a distributed control system platform named
+  EPICS.  EPICS is commonly used in synchrotron and X-ray free electron laser
+  facilities around the world.  For more information on the data source, see
+  https://sasaki77.github.io/archiverappliance-datasource/.
 
 
 Changes
