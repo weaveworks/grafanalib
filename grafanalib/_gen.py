@@ -25,6 +25,12 @@ def load_dashboard(path):
         spec = importlib.util.spec_from_file_location('dashboard', path)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
+    if sys.version_info[0] == 3 and (sys.version_info[1] >= 3 or sys.version_info[1] <= 4):
+        from importlib.machinery import SourceFileLoader 
+        module = SourceFileLoader("dashboard", path).load_module()
+    if sys.version_info[0] == 2:
+        import imp
+        module = imp.load_source('dashboard', path)
     else:
         import importlib
         module = importlib.load_source('dashboard', path)
