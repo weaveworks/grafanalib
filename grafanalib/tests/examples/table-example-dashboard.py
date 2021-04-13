@@ -3,7 +3,7 @@
 
 """
 NAME:
-    table-example.dashboard.py
+    table-example-dashboard.py
 
 DESCRIPTION:
     This script creates Grafana dashboards using Grafanalib, and a static table
@@ -16,7 +16,7 @@ DESCRIPTION:
 USAGE:
     Create and upload the dashboard:
 
-    ./table-example.dashboard.py --title "My python dashboard" > dash.json
+    ./table-example-dashboard.py --title "My python dashboard" > dash.json
     ./upload_grafana_dashboard.sh dash.json
 
 """
