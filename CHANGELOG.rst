@@ -11,7 +11,7 @@ x.x.x (TBD)
 Changes
 -------
 
-* Changed ...
+* bugfix load_dashboard add support for old python version 2.x, 3.3 and 3.4 
 
 
 0.5.1 (2021-04-06)
