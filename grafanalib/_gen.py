@@ -26,7 +26,7 @@ def load_dashboard(path):
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
     elif sys.version_info[0] == 3 and (sys.version_info[1] >= 3 or sys.version_info[1] <= 4):
-        from importlib.machinery import SourceFileLoader 
+        from importlib.machinery import SourceFileLoader
         module = SourceFileLoader("dashboard", path).load_module()
     elif sys.version_info[0] == 2:
         import imp
@@ -34,6 +34,7 @@ def load_dashboard(path):
     else:
         import importlib
         module = importlib.load_source('dashboard', path)
+
     marker = object()
     dashboard = getattr(module, 'dashboard', marker)
     if dashboard is marker:
