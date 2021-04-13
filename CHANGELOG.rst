@@ -14,6 +14,11 @@ Changes
 * Changed ...
 
 
+0.5.2 (2021-04-13)
+===========
+
+* Added table-driven example dashboard and upload script
+
 0.5.1 (2021-04-06)
 ===========
 
