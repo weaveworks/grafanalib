@@ -390,7 +390,7 @@ class Target(object):
     step = attr.ib(default=DEFAULT_STEP)
     target = attr.ib(default="")
     instant = attr.ib(validator=instance_of(bool), default=False)
-    datasource = attr.ib(default="")
+    datasource = attr.ib(default=None)
 
     def to_json_data(self):
         return {

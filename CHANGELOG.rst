@@ -6,6 +6,7 @@ x.x.x (TBD)
 ==================
 
 * Added ...
+* Fix default target datasource to work with newer versions of Grafana
 
 
 Changes
