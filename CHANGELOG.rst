@@ -9,7 +9,7 @@ x.x.x (TBD)
 * Added timeField field for the Elasticsearch target to allow the alert to change its state
 * Added nameFilter field for the AlertList panel
 * Added dashboardTags field for the AlertList panel
-* Added maxDataPoints field to the Stats panel
+* Removed re-defined maxDataPoints field from multiple panels
 
 
 Changes
