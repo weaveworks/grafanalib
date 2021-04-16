@@ -8,13 +8,14 @@ x.x.x (TBD)
 * Added ...
 
 
+
 Changes
 -------
 
-* Changed ...
+* Fix default target datasource to work with newer versions of Grafana
 
 
-0.5.1 (2021-04-06)
+0.5.10 (2021-04-06)
 ===========
 
 * Added timeField field for the Elasticsearch target to allow the alert to change its state
