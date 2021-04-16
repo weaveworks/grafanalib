@@ -89,6 +89,7 @@ HEATMAP_TYPE = 'heatmap'
 STATUSMAP_TYPE = 'flant-statusmap-panel'
 SVG_TYPE = 'marcuscalidus-svg-panel'
 PIE_CHART_TYPE = 'grafana-piechart-panel'
+TIMESERIES_TYPE = 'timeseries'
 
 DEFAULT_FILL = 1
 DEFAULT_REFRESH = '10s'
@@ -1379,6 +1380,89 @@ class Graph(Panel):
             return t if t.refId else attr.evolve(t, refId=next(auto_ref_ids))
         return self._map_targets(set_refid)
 
+@attr.s
+class TimeSeries(Panel):
+    """Generates Time Series panel json structure
+
+    Grafana doc on time series: https://grafana.com/docs/grafana/latest/panels/visualizations/time-series/
+
+    :param dataSource: Grafana datasource name
+    :param targets: list of metric requests for chosen datasource
+    :param title: panel title
+    :param textMode: define Grafana will show name or value: keys: 'auto' 'name' 'none' 'value' 'value_and_name'
+    :param colorMode: defines if Grafana will color panel background: keys "value" "background"
+    :param graphMode: defines if Grafana will draw graph: keys 'area' 'none'
+    :param orientation: Stacking direction in case of multiple series or fields: keys 'auto' 'horizontal' 'vertical'
+    :param alignment: defines value & title positioning: keys 'auto' 'centre'
+    :param description: optional panel description
+    :param editable: defines if panel is editable via web interfaces
+    :param format: defines value units
+    :param height: defines panel height
+    :param id: panel id
+    :param decimals: number of decimals to display
+    :param interval: defines time interval between metric queries
+    :param links: additional web links
+    :param mappings: the list of values to text mappings
+        This should be a list of StatMapping objects
+        https://grafana.com/docs/grafana/latest/panels/field-configuration-options/#value-mapping
+    :param reduceCalc: algorithm for reduction to a single value: keys
+        'mean' 'lastNotNull' 'last' 'first' 'firstNotNull' 'min' 'max' 'sum' 'total'
+    :param span: defines the number of spans that will be used for panel
+    :param thresholds: single stat thresholds
+    :param transparent: defines if the panel should be transparent
+    """
+
+    displayMode = attr.ib(default='list')
+    placement = attr.ib(default='bottom')
+    textMode = attr.ib(default='auto')
+    colorMode = attr.ib(default='value')
+    graphMode = attr.ib(default='area')
+    orientation = attr.ib(default='auto')
+    alignment = attr.ib(default='auto')
+    format = attr.ib(default='none')
+    mappings = attr.ib(default=attr.Factory(list))
+    span = attr.ib(default=6)
+    thresholds = attr.ib(default="")
+    reduceCalc = attr.ib(default='mean', type=str)
+    decimals = attr.ib(default=None)
+    maxDataPoints = attr.ib(default=None)
+    def to_json_data(self):
+        return self.panel_json(
+            {
+                'fieldConfig': {
+                    'defaults': {
+                        'custom': {},
+                        'decimals': self.decimals,
+                        'mappings': self.mappings,
+                        'thresholds': {
+                            'mode': 'absolute',
+                            'steps': self.thresholds,
+                        },
+                        'unit': self.format
+                    }
+                },
+                'options': {
+                    'legend': {
+                        "displayMode": self.displayMode,
+                        "placement": self.placement
+                    },
+                    'textMode': self.textMode,
+                    'colorMode': self.colorMode,
+                    'graphMode': self.graphMode,
+                    'justifyMode': self.alignment,
+                    'orientation': self.orientation,
+                    'reduceOptions': {
+                        'calcs': [
+                            self.reduceCalc
+                        ],
+                        'fields': '',
+                        'values': False
+                    }
+                },
+                'type': TIMESERIES_TYPE,
+                'maxDataPoints': self.maxDataPoints
+            }
+        )
 
 @attr.s
 class SparkLine(object):
