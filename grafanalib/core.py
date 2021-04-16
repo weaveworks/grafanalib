@@ -1581,6 +1581,7 @@ class Stat(Panel):
     thresholds = attr.ib(default="")
     reduceCalc = attr.ib(default='mean', type=str)
     decimals = attr.ib(default=None)
+    maxDataPoints = attr.ib(default=None)
 
     def to_json_data(self):
         return self.panel_json(
@@ -1612,6 +1613,7 @@ class Stat(Panel):
                     }
                 },
                 'type': STAT_TYPE,
+                'maxDataPoints': self.maxDataPoints
             }
         )
 
