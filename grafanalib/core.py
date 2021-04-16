@@ -2593,7 +2593,7 @@ class PieChart(Panel):
     :param id: panel id
     :param pieType: defines the shape of the pie chart (pie or donut)
     :param showLegend: defines if the legend should be shown
-    :param showLegend: defines if the legend should show values
+    :param showLegendValues: defines if the legend should show values
     :param legendType: defines where the legend position
     :param links: additional web links
     :param span: defines the number of spans that will be used for panel

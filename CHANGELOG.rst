@@ -12,6 +12,8 @@ x.x.x (TBD)
 Changes
 -------
 
+
+* bugfix load_dashboard add support for old python version 2.x, 3.3 and 3.4 
 * Fix default target datasource to work with newer versions of Grafana
 
 
