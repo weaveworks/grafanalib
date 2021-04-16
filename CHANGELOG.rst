@@ -8,17 +8,16 @@ x.x.x (TBD)
 * Added ...
 
 
-
 Changes
 -------
 
-
 * bugfix load_dashboard add support for old python version 2.x, 3.3 and 3.4 
 * Fix default target datasource to work with newer versions of Grafana
+* Added table-driven example dashboard and upload script
 
 
-0.5.10 (2021-04-06)
-===========
+0.5.11 (2021-04-06)
+===================
 
 * Added timeField field for the Elasticsearch target to allow the alert to change its state
 * Added nameFilter field for the AlertList panel
@@ -27,7 +26,7 @@ Changes
 Thanks a lot for your contributions to this release, @dafna-starkware
 
 0.5.10 (2021-03-21)
-==================
+===================
 
 * Added Logs panel (https://grafana.com/docs/grafana/latest/panels/visualizations/logs-panel/)
 * Added Cloudwatch metrics datasource (https://grafana.com/docs/grafana/latest/datasources/cloudwatch/)
