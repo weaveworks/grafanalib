@@ -1380,6 +1380,7 @@ class Graph(Panel):
             return t if t.refId else attr.evolve(t, refId=next(auto_ref_ids))
         return self._map_targets(set_refid)
 
+
 @attr.s
 class TimeSeries(Panel):
     """Generates Time Series panel json structure
@@ -1425,7 +1426,7 @@ class TimeSeries(Panel):
     thresholds = attr.ib(default="")
     reduceCalc = attr.ib(default='mean', type=str)
     decimals = attr.ib(default=None)
-    maxDataPoints = attr.ib(default=None)
+
     def to_json_data(self):
         return self.panel_json(
             {
@@ -1460,9 +1461,9 @@ class TimeSeries(Panel):
                     }
                 },
                 'type': TIMESERIES_TYPE,
-                'maxDataPoints': self.maxDataPoints
             }
         )
+
 
 @attr.s
 class SparkLine(object):
