@@ -1722,8 +1722,6 @@ class SingleStat(Panel):
         Additional info can be found in docs:
         https://grafana.com/docs/grafana/latest/features/panels/singlestat/#value-to-text-mapping
     :param mappingTypes: the list of available mapping types for panel
-    :param maxDataPoints: maximum metric query results,
-        that will be used for rendering
     :param minSpan: minimum span number
     :param nullText: defines what to show if metric query result is undefined
     :param nullPointMode: defines how to render undefined values
@@ -1762,7 +1760,6 @@ class SingleStat(Panel):
             MAPPING_RANGE_TO_TEXT,
         ]),
     )
-    maxDataPoints = attr.ib(default=100)
     minSpan = attr.ib(default=None)
     nullText = attr.ib(default=None)
     nullPointMode = attr.ib(default='connected')
@@ -1794,7 +1791,6 @@ class SingleStat(Panel):
                 'hideTimeOverride': self.hideTimeOverride,
                 'mappingType': self.mappingType,
                 'mappingTypes': self.mappingTypes,
-                'maxDataPoints': self.maxDataPoints,
                 'minSpan': self.minSpan,
                 'nullPointMode': self.nullPointMode,
                 'nullText': self.nullText,
@@ -2096,8 +2092,6 @@ class BarGauge(Panel):
     :param limit: limit of number of values to show when not Calculating
     :param links: additional web links
     :param max: maximum value of the gauge
-    :param maxDataPoints: maximum metric query results,
-        that will be used for rendering
     :param min: minimum value of the gauge
     :param minSpan: minimum span number
     :param orientation: orientation of the bar gauge
@@ -2135,7 +2129,6 @@ class BarGauge(Panel):
     label = attr.ib(default=None)
     limit = attr.ib(default=None)
     max = attr.ib(default=100)
-    maxDataPoints = attr.ib(default=100)
     min = attr.ib(default=0)
     minSpan = attr.ib(default=None)
     orientation = attr.ib(
@@ -2162,7 +2155,6 @@ class BarGauge(Panel):
                 'cacheTimeout': self.cacheTimeout,
                 'hideTimeOverride': self.hideTimeOverride,
                 'interval': self.interval,
-                'maxDataPoints': self.maxDataPoints,
                 'minSpan': self.minSpan,
                 'options': {
                     'displayMode': self.displayMode,
@@ -2212,8 +2204,6 @@ class GaugePanel(Panel):
     :param limit: limit of number of values to show when not Calculating
     :param links: additional web links
     :param max: maximum value of the gauge
-    :param maxDataPoints: maximum metric query results,
-        that will be used for rendering
     :param min: minimum value of the gauge
     :param minSpan: minimum span number
     :param rangeMaps: the list of value to text mappings
@@ -2240,7 +2230,6 @@ class GaugePanel(Panel):
     label = attr.ib(default=None)
     limit = attr.ib(default=None)
     max = attr.ib(default=100)
-    maxDataPoints = attr.ib(default=100)
     min = attr.ib(default=0)
     minSpan = attr.ib(default=None)
     rangeMaps = attr.ib(default=attr.Factory(list))
@@ -2263,7 +2252,6 @@ class GaugePanel(Panel):
                 'cacheTimeout': self.cacheTimeout,
                 'hideTimeOverride': self.hideTimeOverride,
                 'interval': self.interval,
-                'maxDataPoints': self.maxDataPoints,
                 'minSpan': self.minSpan,
                 'options': {
                     'fieldOptions': {
