@@ -6,10 +6,6 @@ x.x.x (TBD)
 ==================
 
 * Added ...
-* Added timeField field for the Elasticsearch target to allow the alert to change its state
-* Added nameFilter field for the AlertList panel
-* Added dashboardTags field for the AlertList panel
-* Removed re-defined maxDataPoints field from multiple panels
 
 
 Changes
@@ -18,6 +14,7 @@ Changes
 * bugfix load_dashboard add support for old python version 2.x, 3.3 and 3.4 
 * Fix default target datasource to work with newer versions of Grafana
 * Added table-driven example dashboard and upload script
+* Removed re-defined maxDataPoints field from multiple panels
 
 
 0.5.11 (2021-04-06)
