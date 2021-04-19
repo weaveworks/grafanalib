@@ -1,6 +1,19 @@
 """Tests for core."""
 
+import random
 import grafanalib.core as G
+
+
+def dummy_grid_pos() -> G.GridPos:
+    return G.GridPos(h=1, w=2, x=3, y=4)
+
+
+def dummy_data_link():
+    return G.DataLink(
+        title='dummy title',
+        linkUrl='https://www.dummy-link-url.com',
+        isNewTab=True
+    )
 
 
 def test_template_defaults():
@@ -233,3 +246,17 @@ def test_graph_threshold_custom():
     assert data['op'] == G.EVAL_GT
     assert data['fillColor'] == color
     assert data['lineColor'] == G.RED
+
+
+def test_alert_list():
+    alert_list = G.AlertList(
+        dashboardTags=['dummy tag'],
+        description='dummy description',
+        gridPos=dummy_grid_pos(),
+        id=random.randint(1, 10),
+        links=[dummy_data_link(), dummy_data_link()],
+        nameFilter='dummy name filter',
+        stateFilter=[G.ALERTLIST_STATE_ALERTING, G.ALERTLIST_STATE_OK],
+        title='dummy title'
+    )
+    alert_list.to_json_data()

@@ -1476,6 +1476,7 @@ class AlertList(object):
 
     :param dashboardTags: A list of tags (strings) for the panel.
     :param description: Panel description, supports markdown and links.
+    :param gridPos: describes the panel size and position in grid coordinates.
     :param id: panel id
     :param limit: Max number of alerts that can be displayed in the list.
     :param nameFilter: Show only alerts that contain nameFilter in their name.
@@ -1501,8 +1502,8 @@ class AlertList(object):
         validator=attr.validators.deep_iterable(
             member_validator=attr.validators.instance_of(str),
             iterable_validator=attr.validators.instance_of(list)))
-    description = attr.ib(default="")
-    gridPos = attr.ib(default=None)
+    description = attr.ib(default="", validator=instance_of(str))
+    gridPos = attr.ib(default=None, validator=instance_of(GridPos))
     id = attr.ib(default=None)
     limit = attr.ib(default=DEFAULT_LIMIT)
     links = attr.ib(
@@ -1510,6 +1511,7 @@ class AlertList(object):
         validator=attr.validators.deep_iterable(
             member_validator=attr.validators.instance_of(DataLink),
             iterable_validator=attr.validators.instance_of(list)))
+    nameFilter = attr.ib(default="", validator=instance_of(str))
     onlyAlertsOnDashboard = attr.ib(default=True, validator=instance_of(bool))
     show = attr.ib(default=ALERTLIST_SHOW_CURRENT)
     sortOrder = attr.ib(default=SORT_ASC, validator=in_([1, 2, 3]))
