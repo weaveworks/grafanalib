@@ -11,10 +11,11 @@ x.x.x (TBD)
 Changes
 -------
 
-* bugfix load_dashboard add support for old python version 2.x, 3.3 and 3.4 
+* bugfix load_dashboard add support for old python version 2.x, 3.3 and 3.4
 * Fix default target datasource to work with newer versions of Grafana
 * Added table-driven example dashboard and upload script
 * Removed re-defined maxDataPoints field from multiple panels
+* Fix the AlertList class and add a test for it
 
 
 0.5.11 (2021-04-06)
