@@ -2,7 +2,7 @@
 Changelog
 =========
 
-0.5.12 (2021-04-06)
+0.5.12 (2021-04-24)
 ==================
 
 * Added hide parameter to CloudwatchMetricsTarget class
