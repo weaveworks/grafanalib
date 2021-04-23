@@ -16,6 +16,7 @@ Changes
 * Added table-driven example dashboard and upload script
 * Removed re-defined maxDataPoints field from multiple panels
 * Fix the AlertList class and add a test for it
+* Added hide parameter to CloudwatchMetricsTarget class
 
 
 0.5.11 (2021-04-06)
