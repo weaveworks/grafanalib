@@ -40,7 +40,7 @@ class CloudwatchMetricsTarget(object):
     refId = attr.ib(default="")
     region = attr.ib(default="default")
     statistics = attr.ib(default=["Average"], validator=instance_of(list))
-    hide = attr.ib(default=False)
+    hide = attr.ib(default=False, validator=instance_of(bool))
 
     def to_json_data(self):
 
