@@ -10,7 +10,7 @@ x.x.x (TBD)
 Changes
 -------
 
-*
+* Bugfix: changed 'target' validator in AlertNotification to accept CloudwatchMetricsTarget
 
 0.5.12 (2021-04-24)
 ==================
