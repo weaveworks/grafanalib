@@ -371,6 +371,14 @@ class Repeat(object):
     maxPerRow = attr.ib(default=None, validator=is_valid_max_per_row)
 
 
+def is_valid_target(instance, attribute, value):
+    """
+    Check if a given attribute is a valid target
+    """
+    if not hasattr(value, "refId"):
+        raise ValueError(f"{attribute.name} should have 'refId' attribute")
+
+
 @attr.s
 class Target(object):
     """
@@ -920,7 +928,7 @@ class AlertCondition(object):
     :param type: CTYPE_*
     """
 
-    target = attr.ib(validator=instance_of(Target))
+    target = attr.ib(validator=is_valid_target)
     evaluator = attr.ib(validator=instance_of(Evaluator))
     timeRange = attr.ib(validator=instance_of(TimeRange))
     operator = attr.ib()
