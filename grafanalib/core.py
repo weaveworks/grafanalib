@@ -958,6 +958,11 @@ class AlertCondition(object):
 
 @attr.s
 class Alert(object):
+    """
+    Alert definition
+
+    :param alertRuleTags: Key Value pairs to be sent with Alert notifications
+    """
 
     name = attr.ib()
     message = attr.ib()
@@ -968,9 +973,11 @@ class Alert(object):
     noDataState = attr.ib(default=STATE_NO_DATA)
     notifications = attr.ib(default=attr.Factory(list))
     gracePeriod = attr.ib(default='5m')
+    alertRuleTags = attr.ib(default=attr.Factory(dict))
 
     def to_json_data(self):
         return {
+            'alertRuleTags': self.alertRuleTags,
             'conditions': self.alertConditions,
             'executionErrorState': self.executionErrorState,
             'frequency': self.frequency,
@@ -1270,7 +1277,6 @@ class Graph(Panel):
     Generates Graph panel json structure.
 
     :param alert: List of AlertConditions
-    :param alertRuleTags: Key Value pairs to be sent with Alert notifications
     :param dataLinks: List of data links hooked to datapoints on the graph
     :param dataSource: DataSource's name
     :param minSpan: Minimum width for each panel
@@ -1278,7 +1284,6 @@ class Graph(Panel):
     """
 
     alert = attr.ib(default=None)
-    alertRuleTags = attr.ib(default=attr.Factory(dict))
     alertThreshold = attr.ib(default=True, validator=instance_of(bool))
     aliasColors = attr.ib(default=attr.Factory(dict))
     bars = attr.ib(default=False, validator=instance_of(bool))
@@ -1353,7 +1358,6 @@ class Graph(Panel):
         }
         if self.alert:
             graphObject['alert'] = self.alert
-            graphObject['alertRuleTags'] = self.alertRuleTags
             graphObject['thresholds'] = []
         if self.thresholds and self.alert:
             print("Warning: Graph threshold ignored as Alerts defined")

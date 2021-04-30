@@ -11,6 +11,7 @@ Changes
 -------
 
 * Bugfix: changed 'target' validator in AlertNotification to accept CloudwatchMetricsTarget
+* Bugfix: 'alertRuleTags' are now defined in 'Alert' class instead of 'Graph'
 
 0.5.12 (2021-04-24)
 ==================
