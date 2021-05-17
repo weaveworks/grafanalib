@@ -1142,6 +1142,7 @@ class Panel(object):
     :param timeFrom: time range that Override relative time
     :param title: of the panel
     :param transparent: defines if panel should be transparent
+    :param transformations: defines transformations applied to the table
     """
 
     dataSource = attr.ib(default=None)
@@ -1164,6 +1165,7 @@ class Panel(object):
     timeFrom = attr.ib(default=None)
     timeShift = attr.ib(default=None)
     transparent = attr.ib(default=False, validator=instance_of(bool))
+    transformations = attr.ib(default=attr.Factory(list), validator=instance_of(list))
 
     def _map_panels(self, f):
         return f(self)
@@ -1192,6 +1194,7 @@ class Panel(object):
             'timeShift': self.timeShift,
             'title': self.title,
             'transparent': self.transparent,
+            'transformations': self.transformations
         }
         res.update(overrides)
         return res
@@ -2020,7 +2023,6 @@ class Table(Panel):
     :param title: panel title
     :param transform: table style
     :param transparent: defines if panel should be transparent
-    :param transformations: defines transformations applied to the table
     """
 
     columns = attr.ib(default=attr.Factory(list))
@@ -2034,7 +2036,6 @@ class Table(Panel):
     sort = attr.ib(
         default=attr.Factory(ColumnSort), validator=instance_of(ColumnSort))
     styles = attr.ib()
-    transformations = attr.ib(default=attr.Factory(list), validator=instance_of(list))
 
     transform = attr.ib(default=COLUMNS_TRANSFORM)
 
@@ -2087,7 +2088,6 @@ class Table(Panel):
                 'styles': self.styles,
                 'transform': self.transform,
                 'type': TABLE_TYPE,
-                'transformations': self.transformations
             }
         )
 
