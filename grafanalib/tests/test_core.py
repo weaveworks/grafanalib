@@ -8,11 +8,33 @@ def dummy_grid_pos() -> G.GridPos:
     return G.GridPos(h=1, w=2, x=3, y=4)
 
 
-def dummy_data_link():
+def dummy_data_link() -> G.DataLink:
     return G.DataLink(
         title='dummy title',
         linkUrl='https://www.dummy-link-url.com',
         isNewTab=True
+    )
+
+
+def dummy_evaluator() -> G.Evaluator:
+    return G.Evaluator(
+        type=G.EVAL_GT,
+        params=42
+    )
+
+
+def dummy_alert_condition() -> G.AlertCondition:
+    return G.AlertCondition(
+        target=G.Target(),
+        evaluator=G.Evaluator(
+            type=G.EVAL_GT,
+            params=42),
+        timeRange=G.TimeRange(
+            from_time='5m',
+            to_time='now'
+        ),
+        operator=G.OP_AND,
+        reducerType=G.RTYPE_AVG,
     )
 
 
@@ -260,3 +282,13 @@ def test_alert_list():
         title='dummy title'
     )
     alert_list.to_json_data()
+
+
+def test_alert():
+    alert = G.Alert(
+        name='dummy name',
+        message='dummy message',
+        alertConditions=dummy_alert_condition(),
+        alertRuleTags=dict(alert_rul_dummy_key='alert rul dummy value')
+    )
+    alert.to_json_data()

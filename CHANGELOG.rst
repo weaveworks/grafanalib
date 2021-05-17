@@ -5,12 +5,13 @@ Changelog
 x.x.x (TBD)
 ==================
 
-* Added ...
+* Added a test for the Alert class.
 
 Changes
 -------
 
 * Bugfix: changed 'target' validator in AlertNotification to accept CloudwatchMetricsTarget
+* Moved the alertRuleTag field from Graph to Alert.
 
 0.5.12 (2021-04-24)
 ==================
