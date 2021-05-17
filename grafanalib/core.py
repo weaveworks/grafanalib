@@ -2034,7 +2034,7 @@ class Table(Panel):
     sort = attr.ib(
         default=attr.Factory(ColumnSort), validator=instance_of(ColumnSort))
     styles = attr.ib()
-    transformations = attr.ib(default=list(), validator=instance_of(list))
+    transformations = attr.ib(default=attr.Factory(list), validator=instance_of(list))
 
     transform = attr.ib(default=COLUMNS_TRANSFORM)
 
