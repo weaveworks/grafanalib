@@ -2,7 +2,7 @@
 Changelog
 =========
 
-x.x.x (TBD)
+0.5.13 (2021-05-17)
 ==================
 
 * Added a test for the Alert class.
