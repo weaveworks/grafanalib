@@ -113,6 +113,7 @@ def test_table_styled_columns():
         G.ColumnStyle(pattern='Foo'),
     ]
 
+
 def test_table_transformations():
     t = G.Table(
         dataSource='some data source',
@@ -120,26 +121,28 @@ def test_table_transformations():
             G.Target(expr='some expr'),
         ],
         title='table title',
-        transformations = [
-                            {
-                                "id": "seriesToRows",
-                                "options": {}
-                            },
-                            {
-                                "id": "organize",
-                                "options": {
-                                    "excludeByName": {
-                                    "Time": True
-                                    },
-                                    "indexByName": {},
-                                    "renameByName": {
-                                    "Value": "Dummy"
-                                    }
-                            }
-                        }]
+        transformations=[
+            {
+                "id": "seriesToRows",
+                "options": {}
+            },
+            {
+                "id": "organize",
+                "options": {
+                    "excludeByName": {
+                        "Time": True
+                    },
+                    "indexByName": {},
+                    "renameByName": {
+                        "Value": "Dummy"
+                    }
+                }
+            }
+        ]
     )
     assert len(t.to_json_data()['transformations']) == 2
     assert t.to_json_data()['transformations'][0]["id"] == "seriesToRows"
+
 
 def test_stat_no_repeat():
     t = G.Stat(
