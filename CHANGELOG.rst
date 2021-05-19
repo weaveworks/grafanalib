@@ -5,7 +5,10 @@ Changelog
 x.x.x (TBD)
 ==================
 
+* Added colour overrides to pie chart panel
+* Added missing attributes from xAxis class
 * Added transformations for the Panel class (https://grafana.com/docs/grafana/next/panels/transformations/types-options/#transformation-types-and-options)
+
 
 Changes
 -------

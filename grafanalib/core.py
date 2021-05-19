@@ -443,6 +443,14 @@ def is_valid_xaxis_mode(instance, attribute, value):
 
 @attr.s
 class XAxis(object):
+    """
+    X Axis
+
+    :param mode: Mode of axis can be time, series or histogram
+    :param name: X axis name
+    :param value: list of values eg. ["current"] or ["avg"]
+    :param show: show X axis
+    """
 
     mode = attr.ib(default='time', validator=is_valid_xaxis_mode)
     name = attr.ib(default=None)
@@ -451,6 +459,9 @@ class XAxis(object):
 
     def to_json_data(self):
         return {
+            'mode': self.mode,
+            'name': self.name,
+            'values': self.values,
             'show': self.show,
         }
 
@@ -2593,6 +2604,8 @@ class Svg(Panel):
 class PieChart(Panel):
     """Generates Pie Chart panel json structure
     Grafana doc on Pie Chart: https://grafana.com/grafana/plugins/grafana-piechart-panel
+
+    :param aliasColors: dictionary of color overrides
     :param dataSource: Grafana datasource name
     :param targets: list of metric requests for chosen datasource
     :param title: panel title
@@ -2610,6 +2623,7 @@ class PieChart(Panel):
     :param transparent: defines if the panel is transparent
     """
 
+    aliasColors = attr.ib(default=attr.Factory(dict))
     format = attr.ib(default='none')
     legendType = attr.ib(default='Right side')
     pieType = attr.ib(default='pie')
@@ -2620,6 +2634,7 @@ class PieChart(Panel):
     def to_json_data(self):
         return self.panel_json(
             {
+                'aliasColors': self.aliasColors,
                 'format': self.format,
                 'pieType': self.pieType,
                 'height': self.height,
