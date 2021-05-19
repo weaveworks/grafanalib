@@ -5,7 +5,8 @@ Changelog
 x.x.x (TBD)
 ==================
 
-* Added ...
+* Added colour overrides to pie chart panel
+* Added missing attributes from xAxis class
 
 Changes
 -------
