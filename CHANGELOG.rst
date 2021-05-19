@@ -5,7 +5,7 @@ Changelog
 x.x.x (TBD)
 ==================
 
-* Added ...
+* Added transformations for the Panel class (https://grafana.com/docs/grafana/next/panels/transformations/types-options/#transformation-types-and-options)
 
 Changes
 -------
