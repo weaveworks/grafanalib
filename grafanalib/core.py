@@ -89,6 +89,7 @@ HEATMAP_TYPE = 'heatmap'
 STATUSMAP_TYPE = 'flant-statusmap-panel'
 SVG_TYPE = 'marcuscalidus-svg-panel'
 PIE_CHART_TYPE = 'grafana-piechart-panel'
+WORLD_MAP_TYPE = 'grafana-worldmap-panel'
 
 DEFAULT_FILL = 1
 DEFAULT_REFRESH = '10s'
@@ -2853,3 +2854,99 @@ class SeriesOverride(object):
             'yaxis': self.yaxis,
             'color': self.color,
         }
+
+
+WORLDMAP_CENTER = ['(0°, 0°)', 'North America', 'Europe', 'West Asia', 'SE Asia', 'Last GeoHash', 'custom']
+WORLDMAP_LOCATION_DATA = ['countries', 'countries_3letter', 'states', 'probes', 'geohash', 'json_endpoint', 'jsonp endpoint', 'json result', 'table']
+
+
+@attr.s
+class Worldmap(Panel):
+    """Generates Worldmap panel json structure
+    Grafana doc on Worldmap: https://grafana.com/grafana/plugins/grafana-worldmap-panel/
+
+    :param aggregation: metric aggregation: min, max, avg, current, total
+    :param circleMaxSize: Maximum map circle size
+    :param circleMinSize: Minimum map circle size
+    :param decimals: Number of decimals to show
+    :param geoPoint: Name of the geo_point/geohash column. This is used to calculate where the circle should be drawn.
+    :param locationData: Format of the location data, options in `WORLDMAP_LOCATION_DATA`
+    :param locationName: Name of the Location Name column. Used to label each circle on the map. If it is empty then the geohash value is used.
+    :param metric: Name of the metric column. This is used to give the circle a value - this determines how large the circle is.
+    :param mapCenter: Where to centre the map, default center (0°, 0°). Options: North America, Europe, West Asia, SE Asia, Last GeoHash, custom
+    :param mapCenterLatitude: If mapCenter=custom set the initial map latitude
+    :param mapCenterLongitude: If mapCenter=custom set the initial map longitude
+    :param hideEmpty: Hide series with only nulls
+    :param hideZero: Hide series with only zeros
+    :param initialZoom: Initial map zoom
+    :param jsonUrl: URL for JSON location data if `json_endpoint` or `jsonp endpoint` used
+    :param jsonpCallback: Callback if `jsonp endpoint` used
+    :param mouseWheelZoom: Zoom map on scroll of mouse wheel
+    :param stickyLabels: Sticky map labels
+    :param thresholds: String of thresholds eg. '0,10,20'
+    :param thresholdsColors: List of colors to be used in each threshold
+    :param unitPlural: Units plural
+    :param unitSingle: Units single
+    :param unitSingular: Units singular
+    """
+
+    circleMaxSize = attr.ib(default=30, validator=instance_of(int))
+    circleMinSize = attr.ib(default=2, validator=instance_of(int))
+    decimals = attr.ib(default=0, validator=instance_of(int))
+    geoPoint = attr.ib(default='geohash', validator=instance_of(str))
+    locationData = attr.ib(default='countries', validator=attr.validators.in_(WORLDMAP_LOCATION_DATA))
+    locationName = attr.ib(default='')
+    hideEmpty = attr.ib(default=False, validator=instance_of(bool))
+    hideZero = attr.ib(default=False, validator=instance_of(bool))
+    initialZoom = attr.ib(default=1, validator=instance_of(int))
+    jsonUrl = attr.ib(default='', validator=instance_of(str))
+    jsonpCallback = attr.ib(default='', validator=instance_of(str))
+    mapCenter = attr.ib(default='(0°, 0°)', validator=attr.validators.in_(WORLDMAP_CENTER))
+    mapCenterLatitude = attr.ib(default=0, validator=instance_of(int))
+    mapCenterLongitude = attr.ib(default=0, validator=instance_of(int))
+    metric = attr.ib(default='Value')
+    mouseWheelZoom = attr.ib(default=False, validator=instance_of(bool))
+    stickyLabels = attr.ib(default=False, validator=instance_of(bool))
+    thresholds = attr.ib(default='0,100,150', validator=instance_of(str))
+    thresholdColors = attr.ib(default=["#73BF69", "#73BF69", "#FADE2A", "#C4162A"], validator=instance_of(list))
+    unitPlural = attr.ib(default='', validator=instance_of(str))
+    unitSingle = attr.ib(default='', validator=instance_of(str))
+    unitSingular = attr.ib(default='', validator=instance_of(str))
+    aggregation = attr.ib(default='total', validator=instance_of(str))
+
+    def to_json_data(self):
+        return self.panel_json(
+            {
+                'circleMaxSize': self.circleMaxSize,
+                'circleMinSize': self.circleMinSize,
+                'colors': self.thresholdColors,
+                'decimals': self.decimals,
+                'esGeoPoint': self.geoPoint,
+                'esMetric': self.metric,
+                'locationData': self.locationData,
+                'esLocationName': self.locationName,
+                'hideEmpty': self.hideEmpty,
+                'hideZero': self.hideZero,
+                'initialZoom': self.initialZoom,
+                'jsonUrl': self.jsonUrl,
+                'jsonpCallback': self.jsonpCallback,
+                'mapCenter': self.mapCenter,
+                'mapCenterLatitude': self.mapCenterLatitude,
+                'mapCenterLongitude': self.mapCenterLongitude,
+                'mouseWheelZoom': self.mouseWheelZoom,
+                'stickyLabels': self.stickyLabels,
+                'thresholds': self.thresholds,
+                'unitPlural': self.unitPlural,
+                'unitSingle': self.unitSingle,
+                'unitSingular': self.unitSingular,
+                'valueName': self.aggregation,
+                'tableQueryOptions': {
+                    'queryType': 'geohash',
+                    'geohashField': 'geohash',
+                    'latitudeField': 'latitude',
+                    'longitudeField': 'longitude',
+                    'metricField': 'metric'
+                },
+                'type': WORLD_MAP_TYPE
+            }
+        )

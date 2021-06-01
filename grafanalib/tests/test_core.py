@@ -322,3 +322,15 @@ def test_alert():
         alertRuleTags=dict(alert_rul_dummy_key='alert rul dummy value')
     )
     alert.to_json_data()
+
+
+def test_worldmap():
+    data_source = 'dummy data source'
+    targets = ['dummy_prom_query']
+    title = 'dummy title'
+    worldmap = G.Worldmap(data_source, targets, title, circleMaxSize=11)
+    data = worldmap.to_json_data()
+    assert data['targets'] == targets
+    assert data['datasource'] == data_source
+    assert data['title'] == title
+    assert data['circleMaxSize'] == 11
