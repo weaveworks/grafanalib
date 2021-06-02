@@ -1604,7 +1604,6 @@ class Stat(Panel):
     textMode = attr.ib(default='auto')
     thresholds = attr.ib(default="")
 
-
     def to_json_data(self):
         return self.panel_json(
             {
