@@ -232,6 +232,28 @@ def test_graph_panel():
     assert 'alert' not in data
 
 
+def test_panel_extra_json():
+    data_source = 'dummy data source'
+    targets = ['dummy_prom_query']
+    title = 'dummy title'
+    extraJson = {
+        'fillGradient': 6,
+        'yaxis': {'align': True},
+        'legend': {'avg': True},
+    }
+    graph = G.Graph(data_source, targets, title, extraJson=extraJson)
+    data = graph.to_json_data()
+    assert data['targets'] == targets
+    assert data['datasource'] == data_source
+    assert data['title'] == title
+    assert 'alert' not in data
+    assert data['fillGradient'] == 6
+    assert data['yaxis']['align'] is True
+    # Nested non-dict object should also be deep-updated
+    assert data['legend']['max'] is False
+    assert data['legend']['avg'] is True
+
+
 def test_graph_panel_threshold():
     data_source = 'dummy data source'
     targets = ['dummy_prom_query']
