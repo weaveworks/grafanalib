@@ -1169,6 +1169,8 @@ class Panel(object):
     :param title: of the panel
     :param transparent: defines if panel should be transparent
     :param transformations: defines transformations applied to the table
+    :param extraJson: raw JSON additions or overrides added to the JSON output
+           of this panel, can be used for using unsupported features
     """
 
     dataSource = attr.ib(default=None)
