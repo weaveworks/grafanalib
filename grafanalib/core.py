@@ -1341,7 +1341,7 @@ class Graph(Panel):
     alertThreshold = attr.ib(default=True, validator=instance_of(bool))
     aliasColors = attr.ib(default=attr.Factory(dict))
     align = attr.ib(default=False, validator=instance_of(bool))
-    alignLevel = attr.ib(default=None, validator=instance_of(int))
+    alignLevel = attr.ib(default=0, validator=instance_of(int))
     bars = attr.ib(default=False, validator=instance_of(bool))
     dataLinks = attr.ib(default=attr.Factory(list))
     error = attr.ib(default=False, validator=instance_of(bool))
