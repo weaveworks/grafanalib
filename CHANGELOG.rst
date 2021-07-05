@@ -9,6 +9,7 @@ x.x.x (TBD)
 * Added missing attributes from xAxis class
 * Added transformations for the Panel class (https://grafana.com/docs/grafana/next/panels/transformations/types-options/#transformation-types-and-options)
 * Added Worldmap panel (https://grafana.com/grafana/plugins/grafana-worldmap-panel/)
+* Added missing fill gradient to Graph panel
 
 Changes
 -------

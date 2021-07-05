@@ -1296,9 +1296,15 @@ class Graph(Panel):
     Generates Graph panel json structure.
 
     :param alert: List of AlertConditions
+    :param bars: Display values as a bar chart
     :param dataLinks: List of data links hooked to datapoints on the graph
-    :param dataSource: DataSource's name
-    :param minSpan: Minimum width for each panel
+    :param fill: Area fill, amount of color fill for a series. (default 1, 0 is none)
+    :param fillGradient: Degree of gradient on the area fill. (0 is no gradient, 10 is a steep gradient. Default is 0.)
+    :param lines: Display values as a line graph
+    :param points: Display points for values (default False)
+    :param pointRadius: Controls how large the points are
+    :param stack: Each series is stacked on top of another
+    :param percentage: Available when Stack is selected. Each series is drawn as a percentage of the total of all series
     :param thresholds: List of GraphThresholds - Only valid when alert not defined
     """
 
@@ -1309,6 +1315,7 @@ class Graph(Panel):
     dataLinks = attr.ib(default=attr.Factory(list))
     error = attr.ib(default=False, validator=instance_of(bool))
     fill = attr.ib(default=1, validator=instance_of(int))
+    fillGradient = attr.ib(default=0, validator=instance_of(int))
     grid = attr.ib(default=attr.Factory(Grid), validator=instance_of(Grid))
     isNew = attr.ib(default=True, validator=instance_of(bool))
     legend = attr.ib(
@@ -1331,7 +1338,6 @@ class Graph(Panel):
     )
     thresholds = attr.ib(default=attr.Factory(list))
     xAxis = attr.ib(default=attr.Factory(XAxis), validator=instance_of(XAxis))
-    # XXX: This isn't a *good* default, rather it's the default Grafana uses.
     try:
         yAxes = attr.ib(
             default=attr.Factory(YAxes),
