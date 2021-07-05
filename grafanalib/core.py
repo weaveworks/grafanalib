@@ -2520,8 +2520,10 @@ class PieChart(Panel):
     :param aliasColors: dictionary of color overrides
     :param format: defines value units
     :param pieType: defines the shape of the pie chart (pie or donut)
+    :param percentageDecimals: Number of decimal places to show if percentages shown in legned
     :param showLegend: defines if the legend should be shown
     :param showLegendValues: defines if the legend should show values
+    :param showLegendPercentage: Show percentages in the legend
     :param legendType: defines where the legend position
     :param thresholds: defines thresholds
     """
@@ -2530,8 +2532,10 @@ class PieChart(Panel):
     format = attr.ib(default='none')
     legendType = attr.ib(default='Right side')
     pieType = attr.ib(default='pie')
+    percentageDecimals = attr.ib(default=0, validator=instance_of(int))
     showLegend = attr.ib(default=True)
     showLegendValues = attr.ib(default=True)
+    showLegendPercentage = attr.ib(default=False, validator=instance_of(bool))
     thresholds = attr.ib(default="")
 
     def to_json_data(self):
@@ -2549,7 +2553,9 @@ class PieChart(Panel):
                 },
                 'legend': {
                     'show': self.showLegend,
-                    'values': self.showLegendValues
+                    'values': self.showLegendValues,
+                    'percentage': self.showLegendPercentage,
+                    'percentageDecimals': self.percentageDecimals
                 },
                 'legendType': self.legendType,
                 'type': PIE_CHART_TYPE,

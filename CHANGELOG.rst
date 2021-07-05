@@ -11,6 +11,7 @@ x.x.x (TBD)
 * Added Worldmap panel (https://grafana.com/grafana/plugins/grafana-worldmap-panel/)
 * Added missing fill gradient to Graph panel
 * Added missing align to graph panel
+* Added missing show percentage attribute to Pie chart panel
 
 Changes
 -------
