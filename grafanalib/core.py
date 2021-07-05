@@ -472,7 +472,16 @@ class YAxis(object):
     """A single Y axis.
 
     Grafana graphs have two Y axes: one on the left and one on the right.
+
+    :param decimals: Defines how many decimals are displayed for Y value. (default auto)
+    :param format: The display unit for the Y value
+    :param label: The Y axis label. (default “")
+    :param logBase: The scale to use for the Y value, linear, or logarithmic. (default linear)
+    :param max: The maximum Y value
+    :param min: The minimum Y value
+    :param show: Show or hide the axis
     """
+
     decimals = attr.ib(default=None)
     format = attr.ib(default=None)
     label = attr.ib(default=None)
@@ -1296,6 +1305,8 @@ class Graph(Panel):
     Generates Graph panel json structure.
 
     :param alert: List of AlertConditions
+    :param align: Select to align left and right Y-axes by value
+    :param alignLevel: Available when Align is selected. Value to use for alignment of left and right Y-axes
     :param bars: Display values as a bar chart
     :param dataLinks: List of data links hooked to datapoints on the graph
     :param fill: Area fill, amount of color fill for a series. (default 1, 0 is none)
@@ -1311,6 +1322,8 @@ class Graph(Panel):
     alert = attr.ib(default=None)
     alertThreshold = attr.ib(default=True, validator=instance_of(bool))
     aliasColors = attr.ib(default=attr.Factory(dict))
+    align = attr.ib(default=False, validator=instance_of(bool))
+    alignLevel = attr.ib(default=None, validator=instance_of(int))
     bars = attr.ib(default=False, validator=instance_of(bool))
     dataLinks = attr.ib(default=attr.Factory(list))
     error = attr.ib(default=False, validator=instance_of(bool))
@@ -1380,6 +1393,10 @@ class Graph(Panel):
             'type': GRAPH_TYPE,
             'xaxis': self.xAxis,
             'yaxes': self.yAxes,
+            'yaxis': {
+                'align': self.align,
+                'alignLevel': self.alignLevel
+            }
         }
         if self.alert:
             graphObject['alert'] = self.alert
