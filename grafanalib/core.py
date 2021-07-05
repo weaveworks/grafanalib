@@ -1131,6 +1131,20 @@ class Dashboard(object):
         }
 
 
+def _deep_update(base_dict, extra_dict):
+    if extra_dict is None:
+        return base_dict
+
+    for k, v in extra_dict.items():
+        if k in base_dict and hasattr(base_dict[k], "to_json_data"):
+            base_dict[k] = base_dict[k].to_json_data()
+
+        if k in base_dict and isinstance(base_dict[k], dict):
+            _deep_update(base_dict[k], v)
+        else:
+            base_dict[k] = v
+
+
 @attr.s
 class Panel(object):
     """
@@ -1155,6 +1169,8 @@ class Panel(object):
     :param title: of the panel
     :param transparent: defines if panel should be transparent
     :param transformations: defines transformations applied to the table
+    :param extraJson: raw JSON additions or overrides added to the JSON output
+           of this panel, can be used for using unsupported features
     """
 
     dataSource = attr.ib(default=None)
@@ -1178,6 +1194,7 @@ class Panel(object):
     timeShift = attr.ib(default=None)
     transparent = attr.ib(default=False, validator=instance_of(bool))
     transformations = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+    extraJson = attr.ib(default=None, validator=attr.validators.optional(instance_of(dict)))
 
     def _map_panels(self, f):
         return f(self)
@@ -1209,6 +1226,7 @@ class Panel(object):
             'transformations': self.transformations
         }
         res.update(overrides)
+        _deep_update(res, self.extraJson)
         return res
 
 
