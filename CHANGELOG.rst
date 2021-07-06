@@ -9,6 +9,9 @@ x.x.x (TBD)
 * Added missing attributes from xAxis class
 * Added transformations for the Panel class (https://grafana.com/docs/grafana/next/panels/transformations/types-options/#transformation-types-and-options)
 * Added Worldmap panel (https://grafana.com/grafana/plugins/grafana-worldmap-panel/)
+* Added missing fill gradient to Graph panel
+* Added missing align to graph panel
+* Added missing show percentage attribute to Pie chart panel
 * Added ``extraJson`` attribute to the Panel class for overriding the panel with raw JSON
 
 Changes
