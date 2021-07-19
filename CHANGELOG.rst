@@ -20,7 +20,7 @@ Changes
 * ...
 
 0.5.13 (2021-05-17)
-==================
+===================
 
 * Added a test for the Alert class.
 
@@ -31,7 +31,7 @@ Changes
 * Moved the alertRuleTag field from Graph to Alert.
 
 0.5.12 (2021-04-24)
-==================
+===================
 
 * Added hide parameter to CloudwatchMetricsTarget class
 * Added table-driven example dashboard and upload script

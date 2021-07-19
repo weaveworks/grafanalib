@@ -1562,8 +1562,8 @@ class AlertList(object):
     :param span: Defines the number of spans that will be used for the panel.
     :param stateFilter: Show alerts with statuses from the stateFilter list. The list can contain a
         subset of the following statuses:
-            [ALERTLIST_STATE_ALERTING, ALERTLIST_STATE_OK, ALERTLIST_STATE_NO_DATA,
-             ALERTLIST_STATE_PAUSED, ALERTLIST_STATE_EXECUTION_ERROR, ALERTLIST_STATE_PENDING].
+        [ALERTLIST_STATE_ALERTING, ALERTLIST_STATE_OK, ALERTLIST_STATE_NO_DATA,
+        ALERTLIST_STATE_PAUSED, ALERTLIST_STATE_EXECUTION_ERROR, ALERTLIST_STATE_PENDING].
         An empty list means all alerts.
     :param title: The panel title.
     :param transparent: If true, display the panel without a background.
@@ -2678,8 +2678,8 @@ class Threshold(object):
     Example::
         thresholds = [
             Threshold('green', 0, 0.0),
-            Threshold('red', 1, 80.0)
-        ]
+            Threshold('red', 1, 80.0)]
+
     """
 
     color = attr.ib()
@@ -2718,8 +2718,9 @@ class GraphThreshold(object):
     Example:
         thresholds = [
             GraphThreshold(colorMode="ok", value=10.0),
-            GrpahThreshold(colorMode="critical", value=90.0)
-        ]
+            GraphThreshold(colorMode="critical", value=90.0)
+            ]
+
     """
 
     value = attr.ib(validator=instance_of(float))
