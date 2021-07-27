@@ -282,7 +282,8 @@ class TermsGroupBy(object):
     :param field: name of the field to group by
     :param minDocCount: min. amount of matching records to return a result
     :param order: ORDER_ASC or ORDER_DESC
-    :param orderBy: term to order the bucker
+    :param orderBy: term to order the bucket Term value: '_term', Doc Count: '_count'
+        or to use metric function use the string value "2"
     :param size: how many buckets are returned
     """
     field = attr.ib(validator=instance_of(str))
