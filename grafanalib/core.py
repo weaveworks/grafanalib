@@ -777,6 +777,7 @@ class Template(object):
                         break
         else:
             self._current = {
+                'selected': False if self.default is None or not self.default else True,
                 'text': self.default,
                 'value': self.default,
                 'tags': [],
