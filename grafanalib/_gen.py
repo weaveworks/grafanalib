@@ -135,5 +135,5 @@ def generate_dashboards_script():
 
 
 def generate_dashboard_script():
-    """Entry point for generate-dasboard."""
+    """Entry point for generate-dashboard."""
     run_script(generate_dashboard)
