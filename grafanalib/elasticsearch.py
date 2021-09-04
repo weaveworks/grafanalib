@@ -26,17 +26,18 @@ class CountMetricAgg(object):
     inline = attr.ib(default="", validator=instance_of(str))
 
     def to_json_data(self):
-        return {
+        self.settings = {}
+
+        if self.inline:
+            self.settings['script'] = {'inline': self.inline}
+
+       return {
             'id': str(self.id),
             'hide': self.hide,
             'type': 'count',
             'field': 'select field',
             'inlineScript': self.inline,
-            'settings': {
-                'script': {
-                    'inline': self.inline
-                }
-            }
+            'settings': self.settings,
         }
 
 
@@ -97,7 +98,7 @@ class CardinalityMetricAgg(object):
         return {
             'id': str(self.id),
             'hide': self.hide,
-            'type': 'max',
+            'type': 'cardinality',
             'field': self.field,
             'inlineScript': self.inline,
             'settings': self.settings,
@@ -131,7 +132,7 @@ class AverageMetricAgg(object):
         return {
             'id': str(self.id),
             'hide': self.hide,
-            'type': 'max',
+            'type': 'avg',
             'field': self.field,
             'inlineScript': self.inline,
             'settings': self.settings,
@@ -195,7 +196,7 @@ class SumMetricAgg(object):
         return {
             'id': str(self.id),
             'hide': self.hide,
-            'type': 'max',
+            'type': 'sum',
             'field': self.field,
             'inlineScript': self.inline,
             'settings': self.settings,
