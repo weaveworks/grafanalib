@@ -19,9 +19,11 @@ class CountMetricAgg(object):
     It's the default aggregator for elasticsearch queries.
     :param hide: show/hide the metric in the final panel display
     :param id: id of the metric
+    :param inline: script to apply to the data, using '_value'
     """
     id = attr.ib(default=0, validator=instance_of(int))
     hide = attr.ib(default=False, validator=instance_of(bool))
+    inline = attr.ib(default="", validator=instance_of(str))
 
     def to_json_data(self):
         return {
@@ -29,7 +31,12 @@ class CountMetricAgg(object):
             'hide': self.hide,
             'type': 'count',
             'field': 'select field',
-            'settings': {},
+            'inlineScript': self.inline,
+            'settings': {
+                'script': {
+                    'inline': self.inline
+                }
+            }
         }
 
 
@@ -42,18 +49,26 @@ class MaxMetricAgg(object):
     :param field: name of elasticsearch field to provide the maximum for
     :param hide: show/hide the metric in the final panel display
     :param id: id of the metric
+    :param inline: script to apply to the data, using '_value'
     """
     field = attr.ib(default="", validator=instance_of(str))
     id = attr.ib(default=0, validator=instance_of(int))
     hide = attr.ib(default=False, validator=instance_of(bool))
+    inline = attr.ib(default="", validator=instance_of(str))
 
     def to_json_data(self):
+        self.settings = {}
+
+        if self.inline:
+            self.settings['script'] = {'inline': self.inline}
+
         return {
             'id': str(self.id),
             'hide': self.hide,
             'type': 'max',
             'field': self.field,
-            'settings': {},
+            'inlineScript': self.inline,
+            'settings': self.settings,
         }
 
 
@@ -66,19 +81,28 @@ class CardinalityMetricAgg(object):
     :param field: name of elasticsearch field to provide the maximum for
     :param id: id of the metric
     :param hide: show/hide the metric in the final panel display
+    :param inline: script to apply to the data, using '_value'
     """
     field = attr.ib(default="", validator=instance_of(str))
     id = attr.ib(default=0, validator=instance_of(int))
     hide = attr.ib(default=False, validator=instance_of(bool))
+    inline = attr.ib(default="", validator=instance_of(str))
 
     def to_json_data(self):
+        self.settings = {}
+
+        if self.inline:
+            self.settings['script'] = {'inline': self.inline}
+
         return {
             'id': str(self.id),
             'hide': self.hide,
-            'type': 'cardinality',
+            'type': 'max',
             'field': self.field,
-            'settings': {},
+            'inlineScript': self.inline,
+            'settings': self.settings,
         }
+
 
 
 @attr.s
@@ -90,19 +114,27 @@ class AverageMetricAgg(object):
     :param field: name of elasticsearch field to provide the maximum for
     :param id: id of the metric
     :param hide: show/hide the metric in the final panel display
+    :param inline: script to apply to the data, using '_value'
     """
 
     field = attr.ib(default="", validator=instance_of(str))
     id = attr.ib(default=0, validator=instance_of(int))
     hide = attr.ib(default=False, validator=instance_of(bool))
+    inline = attr.ib(default="", validator=instance_of(str))
 
     def to_json_data(self):
+        self.settings = {}
+
+        if self.inline:
+            self.settings['script'] = {'inline': self.inline}
+
         return {
             'id': str(self.id),
             'hide': self.hide,
-            'type': 'avg',
+            'type': 'max',
             'field': self.field,
-            'settings': {},
+            'inlineScript': self.inline,
+            'settings': self.settings,
             'meta': {}
         }
 
@@ -147,19 +179,28 @@ class SumMetricAgg(object):
     :param field: name of elasticsearch field to provide the sum over
     :param hide: show/hide the metric in the final panel display
     :param id: id of the metric
+    :param inline: script to apply to the data, using '_value'
     """
     field = attr.ib(default="", validator=instance_of(str))
     id = attr.ib(default=0, validator=instance_of(int))
     hide = attr.ib(default=False, validator=instance_of(bool))
+    inline = attr.ib(default="", validator=instance_of(str))
 
     def to_json_data(self):
+        self.settings = {}
+
+        if self.inline:
+            self.settings['script'] = {'inline': self.inline}
+
         return {
-            'type': 'sum',
             'id': str(self.id),
             'hide': self.hide,
+            'type': 'max',
             'field': self.field,
-            'settings': {},
+            'inlineScript': self.inline,
+            'settings': self.settings,
         }
+
 
 
 @attr.s
@@ -221,6 +262,7 @@ class BucketScriptAgg(object):
             })
 
         return {
+            'field': 'select field',
             'type': 'bucket_script',
             'id': str(self.id),
             'hide': self.hide,
