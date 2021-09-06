@@ -31,7 +31,7 @@ class CountMetricAgg(object):
         if self.inline:
             self.settings['script'] = {'inline': self.inline}
 
-       return {
+        return {
             'id': str(self.id),
             'hide': self.hide,
             'type': 'count',
@@ -103,7 +103,6 @@ class CardinalityMetricAgg(object):
             'inlineScript': self.inline,
             'settings': self.settings,
         }
-
 
 
 @attr.s
@@ -201,7 +200,6 @@ class SumMetricAgg(object):
             'inlineScript': self.inline,
             'settings': self.settings,
         }
-
 
 
 @attr.s
