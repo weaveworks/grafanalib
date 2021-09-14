@@ -2,7 +2,7 @@
 Changelog
 =========
 
-x.x.x (TBD)
+0.5.14 (2021-09-14)
 ==================
 
 * Added colour overrides to pie chart panel
@@ -14,12 +14,7 @@ x.x.x (TBD)
 * Added missing show percentage attribute to Pie chart panel
 * Added ``extraJson`` attribute to the Panel class for overriding the panel with raw JSON
 * Added inline script support for Elasticsearch metrics
-* Seletcted needs to be set as a bool value for templating to work.
-
-Changes
--------
-
-* ...
+* Selected needs to be set as a bool value for templating to work.
 
 0.5.13 (2021-05-17)
 ===================
