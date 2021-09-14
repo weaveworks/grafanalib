@@ -13,6 +13,7 @@ x.x.x (TBD)
 * Added missing align to graph panel
 * Added missing show percentage attribute to Pie chart panel
 * Added ``extraJson`` attribute to the Panel class for overriding the panel with raw JSON
+* Added inline script support for Elasticsearch metrics
 
 Changes
 -------
