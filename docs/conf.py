@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath('.'))
 # -- Project information -----------------------------------------------------
 
 project = 'grafanalib'
-copyright = '2020, grafanalib community'
+copyright = '2021, grafanalib community'
 author = 'grafanalib community'
 
 
