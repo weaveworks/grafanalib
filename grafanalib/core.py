@@ -489,7 +489,7 @@ class YAxis(object):
     label = attr.ib(default=None)
     logBase = attr.ib(default=1)
     max = attr.ib(default=None)
-    min = attr.ib(default=0)
+    min = attr.ib(default=None)
     show = attr.ib(default=True, validator=instance_of(bool))
 
     def to_json_data(self):
