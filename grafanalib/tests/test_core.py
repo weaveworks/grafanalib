@@ -158,6 +158,21 @@ def test_stat_no_repeat():
     assert t.to_json_data()['maxPerRow'] is None
 
 
+def test_StatMapping():
+    t = G.StatMapping(
+        'dummy_text',
+        startValue='foo',
+        endValue='bar',
+        color='dark-read',
+    )
+
+    json_data = t.to_json_data()
+    assert json_data['text'] == 'dummy_text'
+    assert json_data['from'] == 'foo'
+    assert json_data['to'] == 'bar'
+    assert json_data['color'] == 'dark-read'
+
+
 def test_stat_with_repeat():
     t = G.Stat(
         title='dummy',
