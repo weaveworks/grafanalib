@@ -1,3 +1,4 @@
+
 """Low-level functions for building Grafana dashboards.
 
 The functions in this module don't enforce Weaveworks policy, and only mildly
@@ -1689,6 +1690,7 @@ class StatMapping(object):
     :param value: Value to be replaced
     :param startValue: When using a range, the start value of the range
     :param endValue: When using a range, the end value of the range
+    :param color: How to color the text if mapping occurs
     :param id: panel id
     """
 
@@ -1696,12 +1698,13 @@ class StatMapping(object):
     mapValue = attr.ib(default="", validator=instance_of(str))
     startValue = attr.ib(default="", validator=instance_of(str))
     endValue = attr.ib(default="", validator=instance_of(str))
+    color = attr.ib(default="", validator=instance_of(str))
     id = attr.ib(default=None)
 
     def to_json_data(self):
         mappingType = MAPPING_TYPE_VALUE_TO_TEXT if self.mapValue else MAPPING_TYPE_RANGE_TO_TEXT
 
-        return {
+        ret_dict = {
             'operator': '',
             'text': self.text,
             'type': mappingType,
@@ -1711,6 +1714,11 @@ class StatMapping(object):
             'id': self.id
         }
 
+        if self.color:
+            ret_dict.update({"color": self.color})
+
+        return ret_dict
+
 
 @attr.s
 class StatValueMapping(object):
@@ -1718,16 +1726,23 @@ class StatValueMapping(object):
     Generates json structure for the value mappings for the StatPanel:
 
     :param text: Sting that will replace input value
-    :param value: Value to be replaced
+    :param mapValue: Value to be replaced
+    :param color: How to color the text if mapping occurs
     :param id: panel id
     """
 
     text = attr.ib()
     mapValue = attr.ib(default="", validator=instance_of(str))
+    color = attr.ib(default="", validator=instance_of(str))
     id = attr.ib(default=None)
 
     def to_json_data(self):
-        return StatMapping(self.text, mapValue=self.mapValue, id=self.id)
+        return StatMapping(
+            self.text,
+            mapValue=self.mapValue,
+            color=self.color,
+            id=self.id,
+        )
 
 
 @attr.s
@@ -1738,12 +1753,14 @@ class StatRangeMapping(object):
     :param text: Sting that will replace input value
     :param startValue: When using a range, the start value of the range
     :param endValue: When using a range, the end value of the range
+    :param color: How to color the text if mapping occurs
     :param id: panel id
     """
 
     text = attr.ib()
     startValue = attr.ib(default="", validator=instance_of(str))
     endValue = attr.ib(default="", validator=instance_of(str))
+    color = attr.ib(default="", validator=instance_of(str))
     id = attr.ib(default=None)
 
     def to_json_data(self):
@@ -1751,6 +1768,7 @@ class StatRangeMapping(object):
             self.text,
             startValue=self.startValue,
             endValue=self.endValue,
+            color=self.color,
             id=self.id
         )
 
