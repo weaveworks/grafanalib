@@ -1682,8 +1682,99 @@ class Stat(Panel):
 
 
 @attr.s
+class StatValueMappings(object):
+    """
+    Generates json structure for the value mappings for the StatPanel:
+
+    :param mappingItems: List of StatValueMappingItem objects
+
+    mappings=[
+        core.StatValueMappings(
+            [
+                core.StatValueMappingItem('Offline', '0', 'red'),  # Value must a string
+                core.StatValueMappingItem('Online', '1', 'green')
+            ]
+        ),
+    ],
+    """
+    mappingItems = attr.ib(default=[], validator=instance_of(list))
+
+    def to_json_data(self):
+        ret_dict = {
+            'type': 'value',
+            'options': {
+            }
+        }
+
+        for item in self.mappingItems:
+            ret_dict['options'].update(item.to_json_data())
+
+        return ret_dict
+
+
+@attr.s
+class StatValueMappingItem(object):
+    """
+    Generates json structure for the value mapping item for the StatValueMappings class:
+
+    :param text: String that will replace input value
+    :param mapValue: Value to be replaced
+    :param color: How to color the text if mapping occurs
+    :param index: index
+    """
+
+    text = attr.ib()
+    mapValue = attr.ib(default="", validator=instance_of(str))
+    color = attr.ib(default="", validator=instance_of(str))
+    index = attr.ib(default=None)
+
+    def to_json_data(self):
+        return {
+            self.mapValue: {
+                'text': self.text,
+                'color': self.color,
+                'index': self.index
+            }
+        }
+
+
+@attr.s
+class StatRangeMappings(object):
+    """
+    Generates json structure for the range mappings for the StatPanel:
+
+    :param text: Sting that will replace input value
+    :param startValue: When using a range, the start value of the range
+    :param endValue: When using a range, the end value of the range
+    :param color: How to color the text if mapping occurs
+    :param index: index
+    """
+
+    text = attr.ib()
+    startValue = attr.ib(default=0, validator=instance_of(int))
+    endValue = attr.ib(default=0, validator=instance_of(int))
+    color = attr.ib(default="", validator=instance_of(str))
+    index = attr.ib(default=None)
+
+    def to_json_data(self):
+        return {
+            'type': 'range',
+            'options': {
+                'from': self.startValue,
+                'to': self.endValue,
+                'result': {
+                    'text': self.text,
+                    'color': self.color,
+                    'index': self.index
+                }
+            }
+        }
+
+
+@attr.s
 class StatMapping(object):
     """
+    Deprecated Grafana v8
     Generates json structure for the value mapping for the Stat panel:
 
     :param text: Sting that will replace input value
@@ -1698,7 +1789,6 @@ class StatMapping(object):
     mapValue = attr.ib(default="", validator=instance_of(str))
     startValue = attr.ib(default="", validator=instance_of(str))
     endValue = attr.ib(default="", validator=instance_of(str))
-    color = attr.ib(default="", validator=instance_of(str))
     id = attr.ib(default=None)
 
     def to_json_data(self):
@@ -1714,33 +1804,28 @@ class StatMapping(object):
             'id': self.id
         }
 
-        if self.color:
-            ret_dict.update({"color": self.color})
-
         return ret_dict
 
 
 @attr.s
 class StatValueMapping(object):
     """
+    Deprecated Grafana v8
     Generates json structure for the value mappings for the StatPanel:
 
     :param text: Sting that will replace input value
     :param mapValue: Value to be replaced
-    :param color: How to color the text if mapping occurs
     :param id: panel id
     """
 
     text = attr.ib()
     mapValue = attr.ib(default="", validator=instance_of(str))
-    color = attr.ib(default="", validator=instance_of(str))
     id = attr.ib(default=None)
 
     def to_json_data(self):
         return StatMapping(
             self.text,
             mapValue=self.mapValue,
-            color=self.color,
             id=self.id,
         )
 
@@ -1748,19 +1833,18 @@ class StatValueMapping(object):
 @attr.s
 class StatRangeMapping(object):
     """
-    Generates json structure for the value mappings for the StatPanel:
+    Deprecated Grafana v8
+    Generates json structure for the range mappings for the StatPanel:
 
     :param text: Sting that will replace input value
     :param startValue: When using a range, the start value of the range
     :param endValue: When using a range, the end value of the range
-    :param color: How to color the text if mapping occurs
     :param id: panel id
     """
 
     text = attr.ib()
     startValue = attr.ib(default="", validator=instance_of(str))
     endValue = attr.ib(default="", validator=instance_of(str))
-    color = attr.ib(default="", validator=instance_of(str))
     id = attr.ib(default=None)
 
     def to_json_data(self):
@@ -1768,7 +1852,6 @@ class StatRangeMapping(object):
             self.text,
             startValue=self.startValue,
             endValue=self.endValue,
-            color=self.color,
             id=self.id
         )
 
