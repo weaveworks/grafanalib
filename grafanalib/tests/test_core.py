@@ -157,6 +157,7 @@ def test_stat_no_repeat():
     assert t.to_json_data()['repeatDirection'] is None
     assert t.to_json_data()['maxPerRow'] is None
 
+
 def test_StatValueMappings():
     t = G.StatValueMappings(
         [
@@ -171,6 +172,7 @@ def test_StatValueMappings():
     assert json_data['options']['0']['color'] == 'dark-red'
     assert json_data['options']['1']['text'] == 'bar'
     assert json_data['options']['1']['color'] == 'purple'
+
 
 def test_StatRangeMappings():
     t = G.StatRangeMappings(
@@ -187,6 +189,7 @@ def test_StatRangeMappings():
     assert json_data['options']['result']['text'] == 'dummy_text'
     assert json_data['options']['result']['color'] == 'dark-red'
 
+
 def test_StatMapping():
     t = G.StatMapping(
         'dummy_text',
@@ -198,6 +201,7 @@ def test_StatMapping():
     assert json_data['text'] == 'dummy_text'
     assert json_data['from'] == 'foo'
     assert json_data['to'] == 'bar'
+
 
 def test_stat_with_repeat():
     t = G.Stat(
