@@ -160,10 +160,8 @@ def test_stat_no_repeat():
 
 def test_StatValueMappings():
     t = G.StatValueMappings(
-        [
-            G.StatValueMappingItem('foo', '0', 'dark-red'),  # Value must a string
-            G.StatValueMappingItem('bar', '1', 'purple')
-        ]
+        G.StatValueMappingItem('foo', '0', 'dark-red'),  # Value must a string
+        G.StatValueMappingItem('bar', '1', 'purple'),
     )
 
     json_data = t.to_json_data()
