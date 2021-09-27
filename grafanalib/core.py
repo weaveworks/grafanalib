@@ -1716,10 +1716,8 @@ class StatValueMappings(object):
 
     mappings=[
         core.StatValueMappings(
-            [
-                core.StatValueMappingItem('Offline', '0', 'red'),  # Value must a string
-                core.StatValueMappingItem('Online', '1', 'green')
-            ]
+            core.StatValueMappingItem('Offline', '0', 'red'),  # Value must a string
+            core.StatValueMappingItem('Online', '1', 'green')
         ),
     ],
     """
