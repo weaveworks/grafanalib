@@ -1682,6 +1682,32 @@ class Stat(Panel):
 
 
 @attr.s
+class StatValueMappingItem(object):
+    """
+    Generates json structure for the value mapping item for the StatValueMappings class:
+
+    :param text: String that will replace input value
+    :param mapValue: Value to be replaced
+    :param color: How to color the text if mapping occurs
+    :param index: index
+    """
+
+    text = attr.ib()
+    mapValue = attr.ib(default="", validator=instance_of(str))
+    color = attr.ib(default="", validator=instance_of(str))
+    index = attr.ib(default=None)
+
+    def to_json_data(self):
+        return {
+            self.mapValue: {
+                'text': self.text,
+                'color': self.color,
+                'index': self.index
+            }
+        }
+
+
+@attr.s(auto_detect=True)
 class StatValueMappings(object):
     """
     Generates json structure for the value mappings for the StatPanel:
@@ -1710,32 +1736,6 @@ class StatValueMappings(object):
             ret_dict['options'].update(item.to_json_data())
 
         return ret_dict
-
-
-@attr.s
-class StatValueMappingItem(object):
-    """
-    Generates json structure for the value mapping item for the StatValueMappings class:
-
-    :param text: String that will replace input value
-    :param mapValue: Value to be replaced
-    :param color: How to color the text if mapping occurs
-    :param index: index
-    """
-
-    text = attr.ib()
-    mapValue = attr.ib(default="", validator=instance_of(str))
-    color = attr.ib(default="", validator=instance_of(str))
-    index = attr.ib(default=None)
-
-    def to_json_data(self):
-        return {
-            self.mapValue: {
-                'text': self.text,
-                'color': self.color,
-                'index': self.index
-            }
-        }
 
 
 @attr.s
