@@ -1707,7 +1707,7 @@ class StatValueMappingItem(object):
         }
 
 
-@attr.s(auto_detect=True)
+@attr.s(init=False)
 class StatValueMappings(object):
     """
     Generates json structure for the value mappings for the StatPanel:
@@ -1723,7 +1723,11 @@ class StatValueMappings(object):
         ),
     ],
     """
+
     mappingItems = attr.ib(default=[], validator=instance_of(list))
+
+    def __init__(self, *mappings: StatValueMappingItem):
+        self.__attrs_init__([*mappings])
 
     def to_json_data(self):
         ret_dict = {
