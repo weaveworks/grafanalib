@@ -1725,9 +1725,9 @@ class StatValueMappings(object):
     mappingItems = attr.ib(
         default=[],
         validator=attr.validators.deep_iterable(
-            member_validator = attr.validators.instance_of(StatValueMappingItem),
-            iterable_validator = attr.validators.instance_of(list)
-        )
+            member_validator=attr.validators.instance_of(StatValueMappingItem),
+            iterable_validator=attr.validators.instance_of(list),
+        ),
     )
 
     def __init__(self, *mappings: StatValueMappingItem):

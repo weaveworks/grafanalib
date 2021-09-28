@@ -161,10 +161,11 @@ def test_stat_no_repeat():
 
 def test_StatValueMappings_exception_checks():
     with pytest.raises(TypeError):
-        t = G.StatValueMappings(
+        G.StatValueMappings(
             G.StatValueMappingItem('foo', '0', 'dark-red'),
             "not of type StatValueMappingItem",
         )
+
 
 def test_StatValueMappings():
     t = G.StatValueMappings(
