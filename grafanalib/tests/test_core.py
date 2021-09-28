@@ -2,6 +2,7 @@
 
 import random
 import grafanalib.core as G
+import pytest
 
 
 def dummy_grid_pos() -> G.GridPos:
@@ -157,6 +158,13 @@ def test_stat_no_repeat():
     assert t.to_json_data()['repeatDirection'] is None
     assert t.to_json_data()['maxPerRow'] is None
 
+
+def test_StatValueMappings_exception_checks():
+    with pytest.raises(TypeError):
+        t = G.StatValueMappings(
+            G.StatValueMappingItem('foo', '0', 'dark-red'),
+            "not of type StatValueMappingItem",
+        )
 
 def test_StatValueMappings():
     t = G.StatValueMappings(
