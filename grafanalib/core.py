@@ -1789,7 +1789,6 @@ class StatMapping(object):
     :param value: Value to be replaced
     :param startValue: When using a range, the start value of the range
     :param endValue: When using a range, the end value of the range
-    :param color: How to color the text if mapping occurs
     :param id: panel id
     """
 
