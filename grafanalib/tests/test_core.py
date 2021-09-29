@@ -225,11 +225,11 @@ def test_Discrete():
         G.DiscreteColorMappingItem('foz', color='faz')
     ]
 
-    t = G.Discrete('foo', colorMapsItems=colorMap)
+    t = G.Discrete(title='foo', colorMapsItems=colorMap)
 
     json_data = t.to_json_data()
     assert json_data['colorMaps'] == colorMap
-    assert json_data['title'] == ''
+    assert json_data['title'] == 'foo'
     assert json_data['type'] == G.DISCRETE_TYPE
 
 
