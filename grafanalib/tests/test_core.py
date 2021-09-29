@@ -159,6 +159,44 @@ def test_stat_no_repeat():
     assert t.to_json_data()['maxPerRow'] is None
 
 
+def test_StatValueMappings_exception_checks():
+    with pytest.raises(TypeError):
+        G.StatValueMappings(
+            G.StatValueMappingItem('foo', '0', 'dark-red'),
+            "not of type StatValueMappingItem",
+        )
+
+
+def test_StatValueMappings():
+    t = G.StatValueMappings(
+        G.StatValueMappingItem('foo', '0', 'dark-red'),  # Value must a string
+        G.StatValueMappingItem('bar', '1', 'purple'),
+    )
+
+    json_data = t.to_json_data()
+    assert json_data['type'] == 'value'
+    assert json_data['options']['0']['text'] == 'foo'
+    assert json_data['options']['0']['color'] == 'dark-red'
+    assert json_data['options']['1']['text'] == 'bar'
+    assert json_data['options']['1']['color'] == 'purple'
+
+
+def test_StatRangeMappings():
+    t = G.StatRangeMappings(
+        'dummy_text',
+        startValue=10,
+        endValue=20,
+        color='dark-red'
+    )
+
+    json_data = t.to_json_data()
+    assert json_data['type'] == 'range'
+    assert json_data['options']['from'] == 10
+    assert json_data['options']['to'] == 20
+    assert json_data['options']['result']['text'] == 'dummy_text'
+    assert json_data['options']['result']['color'] == 'dark-red'
+
+
 def test_DiscreteColorMappingItem_exception_checks():
     with pytest.raises(TypeError):
         G.DiscreteColorMappingItem(123)
@@ -193,6 +231,19 @@ def test_Discrete():
     assert json_data['colorMaps'] == colorMap
     assert json_data['title'] == ''
     assert json_data['type'] == G.DISCRETE_TYPE
+
+
+def test_StatMapping():
+    t = G.StatMapping(
+        'dummy_text',
+        startValue='foo',
+        endValue='bar',
+    )
+
+    json_data = t.to_json_data()
+    assert json_data['text'] == 'dummy_text'
+    assert json_data['from'] == 'foo'
+    assert json_data['to'] == 'bar'
 
 
 def test_stat_with_repeat():

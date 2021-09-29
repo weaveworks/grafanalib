@@ -5,12 +5,16 @@ Changelog
 x.x.x (TBD)
 ===================
 
-* Added Discrete panel
+Added
+-----
+* Discrete panel
+* Support for colors in stat mapping panel with StatValueMappings & StatRangeMappings
 
 Changes
 -------
 
 * Changed Refine expectations of is_color_code
+* Deprecated StatMapping, StatValueMapping & StatRangeMapping
 
 0.5.14 (2021-09-14)
 ==================
