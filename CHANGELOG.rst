@@ -5,12 +5,12 @@ Changelog
 x.x.x (TBD)
 ===================
 
-* Added ...
+* Added Discrete panel
 
 Changes
 -------
 
-* Changed ...
+* Changed Refine expectations of is_color_code
 
 0.5.14 (2021-09-14)
 ==================
