@@ -1452,6 +1452,7 @@ class Graph(Panel):
 
         def set_refid(t):
             return t if t.refId else attr.evolve(t, refId=next(auto_ref_ids))
+
         return self._map_targets(set_refid)
 
 
