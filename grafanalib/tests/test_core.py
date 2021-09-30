@@ -159,6 +159,42 @@ def test_stat_no_repeat():
     assert t.to_json_data()['maxPerRow'] is None
 
 
+def test_DiscreteColorMappingItem_exception_checks():
+    with pytest.raises(TypeError):
+        G.DiscreteColorMappingItem(123)
+
+    with pytest.raises(TypeError):
+        G.DiscreteColorMappingItem("foo", color=123)
+
+
+def test_DiscreteColorMappingItem():
+    t = G.DiscreteColorMappingItem('foo')
+
+    json_data = t.to_json_data()
+    assert json_data['text'] == 'foo'
+    assert json_data['color'] == G.GREY1
+
+    t = G.DiscreteColorMappingItem('foo', color='bar')
+
+    json_data = t.to_json_data()
+    assert json_data['text'] == 'foo'
+    assert json_data['color'] == 'bar'
+
+
+def test_Discrete():
+    colorMap = [
+        G.DiscreteColorMappingItem('bar', color='baz'),
+        G.DiscreteColorMappingItem('foz', color='faz')
+    ]
+
+    t = G.Discrete('foo', colorMapsItems=colorMap)
+
+    json_data = t.to_json_data()
+    assert json_data['colorMaps'] == colorMap
+    assert json_data['title'] == ''
+    assert json_data['type'] == G.DISCRETE_TYPE
+
+
 def test_StatValueMappings_exception_checks():
     with pytest.raises(TypeError):
         G.StatValueMappings(

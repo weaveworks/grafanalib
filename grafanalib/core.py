@@ -77,6 +77,7 @@ ABSOLUTE_TYPE = 'absolute'
 DASHBOARD_TYPE = 'dashboard'
 ROW_TYPE = 'row'
 GRAPH_TYPE = 'graph'
+DISCRETE_TYPE = 'natel-discrete-panel'
 STAT_TYPE = 'stat'
 SINGLESTAT_TYPE = 'singlestat'
 TABLE_TYPE = 'table'
@@ -1453,7 +1454,51 @@ class Graph(Panel):
 
         def set_refid(t):
             return t if t.refId else attr.evolve(t, refId=next(auto_ref_ids))
+
         return self._map_targets(set_refid)
+
+
+@attr.s
+class DiscreteColorMappingItem(object):
+    """
+    Generates json structure for the value mapping item for the StatValueMappings class:
+
+    :param text: String to color
+    :param color: To color the text with
+    """
+
+    text = attr.ib(validator=instance_of(str))
+    color = attr.ib(default=GREY1, validator=instance_of((str, RGBA)))
+
+    def to_json_data(self):
+        return {
+            "color": self.color,
+            "text": self.text,
+        }
+
+
+@attr.s
+class Discrete(Panel):
+    """
+    Generates Discrete panel json structure.
+
+    :param colorMaps: List of DiscreteColorMappingItem, to color values.
+    """
+
+    colorMapsItems = attr.ib(
+        default=[],
+        validator=attr.validators.deep_iterable(
+            member_validator=attr.validators.instance_of(DiscreteColorMappingItem),
+            iterable_validator=attr.validators.instance_of(list),
+        ),
+    )
+
+    def to_json_data(self):
+        graphObject = {
+            'colorMaps': self.colorMapsItems,
+            'type': DISCRETE_TYPE,
+        }
+        return self.panel_json(graphObject)
 
 
 @attr.s

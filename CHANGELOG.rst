@@ -5,14 +5,13 @@ Changelog
 x.x.x (TBD)
 ===================
 
-Added
------
-
-* Support for colors in stat mapping panel with StatValueMappings & StatRangeMappings
+* Added Discrete panel
+* Added support for colors in stat mapping panel with StatValueMappings & StatRangeMappings
 
 Changes
 -------
 
+* Refine expectations of is_color_code
 * Deprecated StatMapping, StatValueMapping & StatRangeMapping
 
 0.5.14 (2021-09-14)
