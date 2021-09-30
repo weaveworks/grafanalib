@@ -5,12 +5,15 @@ Changelog
 x.x.x (TBD)
 ===================
 
-* Added ...
+Added
+-----
+
+* Support for colors in stat mapping panel with StatValueMappings & StatRangeMappings
 
 Changes
 -------
 
-* Changed ...
+* Deprecated StatMapping, StatValueMapping & StatRangeMapping
 
 0.5.14 (2021-09-14)
 ==================
