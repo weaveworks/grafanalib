@@ -8,6 +8,7 @@ x.x.x (TBD)
 * Added Discrete panel
 * Added support for colors in stat mapping panel with StatValueMappings & StatRangeMappings
 * Added missing auto interval properties in Template
+* Added support for time series panel added in Grafana v8
 
 Changes
 -------
