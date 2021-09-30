@@ -425,7 +425,7 @@ def test_worldmap():
     assert data['circleMaxSize'] == 11
 
 
-def test_worldmap():
+def test_stateTimeline():
     data_source = 'dummy data source'
     targets = ['dummy_prom_query']
     title = 'dummy title'
