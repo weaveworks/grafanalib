@@ -5,7 +5,10 @@ Changelog
 x.x.x (TBD)
 ===================
 
-* Added support for colors in stat mapping panel with StatValueMappings & StatRangeMappings
+Added
+-----
+
+* Support for colors in stat mapping panel with StatValueMappings & StatRangeMappings
 
 Changes
 -------
