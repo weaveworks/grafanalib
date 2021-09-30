@@ -260,6 +260,7 @@ GAUGE_DISPLAY_MODE_GRADIENT = 'gradient'
 DEFAULT_AUTO_COUNT = 30
 DEFAULT_MIN_AUTO_INTERVAL = '10s'
 
+
 @attr.s
 class Mapping(object):
 
@@ -772,7 +773,7 @@ class Template(object):
         validator=instance_of(int)
     )
     autoMin = attr.ib(default=DEFAULT_MIN_AUTO_INTERVAL)
-    
+
     def __attrs_post_init__(self):
         if self.type == 'custom':
             if len(self.options) == 0:

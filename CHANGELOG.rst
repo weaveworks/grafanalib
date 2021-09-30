@@ -7,16 +7,18 @@ x.x.x (TBD)
 
 * Added Discrete panel
 * Added support for colors in stat mapping panel with StatValueMappings & StatRangeMappings
+* Added missing auto interval properties in Template
 
 Changes
 -------
 
 * Refine expectations of is_color_code
 * Deprecated StatMapping, StatValueMapping & StatRangeMapping
+* Change YAxis min value default from None to 0
 
 0.5.14 (2021-09-14)
 ==================
-* Added missing auto interval properties in Template
+
 * Added colour overrides to pie chart panel
 * Added missing attributes from xAxis class
 * Added transformations for the Panel class (https://grafana.com/docs/grafana/next/panels/transformations/types-options/#transformation-types-and-options)
