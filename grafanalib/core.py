@@ -80,6 +80,7 @@ GRAPH_TYPE = 'graph'
 DISCRETE_TYPE = 'natel-discrete-panel'
 STAT_TYPE = 'stat'
 SINGLESTAT_TYPE = 'singlestat'
+STATE_TIMELINE_TYPE = 'state-timeline'
 TABLE_TYPE = 'table'
 TEXT_TYPE = 'text'
 ALERTLIST_TYPE = 'alertlist'
@@ -1266,10 +1267,12 @@ class RowPanel(Panel):
     Generates Row panel json structure.
 
     :param title: title of the panel
-    :param panels: list of panels in the row
+    :param collapsed: set True if row should be collapsed
+    :param panels: list of panels in the row, only to be used when collapsed=True
     """
-
+    collapsed = attr.ib(default=False, validator=instance_of(bool))
     panels = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+
 
     def _iter_panels(self):
         return iter(self.panels)
@@ -1281,7 +1284,7 @@ class RowPanel(Panel):
     def to_json_data(self):
         return self.panel_json(
             {
-                'collapsed': False,
+                'collapsed': self.collapsed,
                 'panels': self.panels,
                 'type': ROW_TYPE
             }
@@ -1689,6 +1692,7 @@ class Stat(Panel):
     :param decimals: number of decimals to display
     :param format: defines value units
     :param graphMode: defines if Grafana will draw graph: keys 'area' 'none'
+    :param noValue: define the default value if no value is found
     :param mappings: the list of values to text mappings
         This should be a list of StatMapping objects
         https://grafana.com/docs/grafana/latest/panels/field-configuration-options/#value-mapping
@@ -1705,6 +1709,7 @@ class Stat(Panel):
     format = attr.ib(default='none')
     graphMode = attr.ib(default='area')
     mappings = attr.ib(default=attr.Factory(list))
+    noValue = attr.ib(default='none')
     orientation = attr.ib(default='auto')
     reduceCalc = attr.ib(default='mean', type=str)
     textMode = attr.ib(default='auto')
@@ -1719,10 +1724,11 @@ class Stat(Panel):
                         'decimals': self.decimals,
                         'mappings': self.mappings,
                         'thresholds': {
-                            'mode': 'absolute',
+                            'mode': ABSOLUTE_TYPE,
                             'steps': self.thresholds,
                         },
-                        'unit': self.format
+                        'unit': self.format,
+                        'noValue': self.noValue
                     }
                 },
                 'options': {
@@ -2190,6 +2196,100 @@ def _style_columns(columns):
                 "specified" % (style.pattern, column.text))
         styles.append(attr.evolve(style, pattern=column.text))
     return new_columns, styles
+
+@attr.s
+class Tablev8(Panel):
+    """Generates Table panel json structure for Grafana v8 and above
+
+    Grafana doc on table: https://grafana.com/docs/grafana/latest/visualizations/table/
+
+    :param columns: table columns for Aggregations view
+    :param fontSize: defines value font size
+    :param pageSize: rows per page (None is unlimited)
+    :param scroll: scroll the table instead of displaying in full
+    :param showHeader: show the table header
+    :param sort: table sorting
+    :param styles: defines formatting for each column
+
+    :param filterable: bool is table filterable
+    :param transformations: list of table transformations
+    """
+
+    columns = attr.ib(default=attr.Factory(list))
+    fontSize = attr.ib(default='100%')
+    pageSize = attr.ib(default=None)
+    scroll = attr.ib(default=True, validator=instance_of(bool))
+    showHeader = attr.ib(default=True, validator=instance_of(bool))
+    span = attr.ib(default=6)
+    sort = attr.ib(
+        default=attr.Factory(ColumnSort), validator=instance_of(ColumnSort))
+    styles = attr.ib()
+
+    align = attr.ib(default='auto')
+    displayMode = attr.ib(default='auto')
+    filterable = attr.ib(default=True, validator=instance_of(bool))
+    transformations = attr.ib(default=attr.Factory(list))
+
+    @styles.default
+    def styles_default(self):
+        return [
+            ColumnStyle(
+                alias='Time',
+                pattern='Time',
+                type=DateColumnStyleType(),
+            ),
+            ColumnStyle(
+                alias='time',
+                pattern='time',
+                type=DateColumnStyleType(),
+            ),
+            ColumnStyle(
+                pattern='/.*/',
+            ),
+        ]
+
+    @classmethod
+    def with_styled_columns(cls, columns, styles=None, **kwargs):
+        """Construct a table where each column has an associated style.
+
+        :param columns: A list of (Column, ColumnStyle) pairs, where the
+            ColumnStyle is the style for the column and does not have a
+            pattern set (or the pattern is set to exactly the column name).
+            The ColumnStyle may also be None.
+        :param styles: An optional list of extra column styles that will be
+            appended to the table's list of styles.
+        :param kwargs: Other parameters to the Table constructor.
+        :return: A Table.
+        """
+        extraStyles = styles if styles else []
+        columns, styles = _style_columns(columns)
+        return cls(columns=columns, styles=styles + extraStyles, **kwargs)
+
+    def to_json_data(self):
+        return self.panel_json(
+            {
+                'columns': self.columns,
+                'fontSize': self.fontSize,
+                'hideTimeOverride': self.hideTimeOverride,
+                'minSpan': self.minSpan,
+                'pageSize': self.pageSize,
+                'scroll': self.scroll,
+                'showHeader': self.showHeader,
+                'sort': self.sort,
+                'styles': self.styles,
+                'fieldConfig': {
+                    'defaults': {
+                        'custom': {
+                            'align': self.align,
+                            'displayMode': self.displayMode,
+                            'filterable': self.filterable
+                        }
+                    }
+                },
+                'transformations': self.transformations,
+                'type': TABLE_TYPE,
+            }
+        )
 
 
 @attr.s
@@ -3031,5 +3131,63 @@ class Worldmap(Panel):
                     'metricField': 'metric'
                 },
                 'type': WORLD_MAP_TYPE
+            }
+        )
+
+
+@attr.s
+class StateTimeline(Panel):
+    """Generates State Timeline panel json structure
+    Grafana docs on State Timeline panel: https://grafana.com/docs/grafana/latest/visualizations/state-timeline/
+
+    :param showHeadings: The chosen list selection (Starred, Recently viewed, Search) is shown as a heading
+    """
+    alignValue = attr.ib(default='left', validator=instance_of(str))
+    colorMode = attr.ib(default='thresholds', validator=instance_of(str))
+    fillOpacity = attr.ib(default=70, validator=instance_of(int))
+    legendDisplayMode = attr.ib(default='list', validator=instance_of(str))
+    legendPlacement = attr.ib(default='bottom', validator=instance_of(str))
+    lineWidth = attr.ib(default=0, validator=instance_of(int))
+    mappings = attr.ib(default=attr.Factory(list))
+    mergeValues = attr.ib(default=True, validator=instance_of(bool))
+    rowHeight = attr.ib(default=0.9, validator=instance_of(float))
+    showValue = attr.ib(default='auto', validator=instance_of(str))
+    tooltipMode = attr.ib(default='single', validator=instance_of(str))
+    thresholds = attr.ib(default=attr.Factory(list))
+
+    def to_json_data(self):
+        return self.panel_json(
+            {
+                'fieldConfig': {
+                    'defaults': {
+                        'custom': {
+                            'lineWidth': self.lineWidth,
+                            'fillOpacity': self.fillOpacity
+                        },
+                        'color': {
+                            'mode': self.colorMode
+                        },
+                        'thresholds': {
+                            'mode': ABSOLUTE_TYPE,
+                            'steps': self.thresholds,
+                        },
+                        'mappings': self.mappings
+                    },
+                    'overrides': []
+                },
+                'options': {
+                    'mergeValues': self.mergeValues,
+                    'showValue': self.showValue,
+                    'alignValue': self.alignValue,
+                    'rowHeight': self.rowHeight,
+                    'legend': {
+                        'displayMode': self.legendDisplayMode,
+                        'placement': self.legendPlacement
+                    },
+                    'tooltip': {
+                        'mode': self.tooltipMode
+                    }
+                },
+                'type': STATE_TIMELINE_TYPE,
             }
         )
