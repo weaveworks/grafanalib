@@ -17,6 +17,7 @@ Changes
 * Refine expectations of is_color_code
 * Deprecated StatMapping, StatValueMapping & StatRangeMapping
 * Change YAxis min value default from None to 0
+* Support for Table panel for Grafana v8 may have broken backwards compatibility in old Table panel
 
 0.5.14 (2021-09-14)
 ==================
