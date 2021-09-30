@@ -1495,10 +1495,6 @@ class Discrete(Panel):
     def to_json_data(self):
         graphObject = {
             'colorMaps': self.colorMapsItems,
-            'datasource': self.dataSource,
-            'grid': self.gridPos,
-            'targets': self.targets,
-            'title': self.title,
             'type': DISCRETE_TYPE,
         }
         return self.panel_json(graphObject)
