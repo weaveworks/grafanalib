@@ -257,6 +257,8 @@ GAUGE_DISPLAY_MODE_BASIC = 'basic'
 GAUGE_DISPLAY_MODE_LCD = 'lcd'
 GAUGE_DISPLAY_MODE_GRADIENT = 'gradient'
 
+DEFAULT_AUTO_COUNT = 30
+DEFAULT_MIN_AUTO_INTERVAL = '10s'
 
 @attr.s
 class Mapping(object):
@@ -728,6 +730,9 @@ class Template(object):
         interval, datasource, custom, constant, adhoc.
     :param hide: Hide this variable in the dashboard, can be one of:
         SHOW (default), HIDE_LABEL, HIDE_VARIABLE
+    :param auto: Interval will be dynamically calculated by dividing time range by the count specified in auto_count.
+    :param autoCount: Number of intervals for dividing the time range.
+    :param autoMin: Smallest interval for auto interval generator.
     """
 
     name = attr.ib()
@@ -758,7 +763,16 @@ class Template(object):
     type = attr.ib(default='query')
     hide = attr.ib(default=SHOW)
     sort = attr.ib(default=SORT_ALPHA_ASC)
-
+    auto = attr.ib(
+        default=False,
+        validator=instance_of(bool),
+    )
+    autoCount = attr.ib(
+        default=DEFAULT_AUTO_COUNT,
+        validator=instance_of(int)
+    )
+    autoMin = attr.ib(default=DEFAULT_MIN_AUTO_INTERVAL)
+    
     def __attrs_post_init__(self):
         if self.type == 'custom':
             if len(self.options) == 0:
@@ -804,6 +818,9 @@ class Template(object):
             'useTags': self.useTags,
             'tagsQuery': self.tagsQuery,
             'tagValuesQuery': self.tagValuesQuery,
+            'auto': self.auto,
+            'auto_min': self.autoMin,
+            'auto_count': self.autoCount
         }
 
 
