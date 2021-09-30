@@ -2197,38 +2197,42 @@ def _style_columns(columns):
         styles.append(attr.evolve(style, pattern=column.text))
     return new_columns, styles
 
-@attr.s
-class Tablev8(Panel):
-    """Generates Table panel json structure for Grafana v8 and above
 
+@attr.s
+class Table(Panel):
+    """Generates Table panel json structure
+
+    Now supports Grafana v8+
     Grafana doc on table: https://grafana.com/docs/grafana/latest/visualizations/table/
 
-    :param columns: table columns for Aggregations view
-    :param fontSize: defines value font size
-    :param pageSize: rows per page (None is unlimited)
-    :param scroll: scroll the table instead of displaying in full
-    :param showHeader: show the table header
-    :param sort: table sorting
-    :param styles: defines formatting for each column
-
-    :param filterable: bool is table filterable
-    :param transformations: list of table transformations
+    :param align: Align cell contents; auto (default), left, center, right
+    :param colorMode: Default thresholds
+    :param columns: Table columns for Aggregations view
+    :param displayMode: By default, Grafana automatically chooses display settings, you can choose;
+        color-text, color-background, color-background-solid, gradient-gauge, lcd-gauge, basic, json-view
+    :param fontSize: Defines value font size
+    :param pageSize: Rows per page (None is unlimited)
+    :param scroll: Scroll the table instead of displaying in full
+    :param showHeader: Show the table header
+    :param sort: Table sorting
+    :param styles: Defines formatting for each column
+    :param transform: Table style
     """
 
+    align = attr.ib(default='auto', validator=instance_of(str))
+    colorMode = attr.ib(default='thresholds', validator=instance_of(str))
     columns = attr.ib(default=attr.Factory(list))
+    displayMode = attr.ib(default='auto', validator=instance_of(str))
     fontSize = attr.ib(default='100%')
+    filterable = attr.ib(default=False, validator=instance_of(bool))
+    mappings = attr.ib(default=attr.Factory(list))
     pageSize = attr.ib(default=None)
     scroll = attr.ib(default=True, validator=instance_of(bool))
     showHeader = attr.ib(default=True, validator=instance_of(bool))
     span = attr.ib(default=6)
-    sort = attr.ib(
-        default=attr.Factory(ColumnSort), validator=instance_of(ColumnSort))
     styles = attr.ib()
-
-    align = attr.ib(default='auto')
-    displayMode = attr.ib(default='auto')
-    filterable = attr.ib(default=True, validator=instance_of(bool))
-    transformations = attr.ib(default=attr.Factory(list))
+    transform = attr.ib(default=COLUMNS_TRANSFORM)
+    thresholds = attr.ib(default=attr.Factory(list))
 
     @styles.default
     def styles_default(self):
@@ -2268,104 +2272,32 @@ class Tablev8(Panel):
     def to_json_data(self):
         return self.panel_json(
             {
+                "color": {
+                    "mode": self.colorMode
+                },
                 'columns': self.columns,
                 'fontSize': self.fontSize,
-                'hideTimeOverride': self.hideTimeOverride,
-                'minSpan': self.minSpan,
-                'pageSize': self.pageSize,
-                'scroll': self.scroll,
-                'showHeader': self.showHeader,
-                'sort': self.sort,
-                'styles': self.styles,
                 'fieldConfig': {
                     'defaults': {
                         'custom': {
                             'align': self.align,
                             'displayMode': self.displayMode,
                             'filterable': self.filterable
+                        },
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": self.thresholds
                         }
                     }
                 },
-                'transformations': self.transformations,
-                'type': TABLE_TYPE,
-            }
-        )
-
-
-@attr.s
-class Table(Panel):
-    """Generates Table panel json structure
-
-    Grafana doc on table: https://grafana.com/docs/grafana/latest/features/panels/table_panel/#table-panel
-
-    :param columns: table columns for Aggregations view
-    :param fontSize: defines value font size
-    :param pageSize: rows per page (None is unlimited)
-    :param scroll: scroll the table instead of displaying in full
-    :param showHeader: show the table header
-    :param sort: table sorting
-    :param styles: defines formatting for each column
-    :param transform: table style
-    """
-
-    columns = attr.ib(default=attr.Factory(list))
-    fontSize = attr.ib(default='100%')
-    pageSize = attr.ib(default=None)
-    scroll = attr.ib(default=True, validator=instance_of(bool))
-    showHeader = attr.ib(default=True, validator=instance_of(bool))
-    span = attr.ib(default=6)
-    sort = attr.ib(
-        default=attr.Factory(ColumnSort), validator=instance_of(ColumnSort))
-    styles = attr.ib()
-
-    transform = attr.ib(default=COLUMNS_TRANSFORM)
-
-    @styles.default
-    def styles_default(self):
-        return [
-            ColumnStyle(
-                alias='Time',
-                pattern='Time',
-                type=DateColumnStyleType(),
-            ),
-            ColumnStyle(
-                alias='time',
-                pattern='time',
-                type=DateColumnStyleType(),
-            ),
-            ColumnStyle(
-                pattern='/.*/',
-            ),
-        ]
-
-    @classmethod
-    def with_styled_columns(cls, columns, styles=None, **kwargs):
-        """Construct a table where each column has an associated style.
-
-        :param columns: A list of (Column, ColumnStyle) pairs, where the
-            ColumnStyle is the style for the column and does not have a
-            pattern set (or the pattern is set to exactly the column name).
-            The ColumnStyle may also be None.
-        :param styles: An optional list of extra column styles that will be
-            appended to the table's list of styles.
-        :param kwargs: Other parameters to the Table constructor.
-        :return: A Table.
-        """
-        extraStyles = styles if styles else []
-        columns, styles = _style_columns(columns)
-        return cls(columns=columns, styles=styles + extraStyles, **kwargs)
-
-    def to_json_data(self):
-        return self.panel_json(
-            {
-                'columns': self.columns,
-                'fontSize': self.fontSize,
                 'hideTimeOverride': self.hideTimeOverride,
+                'mappings': self.mappings,
                 'minSpan': self.minSpan,
+                'options': {
+                    'showHeader': self.showHeader
+                },
                 'pageSize': self.pageSize,
                 'scroll': self.scroll,
-                'showHeader': self.showHeader,
-                'sort': self.sort,
                 'styles': self.styles,
                 'transform': self.transform,
                 'type': TABLE_TYPE,
@@ -3140,7 +3072,18 @@ class StateTimeline(Panel):
     """Generates State Timeline panel json structure
     Grafana docs on State Timeline panel: https://grafana.com/docs/grafana/latest/visualizations/state-timeline/
 
-    :param showHeadings: The chosen list selection (Starred, Recently viewed, Search) is shown as a heading
+    :param alignValue: Controls value alignment inside state regions, default left
+    :param colorMode: Default thresholds
+    :param fillOpacity: Controls the opacity of state regions, default 0.9
+    :param legendDisplayMode: refine how the legend appears, list, table or hidden
+    :param legendPlacement: bottom or top
+    :param lineWidth: Controls line width of state regions
+    :param mappings: To assign colors to boolean or string values, use Value mappings
+    :param mergeValues: Controls whether Grafana merges identical values if they are next to each other, default True
+    :param rowHeight: Controls how much space between rows there are. 1 = no space = 0.5 = 50% space
+    :param showValue: Controls whether values are rendered inside the state regions. Auto will render values if there is sufficient space.
+    :param tooltipMode: Default single
+    :param thresholds: Thresholds are used to turn the time series into discrete colored state regions
     """
     alignValue = attr.ib(default='left', validator=instance_of(str))
     colorMode = attr.ib(default='thresholds', validator=instance_of(str))

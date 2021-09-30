@@ -444,3 +444,15 @@ def test_worldmap():
     assert data['datasource'] == data_source
     assert data['title'] == title
     assert data['circleMaxSize'] == 11
+
+
+def test_worldmap():
+    data_source = 'dummy data source'
+    targets = ['dummy_prom_query']
+    title = 'dummy title'
+    stateTimeline = G.StateTimeline(data_source, targets, title, rowHeight=0.7)
+    data = stateTimeline.to_json_data()
+    assert data['targets'] == targets
+    assert data['datasource'] == data_source
+    assert data['title'] == title
+    assert data['rowHeight'] == 0.7

@@ -8,6 +8,8 @@ x.x.x (TBD)
 * Added Discrete panel
 * Added support for colors in stat mapping panel with StatValueMappings & StatRangeMappings
 * Added missing auto interval properties in Template
+* Added param to RowPanel to collapse the row
+* Added StateTimeline panel which was added in Grafana v8
 
 Changes
 -------
