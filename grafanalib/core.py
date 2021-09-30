@@ -2230,44 +2230,7 @@ class Table(Panel):
     scroll = attr.ib(default=True, validator=instance_of(bool))
     showHeader = attr.ib(default=True, validator=instance_of(bool))
     span = attr.ib(default=6)
-    styles = attr.ib()
-    transform = attr.ib(default=COLUMNS_TRANSFORM)
     thresholds = attr.ib(default=attr.Factory(list))
-
-    @styles.default
-    def styles_default(self):
-        return [
-            ColumnStyle(
-                alias='Time',
-                pattern='Time',
-                type=DateColumnStyleType(),
-            ),
-            ColumnStyle(
-                alias='time',
-                pattern='time',
-                type=DateColumnStyleType(),
-            ),
-            ColumnStyle(
-                pattern='/.*/',
-            ),
-        ]
-
-    @classmethod
-    def with_styled_columns(cls, columns, styles=None, **kwargs):
-        """Construct a table where each column has an associated style.
-
-        :param columns: A list of (Column, ColumnStyle) pairs, where the
-            ColumnStyle is the style for the column and does not have a
-            pattern set (or the pattern is set to exactly the column name).
-            The ColumnStyle may also be None.
-        :param styles: An optional list of extra column styles that will be
-            appended to the table's list of styles.
-        :param kwargs: Other parameters to the Table constructor.
-        :return: A Table.
-        """
-        extraStyles = styles if styles else []
-        columns, styles = _style_columns(columns)
-        return cls(columns=columns, styles=styles + extraStyles, **kwargs)
 
     def to_json_data(self):
         return self.panel_json(
@@ -2298,8 +2261,6 @@ class Table(Panel):
                 },
                 'pageSize': self.pageSize,
                 'scroll': self.scroll,
-                'styles': self.styles,
-                'transform': self.transform,
                 'type': TABLE_TYPE,
             }
         )
