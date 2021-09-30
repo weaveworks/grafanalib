@@ -2211,12 +2211,10 @@ class Table(Panel):
     :param displayMode: By default, Grafana automatically chooses display settings, you can choose;
         color-text, color-background, color-background-solid, gradient-gauge, lcd-gauge, basic, json-view
     :param fontSize: Defines value font size
-    :param pageSize: Rows per page (None is unlimited)
-    :param scroll: Scroll the table instead of displaying in full
+    :param filterable: Allow user to filter columns, default False
+    :param mappings: To assign colors to boolean or string values, use Value mappings
     :param showHeader: Show the table header
-    :param sort: Table sorting
-    :param styles: Defines formatting for each column
-    :param transform: Table style
+    :param thresholds: List of thresholds
     """
 
     align = attr.ib(default='auto', validator=instance_of(str))
@@ -2226,8 +2224,6 @@ class Table(Panel):
     fontSize = attr.ib(default='100%')
     filterable = attr.ib(default=False, validator=instance_of(bool))
     mappings = attr.ib(default=attr.Factory(list))
-    pageSize = attr.ib(default=None)
-    scroll = attr.ib(default=True, validator=instance_of(bool))
     showHeader = attr.ib(default=True, validator=instance_of(bool))
     span = attr.ib(default=6)
     thresholds = attr.ib(default=attr.Factory(list))
@@ -2259,8 +2255,6 @@ class Table(Panel):
                 'options': {
                     'showHeader': self.showHeader
                 },
-                'pageSize': self.pageSize,
-                'scroll': self.scroll,
                 'type': TABLE_TYPE,
             }
         )
