@@ -1479,81 +1479,100 @@ class Graph(Panel):
 
 @attr.s
 class TimeSeries(Panel):
-    """Generates Time Series panel json structure
+    """Generates Time Series panel json structure added in Grafana v8
 
     Grafana doc on time series: https://grafana.com/docs/grafana/latest/panels/visualizations/time-series/
 
-    :param dataSource: Grafana datasource name
-    :param targets: list of metric requests for chosen datasource
-    :param title: panel title
-    :param textMode: define Grafana will show name or value: keys: 'auto' 'name' 'none' 'value' 'value_and_name'
-    :param colorMode: defines if Grafana will color panel background: keys "value" "background"
-    :param graphMode: defines if Grafana will draw graph: keys 'area' 'none'
-    :param orientation: Stacking direction in case of multiple series or fields: keys 'auto' 'horizontal' 'vertical'
-    :param alignment: defines value & title positioning: keys 'auto' 'centre'
-    :param description: optional panel description
-    :param editable: defines if panel is editable via web interfaces
-    :param format: defines value units
-    :param height: defines panel height
-    :param id: panel id
-    :param decimals: number of decimals to display
-    :param interval: defines time interval between metric queries
-    :param links: additional web links
-    :param mappings: the list of values to text mappings
-        This should be a list of StatMapping objects
-        https://grafana.com/docs/grafana/latest/panels/field-configuration-options/#value-mapping
-    :param reduceCalc: algorithm for reduction to a single value: keys
-        'mean' 'lastNotNull' 'last' 'first' 'firstNotNull' 'min' 'max' 'sum' 'total'
-    :param span: defines the number of spans that will be used for panel
+    :param axisPlacement: auto(Default)
+    :param axisLabel: axis label string
+    :param barAlignment: barAlignment
+    :param colorMode: Color mode
+        palette-classic (Default),
+    :param drawStyle: how to display your time series data
+        line (Default), bars, points
+    :param fillOpacity: fillOpacity
+    :param gradientMode: gradientMode
+    :param legendDisplayMode: refine how the legend appears in your visualization
+        list (Default), table, hidden
+    :param legendPlacement: bottom (Default), right
+    :param lineInterpolation: lineInterpolation
+    :param lineWidth: lineWidth
+    :param mappings: To assign colors to boolean or string values, use Value mappings
+    :param pointSize: pointSize
+    :param scaleDistributionType: scaleDistributionType
+    :param spanNulls: boolean
+    :param showPoints: auto
     :param thresholds: single stat thresholds
-    :param transparent: defines if the panel should be transparent
+    :param tooltipMode: When you hover your cursor over the visualization, Grafana can display tooltips
+        single (Default), multi, none
     """
 
-    displayMode = attr.ib(default='list')
-    placement = attr.ib(default='bottom')
-    textMode = attr.ib(default='auto')
-    colorMode = attr.ib(default='value')
-    graphMode = attr.ib(default='area')
-    orientation = attr.ib(default='auto')
-    alignment = attr.ib(default='auto')
-    format = attr.ib(default='none')
+    axisPlacement = attr.ib(default='auto', validator=instance_of(str))
+    axisLabel = attr.ib(default='', validator=instance_of(str))
+    barAlignment = attr.ib(default=0, validator=instance_of(int))
+    colorMode = attr.ib(default='palette-classic', validator=instance_of(str))
+    drawStyle = attr.ib(default='line', validator=instance_of(str))
+    fillOpacity = attr.ib(default=0, validator=instance_of(int))
+    gradientMode = attr.ib(default='none', validator=instance_of(str))
+    legendDisplayMode = attr.ib(default='list', validator=instance_of(str))
+    legendPlacement = attr.ib(default='bottom', validator=instance_of(str))
+    lineInterpolation = attr.ib(default='linear', validator=instance_of(str))
+    lineWidth = attr.ib(default=1, validator=instance_of(int))
     mappings = attr.ib(default=attr.Factory(list))
-    span = attr.ib(default=6)
-    thresholds = attr.ib(default="")
-    reduceCalc = attr.ib(default='mean', type=str)
-    decimals = attr.ib(default=None)
+    pointSize = attr.ib(default=5, validator=instance_of(int))
+    scaleDistributionType = attr.ib(default='linear', validator=instance_of(str))
+    spanNulls = attr.ib(default=False, validator=instance_of(bool))
+    showPoints = attr.ib(default='auto', validator=instance_of(str))
+    stacking = attr.ib(default={}, validator=instance_of(dict))
+    thresholds = attr.ib(default=attr.Factory(list))
+    tooltipMode = attr.ib(default='single', validator=instance_of(str))
 
     def to_json_data(self):
         return self.panel_json(
             {
                 'fieldConfig': {
                     'defaults': {
-                        'custom': {},
-                        'decimals': self.decimals,
+                        'color': {
+                            'mode': self.colorMode
+                        },
+                        'custom': {
+                            'axisPlacement': self.axisPlacement,
+                            'axisLabel': self.axisLabel,
+                            'drawStyle': self.drawStyle,
+                            'lineInterpolation': self.lineInterpolation,
+                            'barAlignment': self.barAlignment,
+                            'lineWidth': self.lineWidth,
+                            'fillOpacity': self.fillOpacity,
+                            'gradientMode': self.gradientMode,
+                            'spanNulls': self.spanNulls,
+                            'showPoints': self.showPoints,
+                            'pointSize': self.pointSize,
+                            'stacking': self.stacking,
+                            'scaleDistribution': {
+                                'type': self.scaleDistributionType
+                            },
+                            'hideFrom': {
+                                'tooltip': False,
+                                'viz': False,
+                                'legend': False
+                            },
+                        },
                         'mappings': self.mappings,
                         'thresholds': {
                             'mode': 'absolute',
-                            'steps': self.thresholds,
+                            'steps': self.thresholds
                         },
-                        'unit': self.format
-                    }
+                    },
+                    'overrides': []
                 },
                 'options': {
                     'legend': {
-                        "displayMode": self.displayMode,
-                        "placement": self.placement
+                        'displayMode': self.legendDisplayMode,
+                        'placement': self.legendPlacement,
+                        'calcs': []
                     },
-                    'textMode': self.textMode,
-                    'colorMode': self.colorMode,
-                    'graphMode': self.graphMode,
-                    'justifyMode': self.alignment,
-                    'orientation': self.orientation,
-                    'reduceOptions': {
-                        'calcs': [
-                            self.reduceCalc
-                        ],
-                        'fields': '',
-                        'values': False
+                    'tooltip': {
+                        'mode': self.tooltipMode
                     }
                 },
                 'type': TIMESERIES_TYPE,
