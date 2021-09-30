@@ -434,4 +434,4 @@ def test_worldmap():
     assert data['targets'] == targets
     assert data['datasource'] == data_source
     assert data['title'] == title
-    assert data['rowHeight'] == 0.7
+    assert data['options']['rowHeight'] == 0.7
