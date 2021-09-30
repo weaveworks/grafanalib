@@ -27,6 +27,7 @@ class CloudwatchMetricsTarget(object):
     :param refId: target reference id
     :param region: Cloudwatch region
     :param statistics: Cloudwatch mathematic statistic
+    :param hide: controls if given metric is displayed on visualization
     """
     alias = attr.ib(default="")
     dimensions = attr.ib(default={}, validator=instance_of(dict))
@@ -39,6 +40,7 @@ class CloudwatchMetricsTarget(object):
     refId = attr.ib(default="")
     region = attr.ib(default="default")
     statistics = attr.ib(default=["Average"], validator=instance_of(list))
+    hide = attr.ib(default=False, validator=instance_of(bool))
 
     def to_json_data(self):
 
@@ -53,5 +55,6 @@ class CloudwatchMetricsTarget(object):
             "period": self.period,
             "refId": self.refId,
             "region": self.region,
-            "statistics": self.statistics
+            "statistics": self.statistics,
+            "hide": self.hide,
         }

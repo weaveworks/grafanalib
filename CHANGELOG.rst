@@ -2,22 +2,74 @@
 Changelog
 =========
 
-0.x.x (TBD)
-===========
+x.x.x (TBD)
+===================
+
+* Added Discrete panel
+* Added support for colors in stat mapping panel with StatValueMappings & StatRangeMappings
+* Added missing auto interval properties in Template
+* Added support for time series panel added in Grafana v8
+
+Changes
+-------
+
+* Refine expectations of is_color_code
+* Deprecated StatMapping, StatValueMapping & StatRangeMapping
+* Change YAxis min value default from None to 0
+
+0.5.14 (2021-09-14)
+==================
+
+* Added colour overrides to pie chart panel
+* Added missing attributes from xAxis class
+* Added transformations for the Panel class (https://grafana.com/docs/grafana/next/panels/transformations/types-options/#transformation-types-and-options)
+* Added Worldmap panel (https://grafana.com/grafana/plugins/grafana-worldmap-panel/)
+* Added missing fill gradient to Graph panel
+* Added missing align to graph panel
+* Added missing show percentage attribute to Pie chart panel
+* Added ``extraJson`` attribute to the Panel class for overriding the panel with raw JSON
+* Added inline script support for Elasticsearch metrics
+* Selected needs to be set as a bool value for templating to work.
+
+0.5.13 (2021-05-17)
+===================
+
+* Added a test for the Alert class.
+
+Changes
+-------
+
+* Bugfix: changed 'target' validator in AlertNotification to accept CloudwatchMetricsTarget
+* Moved the alertRuleTag field from Graph to Alert.
+
+0.5.12 (2021-04-24)
+===================
+
+* Added hide parameter to CloudwatchMetricsTarget class
+* Added table-driven example dashboard and upload script
+
+Changes
+-------
+
+* bugfix load_dashboard add support for old python version 2.x, 3.3 and 3.4
+* Fix default target datasource to work with newer versions of Grafana
+* Removed re-defined maxDataPoints field from multiple panels
+* Fix the AlertList class and add a test for it
+
+Thanks to all those who have contributed to this release.
+
+
+0.5.11 (2021-04-06)
+===================
 
 * Added timeField field for the Elasticsearch target to allow the alert to change its state
 * Added nameFilter field for the AlertList panel
 * Added dashboardTags field for the AlertList panel
 
-
-Changes
--------
-
-* ...
-
+Thanks a lot for your contributions to this release, @dafna-starkware
 
 0.5.10 (2021-03-21)
-==================
+===================
 
 * Added Logs panel (https://grafana.com/docs/grafana/latest/panels/visualizations/logs-panel/)
 * Added Cloudwatch metrics datasource (https://grafana.com/docs/grafana/latest/datasources/cloudwatch/)

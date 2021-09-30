@@ -45,6 +45,10 @@ Lots of grafanalib is just simple data structures, so we aren't fastidious about
 However, tests are strongly encouraged for anything with non-trivial logic.
 Please try to use `hypothesis`_ for your tests.
 
+.. code-block:: console
+
+  $ make all
+
 Gotchas
 -------
 

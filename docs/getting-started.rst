@@ -42,6 +42,15 @@ If you save the above as ``example.dashboard.py`` (the suffix must be
 
   $ generate-dashboard -o frontend.json example.dashboard.py
 
+Generating dashboards from code
+===============================
+
+Sometimes you may need to generate and upload dashboard directly from Python 
+code. The following example provides minimal code boilerplate for it:
+
+.. literalinclude:: ../grafanalib/tests/examples/example.upload-dashboard.py
+   :language: python
+
 Installation
 ============
 

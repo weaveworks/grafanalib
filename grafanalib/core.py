@@ -1,3 +1,4 @@
+
 """Low-level functions for building Grafana dashboards.
 
 The functions in this module don't enforce Weaveworks policy, and only mildly
@@ -76,6 +77,7 @@ ABSOLUTE_TYPE = 'absolute'
 DASHBOARD_TYPE = 'dashboard'
 ROW_TYPE = 'row'
 GRAPH_TYPE = 'graph'
+DISCRETE_TYPE = 'natel-discrete-panel'
 STAT_TYPE = 'stat'
 SINGLESTAT_TYPE = 'singlestat'
 TABLE_TYPE = 'table'
@@ -90,6 +92,7 @@ STATUSMAP_TYPE = 'flant-statusmap-panel'
 SVG_TYPE = 'marcuscalidus-svg-panel'
 PIE_CHART_TYPE = 'grafana-piechart-panel'
 TIMESERIES_TYPE = 'timeseries'
+WORLD_MAP_TYPE = 'grafana-worldmap-panel'
 
 DEFAULT_FILL = 1
 DEFAULT_REFRESH = '10s'
@@ -255,6 +258,9 @@ GAUGE_DISPLAY_MODE_BASIC = 'basic'
 GAUGE_DISPLAY_MODE_LCD = 'lcd'
 GAUGE_DISPLAY_MODE_GRADIENT = 'gradient'
 
+DEFAULT_AUTO_COUNT = 30
+DEFAULT_MIN_AUTO_INTERVAL = '10s'
+
 
 @attr.s
 class Mapping(object):
@@ -372,6 +378,14 @@ class Repeat(object):
     maxPerRow = attr.ib(default=None, validator=is_valid_max_per_row)
 
 
+def is_valid_target(instance, attribute, value):
+    """
+    Check if a given attribute is a valid target
+    """
+    if not hasattr(value, "refId"):
+        raise ValueError(f"{attribute.name} should have 'refId' attribute")
+
+
 @attr.s
 class Target(object):
     """
@@ -391,7 +405,7 @@ class Target(object):
     step = attr.ib(default=DEFAULT_STEP)
     target = attr.ib(default="")
     instant = attr.ib(validator=instance_of(bool), default=False)
-    datasource = attr.ib(default="")
+    datasource = attr.ib(default=None)
 
     def to_json_data(self):
         return {
@@ -436,6 +450,14 @@ def is_valid_xaxis_mode(instance, attribute, value):
 
 @attr.s
 class XAxis(object):
+    """
+    X Axis
+
+    :param mode: Mode of axis can be time, series or histogram
+    :param name: X axis name
+    :param value: list of values eg. ["current"] or ["avg"]
+    :param show: show X axis
+    """
 
     mode = attr.ib(default='time', validator=is_valid_xaxis_mode)
     name = attr.ib(default=None)
@@ -444,6 +466,9 @@ class XAxis(object):
 
     def to_json_data(self):
         return {
+            'mode': self.mode,
+            'name': self.name,
+            'values': self.values,
             'show': self.show,
         }
 
@@ -453,13 +478,22 @@ class YAxis(object):
     """A single Y axis.
 
     Grafana graphs have two Y axes: one on the left and one on the right.
+
+    :param decimals: Defines how many decimals are displayed for Y value. (default auto)
+    :param format: The display unit for the Y value
+    :param label: The Y axis label. (default “")
+    :param logBase: The scale to use for the Y value, linear, or logarithmic. (default linear)
+    :param max: The maximum Y value
+    :param min: The minimum Y value
+    :param show: Show or hide the axis
     """
+
     decimals = attr.ib(default=None)
     format = attr.ib(default=None)
     label = attr.ib(default=None)
     logBase = attr.ib(default=1)
     max = attr.ib(default=None)
-    min = attr.ib(default=0)
+    min = attr.ib(default=None)
     show = attr.ib(default=True, validator=instance_of(bool))
 
     def to_json_data(self):
@@ -545,12 +579,12 @@ def _balance_panels(panels):
 class GridPos(object):
     """GridPos describes the panel size and position in grid coordinates.
 
-        :param h: height of the panel, grid height units each represents
-            30 pixels
-        :param w: width of the panel 1-24 (the width of the dashboard
-            is divided into 24 columns)
-        :param x: x cordinate of the panel, in same unit as w
-        :param y: y cordinate of the panel, in same unit as h
+    :param h: height of the panel, grid height units each represents
+        30 pixels
+    :param w: width of the panel 1-24 (the width of the dashboard
+        is divided into 24 columns)
+    :param x: x cordinate of the panel, in same unit as w
+    :param y: y cordinate of the panel, in same unit as h
     """
 
     h = attr.ib()
@@ -654,10 +688,10 @@ class DashboardLink(object):
 class ExternalLink(object):
     """ExternalLink creates a top-level link attached to a dashboard.
 
-        :param url: the URL to link to
-        :param title: the text of the link
-        :param keepTime: if true, the URL params for the dashboard's
-            current time period are appended
+    :param url: the URL to link to
+    :param title: the text of the link
+    :param keepTime: if true, the URL params for the dashboard's
+        current time period are appended
     """
     uri = attr.ib()
     title = attr.ib()
@@ -680,24 +714,27 @@ class Template(object):
     """Template create a new 'variable' for the dashboard, defines the variable
     name, human name, query to fetch the values and the default value.
 
-        :param default: the default value for the variable
-        :param dataSource: where to fetch the values for the variable from
-        :param label: the variable's human label
-        :param name: the variable's name
-        :param query: the query users to fetch the valid values of the variable
-        :param refresh: Controls when to update values in the dropdown
-        :param allValue: specify a custom all value with regex,
-            globs or lucene syntax.
-        :param includeAll: Add a special All option whose value includes
-            all options.
-        :param regex: Regex to filter or capture specific parts of the names
-            return by your data source query.
-        :param multi: If enabled, the variable will support the selection of
-            multiple options at the same time.
-        :param type: The template type, can be one of: query (default),
-            interval, datasource, custom, constant, adhoc.
-        :param hide: Hide this variable in the dashboard, can be one of:
-            SHOW (default), HIDE_LABEL, HIDE_VARIABLE
+    :param default: the default value for the variable
+    :param dataSource: where to fetch the values for the variable from
+    :param label: the variable's human label
+    :param name: the variable's name
+    :param query: the query users to fetch the valid values of the variable
+    :param refresh: Controls when to update values in the dropdown
+    :param allValue: specify a custom all value with regex,
+        globs or lucene syntax.
+    :param includeAll: Add a special All option whose value includes
+        all options.
+    :param regex: Regex to filter or capture specific parts of the names
+        return by your data source query.
+    :param multi: If enabled, the variable will support the selection of
+        multiple options at the same time.
+    :param type: The template type, can be one of: query (default),
+        interval, datasource, custom, constant, adhoc.
+    :param hide: Hide this variable in the dashboard, can be one of:
+        SHOW (default), HIDE_LABEL, HIDE_VARIABLE
+    :param auto: Interval will be dynamically calculated by dividing time range by the count specified in auto_count.
+    :param autoCount: Number of intervals for dividing the time range.
+    :param autoMin: Smallest interval for auto interval generator.
     """
 
     name = attr.ib()
@@ -728,6 +765,15 @@ class Template(object):
     type = attr.ib(default='query')
     hide = attr.ib(default=SHOW)
     sort = attr.ib(default=SORT_ALPHA_ASC)
+    auto = attr.ib(
+        default=False,
+        validator=instance_of(bool),
+    )
+    autoCount = attr.ib(
+        default=DEFAULT_AUTO_COUNT,
+        validator=instance_of(int)
+    )
+    autoMin = attr.ib(default=DEFAULT_MIN_AUTO_INTERVAL)
 
     def __attrs_post_init__(self):
         if self.type == 'custom':
@@ -749,6 +795,7 @@ class Template(object):
                         break
         else:
             self._current = {
+                'selected': False if self.default is None or not self.default else True,
                 'text': self.default,
                 'value': self.default,
                 'tags': [],
@@ -773,6 +820,9 @@ class Template(object):
             'useTags': self.useTags,
             'tagsQuery': self.tagsQuery,
             'tagValuesQuery': self.tagValuesQuery,
+            'auto': self.auto,
+            'auto_min': self.autoMin,
+            'auto_count': self.autoCount
         }
 
 
@@ -805,6 +855,7 @@ DEFAULT_TIME = Time('now-1h', 'now')
 class TimePicker(object):
     """
     Time Picker
+
     :param refreshIntervals: dashboard auto-refresh interval options
     :param timeOptions: dashboard time range options
     :param hidden: hide the time picker from dashboard
@@ -920,7 +971,7 @@ class AlertCondition(object):
     :param type: CTYPE_*
     """
 
-    target = attr.ib(validator=instance_of(Target))
+    target = attr.ib(validator=is_valid_target)
     evaluator = attr.ib(validator=instance_of(Evaluator))
     timeRange = attr.ib(validator=instance_of(TimeRange))
     operator = attr.ib()
@@ -950,7 +1001,9 @@ class AlertCondition(object):
 
 @attr.s
 class Alert(object):
-
+    """
+    :param alertRuleTags: Key Value pairs to be sent with Alert notifications.
+    """
     name = attr.ib()
     message = attr.ib()
     alertConditions = attr.ib()
@@ -960,6 +1013,14 @@ class Alert(object):
     noDataState = attr.ib(default=STATE_NO_DATA)
     notifications = attr.ib(default=attr.Factory(list))
     gracePeriod = attr.ib(default='5m')
+    alertRuleTags = attr.ib(
+        default=attr.Factory(dict),
+        validator=attr.validators.deep_mapping(
+            key_validator=attr.validators.instance_of(str),
+            value_validator=attr.validators.instance_of(str),
+            mapping_validator=attr.validators.instance_of(dict),
+        )
+    )
 
     def to_json_data(self):
         return {
@@ -972,6 +1033,7 @@ class Alert(object):
             'noDataState': self.noDataState,
             'notifications': self.notifications,
             'for': self.gracePeriod,
+            'alertRuleTags': self.alertRuleTags,
         }
 
 
@@ -1100,10 +1162,25 @@ class Dashboard(object):
         }
 
 
+def _deep_update(base_dict, extra_dict):
+    if extra_dict is None:
+        return base_dict
+
+    for k, v in extra_dict.items():
+        if k in base_dict and hasattr(base_dict[k], "to_json_data"):
+            base_dict[k] = base_dict[k].to_json_data()
+
+        if k in base_dict and isinstance(base_dict[k], dict):
+            _deep_update(base_dict[k], v)
+        else:
+            base_dict[k] = v
+
+
 @attr.s
 class Panel(object):
     """
     Generic panel for shared defaults
+
     :param cacheTimeout: metric query result cache ttl
     :param dataSource: Grafana datasource name
     :param description: optional panel description
@@ -1122,6 +1199,9 @@ class Panel(object):
     :param timeFrom: time range that Override relative time
     :param title: of the panel
     :param transparent: defines if panel should be transparent
+    :param transformations: defines transformations applied to the table
+    :param extraJson: raw JSON additions or overrides added to the JSON output
+           of this panel, can be used for using unsupported features
     """
 
     dataSource = attr.ib(default=None)
@@ -1144,6 +1224,8 @@ class Panel(object):
     timeFrom = attr.ib(default=None)
     timeShift = attr.ib(default=None)
     transparent = attr.ib(default=False, validator=instance_of(bool))
+    transformations = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+    extraJson = attr.ib(default=None, validator=attr.validators.optional(instance_of(dict)))
 
     def _map_panels(self, f):
         return f(self)
@@ -1172,8 +1254,10 @@ class Panel(object):
             'timeShift': self.timeShift,
             'title': self.title,
             'transparent': self.transparent,
+            'transformations': self.transformations
         }
         res.update(overrides)
+        _deep_update(res, self.extraJson)
         return res
 
 
@@ -1261,21 +1345,30 @@ class Graph(Panel):
     Generates Graph panel json structure.
 
     :param alert: List of AlertConditions
-    :param alertRuleTags: Key Value pairs to be sent with Alert notifications
+    :param align: Select to align left and right Y-axes by value
+    :param alignLevel: Available when Align is selected. Value to use for alignment of left and right Y-axes
+    :param bars: Display values as a bar chart
     :param dataLinks: List of data links hooked to datapoints on the graph
-    :param dataSource: DataSource's name
-    :param minSpan: Minimum width for each panel
+    :param fill: Area fill, amount of color fill for a series. (default 1, 0 is none)
+    :param fillGradient: Degree of gradient on the area fill. (0 is no gradient, 10 is a steep gradient. Default is 0.)
+    :param lines: Display values as a line graph
+    :param points: Display points for values (default False)
+    :param pointRadius: Controls how large the points are
+    :param stack: Each series is stacked on top of another
+    :param percentage: Available when Stack is selected. Each series is drawn as a percentage of the total of all series
     :param thresholds: List of GraphThresholds - Only valid when alert not defined
     """
 
     alert = attr.ib(default=None)
-    alertRuleTags = attr.ib(default=attr.Factory(dict))
     alertThreshold = attr.ib(default=True, validator=instance_of(bool))
     aliasColors = attr.ib(default=attr.Factory(dict))
+    align = attr.ib(default=False, validator=instance_of(bool))
+    alignLevel = attr.ib(default=0, validator=instance_of(int))
     bars = attr.ib(default=False, validator=instance_of(bool))
     dataLinks = attr.ib(default=attr.Factory(list))
     error = attr.ib(default=False, validator=instance_of(bool))
     fill = attr.ib(default=1, validator=instance_of(int))
+    fillGradient = attr.ib(default=0, validator=instance_of(int))
     grid = attr.ib(default=attr.Factory(Grid), validator=instance_of(Grid))
     isNew = attr.ib(default=True, validator=instance_of(bool))
     legend = attr.ib(
@@ -1298,7 +1391,6 @@ class Graph(Panel):
     )
     thresholds = attr.ib(default=attr.Factory(list))
     xAxis = attr.ib(default=attr.Factory(XAxis), validator=instance_of(XAxis))
-    # XXX: This isn't a *good* default, rather it's the default Grafana uses.
     try:
         yAxes = attr.ib(
             default=attr.Factory(YAxes),
@@ -1341,10 +1433,13 @@ class Graph(Panel):
             'type': GRAPH_TYPE,
             'xaxis': self.xAxis,
             'yaxes': self.yAxes,
+            'yaxis': {
+                'align': self.align,
+                'alignLevel': self.alignLevel
+            }
         }
         if self.alert:
             graphObject['alert'] = self.alert
-            graphObject['alertRuleTags'] = self.alertRuleTags
             graphObject['thresholds'] = []
         if self.thresholds and self.alert:
             print("Warning: Graph threshold ignored as Alerts defined")
@@ -1378,6 +1473,7 @@ class Graph(Panel):
 
         def set_refid(t):
             return t if t.refId else attr.evolve(t, refId=next(auto_ref_ids))
+
         return self._map_targets(set_refid)
 
 
@@ -1463,6 +1559,49 @@ class TimeSeries(Panel):
                 'type': TIMESERIES_TYPE,
             }
         )
+
+
+@attr.s
+class DiscreteColorMappingItem(object):
+    """
+    Generates json structure for the value mapping item for the StatValueMappings class:
+
+    :param text: String to color
+    :param color: To color the text with
+    """
+
+    text = attr.ib(validator=instance_of(str))
+    color = attr.ib(default=GREY1, validator=instance_of((str, RGBA)))
+
+    def to_json_data(self):
+        return {
+            "color": self.color,
+            "text": self.text,
+        }
+
+
+@attr.s
+class Discrete(Panel):
+    """
+    Generates Discrete panel json structure.
+
+    :param colorMaps: List of DiscreteColorMappingItem, to color values.
+    """
+
+    colorMapsItems = attr.ib(
+        default=[],
+        validator=attr.validators.deep_iterable(
+            member_validator=attr.validators.instance_of(DiscreteColorMappingItem),
+            iterable_validator=attr.validators.instance_of(list),
+        ),
+    )
+
+    def to_json_data(self):
+        graphObject = {
+            'colorMaps': self.colorMapsItems,
+            'type': DISCRETE_TYPE,
+        }
+        return self.panel_json(graphObject)
 
 
 @attr.s
@@ -1559,6 +1698,7 @@ class AlertList(object):
 
     :param dashboardTags: A list of tags (strings) for the panel.
     :param description: Panel description, supports markdown and links.
+    :param gridPos: describes the panel size and position in grid coordinates.
     :param id: panel id
     :param limit: Max number of alerts that can be displayed in the list.
     :param nameFilter: Show only alerts that contain nameFilter in their name.
@@ -1572,8 +1712,8 @@ class AlertList(object):
     :param span: Defines the number of spans that will be used for the panel.
     :param stateFilter: Show alerts with statuses from the stateFilter list. The list can contain a
         subset of the following statuses:
-            [ALERTLIST_STATE_ALERTING, ALERTLIST_STATE_OK, ALERTLIST_STATE_NO_DATA,
-             ALERTLIST_STATE_PAUSED, ALERTLIST_STATE_EXECUTION_ERROR, ALERTLIST_STATE_PENDING].
+        [ALERTLIST_STATE_ALERTING, ALERTLIST_STATE_OK, ALERTLIST_STATE_NO_DATA,
+        ALERTLIST_STATE_PAUSED, ALERTLIST_STATE_EXECUTION_ERROR, ALERTLIST_STATE_PENDING].
         An empty list means all alerts.
     :param title: The panel title.
     :param transparent: If true, display the panel without a background.
@@ -1584,8 +1724,9 @@ class AlertList(object):
         validator=attr.validators.deep_iterable(
             member_validator=attr.validators.instance_of(str),
             iterable_validator=attr.validators.instance_of(list)))
-    description = attr.ib(default="")
-    gridPos = attr.ib(default=None)
+    description = attr.ib(default="", validator=instance_of(str))
+    gridPos = attr.ib(
+        default=None, validator=attr.validators.optional(attr.validators.instance_of(GridPos)))
     id = attr.ib(default=None)
     limit = attr.ib(default=DEFAULT_LIMIT)
     links = attr.ib(
@@ -1593,6 +1734,7 @@ class AlertList(object):
         validator=attr.validators.deep_iterable(
             member_validator=attr.validators.instance_of(DataLink),
             iterable_validator=attr.validators.instance_of(list)))
+    nameFilter = attr.ib(default="", validator=instance_of(str))
     onlyAlertsOnDashboard = attr.ib(default=True, validator=instance_of(bool))
     show = attr.ib(default=ALERTLIST_SHOW_CURRENT)
     sortOrder = attr.ib(default=SORT_ASC, validator=in_([1, 2, 3]))
@@ -1627,43 +1769,31 @@ class Stat(Panel):
 
     Grafana doc on stat: https://grafana.com/docs/grafana/latest/panels/visualizations/stat-panel/
 
-    :param dataSource: Grafana datasource name
-    :param targets: list of metric requests for chosen datasource
-    :param title: panel title
-    :param textMode: define Grafana will show name or value: keys: 'auto' 'name' 'none' 'value' 'value_and_name'
-    :param colorMode: defines if Grafana will color panel background: keys "value" "background"
-    :param graphMode: defines if Grafana will draw graph: keys 'area' 'none'
-    :param orientation: Stacking direction in case of multiple series or fields: keys 'auto' 'horizontal' 'vertical'
     :param alignment: defines value & title positioning: keys 'auto' 'centre'
-    :param description: optional panel description
-    :param editable: defines if panel is editable via web interfaces
-    :param format: defines value units
-    :param height: defines panel height
-    :param id: panel id
+    :param colorMode: defines if Grafana will color panel background: keys "value" "background"
     :param decimals: number of decimals to display
-    :param interval: defines time interval between metric queries
-    :param links: additional web links
+    :param format: defines value units
+    :param graphMode: defines if Grafana will draw graph: keys 'area' 'none'
     :param mappings: the list of values to text mappings
         This should be a list of StatMapping objects
         https://grafana.com/docs/grafana/latest/panels/field-configuration-options/#value-mapping
+    :param orientation: Stacking direction in case of multiple series or fields: keys 'auto' 'horizontal' 'vertical'
     :param reduceCalc: algorithm for reduction to a single value: keys
         'mean' 'lastNotNull' 'last' 'first' 'firstNotNull' 'min' 'max' 'sum' 'total'
-    :param span: defines the number of spans that will be used for panel
+    :param textMode: define Grafana will show name or value: keys: 'auto' 'name' 'none' 'value' 'value_and_name'
     :param thresholds: single stat thresholds
-    :param transparent: defines if the panel should be transparent
     """
 
-    textMode = attr.ib(default='auto')
-    colorMode = attr.ib(default='value')
-    graphMode = attr.ib(default='area')
-    orientation = attr.ib(default='auto')
     alignment = attr.ib(default='auto')
-    format = attr.ib(default='none')
-    mappings = attr.ib(default=attr.Factory(list))
-    span = attr.ib(default=6)
-    thresholds = attr.ib(default="")
-    reduceCalc = attr.ib(default='mean', type=str)
+    colorMode = attr.ib(default='value')
     decimals = attr.ib(default=None)
+    format = attr.ib(default='none')
+    graphMode = attr.ib(default='area')
+    mappings = attr.ib(default=attr.Factory(list))
+    orientation = attr.ib(default='auto')
+    reduceCalc = attr.ib(default='mean', type=str)
+    textMode = attr.ib(default='auto')
+    thresholds = attr.ib(default="")
 
     def to_json_data(self):
         return self.panel_json(
@@ -1700,9 +1830,109 @@ class Stat(Panel):
 
 
 @attr.s
+class StatValueMappingItem(object):
+    """
+    Generates json structure for the value mapping item for the StatValueMappings class:
+
+    :param text: String that will replace input value
+    :param mapValue: Value to be replaced
+    :param color: How to color the text if mapping occurs
+    :param index: index
+    """
+
+    text = attr.ib()
+    mapValue = attr.ib(default="", validator=instance_of(str))
+    color = attr.ib(default="", validator=instance_of(str))
+    index = attr.ib(default=None)
+
+    def to_json_data(self):
+        return {
+            self.mapValue: {
+                'text': self.text,
+                'color': self.color,
+                'index': self.index
+            }
+        }
+
+
+@attr.s(init=False)
+class StatValueMappings(object):
+    """
+    Generates json structure for the value mappings for the StatPanel:
+
+    :param mappingItems: List of StatValueMappingItem objects
+
+    mappings=[
+        core.StatValueMappings(
+            core.StatValueMappingItem('Offline', '0', 'red'),  # Value must a string
+            core.StatValueMappingItem('Online', '1', 'green')
+        ),
+    ],
+    """
+
+    mappingItems = attr.ib(
+        default=[],
+        validator=attr.validators.deep_iterable(
+            member_validator=attr.validators.instance_of(StatValueMappingItem),
+            iterable_validator=attr.validators.instance_of(list),
+        ),
+    )
+
+    def __init__(self, *mappings: StatValueMappingItem):
+        self.__attrs_init__([*mappings])
+
+    def to_json_data(self):
+        ret_dict = {
+            'type': 'value',
+            'options': {
+            }
+        }
+
+        for item in self.mappingItems:
+            ret_dict['options'].update(item.to_json_data())
+
+        return ret_dict
+
+
+@attr.s
+class StatRangeMappings(object):
+    """
+    Generates json structure for the range mappings for the StatPanel:
+
+    :param text: Sting that will replace input value
+    :param startValue: When using a range, the start value of the range
+    :param endValue: When using a range, the end value of the range
+    :param color: How to color the text if mapping occurs
+    :param index: index
+    """
+
+    text = attr.ib()
+    startValue = attr.ib(default=0, validator=instance_of(int))
+    endValue = attr.ib(default=0, validator=instance_of(int))
+    color = attr.ib(default="", validator=instance_of(str))
+    index = attr.ib(default=None)
+
+    def to_json_data(self):
+        return {
+            'type': 'range',
+            'options': {
+                'from': self.startValue,
+                'to': self.endValue,
+                'result': {
+                    'text': self.text,
+                    'color': self.color,
+                    'index': self.index
+                }
+            }
+        }
+
+
+@attr.s
 class StatMapping(object):
     """
+    Deprecated Grafana v8
     Generates json structure for the value mapping for the Stat panel:
+
     :param text: Sting that will replace input value
     :param value: Value to be replaced
     :param startValue: When using a range, the start value of the range
@@ -1719,7 +1949,7 @@ class StatMapping(object):
     def to_json_data(self):
         mappingType = MAPPING_TYPE_VALUE_TO_TEXT if self.mapValue else MAPPING_TYPE_RANGE_TO_TEXT
 
-        return {
+        ret_dict = {
             'operator': '',
             'text': self.text,
             'type': mappingType,
@@ -1729,13 +1959,17 @@ class StatMapping(object):
             'id': self.id
         }
 
+        return ret_dict
+
 
 @attr.s
 class StatValueMapping(object):
     """
+    Deprecated Grafana v8
     Generates json structure for the value mappings for the StatPanel:
+
     :param text: Sting that will replace input value
-    :param value: Value to be replaced
+    :param mapValue: Value to be replaced
     :param id: panel id
     """
 
@@ -1744,13 +1978,19 @@ class StatValueMapping(object):
     id = attr.ib(default=None)
 
     def to_json_data(self):
-        return StatMapping(self.text, mapValue=self.mapValue, id=self.id)
+        return StatMapping(
+            self.text,
+            mapValue=self.mapValue,
+            id=self.id,
+        )
 
 
 @attr.s
 class StatRangeMapping(object):
     """
-    Generates json structure for the value mappings for the StatPanel:
+    Deprecated Grafana v8
+    Generates json structure for the range mappings for the StatPanel:
+
     :param text: Sting that will replace input value
     :param startValue: When using a range, the start value of the range
     :param endValue: When using a range, the end value of the range
@@ -1779,32 +2019,19 @@ class SingleStat(Panel):
 
     Grafana doc on singlestat: https://grafana.com/docs/grafana/latest/features/panels/singlestat/
 
-    :param dataSource: Grafana datasource name
-    :param targets: list of metric requests for chosen datasource
-    :param title: panel title
     :param cacheTimeout: metric query result cache ttl
     :param colors: the list of colors that can be used for coloring
         panel value or background. Additional info on coloring in docs:
         https://grafana.com/docs/grafana/latest/features/panels/singlestat/#coloring
     :param colorBackground: defines if grafana will color panel background
     :param colorValue: defines if grafana will color panel value
-    :param description: optional panel description
     :param decimals: override automatic decimal precision for legend/tooltips
-    :param editable: defines if panel is editable via web interfaces
     :param format: defines value units
     :param gauge: draws and additional speedometer-like gauge based
-    :param height: defines panel height
-    :param hideTimeOverride: hides time overrides
-    :param id: panel id
-    :param interval: defines time interval between metric queries
-    :param links: additional web links
     :param mappingType: defines panel mapping type.
         Additional info can be found in docs:
         https://grafana.com/docs/grafana/latest/features/panels/singlestat/#value-to-text-mapping
     :param mappingTypes: the list of available mapping types for panel
-    :param maxDataPoints: maximum metric query results,
-        that will be used for rendering
-    :param minSpan: minimum span number
     :param nullText: defines what to show if metric query result is undefined
     :param nullPointMode: defines how to render undefined values
     :param postfix: defines postfix that will be attached to value
@@ -1812,17 +2039,14 @@ class SingleStat(Panel):
     :param prefix: defines prefix that will be attached to value
     :param prefixFontSize: defines prefix font size
     :param rangeMaps: the list of value to text mappings
-    :param span: defines the number of spans that will be used for panel
     :param sparkline: defines if grafana should draw an additional sparkline.
         Sparkline grafana documentation:
         https://grafana.com/docs/grafana/latest/features/panels/singlestat/#spark-lines
     :param thresholds: single stat thresholds
-    :param transparent: defines if panel should be transparent
     :param valueFontSize: defines value font size
     :param valueName: defines value type. possible values are:
         min, max, avg, current, total, name, first, delta, range
     :param valueMaps: the list of value to text mappings
-    :param timeFrom: time range that Override relative time
     """
 
     cacheTimeout = attr.ib(default=None)
@@ -1833,8 +2057,6 @@ class SingleStat(Panel):
     format = attr.ib(default='none')
     gauge = attr.ib(default=attr.Factory(Gauge),
                     validator=instance_of(Gauge))
-    hideTimeOverride = attr.ib(default=False, validator=instance_of(bool))
-    interval = attr.ib(default=None)
     mappingType = attr.ib(default=MAPPING_TYPE_VALUE_TO_TEXT)
     mappingTypes = attr.ib(
         default=attr.Factory(lambda: [
@@ -1842,7 +2064,6 @@ class SingleStat(Panel):
             MAPPING_RANGE_TO_TEXT,
         ]),
     )
-    maxDataPoints = attr.ib(default=100)
     minSpan = attr.ib(default=None)
     nullText = attr.ib(default=None)
     nullPointMode = attr.ib(default='connected')
@@ -1870,11 +2091,8 @@ class SingleStat(Panel):
                 'decimals': self.decimals,
                 'format': self.format,
                 'gauge': self.gauge,
-                'interval': self.interval,
-                'hideTimeOverride': self.hideTimeOverride,
                 'mappingType': self.mappingType,
                 'mappingTypes': self.mappingTypes,
-                'maxDataPoints': self.maxDataPoints,
                 'minSpan': self.minSpan,
                 'nullPointMode': self.nullPointMode,
                 'nullText': self.nullText,
@@ -2066,31 +2284,17 @@ class Table(Panel):
     Grafana doc on table: https://grafana.com/docs/grafana/latest/features/panels/table_panel/#table-panel
 
     :param columns: table columns for Aggregations view
-    :param dataSource: Grafana datasource name
-    :param description: optional panel description
-    :param editable: defines if panel is editable via web interfaces
     :param fontSize: defines value font size
-    :param height: defines panel height
-    :param hideTimeOverride: hides time overrides
-    :param id: panel id
-    :param links: additional web links
-    :param minSpan: minimum span number
     :param pageSize: rows per page (None is unlimited)
     :param scroll: scroll the table instead of displaying in full
     :param showHeader: show the table header
-    :param span: defines the number of spans that will be used for panel
+    :param sort: table sorting
     :param styles: defines formatting for each column
-    :param targets: list of metric requests for chosen datasource
-    :param timeFrom: time range that Override relative time
-    :param title: panel title
     :param transform: table style
-    :param transparent: defines if panel should be transparent
     """
 
     columns = attr.ib(default=attr.Factory(list))
     fontSize = attr.ib(default='100%')
-    hideTimeOverride = attr.ib(default=False, validator=instance_of(bool))
-    minSpan = attr.ib(default=None)
     pageSize = attr.ib(default=None)
     scroll = attr.ib(default=True, validator=instance_of(bool))
     showHeader = attr.ib(default=True, validator=instance_of(bool))
@@ -2159,43 +2363,25 @@ class BarGauge(Panel):
     """Generates Bar Gauge panel json structure
 
     :param allValue: If All values should be shown or a Calculation
-    :param cacheTimeout: metric query result cache ttl
     :param calc: Calculation to perform on metrics
     :param dataLinks: list of data links hooked to datapoints on the graph
-    :param dataSource: Grafana datasource name
     :param decimals: override automatic decimal precision for legend/tooltips
-    :param description: optional panel description
     :param displayMode: style to display bar gauge in
-    :param editable: defines if panel is editable via web interfaces
     :param format: defines value units
-    :param height: defines panel height
-    :param hideTimeOverride: hides time overrides
-    :param id: panel id
-    :param interval: defines time interval between metric queries
     :param labels: option to show gauge level labels
     :param limit: limit of number of values to show when not Calculating
-    :param links: additional web links
     :param max: maximum value of the gauge
-    :param maxDataPoints: maximum metric query results,
-        that will be used for rendering
     :param min: minimum value of the gauge
-    :param minSpan: minimum span number
     :param orientation: orientation of the bar gauge
     :param rangeMaps: the list of value to text mappings
-    :param span: defines the number of spans that will be used for panel
-    :param targets: list of metric requests for chosen datasource
     :param thresholdLabel: label for gauge. Template Variables:
         "$__series_namei" "$__field_name" "$__cell_{N} / $__calc"
     :param thresholdMarkers: option to show marker of level on gauge
     :param thresholds: single stat thresholds
-    :param timeFrom: time range that Override relative time
-    :param title: panel title
-    :param transparent: defines if panel should be transparent
     :param valueMaps: the list of value to text mappings
     """
 
     allValues = attr.ib(default=False, validator=instance_of(bool))
-    cacheTimeout = attr.ib(default=None)
     calc = attr.ib(default=GAUGE_CALC_MEAN)
     dataLinks = attr.ib(default=attr.Factory(list))
     decimals = attr.ib(default=None)
@@ -2210,14 +2396,10 @@ class BarGauge(Panel):
         ),
     )
     format = attr.ib(default='none')
-    hideTimeOverride = attr.ib(default=False, validator=instance_of(bool))
-    interval = attr.ib(default=None)
     label = attr.ib(default=None)
     limit = attr.ib(default=None)
     max = attr.ib(default=100)
-    maxDataPoints = attr.ib(default=100)
     min = attr.ib(default=0)
-    minSpan = attr.ib(default=None)
     orientation = attr.ib(
         default=ORIENTATION_HORIZONTAL,
         validator=in_([ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL]),
@@ -2239,11 +2421,6 @@ class BarGauge(Panel):
     def to_json_data(self):
         return self.panel_json(
             {
-                'cacheTimeout': self.cacheTimeout,
-                'hideTimeOverride': self.hideTimeOverride,
-                'interval': self.interval,
-                'maxDataPoints': self.maxDataPoints,
-                'minSpan': self.minSpan,
                 'options': {
                     'displayMode': self.displayMode,
                     'fieldOptions': {
@@ -2276,53 +2453,31 @@ class GaugePanel(Panel):
     """Generates Gauge panel json structure
 
     :param allValue: If All values should be shown or a Calculation
-    :param cacheTimeout: metric query result cache ttl
     :param calc: Calculation to perform on metrics
     :param dataLinks: list of data links hooked to datapoints on the graph
-    :param dataSource: Grafana datasource name
     :param decimals: override automatic decimal precision for legend/tooltips
-    :param description: optional panel description
-    :param editable: defines if panel is editable via web interfaces
     :param format: defines value units
-    :param height: defines panel height
-    :param hideTimeOverride: hides time overrides
-    :param id: panel id
-    :param interval: defines time interval between metric queries
     :param labels: option to show gauge level labels
     :param limit: limit of number of values to show when not Calculating
-    :param links: additional web links
     :param max: maximum value of the gauge
-    :param maxDataPoints: maximum metric query results,
-        that will be used for rendering
     :param min: minimum value of the gauge
-    :param minSpan: minimum span number
     :param rangeMaps: the list of value to text mappings
-    :param span: defines the number of spans that will be used for panel
-    :param targets: list of metric requests for chosen datasource
     :param thresholdLabel: label for gauge. Template Variables:
         "$__series_namei" "$__field_name" "$__cell_{N} / $__calc"
     :param thresholdMarkers: option to show marker of level on gauge
     :param thresholds: single stat thresholds
-    :param timeFrom: time range that Override relative time
-    :param title: panel title
-    :param transparent: defines if panel should be transparent
     :param valueMaps: the list of value to text mappings
     """
 
     allValues = attr.ib(default=False, validator=instance_of(bool))
-    cacheTimeout = attr.ib(default=None)
     calc = attr.ib(default=GAUGE_CALC_MEAN)
     dataLinks = attr.ib(default=attr.Factory(list))
     decimals = attr.ib(default=None)
     format = attr.ib(default='none')
-    hideTimeOverride = attr.ib(default=False, validator=instance_of(bool))
-    interval = attr.ib(default=None)
     label = attr.ib(default=None)
     limit = attr.ib(default=None)
     max = attr.ib(default=100)
-    maxDataPoints = attr.ib(default=100)
     min = attr.ib(default=0)
-    minSpan = attr.ib(default=None)
     rangeMaps = attr.ib(default=attr.Factory(list))
     thresholdLabels = attr.ib(default=False, validator=instance_of(bool))
     thresholdMarkers = attr.ib(default=True, validator=instance_of(bool))
@@ -2340,11 +2495,6 @@ class GaugePanel(Panel):
     def to_json_data(self):
         return self.panel_json(
             {
-                'cacheTimeout': self.cacheTimeout,
-                'hideTimeOverride': self.hideTimeOverride,
-                'interval': self.interval,
-                'maxDataPoints': self.maxDataPoints,
-                'minSpan': self.minSpan,
                 'options': {
                     'fieldOptions': {
                         'calcs': [self.calc],
@@ -2374,13 +2524,13 @@ class GaugePanel(Panel):
 class HeatmapColor(object):
     """A Color object for heatmaps
 
-    :param cardColor
-    :param colorScale
-    :param colorScheme
-    :param exponent
-    :param max
-    :param min
-    :param mode
+    :param cardColor: color
+    :param colorScale: scale
+    :param colorScheme: scheme
+    :param exponent: exponent
+    :param max: max
+    :param min: min
+    :param mode: mode
     """
 
     # Maybe cardColor should validate to RGBA object, not sure
@@ -2408,16 +2558,16 @@ class HeatmapColor(object):
 class Heatmap(Panel):
     """Generates Heatmap panel json structure (https://grafana.com/docs/grafana/latest/features/panels/heatmap/)
 
-    :param heatmap
+    :param heatmap: dict
     :param cards: A heatmap card object: keys "cardPadding", "cardRound"
     :param color: Heatmap color object
     :param dataFormat: 'timeseries' or 'tsbuckets'
     :param yBucketBound: 'auto', 'upper', 'middle', 'lower'
     :param reverseYBuckets: boolean
-    :param xBucketSize
-    :param xBucketNumber
-    :param yBucketSize
-    :param yBucketNumber
+    :param xBucketSize: Size
+    :param xBucketNumber: Number
+    :param yBucketSize: Size
+    :param yBucketNumber: Number
     :param highlightCards: boolean
     :param hideZeroBuckets: boolean
     :param transparent: defines if the panel should be transparent
@@ -2492,14 +2642,14 @@ class Heatmap(Panel):
 class StatusmapColor(object):
     """A Color object for Statusmaps
 
-    :param cardColor
-    :param colorScale
-    :param colorScheme
-    :param exponent
-    :param max
-    :param min
-    :param mode
-    :param thresholds
+    :param cardColor: colour
+    :param colorScale: scale
+    :param colorScheme: scheme
+    :param exponent: exponent
+    :param max: max
+    :param min: min
+    :param mode: mode
+    :param thresholds: threshold
     """
 
     # Maybe cardColor should validate to RGBA object, not sure
@@ -2530,27 +2680,15 @@ class Statusmap(Panel):
     """Generates json structure for the flant-statusmap-panel visualisation plugin
     (https://grafana.com/grafana/plugins/flant-statusmap-panel/).
 
-    :param alert
+    :param alert: Alert
     :param cards: A statusmap card object: keys 'cardRound', 'cardMinWidth', 'cardHSpacing', 'cardVSpacing'
     :param color: A StatusmapColor object
-    :param dataSource: Name of the datasource to use
-    :param description: Description of the panel
-    :param editable
-    :param id
-    :param isNew
-    :param legend
-    :param links
-    :param minSpan
-    :param nullPointMode
-    :param span
-    :param targets
-    :param timeFrom
-    :param timeShift
-    :param title: Title of the panel
-    :param tooltip
-    :param transparent: Set panel transparency on/off
-    :param xAxis
-    :param yAxis
+    :param isNew: isNew
+    :param legend: Legend object
+    :param nullPointMode: null
+    :param tooltip: Tooltip object
+    :param xAxis: XAxis object
+    :param yAxis: YAxis object
     """
 
     alert = attr.ib(default=None)
@@ -2572,7 +2710,6 @@ class Statusmap(Panel):
         default=attr.Factory(Legend),
         validator=instance_of(Legend),
     )
-    minSpan = attr.ib(default=None)
     nullPointMode = attr.ib(default=NULL_AS_ZERO)
     tooltip = attr.ib(
         default=attr.Factory(Tooltip),
@@ -2608,21 +2745,12 @@ class Statusmap(Panel):
 class Svg(Panel):
     """Generates SVG panel json structure
     Grafana doc on SVG: https://grafana.com/grafana/plugins/marcuscalidus-svg-panel
-    :param dataSource: Grafana datasource name
-    :param targets: list of metric requests for chosen datasource
-    :param title: panel title
-    :param description: optional panel description
-    :param editable: defines if panel is editable via web interfaces
+
     :param format: defines value units
     :param jsCodeFilePath: path to javascript file to be run on dashboard refresh
     :param jsCodeInitFilePath: path to javascript file to be run after the first initialization of the SVG
-    :param height: defines panel height
-    :param id: panel id
-    :param interval: defines time interval between metric queries
-    :param links: additional web links
-    :param reduceCalc: algorithm for reduction to a single value:
+    :param reduceCalc: algorithm for reduction to a single value,
         keys 'mean' 'lastNotNull' 'last' 'first' 'firstNotNull' 'min' 'max' 'sum' 'total'
-    :param span: defines the number of spans that will be used for panel
     :param svgFilePath: path to SVG image file to be displayed
     """
 
@@ -2663,33 +2791,32 @@ class Svg(Panel):
 class PieChart(Panel):
     """Generates Pie Chart panel json structure
     Grafana doc on Pie Chart: https://grafana.com/grafana/plugins/grafana-piechart-panel
-    :param dataSource: Grafana datasource name
-    :param targets: list of metric requests for chosen datasource
-    :param title: panel title
-    :param description: optional panel description
-    :param editable: defines if panel is editable via web interfaces
+
+    :param aliasColors: dictionary of color overrides
     :param format: defines value units
-    :param height: defines panel height
-    :param id: panel id
     :param pieType: defines the shape of the pie chart (pie or donut)
+    :param percentageDecimals: Number of decimal places to show if percentages shown in legned
     :param showLegend: defines if the legend should be shown
-    :param showLegend: defines if the legend should show values
+    :param showLegendValues: defines if the legend should show values
+    :param showLegendPercentage: Show percentages in the legend
     :param legendType: defines where the legend position
-    :param links: additional web links
-    :param span: defines the number of spans that will be used for panel
-    :param transparent: defines if the panel is transparent
+    :param thresholds: defines thresholds
     """
 
+    aliasColors = attr.ib(default=attr.Factory(dict))
     format = attr.ib(default='none')
     legendType = attr.ib(default='Right side')
     pieType = attr.ib(default='pie')
+    percentageDecimals = attr.ib(default=0, validator=instance_of(int))
     showLegend = attr.ib(default=True)
     showLegendValues = attr.ib(default=True)
+    showLegendPercentage = attr.ib(default=False, validator=instance_of(bool))
     thresholds = attr.ib(default="")
 
     def to_json_data(self):
         return self.panel_json(
             {
+                'aliasColors': self.aliasColors,
                 'format': self.format,
                 'pieType': self.pieType,
                 'height': self.height,
@@ -2701,7 +2828,9 @@ class PieChart(Panel):
                 },
                 'legend': {
                     'show': self.showLegend,
-                    'values': self.showLegendValues
+                    'values': self.showLegendValues,
+                    'percentage': self.showLegendPercentage,
+                    'percentageDecimals': self.percentageDecimals
                 },
                 'legendType': self.legendType,
                 'type': PIE_CHART_TYPE,
@@ -2713,14 +2842,6 @@ class PieChart(Panel):
 class DashboardList(Panel):
     """Generates Dashboard list panel json structure
     Grafana doc on Dashboard list: https://grafana.com/docs/grafana/latest/panels/visualizations/dashboard-list-panel/
-    :param title: panel title
-    :param description: optional panel description
-    :param editable: defines if panel is editable via web interfaces
-    :param height: defines panel height
-    :param id: panel id
-    :param links: additional web links
-    :param span: defines the number of spans that will be used for panel
-    :param transparent: defines if the panel is transparent
 
     :param showHeadings: The chosen list selection (Starred, Recently viewed, Search) is shown as a heading
     :param showSearch: Display dashboards by search query or tags.
@@ -2764,14 +2885,6 @@ class DashboardList(Panel):
 class Logs(Panel):
     """Generates Logs panel json structure
     Grafana doc on Logs panel: https://grafana.com/docs/grafana/latest/panels/visualizations/logs-panel/
-    :param title: panel title
-    :param description: optional panel description
-    :param editable: defines if panel is editable via web interfaces
-    :param height: defines panel height
-    :param id: panel id
-    :param links: additional web links
-    :param span: defines the number of spans that will be used for panel
-    :param transparent: defines if the panel is transparent
 
     :param showLabels: Show or hide the unique labels column, which shows only non-common labels
     :param showTime: Show or hide the log timestamp column
@@ -2816,11 +2929,14 @@ class Threshold(object):
     :param op: EVAL_LT for less than or EVAL_GT for greater than to indicate what the threshold applies to.
     :param yaxis: Choose left or right for panels
 
-    Example:
+    Care must be taken in the order in which the Threshold objects are specified,
+    Grafana expects the value to increase.
+
+    Example::
         thresholds = [
             Threshold('green', 0, 0.0),
-            Threshold('red', 1, 80.0)
-        ]
+            Threshold('red', 1, 80.0)]
+
     """
 
     color = attr.ib()
@@ -2859,8 +2975,9 @@ class GraphThreshold(object):
     Example:
         thresholds = [
             GraphThreshold(colorMode="ok", value=10.0),
-            GrpahThreshold(colorMode="critical", value=90.0)
-        ]
+            GraphThreshold(colorMode="critical", value=90.0)
+            ]
+
     """
 
     value = attr.ib(validator=instance_of(float))
@@ -2905,3 +3022,99 @@ class SeriesOverride(object):
             'yaxis': self.yaxis,
             'color': self.color,
         }
+
+
+WORLDMAP_CENTER = ['(0°, 0°)', 'North America', 'Europe', 'West Asia', 'SE Asia', 'Last GeoHash', 'custom']
+WORLDMAP_LOCATION_DATA = ['countries', 'countries_3letter', 'states', 'probes', 'geohash', 'json_endpoint', 'jsonp endpoint', 'json result', 'table']
+
+
+@attr.s
+class Worldmap(Panel):
+    """Generates Worldmap panel json structure
+    Grafana doc on Worldmap: https://grafana.com/grafana/plugins/grafana-worldmap-panel/
+
+    :param aggregation: metric aggregation: min, max, avg, current, total
+    :param circleMaxSize: Maximum map circle size
+    :param circleMinSize: Minimum map circle size
+    :param decimals: Number of decimals to show
+    :param geoPoint: Name of the geo_point/geohash column. This is used to calculate where the circle should be drawn.
+    :param locationData: Format of the location data, options in `WORLDMAP_LOCATION_DATA`
+    :param locationName: Name of the Location Name column. Used to label each circle on the map. If it is empty then the geohash value is used.
+    :param metric: Name of the metric column. This is used to give the circle a value - this determines how large the circle is.
+    :param mapCenter: Where to centre the map, default center (0°, 0°). Options: North America, Europe, West Asia, SE Asia, Last GeoHash, custom
+    :param mapCenterLatitude: If mapCenter=custom set the initial map latitude
+    :param mapCenterLongitude: If mapCenter=custom set the initial map longitude
+    :param hideEmpty: Hide series with only nulls
+    :param hideZero: Hide series with only zeros
+    :param initialZoom: Initial map zoom
+    :param jsonUrl: URL for JSON location data if `json_endpoint` or `jsonp endpoint` used
+    :param jsonpCallback: Callback if `jsonp endpoint` used
+    :param mouseWheelZoom: Zoom map on scroll of mouse wheel
+    :param stickyLabels: Sticky map labels
+    :param thresholds: String of thresholds eg. '0,10,20'
+    :param thresholdsColors: List of colors to be used in each threshold
+    :param unitPlural: Units plural
+    :param unitSingle: Units single
+    :param unitSingular: Units singular
+    """
+
+    circleMaxSize = attr.ib(default=30, validator=instance_of(int))
+    circleMinSize = attr.ib(default=2, validator=instance_of(int))
+    decimals = attr.ib(default=0, validator=instance_of(int))
+    geoPoint = attr.ib(default='geohash', validator=instance_of(str))
+    locationData = attr.ib(default='countries', validator=attr.validators.in_(WORLDMAP_LOCATION_DATA))
+    locationName = attr.ib(default='')
+    hideEmpty = attr.ib(default=False, validator=instance_of(bool))
+    hideZero = attr.ib(default=False, validator=instance_of(bool))
+    initialZoom = attr.ib(default=1, validator=instance_of(int))
+    jsonUrl = attr.ib(default='', validator=instance_of(str))
+    jsonpCallback = attr.ib(default='', validator=instance_of(str))
+    mapCenter = attr.ib(default='(0°, 0°)', validator=attr.validators.in_(WORLDMAP_CENTER))
+    mapCenterLatitude = attr.ib(default=0, validator=instance_of(int))
+    mapCenterLongitude = attr.ib(default=0, validator=instance_of(int))
+    metric = attr.ib(default='Value')
+    mouseWheelZoom = attr.ib(default=False, validator=instance_of(bool))
+    stickyLabels = attr.ib(default=False, validator=instance_of(bool))
+    thresholds = attr.ib(default='0,100,150', validator=instance_of(str))
+    thresholdColors = attr.ib(default=["#73BF69", "#73BF69", "#FADE2A", "#C4162A"], validator=instance_of(list))
+    unitPlural = attr.ib(default='', validator=instance_of(str))
+    unitSingle = attr.ib(default='', validator=instance_of(str))
+    unitSingular = attr.ib(default='', validator=instance_of(str))
+    aggregation = attr.ib(default='total', validator=instance_of(str))
+
+    def to_json_data(self):
+        return self.panel_json(
+            {
+                'circleMaxSize': self.circleMaxSize,
+                'circleMinSize': self.circleMinSize,
+                'colors': self.thresholdColors,
+                'decimals': self.decimals,
+                'esGeoPoint': self.geoPoint,
+                'esMetric': self.metric,
+                'locationData': self.locationData,
+                'esLocationName': self.locationName,
+                'hideEmpty': self.hideEmpty,
+                'hideZero': self.hideZero,
+                'initialZoom': self.initialZoom,
+                'jsonUrl': self.jsonUrl,
+                'jsonpCallback': self.jsonpCallback,
+                'mapCenter': self.mapCenter,
+                'mapCenterLatitude': self.mapCenterLatitude,
+                'mapCenterLongitude': self.mapCenterLongitude,
+                'mouseWheelZoom': self.mouseWheelZoom,
+                'stickyLabels': self.stickyLabels,
+                'thresholds': self.thresholds,
+                'unitPlural': self.unitPlural,
+                'unitSingle': self.unitSingle,
+                'unitSingular': self.unitSingular,
+                'valueName': self.aggregation,
+                'tableQueryOptions': {
+                    'queryType': 'geohash',
+                    'geohashField': 'geohash',
+                    'latitudeField': 'latitude',
+                    'longitudeField': 'longitude',
+                    'metricField': 'metric'
+                },
+                'type': WORLD_MAP_TYPE
+            }
+        )

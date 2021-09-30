@@ -47,7 +47,7 @@ def is_color_code(instance, attribute, value):
     Value considered as valid color code if it starts with # char
     followed by hexadecimal.
     """
-    err = "{attr} should be a valid color code".format(attr=attribute.name)
+    err = "{attr} should be a valid color code (e.g. #37872D)".format(attr=attribute.name)
     if not value.startswith("#"):
         raise ValueError(err)
     if len(value) != 7:
