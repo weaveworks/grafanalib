@@ -1577,7 +1577,8 @@ class Discrete(Panel):
     Generates Discrete panel json structure.
     https://grafana.com/grafana/plugins/natel-discrete-panel/
 
-    :param colorMaps: list of DiscreteColorMappingItem, to color values.
+    :param colorMaps: list of DiscreteColorMappingItem, to color values
+        (note these apply **after** value mappings)
     :param backgroundColor: dito
     :param lineColor: Separator line color between rows
     :param metricNameColor: dito
