@@ -1567,6 +1567,154 @@ class DiscreteColorMappingItem(object):
 
 
 @attr.s
+class Discrete(Panel):
+    """
+    Generates Discrete panel json structure.
+
+    :param colorMaps: list of DiscreteColorMappingItem, to color values.
+    :param backgroundColor: dito
+    :param lineColor: Separator line color between rows
+    :param metricNameColor: dito
+    :param timeTextColor: dito
+    :param valueTextColor: dito
+
+    :param decimals: number of decimals to display
+    :param rowHeight: dito
+
+    :param units: defines value units
+    :param legendSortBy: time (desc: '-ms', asc: 'ms), count (desc: '-count', asc: 'count')
+
+    :param highlightOnMouseover: whether to highlight the state of hovered time falls in.
+    :param showLegend: dito
+    :param showLegendPercent: whether to show percentage of time spent in each state/value
+    :param showLegendNames:
+    :param showLegendValues: whether to values in legend
+    :param legendPercentDecimals: number of decimals for legend
+    :param showTimeAxis: dito
+    :param use12HourClock: dito
+    :param writeMetricNames: dito
+    :param writeLastValue: dito
+    :param writeAllValues: whether to show all values
+
+    :param showDistinctCount: whether to show distinct values count
+    :param showLegendCounts: whether to show value occurrence count
+    :param showLegendTime: whether to show of each state
+    :param showTransitionCount: whether to show transition count
+
+    :param colorMaps: list of DiscreteColorMappingItem
+    :param rangeMaps: list of RangeMap
+    :param valueMaps: list of ValueMap
+    """
+
+    backgroundColor = attr.ib(
+        default=RGBA(128, 128, 128, 0.1),
+        validator=instance_of((RGBA, RGB, str))
+    )
+    lineColor = attr.ib(
+        default=RGBA(0, 0, 0, 0.1),
+        validator=instance_of((RGBA, RGB, str))
+    )
+    metricNameColor = attr.ib(
+        default="#000000",
+        validator=instance_of((RGBA, RGB, str))
+    )
+    timeTextColor = attr.ib(
+        default="#d8d9da",
+        validator=instance_of((RGBA, RGB, str))
+    )
+    valueTextColor = attr.ib(
+        default="#000000",
+        validator=instance_of((RGBA, RGB, str))
+    )
+
+    decimals = attr.ib(default=0, validator=instance_of(int))
+    legendPercentDecimals = attr.ib(default=0, validator=instance_of(int))
+    rowHeight = attr.ib(default=50, validator=instance_of(int))
+
+    units = attr.ib(default="none", validator=instance_of(str))
+    legendSortBy = attr.ib(
+        default="-ms",
+        validator=in_(['-ms', 'ms', '-count', 'count'])
+    )
+
+    highlightOnMouseover = attr.ib(default=True, validator=instance_of(bool))
+    showLegend = attr.ib(default=True, validator=instance_of(bool))
+    showLegendPercent = attr.ib(default=True, validator=instance_of(bool))
+    showLegendNames = attr.ib(default=True, validator=instance_of(bool))
+    showLegendValues = attr.ib(default=True, validator=instance_of(bool))
+    showTimeAxis = attr.ib(default=True, validator=instance_of(bool))
+    use12HourClock = attr.ib(default=False, validator=instance_of(bool))
+    writeMetricNames = attr.ib(default=False, validator=instance_of(bool))
+    writeLastValue = attr.ib(default=True, validator=instance_of(bool))
+    writeAllValues = attr.ib(default=False, validator=instance_of(bool))
+
+    showDistinctCount = attr.ib(default=None)
+    showLegendCounts = attr.ib(default=None)
+    showLegendTime = attr.ib(default=None)
+    showTransitionCount = attr.ib(default=None)
+
+    colorMaps = attr.ib(
+        default=[],
+        validator=attr.validators.deep_iterable(
+            member_validator=instance_of(DiscreteColorMappingItem),
+            iterable_validator=instance_of(list),
+        ),
+    )
+    rangeMaps = attr.ib(
+        default=[],
+        validator=attr.validators.deep_iterable(
+            member_validator=instance_of(RangeMap),
+            iterable_validator=instance_of(list),
+        ),
+    )
+    valueMaps = attr.ib(
+        default=[],
+        validator=attr.validators.deep_iterable(
+            member_validator=instance_of(ValueMap),
+            iterable_validator=instance_of(list),
+        ),
+    )
+
+    def to_json_data(self):
+        graphObject = {
+            'type': DISCRETE_TYPE,
+
+            'backgroundColor': self.backgroundColor,
+            'lineColor': self.lineColor,
+            'metricNameColor': self.metricNameColor,
+            'timeTextColor': self.timeTextColor,
+            'valueTextColor': self.valueTextColor,
+            'legendPercentDecimals': self.legendPercentDecimals,
+            'decimals': self.decimals,
+            'rowHeight': self.rowHeight,
+
+            'units': self.units,
+            'legendSortBy': self.legendSortBy,
+
+            'highlightOnMouseover': self.highlightOnMouseover,
+            'showLegend': self.showLegend,
+            'showLegendPercent': self.showLegendPercent,
+            'showLegendNames': self.showLegendNames,
+            'showLegendValues': self.showLegendValues,
+            'showTimeAxis': self.showTimeAxis,
+            'use12HourClock': self.use12HourClock,
+            'writeMetricNames': self.writeMetricNames,
+            'writeLastValue': self.writeLastValue,
+            'writeAllValues': self.writeAllValues,
+
+            'showDistinctCount': self.showDistinctCount,
+            'showLegendCounts': self.showLegendCounts,
+            'showLegendTime': self.showLegendTime,
+            'showTransitionCount': self.showTransitionCount,
+
+            'colorMaps': self.colorMaps,
+            'rangeMaps': self.rangeMaps,
+            'valueMaps': self.valueMaps,
+        }
+        return self.panel_json(graphObject)
+
+
+@attr.s
 class Text(Panel):
     """Generates a Text panel."""
 
