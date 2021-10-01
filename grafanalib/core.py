@@ -1459,46 +1459,17 @@ class Graph(Panel):
 
 
 @attr.s
-class DiscreteColorMappingItem(object):
-    """
-    Generates json structure for the value mapping item for the StatValueMappings class:
-
-    :param text: String to color
-    :param color: To color the text with
-    """
-
-    text = attr.ib(validator=instance_of(str))
-    color = attr.ib(default=GREY1, validator=instance_of((str, RGBA)))
+class ValueMap(object):
+    op = attr.ib()
+    text = attr.ib()
+    value = attr.ib()
 
     def to_json_data(self):
         return {
-            "color": self.color,
-            "text": self.text,
+            'op': self.op,
+            'text': self.text,
+            'value': self.value,
         }
-
-
-@attr.s
-class Discrete(Panel):
-    """
-    Generates Discrete panel json structure.
-
-    :param colorMaps: List of DiscreteColorMappingItem, to color values.
-    """
-
-    colorMapsItems = attr.ib(
-        default=[],
-        validator=attr.validators.deep_iterable(
-            member_validator=attr.validators.instance_of(DiscreteColorMappingItem),
-            iterable_validator=attr.validators.instance_of(list),
-        ),
-    )
-
-    def to_json_data(self):
-        graphObject = {
-            'colorMaps': self.colorMapsItems,
-            'type': DISCRETE_TYPE,
-        }
-        return self.panel_json(graphObject)
 
 
 @attr.s
@@ -1524,16 +1495,21 @@ class SparkLine(object):
 
 
 @attr.s
-class ValueMap(object):
-    op = attr.ib()
-    text = attr.ib()
-    value = attr.ib()
+class Gauge(object):
+
+    minValue = attr.ib(default=0, validator=instance_of(int))
+    maxValue = attr.ib(default=100, validator=instance_of(int))
+    show = attr.ib(default=False, validator=instance_of(bool))
+    thresholdLabels = attr.ib(default=False, validator=instance_of(bool))
+    thresholdMarkers = attr.ib(default=True, validator=instance_of(bool))
 
     def to_json_data(self):
         return {
-            'op': self.op,
-            'text': self.text,
-            'value': self.value,
+            'maxValue': self.maxValue,
+            'minValue': self.minValue,
+            'show': self.show,
+            'thresholdLabels': self.thresholdLabels,
+            'thresholdMarkers': self.thresholdMarkers,
         }
 
 
@@ -1552,21 +1528,41 @@ class RangeMap(object):
 
 
 @attr.s
-class Gauge(object):
+class ValueMap(object):
+    """
+    Generates json structure for a value mapping item.
 
-    minValue = attr.ib(default=0, validator=instance_of(int))
-    maxValue = attr.ib(default=100, validator=instance_of(int))
-    show = attr.ib(default=False, validator=instance_of(bool))
-    thresholdLabels = attr.ib(default=False, validator=instance_of(bool))
-    thresholdMarkers = attr.ib(default=True, validator=instance_of(bool))
+    :param value: Value to map to text
+    :param text: Text to map the value to
+    """
+
+    value = attr.ib(default='=', validator=instance_of(str))
+    text = attr.ib(default='', validator=instance_of(str))
 
     def to_json_data(self):
         return {
-            'maxValue': self.maxValue,
-            'minValue': self.minValue,
-            'show': self.show,
-            'thresholdLabels': self.thresholdLabels,
-            'thresholdMarkers': self.thresholdMarkers,
+            'value': self.value,
+            'text': self.text,
+            'op': '=',
+        }
+
+
+@attr.s
+class DiscreteColorMappingItem(object):
+    """
+    Generates json structure for the value mapping item for the StatValueMappings class:
+
+    :param text: String to color
+    :param color: To color the text with
+    """
+
+    text = attr.ib(validator=instance_of(str))
+    color = attr.ib(default=GREY1, validator=instance_of((str, RGBA)))
+
+    def to_json_data(self):
+        return {
+            "color": self.color,
+            "text": self.text,
         }
 
 
