@@ -1478,9 +1478,16 @@ class Graph(Panel):
 
 @attr.s
 class ValueMap(object):
-    op = attr.ib()
+    """
+    Generates json structure for a value mapping item.
+
+    :param op: comparison operator
+    :param value: value to map to text
+    :param text: text to map the value to
+    """
     text = attr.ib()
     value = attr.ib()
+    op = attr.ib(default='=')
 
     def to_json_data(self):
         return {
@@ -1542,26 +1549,6 @@ class RangeMap(object):
             'from': self.start,
             'to': self.end,
             'text': self.text,
-        }
-
-
-@attr.s
-class ValueMap(object):
-    """
-    Generates json structure for a value mapping item.
-
-    :param value: Value to map to text
-    :param text: Text to map the value to
-    """
-
-    value = attr.ib(default='=', validator=instance_of(str))
-    text = attr.ib(default='', validator=instance_of(str))
-
-    def to_json_data(self):
-        return {
-            'value': self.value,
-            'text': self.text,
-            'op': '=',
         }
 
 
