@@ -1639,6 +1639,7 @@ class Discrete(Panel):
     rowHeight = attr.ib(default=50, validator=instance_of(int))
     textSize = attr.ib(default=24, validator=instance_of(int))
 
+    textSizeTime = attr.ib(default=12, validator=instance_of(int))
     units = attr.ib(default="none", validator=instance_of(str))
     legendSortBy = attr.ib(
         default="-ms",
@@ -1696,6 +1697,7 @@ class Discrete(Panel):
             'decimals': self.decimals,
             'rowHeight': self.rowHeight,
             'textSize': self.textSize,
+            'textSizeTime': self.textSizeTime,
 
             'units': self.units,
             'legendSortBy': self.legendSortBy,
