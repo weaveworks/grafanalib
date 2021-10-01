@@ -1637,6 +1637,7 @@ class Discrete(Panel):
     decimals = attr.ib(default=0, validator=instance_of(int))
     legendPercentDecimals = attr.ib(default=0, validator=instance_of(int))
     rowHeight = attr.ib(default=50, validator=instance_of(int))
+    textSize = attr.ib(default=24, validator=instance_of(int))
 
     units = attr.ib(default="none", validator=instance_of(str))
     legendSortBy = attr.ib(
@@ -1694,6 +1695,7 @@ class Discrete(Panel):
             'legendPercentDecimals': self.legendPercentDecimals,
             'decimals': self.decimals,
             'rowHeight': self.rowHeight,
+            'textSize': self.textSize,
 
             'units': self.units,
             'legendSortBy': self.legendSortBy,

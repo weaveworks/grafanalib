@@ -231,6 +231,7 @@ def test_Discrete():
     assert json_data['decimals'] == 123
     assert json_data['legendPercentDecimals'] == 0
     assert json_data['rowHeight'] == 50
+    assert json_data['textSize'] == 24
 
     assert json_data['highlightOnMouseover'] is False
     assert json_data['showLegend'] is True
