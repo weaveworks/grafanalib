@@ -1746,30 +1746,6 @@ class ImageItSensorQuery:
 
 
 @attr.s
-class ImageItMapping:
-    """
-    ImageIt mapping
-    """
-
-    pass
-    # {
-    #     "compareTo": "123",
-    #     "description": "desc",
-    #     "id": "mapping-m286o",
-    #     "operator": "equal",
-    #     "values": {
-    #         "backgroundBlink": true,
-    #         "backgroundColor": "red",
-    #         "bold": true,
-    #         "fontColor": "yellow",
-    #         "overrideValue": "over_val",
-    #         "valueBlink": true,
-    #         "visible": true
-    #     }
-    # },
-
-
-@attr.s
 class ImageItSensor:
     """
     ImageIt sensor.
