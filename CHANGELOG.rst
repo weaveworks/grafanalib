@@ -14,7 +14,7 @@ Changes
 
 * Refine expectations of is_color_code
 * Deprecated StatMapping, StatValueMapping & StatRangeMapping
-* Change YAxis min value default from None to 0
+* Change YAxis min value default from 0 to None
 
 0.5.14 (2021-09-14)
 ==================
