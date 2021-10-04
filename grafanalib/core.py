@@ -15,6 +15,7 @@ from numbers import Number
 
 import attr
 from attr.validators import in_, instance_of
+from collections import namedtuple
 
 
 @attr.s
@@ -92,6 +93,7 @@ STATUSMAP_TYPE = 'flant-statusmap-panel'
 SVG_TYPE = 'marcuscalidus-svg-panel'
 PIE_CHART_TYPE = 'grafana-piechart-panel'
 WORLD_MAP_TYPE = 'grafana-worldmap-panel'
+IMAGEIT_TYPE = 'pierosavi-imageit-panel'
 
 DEFAULT_FILL = 1
 DEFAULT_REFRESH = '10s'
@@ -292,6 +294,8 @@ VTYPE_FIRST = 'first'
 VTYPE_DELTA = 'delta'
 VTYPE_RANGE = 'range'
 VTYPE_DEFAULT = VTYPE_AVG
+
+Point2D = namedtuple('Point2D', 'x,y')
 
 
 @attr.s
@@ -1723,6 +1727,120 @@ class Discrete(Panel):
             'valueMaps': self.valueMaps,
         }
         return self.panel_json(graphObject)
+
+
+@attr.s
+class ImageItSensorQuery:
+    """
+    ImageIt sensor query
+    """
+
+    alias = attr.ib(default='', validator=instance_of(str))
+    id = attr.ib(default='', validator=instance_of(str))
+
+    def to_json_data(self):
+        return {
+            'alias': self.alias,
+            'id': self.id,
+        }
+
+
+@attr.s
+class ImageItSensor:
+    """
+    ImageIt sensor.
+    """
+
+    backgroundBlink = attr.ib(default=False, validator=instance_of(bool))
+    bold = attr.ib(default=False, validator=instance_of(bool))
+    valueBlink = attr.ib(default=False, validator=instance_of(bool))
+    visible = attr.ib(default=True, validator=instance_of(bool))
+
+    decimals = attr.ib(default=0, validator=instance_of(int))
+
+    name = attr.ib(default="", validator=instance_of(str))
+    imageUrl = attr.ib(default="", validator=instance_of(str))
+    link = attr.ib(default="", validator=instance_of(str))
+
+    mappingIds = attr.ib(default=[], validator=instance_of(list))
+
+    position = attr.ib(default=Point2D(0, 0), validator=instance_of(Point2D))
+
+    query = attr.ib(
+        default=ImageItSensorQuery(id='', alias=''),
+        validator=instance_of(ImageItSensorQuery)
+    )
+
+    backgroundColor = attr.ib(
+        default=False,
+        validator=instance_of((RGBA, RGB, str))
+    )
+    fontColor = attr.ib(
+        default=False,
+        validator=instance_of((RGBA, RGB, str))
+    )
+
+    def to_json_data(self):
+        return self.panel_json({
+            'backgroundBlink': self.backgroundBlink,    # false
+            'backgroundColor': self.backgroundColor,    # "#000"
+            'bold': self.bold,    # false
+            'decimals': self.decimals,    # 2
+            'fontColor': self.fontColor,    # "#FFF"
+            'link': self.link,    # ""
+            'mappingIds': self.mappingIds,    # []
+            'name': self.name,    # "Name"
+            "position": {*self.position},
+            'query': self.query,
+            'valueBlink': self.valueBlink,    # false
+            "visible": self.visible,    # true
+        })
+
+
+@attr.s
+class ImageItMapping:
+    pass
+
+
+@attr.s
+class ImageIt(Panel):
+    """Generates a Text panel."""
+
+    forceImageRefresh = attr.ib(default=True, validator=instance_of(bool))
+    lockSensors = attr.ib(default=False, validator=instance_of(bool))
+
+    imageUrl = attr.ib(default="", validator=instance_of(str))
+
+    sensorsTextSize = attr.ib(default=10, validator=instance_of(int))
+
+    mappings = attr.ib(
+        default=[],
+        validator=attr.validators.deep_iterable(
+            member_validator=instance_of(ImageItMapping),
+            iterable_validator=instance_of(list),
+        ),
+    )
+    sensors = attr.ib(
+        default=[],
+        validator=attr.validators.deep_iterable(
+            member_validator=instance_of(ImageItSensorQuery),
+            iterable_validator=instance_of(list),
+        ),
+    )
+
+    def to_json_data(self):
+        return self.panel_json({
+            'type': IMAGEIT_TYPE,
+            # 'transformations': self.transformations,
+            'options': {
+                'forceImageRefresh': self.forceImageRefresh,
+                'imageUrl': self.imageUrl,
+                'lockSensors': self.lockSensors,
+                'sensorsTextSize': self.sensorsTextSize,
+                'sensors': self.sensors,
+                'mappings': self.mappings,  # []
+            }
+        })
 
 
 @attr.s
