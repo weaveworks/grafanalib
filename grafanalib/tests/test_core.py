@@ -159,6 +159,54 @@ def test_stat_no_repeat():
     assert t.to_json_data()['maxPerRow'] is None
 
 
+def test_ImageItMapping_exception_checks():
+    with pytest.raises(ValueError):
+        G.ImageItMapping(operator='foo')
+
+    with pytest.raises(TypeError):
+        G.ImageItMapping(id=123)
+
+
+def test_ImageItMapping():
+    t = G.ImageItMapping()
+
+    json_data = t.to_json_data()
+    assert json_data['compareTo'] == ''
+    assert json_data['description'] == ''
+    assert json_data['id'].startswith('mapping_')
+    assert json_data['operator'] == '='
+
+    assert json_data['values']['fontColor'] == '#FFF'
+    assert json_data['values']['backgroundColor'] == '#000'
+    assert json_data['values']['overrideValue'] == ''
+
+    assert json_data['values']['backgroundBlink'] is False
+    assert json_data['values']['bold'] is False
+    assert json_data['values']['valueBlink'] is False
+    assert json_data['values']['visible'] is True
+
+    t = G.ImageItMapping(
+        id="foo",
+        compareTo="123",
+        operator="<",
+        description="desc",
+        fontColor="#ABC",
+        overrideValue="override",
+        backgroundBlink=True,
+    )
+
+    json_data = t.to_json_data()
+    assert json_data['compareTo'] == '123'
+    assert json_data['description'] == 'desc'
+    assert json_data['id'] == "foo"
+    assert json_data['operator'] == '<'
+
+    assert json_data['values']['fontColor'] == '#ABC'
+    assert json_data['values']['overrideValue'] == 'override'
+
+    assert json_data['values']['backgroundBlink'] is True
+
+
 def test_ImageItSensorQuery_exception_checks():
     with pytest.raises(TypeError):
         G.ImageItSensorQuery(alias=123)
