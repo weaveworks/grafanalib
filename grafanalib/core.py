@@ -295,7 +295,7 @@ VTYPE_DELTA = 'delta'
 VTYPE_RANGE = 'range'
 VTYPE_DEFAULT = VTYPE_AVG
 
-Point2D = namedtuple('Point2D', 'x,y')
+Point2D = namedtuple('Point2D', 'x,y', defaults=(0, 0))
 
 
 @attr.s
@@ -1764,7 +1764,7 @@ class ImageItSensor:
 
     mappingIds = attr.ib(default=[], validator=instance_of(list))
 
-    position = attr.ib(default=Point2D(0, 0), validator=instance_of(Point2D))
+    position = attr.ib(default=Point2D(), validator=instance_of(Point2D))
 
     query = attr.ib(
         default=ImageItSensorQuery(id='', alias=''),
