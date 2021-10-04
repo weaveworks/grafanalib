@@ -9,6 +9,7 @@ arbitrary Grafana JSON.
 import itertools
 import math
 
+import random
 import string
 import warnings
 from numbers import Number
@@ -1799,7 +1800,54 @@ class ImageItSensor:
 
 @attr.s
 class ImageItMapping:
-    pass
+    """
+    ImageItMapping
+    """
+
+    backgroundBlink = attr.ib(default=False, validator=instance_of(bool))
+    bold = attr.ib(default=False, validator=instance_of(bool))
+    valueBlink = attr.ib(default=False, validator=instance_of(bool))
+    visible = attr.ib(default=True, validator=instance_of(bool))
+
+    compareTo = attr.ib(default="", validator=instance_of(str))
+    description = attr.ib(default="", validator=instance_of(str))
+    overrideValue = attr.ib(default="", validator=instance_of(str))
+
+    operator = attr.ib(
+        default="=",
+        validator=in_(['=', '!=', '<', '>']),
+    )
+
+    id = attr.ib(
+        default=f'mapping_{"".join(random.choices(string.ascii_lowercase + string.digits, k=6))}',
+        validator=instance_of(str)
+    )
+
+    backgroundColor = attr.ib(
+        default='#000',
+        validator=instance_of((RGBA, RGB, str))
+    )
+    fontColor = attr.ib(
+        default='#FFF',
+        validator=instance_of((RGBA, RGB, str))
+    )
+
+    def to_json_data(self):
+        return {
+            'compareTo': self.compareTo,
+            'description': self.description,
+            'id': self.id,
+            'operator': self.operator,
+            'values': {
+                'backgroundBlink': self.backgroundBlink,
+                'backgroundColor': self.backgroundColor,
+                'bold': self.bold,
+                'fontColor': self.fontColor,
+                'overrideValue': self.overrideValue,
+                'valueBlink': self.valueBlink,
+                'visible': self.visible,
+            }
+        }
 
 
 @attr.s
