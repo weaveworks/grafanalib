@@ -278,6 +278,63 @@ def test_ImageItSensor():
     assert json_data['position'] == G.Point2D(789, 321)
 
 
+def test_ImageIt_exception_checks():
+    with pytest.raises(TypeError):
+        G.ImageIt(mappings=123)
+
+    with pytest.raises(TypeError):
+        G.ImageIt(mappings=[123, 456])
+
+    with pytest.raises(TypeError):
+        G.ImageIt(sensors=123)
+
+    with pytest.raises(TypeError):
+        G.ImageIt(sensors=[123, 456])
+
+
+def test_ImageIt():
+    t = G.ImageIt()
+    json_data = t.to_json_data()
+
+    assert json_data['type'] == G.IMAGEIT_TYPE
+    assert json_data['options']['forceImageRefresh'] is True
+    assert json_data['options']['lockSensors'] is False
+    assert json_data['options']['imageUrl'] == ''
+    assert json_data['options']['sensorsTextSize'] == 10
+    assert json_data['options']['sensors'] == []
+    assert json_data['options']['mappings'] == []
+
+    sensors = [
+        G.ImageItSensor(),
+        G.ImageItSensor(query=G.ImageItSensorQuery(alias='foo')),
+    ]
+    mappings = [
+        G.ImageItMapping(),
+        G.ImageItMapping(
+            operator='>',
+            compareTo="456",
+            fontColor='#AAAAAA'
+        )
+    ]
+
+    t = G.ImageIt(
+        forceImageRefresh=False,
+        imageUrl="foo://bar.com/img",
+        sensorsTextSize=123,
+        sensors=sensors,
+        mappings=mappings,
+    )
+
+    json_data = t.to_json_data()
+
+    assert json_data['type'] == G.IMAGEIT_TYPE
+    assert json_data['options']['forceImageRefresh'] is False
+    assert json_data['options']['imageUrl'] == 'foo://bar.com/img'
+    assert json_data['options']['sensorsTextSize'] == 123
+    assert json_data['options']['sensors'] == sensors
+    assert json_data['options']['mappings'] == mappings
+
+
 def test_Text_exception_checks():
     with pytest.raises(TypeError):
         G.Text(content=123)
