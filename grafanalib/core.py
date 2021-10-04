@@ -1756,7 +1756,7 @@ class ImageItSensor:
     valueBlink = attr.ib(default=False, validator=instance_of(bool))
     visible = attr.ib(default=True, validator=instance_of(bool))
 
-    decimals = attr.ib(default=0, validator=instance_of(int))
+    decimals = attr.ib(default=2, validator=instance_of(int))
 
     name = attr.ib(default="", validator=instance_of(str))
     imageUrl = attr.ib(default="", validator=instance_of(str))
@@ -1772,16 +1772,16 @@ class ImageItSensor:
     )
 
     backgroundColor = attr.ib(
-        default=False,
+        default='#000',
         validator=instance_of((RGBA, RGB, str))
     )
     fontColor = attr.ib(
-        default=False,
+        default='#FFF',
         validator=instance_of((RGBA, RGB, str))
     )
 
     def to_json_data(self):
-        return self.panel_json({
+        return {
             'backgroundBlink': self.backgroundBlink,    # false
             'backgroundColor': self.backgroundColor,    # "#000"
             'bold': self.bold,    # false
@@ -1790,11 +1790,11 @@ class ImageItSensor:
             'link': self.link,    # ""
             'mappingIds': self.mappingIds,    # []
             'name': self.name,    # "Name"
-            "position": {*self.position},
+            "position": self.position,
             'query': self.query,
             'valueBlink': self.valueBlink,    # false
-            "visible": self.visible,    # true
-        })
+            'visible': self.visible,    # true
+        }
 
 
 @attr.s
@@ -1831,7 +1831,6 @@ class ImageIt(Panel):
     def to_json_data(self):
         return self.panel_json({
             'type': IMAGEIT_TYPE,
-            # 'transformations': self.transformations,
             'options': {
                 'forceImageRefresh': self.forceImageRefresh,
                 'imageUrl': self.imageUrl,
