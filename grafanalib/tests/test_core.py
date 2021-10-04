@@ -159,6 +159,28 @@ def test_stat_no_repeat():
     assert t.to_json_data()['maxPerRow'] is None
 
 
+def test_ImageItSensorQuery_exception_checks():
+    with pytest.raises(TypeError):
+        G.ImageItSensorQuery(alias=123)
+
+    with pytest.raises(TypeError):
+        G.ImageItSensorQuery(id=123)
+
+
+def test_ImageItSensorQuery():
+    t = G.ImageItSensorQuery()
+
+    json_data = t.to_json_data()
+    assert json_data['alias'] == ''
+    assert json_data['id'] == ''
+
+    t = G.ImageItSensorQuery(alias='foo', id='bar')
+
+    json_data = t.to_json_data()
+    assert json_data['alias'] == 'foo'
+    assert json_data['id'] == 'bar'
+
+
 def test_Text_exception_checks():
     with pytest.raises(TypeError):
         G.Text(content=123)
