@@ -1871,7 +1871,7 @@ class ImageIt(Panel):
     sensors = attr.ib(
         default=[],
         validator=attr.validators.deep_iterable(
-            member_validator=instance_of(ImageItSensorQuery),
+            member_validator=instance_of(ImageItSensor),
             iterable_validator=instance_of(list),
         ),
     )
