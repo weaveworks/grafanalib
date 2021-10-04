@@ -181,6 +181,55 @@ def test_ImageItSensorQuery():
     assert json_data['id'] == 'bar'
 
 
+def test_ImageItSensor_exception_checks():
+    with pytest.raises(TypeError):
+        G.ImageItSensor(position=123)
+
+    with pytest.raises(TypeError):
+        G.ImageItSensor(query=123)
+
+
+def test_ImageItSensor():
+    t = G.ImageItSensor()
+
+    json_data = t.to_json_data()
+    assert json_data['backgroundColor'] == '#000'
+    assert json_data['fontColor'] == '#FFF'
+
+    assert json_data['backgroundBlink'] is False
+    assert json_data['bold'] is False
+    assert json_data['valueBlink'] is False
+    assert json_data['visible'] is True
+
+    assert json_data['name'] == ''
+    assert json_data['link'] == ''
+
+    assert json_data['decimals'] == 2
+
+    assert json_data['mappingIds'] == []
+    assert json_data['query'] == G.ImageItSensorQuery()
+    assert json_data['position'] == G.Point2D()
+
+    t = G.ImageItSensor(
+        backgroundColor='#ABC',
+        backgroundBlink=True,
+        name="foo",
+        decimals=123,
+        mappingIds=[123, 456],
+        query=G.ImageItSensorQuery(alias='foo', id='bar'),
+        position=G.Point2D(789, 321),
+    )
+
+    json_data = t.to_json_data()
+    assert json_data['backgroundColor'] == '#ABC'
+    assert json_data['backgroundBlink'] is True
+    assert json_data['name'] == 'foo'
+    assert json_data['decimals'] == 123
+    assert json_data['mappingIds'] == [123, 456]
+    assert json_data['query'] == G.ImageItSensorQuery(alias='foo', id='bar')
+    assert json_data['position'] == G.Point2D(789, 321)
+
+
 def test_Text_exception_checks():
     with pytest.raises(TypeError):
         G.Text(content=123)
