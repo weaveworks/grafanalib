@@ -579,9 +579,7 @@ def _balance_panels(panels):
 @attr.s
 class Position:
     """
-    Position with x, y position. When used in ImageIt, the values are
-    interpreted as 0-100% of the image width resp. height. Sensors then will
-    be attached with their upper left corner to this position.
+    Generic version of Position with x, y coordinates.
 
     :param x: x cordinate
     :param y: y cordinate
@@ -1753,12 +1751,12 @@ class ImageItSensorQuery:
     """
     ImageIt sensor query
 
-    :param alias:
-    :param id:
+    :param id: Query ID to use (aka refId)
+    :param alias: dito
     """
 
-    alias = attr.ib(default='', validator=instance_of(str))
     id = attr.ib(default='', validator=instance_of(str))
+    alias = attr.ib(default='', validator=instance_of(str))
 
     def to_json_data(self):
         return {
@@ -1772,19 +1770,22 @@ class ImageItSensor:
     """
     ImageIt sensor.
 
-    :param backgroundBlink:
-    :param bold:
-    :param valueBlink:
-    :param visible:
-    :param decimals:
-    :param name:
-    :param link:
-    :param unit:
-    :param mappingIds:
-    :param position:
-    :param query:
-    :param backgroundColor:
-    :param fontColor:
+    :param backgroundBlink: dito
+    :param bold: dito
+    :param valueBlink: dito
+    :param visible: dito
+    :param decimals: dito
+    :param name: name to be displayed
+    :param link: link to open upon clicking on the sensor tile
+    :param unit: unit of this sensor
+    :param mappingIds: ID of maps to apply for this sensor (see
+        ImageItMapping class for details)
+    :param position: where to place (upper left corner of the) sensor onto the
+        image (see Position class for details)
+    :param query: which query to use for value retrieval (see Position class
+        for details)
+    :param backgroundColor: dito
+    :param fontColor: dito
     """
 
     backgroundBlink = attr.ib(default=False, validator=instance_of(bool))
@@ -1843,19 +1844,21 @@ class ImageItSensor:
 @attr.s
 class ImageItMapping:
     """
-    ImageItMapping
+    ImageItMapping changes the appearance/behavior of the sensor referencing
+    the given ID.
 
-    :param backgroundBlink:
-    :param bold:
-    :param valueBlink:
-    :param visible:
-    :param compareTo:
-    :param description:
-    :param overrideValue:
-    :param operator:
-    :param id:
-    :param backgroundColor:
-    :param fontColor:
+    :param backgroundBlink: dito
+    :param bold: dito
+    :param valueBlink: dito
+    :param visible: dito
+    :param compareTo: value to compare to
+    :param description: dito
+    :param overrideValue: ?
+    :param operator: comparison operator to use: 'equal', 'notEqual',
+        'smallerThan', 'greaterThan'
+    :param id: ID of this mapping, can be used by ImageItSensor.
+    :param backgroundColor: dito
+    :param fontColor: dito
     """
 
     backgroundBlink = attr.ib(default=False, validator=instance_of(bool))
@@ -1910,12 +1913,14 @@ class ImageIt(Panel):
     Generates a ImageIt panel. See:
     https://grafana.com/grafana/plugins/pierosavi-imageit-panel/ for details.
 
-    :param forceImageRefresh:
-    :param lockSensors:
-    :param imageUrl:
-    :param sensorsTextSize:
-    :param mappings:
-    :param sensors:
+    :param forceImageRefresh: whether to force refresh on dashboard should be
+        used carefully (https://github.com/pierosavi/pierosavi-imageit-panel#whats-up-with-the-force-image-refresh-warning)
+    :param lockSensors: lock the sensor in place (can not be moved manually
+        anymore)
+    :param imageUrl: dito (note: https://github.com/pierosavi/pierosavi-imageit-panel#can-i-host-my-images-inside-my-grafana-instance)
+    :param sensorsTextSize: dito
+    :param mappings: mapping for this panel (list of ImageItMapping)
+    :param sensors: sensors for this panel (list of ImageItSensor)
     """
 
     forceImageRefresh = attr.ib(default=False, validator=instance_of(bool))
