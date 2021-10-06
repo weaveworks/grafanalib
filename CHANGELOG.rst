@@ -13,6 +13,7 @@ x.x.x (TBD)
 Changes
 -------
 
+* Fix Text panel (and add tests)
 * Refine expectations of is_color_code
 * Deprecated StatMapping, StatValueMapping & StatRangeMapping
 * Change YAxis min value default from 0 to None
