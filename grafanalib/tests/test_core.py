@@ -236,6 +236,12 @@ def test_ImageItSensor_exception_checks():
     with pytest.raises(TypeError):
         G.ImageItSensor(query=123)
 
+    with pytest.raises(TypeError):
+        G.ImageItSensor(mappingIds=123)
+
+    with pytest.raises(TypeError):
+        G.ImageItSensor(mappingIds=[123, 456])
+
 
 def test_ImageItSensor():
     t = G.ImageItSensor()
@@ -263,7 +269,7 @@ def test_ImageItSensor():
         backgroundBlink=True,
         name="foo",
         decimals=123,
-        mappingIds=[123, 456],
+        mappingIds=['abc', 'def'],
         query=G.ImageItSensorQuery(alias='foo', id='bar'),
         position=G.Position(789, 321),
     )
@@ -273,7 +279,7 @@ def test_ImageItSensor():
     assert json_data['backgroundBlink'] is True
     assert json_data['name'] == 'foo'
     assert json_data['decimals'] == 123
-    assert json_data['mappingIds'] == [123, 456]
+    assert json_data['mappingIds'] == ['abc', 'def']
     assert json_data['query'] == G.ImageItSensorQuery(alias='foo', id='bar')
     assert json_data['position'] == G.Position(789, 321)
 

@@ -1795,12 +1795,18 @@ class ImageItSensor:
     decimals = attr.ib(default=2, validator=instance_of(int))
 
     name = attr.ib(default="", validator=instance_of(str))
-    imageUrl = attr.ib(default="", validator=instance_of(str))
     link = attr.ib(default="", validator=instance_of(str))
+    unit = attr.ib(default="", validator=instance_of(str))
 
-    mappingIds = attr.ib(default=[], validator=instance_of(list))
+    mappingIds = attr.ib(
+        default=[],
+        validator=attr.validators.deep_iterable(
+            member_validator=instance_of(str),
+            iterable_validator=instance_of(list),
+        ),
+    )
 
-    position = attr.ib(default=Point2D(), validator=instance_of(Point2D))
+    position = attr.ib(default=Position(0, 0), validator=instance_of(Position))
 
     query = attr.ib(
         default=ImageItSensorQuery(id='', alias=''),
@@ -1942,7 +1948,7 @@ class ImageIt(Panel):
                 'lockSensors': self.lockSensors,
                 'sensorsTextSize': self.sensorsTextSize,
                 'sensors': self.sensors,
-                'mappings': self.mappings,  # []
+                'mappings': self.mappings,
             }
         })
 
