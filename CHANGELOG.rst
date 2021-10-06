@@ -5,7 +5,8 @@ Changelog
 x.x.x (TBD)
 ===================
 
-* Added Discrete panel
+* Added ImageIt panel (https://grafana.com/grafana/plugins/pierosavi-imageit-panel/)
+* Added Discrete panel (https://grafana.com/grafana/plugins/natel-discrete-panel/)
 * Added support for colors in stat mapping panel with StatValueMappings & StatRangeMappings
 * Added missing auto interval properties in Template
 
