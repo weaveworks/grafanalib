@@ -306,7 +306,7 @@ def test_ImageIt():
     json_data = t.to_json_data()
 
     assert json_data['type'] == G.IMAGEIT_TYPE
-    assert json_data['options']['forceImageRefresh'] is True
+    assert json_data['options']['forceImageRefresh'] is False
     assert json_data['options']['lockSensors'] is False
     assert json_data['options']['imageUrl'] == ''
     assert json_data['options']['sensorsTextSize'] == 10
