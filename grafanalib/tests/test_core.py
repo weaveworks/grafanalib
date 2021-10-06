@@ -256,7 +256,7 @@ def test_ImageItSensor():
 
     assert json_data['mappingIds'] == []
     assert json_data['query'] == G.ImageItSensorQuery()
-    assert json_data['position'] == G.Point2D()
+    assert json_data['position'] == G.Position(0, 0)
 
     t = G.ImageItSensor(
         backgroundColor='#ABC',
@@ -265,7 +265,7 @@ def test_ImageItSensor():
         decimals=123,
         mappingIds=[123, 456],
         query=G.ImageItSensorQuery(alias='foo', id='bar'),
-        position=G.Point2D(789, 321),
+        position=G.Position(789, 321),
     )
 
     json_data = t.to_json_data()
@@ -275,7 +275,7 @@ def test_ImageItSensor():
     assert json_data['decimals'] == 123
     assert json_data['mappingIds'] == [123, 456]
     assert json_data['query'] == G.ImageItSensorQuery(alias='foo', id='bar')
-    assert json_data['position'] == G.Point2D(789, 321)
+    assert json_data['position'] == G.Position(789, 321)
 
 
 def test_ImageIt_exception_checks():
@@ -360,6 +360,42 @@ def test_Text():
     assert json_data['error'] is True
     assert json_data['options']['content'] == "foo"
     assert json_data['options']['mode'] == G.TEXT_MODE_HTML
+
+
+def test_Position_exception_checks():
+    with pytest.raises(TypeError):
+        G.Position(x='foo', y=123.4)
+    with pytest.raises(TypeError):
+        G.Position(x=123, y='bar')
+
+
+def test_Position():
+    t = G.Position(x=123.4, y=456)
+
+    json_data = t.to_json_data()
+    assert json_data['x'] == 123.4
+    assert json_data['y'] == 456
+
+
+def test_GridPos_exception_checks():
+    with pytest.raises(TypeError):
+        G.GridPos(h='foo', w=2, x=3, y=4)
+    with pytest.raises(TypeError):
+        G.GridPos(h=1.1, w='bar', x=3, y=4)
+    with pytest.raises(TypeError):
+        G.GridPos(h=1, w=2.2, x='foz', y=4)
+    with pytest.raises(TypeError):
+        G.GridPos(h=1, w=2, x=3.3, y='baz')
+
+
+def test_GridPos():
+    t = G.GridPos(h=321, w=654.3, x=123, y=456.7)
+
+    json_data = t.to_json_data()
+    assert json_data['h'] == 321
+    assert json_data['w'] == 654.3
+    assert json_data['x'] == 123
+    assert json_data['y'] == 456.7
 
 
 def test_DiscreteColorMappingItem_exception_checks():

@@ -579,14 +579,15 @@ def _balance_panels(panels):
 @attr.s
 class Position:
     """
-    Position with x, y position.
+    Position with x, y position. When used in ImageIt, the values are
+    interpreted as 0-100% of the image width (and height resp.).
 
     :param x: x cordinate
     :param y: y cordinate
     """
 
-    x = attr.ib(validator=instance_of(int))
-    y = attr.ib(validator=instance_of(int))
+    x = attr.ib(validator=instance_of((int, float)))
+    y = attr.ib(validator=instance_of((int, float)))
 
     def to_json_data(self):
         return {
@@ -596,7 +597,7 @@ class Position:
 
 
 @attr.s
-class GridPos(Position):
+class GridPos:
     """GridPos describes the panel size and position in grid coordinates.
 
     :param h: height of the panel, grid height units each represents
@@ -607,8 +608,10 @@ class GridPos(Position):
     :param y: y cordinate of the panel, in same unit as h
     """
 
-    h = attr.ib(validator=instance_of(int))
-    w = attr.ib(validator=instance_of(int))
+    h = attr.ib(validator=instance_of((int, float)))
+    w = attr.ib(validator=instance_of((int, float)))
+    x = attr.ib(validator=instance_of((int, float)))
+    y = attr.ib(validator=instance_of((int, float)))
 
     def to_json_data(self):
         return {
