@@ -1752,6 +1752,9 @@ class Discrete(Panel):
 class ImageItSensorQuery:
     """
     ImageIt sensor query
+
+    :param alias:
+    :param id:
     """
 
     alias = attr.ib(default='', validator=instance_of(str))
@@ -1768,6 +1771,20 @@ class ImageItSensorQuery:
 class ImageItSensor:
     """
     ImageIt sensor.
+
+    :param backgroundBlink:
+    :param bold:
+    :param valueBlink:
+    :param visible:
+    :param decimals:
+    :param name:
+    :param link:
+    :param unit:
+    :param mappingIds:
+    :param position:
+    :param query:
+    :param backgroundColor:
+    :param fontColor:
     """
 
     backgroundBlink = attr.ib(default=False, validator=instance_of(bool))
@@ -1820,6 +1837,18 @@ class ImageItSensor:
 class ImageItMapping:
     """
     ImageItMapping
+
+    :param backgroundBlink:
+    :param bold:
+    :param valueBlink:
+    :param visible:
+    :param compareTo:
+    :param description:
+    :param overrideValue:
+    :param operator:
+    :param id:
+    :param backgroundColor:
+    :param fontColor:
     """
 
     backgroundBlink = attr.ib(default=False, validator=instance_of(bool))
@@ -1870,9 +1899,19 @@ class ImageItMapping:
 
 @attr.s
 class ImageIt(Panel):
-    """Generates a Text panel."""
+    """
+    Generates a ImageIt panel. See:
+    https://grafana.com/grafana/plugins/pierosavi-imageit-panel/ for details.
 
-    forceImageRefresh = attr.ib(default=True, validator=instance_of(bool))
+    :param forceImageRefresh:
+    :param lockSensors:
+    :param imageUrl:
+    :param sensorsTextSize:
+    :param mappings:
+    :param sensors:
+    """
+
+    forceImageRefresh = attr.ib(default=False, validator=instance_of(bool))
     lockSensors = attr.ib(default=False, validator=instance_of(bool))
 
     imageUrl = attr.ib(default="", validator=instance_of(str))
