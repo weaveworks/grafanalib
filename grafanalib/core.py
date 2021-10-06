@@ -1832,6 +1832,7 @@ class ImageItSensor:
             'link': self.link,    # ""
             'mappingIds': self.mappingIds,    # []
             'name': self.name,    # "Name"
+            'unit': self.unit,
             "position": self.position,
             'query': self.query,
             'valueBlink': self.valueBlink,    # false

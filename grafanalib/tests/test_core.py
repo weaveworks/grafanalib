@@ -257,6 +257,7 @@ def test_ImageItSensor():
 
     assert json_data['name'] == ''
     assert json_data['link'] == ''
+    assert json_data['unit'] == ''
 
     assert json_data['decimals'] == 2
 
@@ -268,6 +269,7 @@ def test_ImageItSensor():
         backgroundColor='#ABC',
         backgroundBlink=True,
         name="foo",
+        unit="unit",
         decimals=123,
         mappingIds=['abc', 'def'],
         query=G.ImageItSensorQuery(alias='foo', id='bar'),
@@ -278,6 +280,7 @@ def test_ImageItSensor():
     assert json_data['backgroundColor'] == '#ABC'
     assert json_data['backgroundBlink'] is True
     assert json_data['name'] == 'foo'
+    assert json_data['unit'] == 'unit'
     assert json_data['decimals'] == 123
     assert json_data['mappingIds'] == ['abc', 'def']
     assert json_data['query'] == G.ImageItSensorQuery(alias='foo', id='bar')
