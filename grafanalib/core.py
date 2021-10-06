@@ -16,7 +16,6 @@ from numbers import Number
 
 import attr
 from attr.validators import in_, instance_of
-from collections import namedtuple
 
 
 @attr.s
@@ -295,8 +294,6 @@ VTYPE_FIRST = 'first'
 VTYPE_DELTA = 'delta'
 VTYPE_RANGE = 'range'
 VTYPE_DEFAULT = VTYPE_AVG
-
-Point2D = namedtuple('Point2D', 'x,y', defaults=(0, 0))
 
 
 @attr.s
@@ -580,7 +577,26 @@ def _balance_panels(panels):
 
 
 @attr.s
-class GridPos(object):
+class Position:
+    """
+    Position with x, y position.
+
+    :param x: x cordinate
+    :param y: y cordinate
+    """
+
+    x = attr.ib(validator=instance_of(int))
+    y = attr.ib(validator=instance_of(int))
+
+    def to_json_data(self):
+        return {
+            'x': self.x,
+            'y': self.y,
+        }
+
+
+@attr.s
+class GridPos(Position):
     """GridPos describes the panel size and position in grid coordinates.
 
     :param h: height of the panel, grid height units each represents
@@ -591,17 +607,15 @@ class GridPos(object):
     :param y: y cordinate of the panel, in same unit as h
     """
 
-    h = attr.ib()
-    w = attr.ib()
-    x = attr.ib()
-    y = attr.ib()
+    h = attr.ib(validator=instance_of(int))
+    w = attr.ib(validator=instance_of(int))
 
     def to_json_data(self):
         return {
             'h': self.h,
             'w': self.w,
             'x': self.x,
-            'y': self.y
+            'y': self.y,
         }
 
 
