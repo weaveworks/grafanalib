@@ -580,7 +580,8 @@ def _balance_panels(panels):
 class Position:
     """
     Position with x, y position. When used in ImageIt, the values are
-    interpreted as 0-100% of the image width (and height resp.).
+    interpreted as 0-100% of the image width resp. height. Sensors then will
+    be attached with their upper left corner to this position.
 
     :param x: x cordinate
     :param y: y cordinate
