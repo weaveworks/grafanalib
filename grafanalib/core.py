@@ -1868,8 +1868,8 @@ class ImageItMapping:
     overrideValue = attr.ib(default="", validator=instance_of(str))
 
     operator = attr.ib(
-        default="=",
-        validator=in_(['=', '!=', '<', '>']),
+        default="equal",
+        validator=in_(['equal', 'notEqual', 'smallerThan', 'greaterThan']),
     )
 
     id = attr.ib(

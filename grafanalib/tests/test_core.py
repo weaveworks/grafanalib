@@ -174,7 +174,7 @@ def test_ImageItMapping():
     assert json_data['compareTo'] == ''
     assert json_data['description'] == ''
     assert json_data['id'].startswith('mapping_')
-    assert json_data['operator'] == '='
+    assert json_data['operator'] == 'equal'
 
     assert json_data['values']['fontColor'] == '#FFF'
     assert json_data['values']['backgroundColor'] == '#000'
@@ -188,7 +188,7 @@ def test_ImageItMapping():
     t = G.ImageItMapping(
         id="foo",
         compareTo="123",
-        operator="<",
+        operator="smallerThan",
         description="desc",
         fontColor="#ABC",
         overrideValue="override",
@@ -199,7 +199,7 @@ def test_ImageItMapping():
     assert json_data['compareTo'] == '123'
     assert json_data['description'] == 'desc'
     assert json_data['id'] == "foo"
-    assert json_data['operator'] == '<'
+    assert json_data['operator'] == 'smallerThan'
 
     assert json_data['values']['fontColor'] == '#ABC'
     assert json_data['values']['overrideValue'] == 'override'
@@ -320,7 +320,7 @@ def test_ImageIt():
     mappings = [
         G.ImageItMapping(),
         G.ImageItMapping(
-            operator='>',
+            operator='greaterThan',
             compareTo="456",
             fontColor='#AAAAAA'
         )
