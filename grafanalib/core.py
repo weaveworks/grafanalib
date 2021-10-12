@@ -3098,15 +3098,23 @@ class Logs(Panel):
     Grafana doc on Logs panel: https://grafana.com/docs/grafana/latest/panels/visualizations/logs-panel/
 
     :param showLabels: Show or hide the unique labels column, which shows only non-common labels
+    :param showCommonLabels: Show or hide the common labels.
     :param showTime: Show or hide the log timestamp column
     :param wrapLogMessages: Toggle line wrapping
     :param sortOrder: Display results in 'Descending' or 'Ascending' time order. The default is Descending,
         showing the newest logs first.
+    :param dedupStrategy: One of none, exact, numbers, signature. Default is none
+    :param enableLogDetails: Set this to True to see the log details view for each log row.
+    :param prettifyLogMessage: Set this to true to pretty print all JSON logs. This setting does not affect logs in any format other than JSON.
     """
     showLabels = attr.ib(default=False, validator=instance_of(bool))
+    showCommonLabels = attr.ib(default=False, validator=instance_of(bool))
     showTime = attr.ib(default=False, validator=instance_of(bool))
-    wrapLogMessages = attr.ib(default=False, validator=instance_of(bool))
+    wrapLogMessage = attr.ib(default=False, validator=instance_of(bool))
     sortOrder = attr.ib(default='Descending', validator=instance_of(str))
+    dedupStrategy = attr.ib(default='none', validator=instance_of(str))
+    enableLogDetails = attr.ib(default=False, validator=instance_of(bool))
+    prettifyLogMessage = attr.ib(default=False, validator=instance_of(bool))
 
     def to_json_data(self):
         return self.panel_json(
@@ -3119,9 +3127,13 @@ class Logs(Panel):
                 },
                 'options': {
                     'showLabels': self.showLabels,
+                    'showCommonLabels': self.showCommonLabels,
                     'showTime': self.showTime,
+                    'wrapLogMessage': self.wrapLogMessage,
                     'sortOrder': self.sortOrder,
-                    'wrapLogMessage': self.wrapLogMessages
+                    'dedupStrategy': self.dedupStrategy,
+                    'enableLogDetails': self.enableLogDetails,
+                    'prettifyLogMessage': self.prettifyLogMessage
                 },
                 'type': LOGS_TYPE,
             }
