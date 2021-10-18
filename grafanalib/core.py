@@ -91,6 +91,7 @@ HEATMAP_TYPE = 'heatmap'
 STATUSMAP_TYPE = 'flant-statusmap-panel'
 SVG_TYPE = 'marcuscalidus-svg-panel'
 PIE_CHART_TYPE = 'grafana-piechart-panel'
+TIMESERIES_TYPE = 'timeseries'
 WORLD_MAP_TYPE = 'grafana-worldmap-panel'
 
 DEFAULT_FILL = 1
@@ -1474,6 +1475,119 @@ class Graph(Panel):
             return t if t.refId else attr.evolve(t, refId=next(auto_ref_ids))
 
         return self._map_targets(set_refid)
+
+
+@attr.s
+class TimeSeries(Panel):
+    """Generates Time Series panel json structure added in Grafana v8
+
+    Grafana doc on time series: https://grafana.com/docs/grafana/latest/panels/visualizations/time-series/
+
+    :param axisPlacement: auto(Default), left. right, hidden
+    :param axisLabel: axis label string
+    :param barAlignment: bar alignment
+        -1 (left), 0 (centre, default), 1
+    :param colorMode: Color mode
+        palette-classic (Default),
+    :param drawStyle: how to display your time series data
+        line (Default), bars, points
+    :param fillOpacity: fillOpacity
+    :param gradientMode: gradientMode
+    :param legendDisplayMode: refine how the legend appears in your visualization
+        list (Default), table, hidden
+    :param legendPlacement: bottom (Default), right
+    :param lineInterpolation: line interpolation
+        linear (Default), smooth, stepBefore, stepAfter
+    :param lineWidth: line width, default 1
+    :param mappings: To assign colors to boolean or string values, use Value mappings
+    :param pointSize: point size, default 5
+    :param scaleDistributionType: axis scale linear or log
+    :param scaleDistributionLog: Base of if logarithmic scale type set, default 2
+    :param spanNulls: connect null values, default False
+    :param showPoints: show points
+        auto (Default), always, never
+    :param stacking: dict to enable stacking, {"mode": "normal", "group": "A"}
+    :param thresholds: single stat thresholds
+    :param tooltipMode: When you hover your cursor over the visualization, Grafana can display tooltips
+        single (Default), multi, none
+    :param unit: units
+    """
+
+    axisPlacement = attr.ib(default='auto', validator=instance_of(str))
+    axisLabel = attr.ib(default='', validator=instance_of(str))
+    barAlignment = attr.ib(default=0, validator=instance_of(int))
+    colorMode = attr.ib(default='palette-classic', validator=instance_of(str))
+    drawStyle = attr.ib(default='line', validator=instance_of(str))
+    fillOpacity = attr.ib(default=0, validator=instance_of(int))
+    gradientMode = attr.ib(default='none', validator=instance_of(str))
+    legendDisplayMode = attr.ib(default='list', validator=instance_of(str))
+    legendPlacement = attr.ib(default='bottom', validator=instance_of(str))
+    lineInterpolation = attr.ib(default='linear', validator=instance_of(str))
+    lineWidth = attr.ib(default=1, validator=instance_of(int))
+    mappings = attr.ib(default=attr.Factory(list))
+    pointSize = attr.ib(default=5, validator=instance_of(int))
+    scaleDistributionType = attr.ib(default='linear', validator=instance_of(str))
+    scaleDistributionLog = attr.ib(default=2, validator=instance_of(int))
+    spanNulls = attr.ib(default=False, validator=instance_of(bool))
+    showPoints = attr.ib(default='auto', validator=instance_of(str))
+    stacking = attr.ib(default={}, validator=instance_of(dict))
+    thresholds = attr.ib(default=attr.Factory(list))
+    tooltipMode = attr.ib(default='single', validator=instance_of(str))
+    unit = attr.ib(default='', validator=instance_of(str))
+
+    def to_json_data(self):
+        return self.panel_json(
+            {
+                'fieldConfig': {
+                    'defaults': {
+                        'color': {
+                            'mode': self.colorMode
+                        },
+                        'custom': {
+                            'axisPlacement': self.axisPlacement,
+                            'axisLabel': self.axisLabel,
+                            'drawStyle': self.drawStyle,
+                            'lineInterpolation': self.lineInterpolation,
+                            'barAlignment': self.barAlignment,
+                            'lineWidth': self.lineWidth,
+                            'fillOpacity': self.fillOpacity,
+                            'gradientMode': self.gradientMode,
+                            'spanNulls': self.spanNulls,
+                            'showPoints': self.showPoints,
+                            'pointSize': self.pointSize,
+                            'stacking': self.stacking,
+                            'scaleDistribution': {
+                                'type': self.scaleDistributionType,
+                                'log': self.scaleDistributionLog
+                            },
+                            'hideFrom': {
+                                'tooltip': False,
+                                'viz': False,
+                                'legend': False
+                            },
+                        },
+                        'mappings': self.mappings,
+                        'thresholds': {
+                            'mode': 'absolute',
+                            'steps': self.thresholds
+                        },
+                        'unit': self.unit
+                    },
+                    'overrides': []
+                },
+                'options': {
+                    'legend': {
+                        'displayMode': self.legendDisplayMode,
+                        'placement': self.legendPlacement,
+                        'calcs': []
+                    },
+                    'tooltip': {
+                        'mode': self.tooltipMode
+                    }
+                },
+                'type': TIMESERIES_TYPE,
+            }
+        )
 
 
 @attr.s

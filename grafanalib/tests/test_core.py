@@ -500,3 +500,14 @@ def test_worldmap():
     assert data['datasource'] == data_source
     assert data['title'] == title
     assert data['circleMaxSize'] == 11
+
+
+def test_timeseries():
+    data_source = 'dummy data source'
+    targets = ['dummy_prom_query']
+    title = 'dummy title'
+    timeseries = G.TimeSeries(data_source, targets, title)
+    data = timeseries.to_json_data()
+    assert data['targets'] == targets
+    assert data['datasource'] == data_source
+    assert data['title'] == title
