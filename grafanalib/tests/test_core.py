@@ -481,7 +481,6 @@ def test_worldmap():
     assert data['circleMaxSize'] == 11
 
 
-<<<<<<< HEAD
 def test_stateTimeline():
     data_source = 'dummy data source'
     targets = ['dummy_prom_query']
@@ -492,7 +491,8 @@ def test_stateTimeline():
     assert data['datasource'] == data_source
     assert data['title'] == title
     assert data['options']['rowHeight'] == 0.7
-=======
+
+
 def test_timeseries():
     data_source = 'dummy data source'
     targets = ['dummy_prom_query']
@@ -502,4 +502,3 @@ def test_timeseries():
     assert data['targets'] == targets
     assert data['datasource'] == data_source
     assert data['title'] == title
->>>>>>> upstream/master
