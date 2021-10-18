@@ -10,6 +10,8 @@ test-results/junit-*.xml
 .ensure-*
 /.tox
 /.coverage
+/venv/
+/.idea/
 
 # Documentation
 docs/build
