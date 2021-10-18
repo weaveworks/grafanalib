@@ -19,6 +19,7 @@ Changes
 * Deprecated StatMapping, StatValueMapping & StatRangeMapping
 * Change YAxis min value default from 0 to None
 * Support for Table panel for Grafana v8 may have broken backwards compatibility in old Table panel
+* Breaking change, support for styled columns in tables removed, no longer used in Grafana v8 new Table
 
 0.5.14 (2021-09-14)
 ==================
