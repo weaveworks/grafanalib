@@ -10,6 +10,7 @@ x.x.x (TBD)
 * Added missing auto interval properties in Template
 * Added param to RowPanel to collapse the row
 * Added StateTimeline panel which was added in Grafana v8
+* Added support for timeseries panel added in Grafana v8
 
 Changes
 -------
