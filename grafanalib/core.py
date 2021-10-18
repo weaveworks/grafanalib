@@ -1271,6 +1271,7 @@ class RowPanel(Panel):
     """
 
     panels = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+    collapsed = attr.ib(default=False, validator=instance_of(bool))
 
     def _iter_panels(self):
         return iter(self.panels)
@@ -1282,7 +1283,7 @@ class RowPanel(Panel):
     def to_json_data(self):
         return self.panel_json(
             {
-                'collapsed': False,
+                'collapsed': self.collapsed,
                 'panels': self.panels,
                 'type': ROW_TYPE
             }
