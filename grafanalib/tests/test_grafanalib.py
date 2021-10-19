@@ -201,3 +201,11 @@ def test_row_panel_show_title():
     row = G.RowPanel(title='My title', panels=['a', 'b']).to_json_data()
     assert row['title'] == 'My title'
     assert row['panels'][0] == 'a'
+
+
+def test_row_panel_collapsed():
+    row = G.RowPanel().to_json_data()
+    assert row['collapsed'] is False
+
+    row = G.RowPanel(collapsed=True).to_json_data()
+    assert row['collapsed'] is True

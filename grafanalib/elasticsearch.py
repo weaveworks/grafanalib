@@ -431,3 +431,70 @@ class ElasticsearchAlertCondition(AlertCondition):
     """
 
     target = attr.ib(validator=instance_of(ElasticsearchTarget))
+
+
+@attr.s
+class MinMetricAgg(object):
+    """An aggregator that provides the min. value among the values.
+    https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-min-aggregation.html
+    :param field: name of elasticsearch field to provide the maximum for
+    :param hide: show/hide the metric in the final panel display
+    :param id: id of the metric
+    :param inline: script to apply to the data, using '_value'
+    """
+
+    field = attr.ib(default="", validator=instance_of(str))
+    id = attr.ib(default=0, validator=instance_of(int))
+    hide = attr.ib(default=False, validator=instance_of(bool))
+    inline = attr.ib(default="", validator=instance_of(str))
+
+    def to_json_data(self):
+        self.settings = {}
+
+        if self.inline:
+            self.settings['script'] = {'inline': self.inline}
+
+        return {
+            'id': str(self.id),
+            'hide': self.hide,
+            'type': 'min',
+            'field': self.field,
+            'inlineScript': self.inline,
+            'settings': self.settings,
+        }
+
+
+@attr.s
+class PercentilesMetricAgg(object):
+    """A multi-value metrics aggregation that calculates one or more percentiles over numeric values extracted from the aggregated documents
+    https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-percentile-aggregation.html
+    :param field: name of elasticsearch field to provide the maximum for
+    :param hide: show/hide the metric in the final panel display
+    :param id: id of the metric
+    :param inline: script to apply to the data, using '_value'
+    :param percents: list of percentiles, like [95,99]
+    """
+
+    field = attr.ib(default="", validator=instance_of(str))
+    id = attr.ib(default=0, validator=instance_of(int))
+    hide = attr.ib(default=False, validator=instance_of(bool))
+    inline = attr.ib(default="", validator=instance_of(str))
+    percents = attr.ib(default=attr.Factory(list))
+    settings = attr.ib(default={})
+
+    def to_json_data(self):
+        self.settings = {}
+
+        self.settings['percents'] = self.percents
+
+        if self.inline:
+            self.settings['script'] = {'inline': self.inline}
+
+        return {
+            'id': str(self.id),
+            'hide': self.hide,
+            'type': 'percentiles',
+            'field': self.field,
+            'inlineScript': self.inline,
+            'settings': self.settings,
+        }

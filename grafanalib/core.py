@@ -1273,6 +1273,7 @@ class RowPanel(Panel):
     """
     collapsed = attr.ib(default=False, validator=instance_of(bool))
     panels = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+    collapsed = attr.ib(default=False, validator=instance_of(bool))
 
     def _iter_panels(self):
         return iter(self.panels)
