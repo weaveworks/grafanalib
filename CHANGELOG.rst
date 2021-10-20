@@ -12,6 +12,7 @@ x.x.x (TBD)
 * Changed RowPanel to allow collapsed to be defined on creation
 * Added MinMetricAgg and PercentilesMetricAgg to Elasticsearch
 * Updated grafanalib/tests/examples/example.upload-dashboard.py with updating dashboard and list existing dashboards
+* Updated documentation for core.py alertcondition. Added list of supported RTYPE_*
 
 Changes
 -------
