@@ -37,3 +37,37 @@ grafana_server = getenv("GRAFANA_SERVER")
 my_dashboard = Dashboard(title="My awesome dashboard")
 my_dashboard_json = get_dashboard_json(my_dashboard)
 upload_to_grafana(my_dashboard_json, grafana_server, grafana_api_key)
+
+##
+##UPDATE EXISTING DASHBOARD##
+##
+my_dashboard = Dashboard(title="My awesome dashboard", id="XX", uid="xxxxx")
+my_dashboard_json = get_dashboard_json(my_dashboard)
+#convert json_dump back to json_object
+temp2=json.loads(my_dashboard_json)
+#append new properties
+temp2['overwrite'] = True
+temp2['message'] = "update from script"
+#print (temp2)
+#change from json_object to json_dump
+my_dashboard_json = json.dumps(temp2, sort_keys=True, indent=2, cls=DashboardEncoder)
+#print ('my_dashboard_json')
+#print (my_dashboard_json)
+
+##
+##GET list of dashboards##
+####Use this to get id and uid for updating exisitng dashboards####
+##
+import requests
+import json
+server = "http://xxxx:3000"
+url = server + "/api/search?query=%"
+headers = {
+    "Authorization":f"Bearer {grafana_api_key}",
+    "Content-Type":"application/json",
+    "Accept": "application/json"
+}
+r = requests.get(url = url, headers = headers, verify=False)
+for item in r.json():
+    if item['type'] == 'dash-db':
+        print(item)
