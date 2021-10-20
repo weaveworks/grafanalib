@@ -11,6 +11,7 @@ x.x.x (TBD)
 * Added support for time series panel added in Grafana v8
 * Changed RowPanel to allow collapsed to be defined on creation
 * Added MinMetricAgg and PercentilesMetricAgg to Elasticsearch
+* Updated grafanalib/tests/examples/example.upload-dashboard.py with updating dashboard and list existing dashboards
 
 Changes
 -------
