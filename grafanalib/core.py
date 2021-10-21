@@ -2422,33 +2422,6 @@ class Column(object):
         }
 
 
-def _style_columns(columns):
-    """Generate a list of column styles given some styled columns.
-
-    The 'Table' object in Grafana separates column definitions from column
-    style definitions. However, when defining dashboards it can be very useful
-    to define the style next to the column. This function helps that happen.
-
-    :param columns: A list of (Column, ColumnStyle) pairs. The associated
-        ColumnStyles must not have a 'pattern' specified. You can also provide
-       'None' if you want to use the default styles.
-    :return: A list of ColumnStyle values that can be used in a Grafana
-        definition.
-    """
-    new_columns = []
-    styles = []
-    for column, style in columns:
-        new_columns.append(column)
-        if not style:
-            continue
-        if style.pattern and style.pattern != column.text:
-            raise ValueError(
-                "ColumnStyle pattern (%r) must match the column name (%r) if "
-                "specified" % (style.pattern, column.text))
-        styles.append(attr.evolve(style, pattern=column.text))
-    return new_columns, styles
-
-
 @attr.s
 class Table(Panel):
     """Generates Table panel json structure
@@ -2478,6 +2451,13 @@ class Table(Panel):
     showHeader = attr.ib(default=True, validator=instance_of(bool))
     span = attr.ib(default=6)
     thresholds = attr.ib(default=attr.Factory(list))
+
+    @classmethod
+    def with_styled_columns(cls, columns, styles=None, **kwargs):
+        """Styled columns is not support in Grafana v8 Table"""
+        print("Error: Styled columns is not support in Grafana v8 Table")
+        print("Please see https://grafana.com/docs/grafana/latest/visualizations/table/ for more options")
+        raise NotImplementedError
 
     def to_json_data(self):
         return self.panel_json(

@@ -11,7 +11,6 @@ x.x.x (TBD)
 * Added param to RowPanel to collapse the row
 * Added StateTimeline panel which was added in Grafana v8
 * Added support for timeseries panel added in Grafana v8
-* Changed RowPanel to allow collapsed to be defined on creation
 * Added MinMetricAgg and PercentilesMetricAgg to Elasticsearch
 
 Changes
