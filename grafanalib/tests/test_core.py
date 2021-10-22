@@ -94,28 +94,7 @@ def test_custom_template_dont_override_options():
     assert t.to_json_data()['current']['value'] == '1'
 
 
-def test_table_styled_columns():
-    t = G.Table.with_styled_columns(
-        columns=[
-            (G.Column('Foo', 'foo'), G.ColumnStyle()),
-            (G.Column('Bar', 'bar'), None),
-        ],
-        dataSource='some data source',
-        targets=[
-            G.Target(expr='some expr'),
-        ],
-        title='table title',
-    )
-    assert t.columns == [
-        G.Column('Foo', 'foo'),
-        G.Column('Bar', 'bar'),
-    ]
-    assert t.styles == [
-        G.ColumnStyle(pattern='Foo'),
-    ]
-
-
-def test_table_transformations():
+def test_table():
     t = G.Table(
         dataSource='some data source',
         targets=[
@@ -500,6 +479,18 @@ def test_worldmap():
     assert data['datasource'] == data_source
     assert data['title'] == title
     assert data['circleMaxSize'] == 11
+
+
+def test_stateTimeline():
+    data_source = 'dummy data source'
+    targets = ['dummy_prom_query']
+    title = 'dummy title'
+    stateTimeline = G.StateTimeline(data_source, targets, title, rowHeight=0.7)
+    data = stateTimeline.to_json_data()
+    assert data['targets'] == targets
+    assert data['datasource'] == data_source
+    assert data['title'] == title
+    assert data['options']['rowHeight'] == 0.7
 
 
 def test_timeseries():

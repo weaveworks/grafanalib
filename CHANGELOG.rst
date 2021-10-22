@@ -8,8 +8,9 @@ x.x.x (TBD)
 * Added Discrete panel
 * Added support for colors in stat mapping panel with StatValueMappings & StatRangeMappings
 * Added missing auto interval properties in Template
-* Added support for time series panel added in Grafana v8
-* Changed RowPanel to allow collapsed to be defined on creation
+* Added param to RowPanel to collapse the row
+* Added StateTimeline panel which was added in Grafana v8
+* Added support for timeseries panel added in Grafana v8
 * Added MinMetricAgg and PercentilesMetricAgg to Elasticsearch
 
 Changes
@@ -18,6 +19,8 @@ Changes
 * Refine expectations of is_color_code
 * Deprecated StatMapping, StatValueMapping & StatRangeMapping
 * Change YAxis min value default from 0 to None
+* Support for Table panel for Grafana v8 may have broken backwards compatibility in old Table panel
+* Breaking change, support for styled columns in tables removed, no longer used in Grafana v8 new Table
 
 0.5.14 (2021-09-14)
 ==================
