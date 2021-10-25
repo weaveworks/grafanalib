@@ -92,6 +92,7 @@ HEATMAP_TYPE = 'heatmap'
 STATUSMAP_TYPE = 'flant-statusmap-panel'
 SVG_TYPE = 'marcuscalidus-svg-panel'
 PIE_CHART_TYPE = 'grafana-piechart-panel'
+PIE_CHART_V2_TYPE = 'piechart'
 TIMESERIES_TYPE = 'timeseries'
 WORLD_MAP_TYPE = 'grafana-worldmap-panel'
 
@@ -2923,6 +2924,9 @@ class Svg(Panel):
 @attr.s
 class PieChart(Panel):
     """Generates Pie Chart panel json structure
+
+    This panel was deprecated in Grafana 8.0, please use PieChartv2 instead
+
     Grafana doc on Pie Chart: https://grafana.com/grafana/plugins/grafana-piechart-panel
 
     :param aliasColors: dictionary of color overrides
@@ -2947,6 +2951,7 @@ class PieChart(Panel):
     thresholds = attr.ib(default="")
 
     def to_json_data(self):
+        print('PieChart panel was deprecated in Grafana 8.0, please use PieChartv2 instead')
         return self.panel_json(
             {
                 'aliasColors': self.aliasColors,
@@ -2967,6 +2972,78 @@ class PieChart(Panel):
                 },
                 'legendType': self.legendType,
                 'type': PIE_CHART_TYPE,
+            }
+        )
+
+
+@attr.s
+class PieChartv2(Panel):
+    """Generates Pie Chart panel json structure
+    Grafana docs on Pie Chart: https://grafana.com/docs/grafana/latest/visualizations/pie-chart-panel/
+
+    :param custom: Custom overides
+    :param colorMode: Color mode
+        palette-classic (Default),
+    :param legendDisplayMode: Display mode of legend: list, table or hidden
+    :param legendPlacement: Location of the legend in the panel: bottom or right
+    :param legendValues: List of value to be shown in legend eg. ['value', 'percent']
+    :param mappings: To assign colors to boolean or string values, use Value mappings
+    :param overrides: Overrides
+    :param pieType: Pie chart type
+        pie (Default), donut
+    :param reduceOptionsCalcs: Reducer function / calculation
+    :param reduceOptionsFields: Fields that should be included in the panel
+    :param reduceOptionsValues: Calculate a single value per column or series or show each row
+    :param tooltipMode: Tooltip mode
+        single (Default), multi, none
+    :param unit: units
+    """
+
+    custom = attr.ib(default={}, validator=instance_of(dict))
+    colorMode = attr.ib(default='palette-classic', validator=instance_of(str))
+    legendDisplayMode = attr.ib(default='list', validator=instance_of(str))
+    legendPlacement = attr.ib(default='bottom', validator=instance_of(str))
+    legendValues = attr.ib(default=[], validator=instance_of(list))
+    mappings = attr.ib(default=attr.Factory(list))
+    overrides = attr.ib(default=[], validator=instance_of(list))
+    pieType = attr.ib(default='pie', validator=instance_of(str))
+    reduceOptionsCalcs = attr.ib(default=['lastNotNull'], validator=instance_of(list))
+    reduceOptionsFields = attr.ib(default='', validator=instance_of(str))
+    reduceOptionsValues = attr.ib(default=False, validator=instance_of(bool))
+    tooltipMode = attr.ib(default='single', validator=instance_of(str))
+    unit = attr.ib(default='', validator=instance_of(str))
+
+    def to_json_data(self):
+        return self.panel_json(
+            {
+                'fieldConfig': {
+                    'defaults': {
+                        'color': {
+                            'mode': self.colorMode
+                        },
+                        'custom': self.custom,
+                        'mappings': self.mappings,
+                        'unit': self.unit,
+                    },
+                    'overrides': self.overrides,
+                },
+                'options': {
+                    'reduceOptions': {
+                        'values': self.reduceOptionsValues,
+                        'calcs': self.reduceOptionsCalcs,
+                        'fields': self.reduceOptionsFields
+                    },
+                    'pieType': self.pieType,
+                    'tooltip': {
+                        'mode': self.tooltipMode
+                    },
+                    'legend': {
+                        'displayMode': self.legendDisplayMode,
+                        'placement': self.legendPlacement,
+                        'values': self.legendValues
+                    },
+                },
+                'type': PIE_CHART_V2_TYPE,
             }
         )
 

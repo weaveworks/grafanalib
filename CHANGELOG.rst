@@ -12,6 +12,7 @@ x.x.x (TBD)
 * Added StateTimeline panel which was added in Grafana v8
 * Added support for timeseries panel added in Grafana v8
 * Added MinMetricAgg and PercentilesMetricAgg to Elasticsearch
+* Added support for Pie Chart v2 from Grafana v8
 
 Changes
 -------
