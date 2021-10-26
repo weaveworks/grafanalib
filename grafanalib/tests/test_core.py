@@ -504,6 +504,15 @@ def test_timeseries():
     assert data['title'] == title
 
 
+def test_news():
+    title = 'dummy title'
+    feedUrl = "www.example.com"
+    news = G.News(title=title, feedUrl=feedUrl)
+    data = news.to_json_data()
+    assert data['options']['feedUrl'] == feedUrl
+    assert data['title'] == title
+
+
 def test_pieChartv2():
     data_source = 'dummy data source'
     targets = ['dummy_prom_query']

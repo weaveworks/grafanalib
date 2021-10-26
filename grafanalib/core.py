@@ -95,6 +95,7 @@ PIE_CHART_TYPE = 'grafana-piechart-panel'
 PIE_CHART_V2_TYPE = 'piechart'
 TIMESERIES_TYPE = 'timeseries'
 WORLD_MAP_TYPE = 'grafana-worldmap-panel'
+NEWS_TYPE = 'news'
 
 DEFAULT_FILL = 1
 DEFAULT_REFRESH = '10s'
@@ -3395,5 +3396,31 @@ class StateTimeline(Panel):
                     }
                 },
                 'type': STATE_TIMELINE_TYPE,
+            }
+        )
+
+
+@attr.s
+class News(Panel):
+    """Generates News panel json structure
+    Grafana docs on State Timeline panel: https://grafana.com/docs/grafana/next/visualizations/news-panel/
+
+    :param feedUrl: URL to query, only RSS feed formats are supported (not Atom).
+    :param showImage: Controls if the news item social (og:image) image is shown above text content
+    :param useProxy: If the feed is unable to connect, consider a CORS proxy
+    """
+    feedUrl = attr.ib(default='', validator=instance_of(str))
+    showImage = attr.ib(default=True, validator=instance_of(bool))
+    useProxy = attr.ib(default=False, validator=instance_of(bool))
+
+    def to_json_data(self):
+        return self.panel_json(
+            {
+                'options': {
+                    'feedUrl': self.feedUrl,
+                    'showImage': self.showImage,
+                    'useProxy': self.useProxy
+                },
+                'type': NEWS_TYPE,
             }
         )
