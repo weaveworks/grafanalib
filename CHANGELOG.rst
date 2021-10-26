@@ -2,7 +2,7 @@
 Changelog
 =========
 
-x.x.x (TBD)
+0.6.0 (2021-10-26)
 ===================
 
 * Added Discrete panel
