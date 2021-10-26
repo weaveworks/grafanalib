@@ -512,7 +512,7 @@ def test_news():
     assert data['options']['feedUrl'] == feedUrl
     assert data['title'] == title
 
-  
+
 def test_pieChartv2():
     data_source = 'dummy data source'
     targets = ['dummy_prom_query']
