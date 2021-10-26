@@ -511,3 +511,14 @@ def test_news():
     data = news.to_json_data()
     assert data['options']['feedUrl'] == feedUrl
     assert data['title'] == title
+
+  
+def test_pieChartv2():
+    data_source = 'dummy data source'
+    targets = ['dummy_prom_query']
+    title = 'dummy title'
+    pie = G.PieChartv2(data_source, targets, title)
+    data = pie.to_json_data()
+    assert data['targets'] == targets
+    assert data['datasource'] == data_source
+    assert data['title'] == title
