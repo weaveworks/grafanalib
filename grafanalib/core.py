@@ -3110,7 +3110,7 @@ class Logs(Panel):
     showLabels = attr.ib(default=False, validator=instance_of(bool))
     showCommonLabels = attr.ib(default=False, validator=instance_of(bool))
     showTime = attr.ib(default=False, validator=instance_of(bool))
-    wrapLogMessage = attr.ib(default=False, validator=instance_of(bool))
+    wrapLogMessages = attr.ib(default=False, validator=instance_of(bool))
     sortOrder = attr.ib(default='Descending', validator=instance_of(str))
     dedupStrategy = attr.ib(default='none', validator=instance_of(str))
     enableLogDetails = attr.ib(default=False, validator=instance_of(bool))
@@ -3129,7 +3129,7 @@ class Logs(Panel):
                     'showLabels': self.showLabels,
                     'showCommonLabels': self.showCommonLabels,
                     'showTime': self.showTime,
-                    'wrapLogMessage': self.wrapLogMessage,
+                    'wrapLogMessage': self.wrapLogMessages,
                     'sortOrder': self.sortOrder,
                     'dedupStrategy': self.dedupStrategy,
                     'enableLogDetails': self.enableLogDetails,
