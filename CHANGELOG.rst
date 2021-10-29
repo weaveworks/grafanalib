@@ -2,6 +2,17 @@
 Changelog
 =========
 
+x.x.x (TBD)
+==================
+
+* Added missing attributes to the Logs panel
+* ...
+
+Changes
+-------
+
+* ...
+
 0.6.0 (2021-10-26)
 ===================
 

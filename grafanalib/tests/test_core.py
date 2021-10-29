@@ -331,9 +331,13 @@ def test_logs_panel():
     assert data['datasource'] == data_source
     assert data['title'] == title
     assert data['options']['showLabels'] is False
+    assert data['options']['showCommonLabels'] is False
     assert data['options']['showTime'] is False
     assert data['options']['wrapLogMessage'] is False
     assert data['options']['sortOrder'] == 'Descending'
+    assert data['options']['dedupStrategy'] == 'none'
+    assert data['options']['enableLogDetails'] is False
+    assert data['options']['prettifyLogMessage'] is False
 
 
 def test_notification():
