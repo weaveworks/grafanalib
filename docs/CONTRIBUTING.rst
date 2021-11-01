@@ -78,4 +78,4 @@ Filing a bug
 .. _`CHANGELOG`: ../CHANGELOG.rst
 .. _`attr.Factory`: http://www.attrs.org/en/stable/api.html#attr.Factory
 .. _`hypothesis`: http://hypothesis.works/
-.. _`core.py`: https://github.com/weaveworks/grafanalib/blob/master/grafanalib/core.py
+.. _`core.py`: https://github.com/weaveworks/grafanalib/blob/main/grafanalib/core.py

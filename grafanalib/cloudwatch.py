@@ -58,3 +58,47 @@ class CloudwatchMetricsTarget(object):
             "statistics": self.statistics,
             "hide": self.hide,
         }
+
+
+@attr.s
+class CloudwatchLogsInsightsTarget(object):
+    """
+    Generates Cloudwatch Logs Insights target JSON structure.
+
+    Grafana docs on using Cloudwatch:
+    https://grafana.com/docs/grafana/latest/datasources/cloudwatch/
+
+    AWS docs on Cloudwatch Logs Insights:
+    https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html
+
+    :param expression: Cloudwatch Logs Insights expressions
+    :param id: unique id
+    :param logGroupNames: List of Cloudwatch log groups to query
+    :param namespace: Cloudwatch namespace
+    :param refId: target reference id
+    :param region: Cloudwatch region
+    :param statsGroups: Cloudwatch statsGroups
+    :param hide: controls if given metric is displayed on visualization
+    """
+    expression = attr.ib(default="")
+    id = attr.ib(default="")
+    logGroupNames = attr.ib(default=[], validator=instance_of(list))
+    namespace = attr.ib(default="")
+    refId = attr.ib(default="")
+    region = attr.ib(default="default")
+    statsGroups = attr.ib(default=[], validator=instance_of(list))
+    hide = attr.ib(default=False, validator=instance_of(bool))
+
+    def to_json_data(self):
+
+        return {
+            "expression": self.expression,
+            "id": self.id,
+            "logGroupNames": self.logGroupNames,
+            "namespace": self.namespace,
+            "queryMode": "Logs",
+            "refId": self.refId,
+            "region": self.region,
+            "statsGroups": self.statsGroups,
+            "hide": self.hide,
+        }
