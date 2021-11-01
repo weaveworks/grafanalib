@@ -506,6 +506,42 @@ def test_timeseries():
     assert data['targets'] == targets
     assert data['datasource'] == data_source
     assert data['title'] == title
+    assert data['fieldConfig']['overrides'] == []
+
+
+def test_timeseries_with_overrides():
+    data_source = 'dummy data source'
+    targets = ['dummy_prom_query']
+    title = 'dummy title'
+    overrides = [
+        {
+            "matcher": {
+                "id": "byName",
+                "options": "min"
+            },
+            "properties": [
+                {
+                    "id": "custom.fillBelowTo",
+                    "value": "min"
+                },
+                {
+                    "id": "custom.lineWidth",
+                    "value": 0
+                }
+            ]
+        }
+    ]
+    timeseries = G.TimeSeries(
+        dataSource=data_source,
+        targets=targets,
+        title=title,
+        overrides=overrides,
+    )
+    data = timeseries.to_json_data()
+    assert data['targets'] == targets
+    assert data['datasource'] == data_source
+    assert data['title'] == title
+    assert data['fieldConfig']['overrides'] == overrides
 
 
 def test_news():

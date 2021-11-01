@@ -1505,6 +1505,7 @@ class TimeSeries(Panel):
         linear (Default), smooth, stepBefore, stepAfter
     :param lineWidth: line width, default 1
     :param mappings: To assign colors to boolean or string values, use Value mappings
+    :param overrides: To override the base characteristics of certain timeseries data
     :param pointSize: point size, default 5
     :param scaleDistributionType: axis scale linear or log
     :param scaleDistributionLog: Base of if logarithmic scale type set, default 2
@@ -1530,6 +1531,7 @@ class TimeSeries(Panel):
     lineInterpolation = attr.ib(default='linear', validator=instance_of(str))
     lineWidth = attr.ib(default=1, validator=instance_of(int))
     mappings = attr.ib(default=attr.Factory(list))
+    overrides = attr.ib(default=attr.Factory(list))
     pointSize = attr.ib(default=5, validator=instance_of(int))
     scaleDistributionType = attr.ib(default='linear', validator=instance_of(str))
     scaleDistributionLog = attr.ib(default=2, validator=instance_of(int))
@@ -1578,7 +1580,7 @@ class TimeSeries(Panel):
                         },
                         'unit': self.unit
                     },
-                    'overrides': []
+                    'overrides': self.overrides
                 },
                 'options': {
                     'legend': {
