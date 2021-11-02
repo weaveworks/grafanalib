@@ -94,28 +94,7 @@ def test_custom_template_dont_override_options():
     assert t.to_json_data()['current']['value'] == '1'
 
 
-def test_table_styled_columns():
-    t = G.Table.with_styled_columns(
-        columns=[
-            (G.Column('Foo', 'foo'), G.ColumnStyle()),
-            (G.Column('Bar', 'bar'), None),
-        ],
-        dataSource='some data source',
-        targets=[
-            G.Target(expr='some expr'),
-        ],
-        title='table title',
-    )
-    assert t.columns == [
-        G.Column('Foo', 'foo'),
-        G.Column('Bar', 'bar'),
-    ]
-    assert t.styles == [
-        G.ColumnStyle(pattern='Foo'),
-    ]
-
-
-def test_table_transformations():
+def test_table():
     t = G.Table(
         dataSource='some data source',
         targets=[
@@ -600,9 +579,13 @@ def test_logs_panel():
     assert data['datasource'] == data_source
     assert data['title'] == title
     assert data['options']['showLabels'] is False
+    assert data['options']['showCommonLabels'] is False
     assert data['options']['showTime'] is False
     assert data['options']['wrapLogMessage'] is False
     assert data['options']['sortOrder'] == 'Descending'
+    assert data['options']['dedupStrategy'] == 'none'
+    assert data['options']['enableLogDetails'] is False
+    assert data['options']['prettifyLogMessage'] is False
 
 
 def test_notification():
@@ -748,3 +731,82 @@ def test_worldmap():
     assert data['datasource'] == data_source
     assert data['title'] == title
     assert data['circleMaxSize'] == 11
+
+
+def test_stateTimeline():
+    data_source = 'dummy data source'
+    targets = ['dummy_prom_query']
+    title = 'dummy title'
+    stateTimeline = G.StateTimeline(data_source, targets, title, rowHeight=0.7)
+    data = stateTimeline.to_json_data()
+    assert data['targets'] == targets
+    assert data['datasource'] == data_source
+    assert data['title'] == title
+    assert data['options']['rowHeight'] == 0.7
+
+
+def test_timeseries():
+    data_source = 'dummy data source'
+    targets = ['dummy_prom_query']
+    title = 'dummy title'
+    timeseries = G.TimeSeries(data_source, targets, title)
+    data = timeseries.to_json_data()
+    assert data['targets'] == targets
+    assert data['datasource'] == data_source
+    assert data['title'] == title
+    assert data['fieldConfig']['overrides'] == []
+
+
+def test_timeseries_with_overrides():
+    data_source = 'dummy data source'
+    targets = ['dummy_prom_query']
+    title = 'dummy title'
+    overrides = [
+        {
+            "matcher": {
+                "id": "byName",
+                "options": "min"
+            },
+            "properties": [
+                {
+                    "id": "custom.fillBelowTo",
+                    "value": "min"
+                },
+                {
+                    "id": "custom.lineWidth",
+                    "value": 0
+                }
+            ]
+        }
+    ]
+    timeseries = G.TimeSeries(
+        dataSource=data_source,
+        targets=targets,
+        title=title,
+        overrides=overrides,
+    )
+    data = timeseries.to_json_data()
+    assert data['targets'] == targets
+    assert data['datasource'] == data_source
+    assert data['title'] == title
+    assert data['fieldConfig']['overrides'] == overrides
+
+
+def test_news():
+    title = 'dummy title'
+    feedUrl = "www.example.com"
+    news = G.News(title=title, feedUrl=feedUrl)
+    data = news.to_json_data()
+    assert data['options']['feedUrl'] == feedUrl
+    assert data['title'] == title
+
+
+def test_pieChartv2():
+    data_source = 'dummy data source'
+    targets = ['dummy_prom_query']
+    title = 'dummy title'
+    pie = G.PieChartv2(data_source, targets, title)
+    data = pie.to_json_data()
+    assert data['targets'] == targets
+    assert data['datasource'] == data_source
+    assert data['title'] == title
