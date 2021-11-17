@@ -562,3 +562,14 @@ def test_pieChartv2():
     assert data['targets'] == targets
     assert data['datasource'] == data_source
     assert data['title'] == title
+    
+def test_sql_target():
+    t = G.Table(
+        dataSource='some data source',
+        targets=[
+            G.SqlTarget(rawSql='SELECT * FROM example'),
+        ],
+        title='table title'
+    )
+    assert t.to_json_data()['targets'][0]["rawQuery"] == True
+    assert t.to_json_data()['targets'][0]["rawSql"] == "SELECT * FROM example"
