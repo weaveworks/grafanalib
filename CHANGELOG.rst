@@ -7,6 +7,7 @@ x.x.x (TBD)
 
 * Added missing attributes to the Logs panel
 * Added Cloudwatch Logs Insights Target
+* Added overrides to panels
 * ...
 
 Changes
