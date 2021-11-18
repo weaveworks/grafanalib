@@ -15,6 +15,16 @@ Changes
 
 * ...
 
+0.6.1 (TBD)
+==================
+
+* Added new SqlTarget to core to be able to define SQL queries as well
+
+Changes
+-------
+
+* Add SqlTarget
+
 0.6.0 (2021-10-26)
 ===================
 

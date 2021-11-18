@@ -428,6 +428,27 @@ class Target(object):
 
 
 @attr.s
+class SqlTarget(Target):
+    """
+    Metric target to support SQL queries
+    """
+
+    rawSql = attr.ib(default="")
+    rawQuery = attr.ib(default=True)
+
+    def to_json_data(self):
+        """Override the Target to_json_data to add additional fields.
+        rawSql: this will contain the actual SQL queries
+        rawQuery: this is set to True by default as in case of False
+                  the rawSql would be unused
+        """
+        super_json = super(SqlTarget, self).to_json_data()
+        super_json["rawSql"] = self.rawSql
+        super_json["rawQuery"] = self.rawQuery
+        return super_json
+
+
+@attr.s
 class Tooltip(object):
 
     msResolution = attr.ib(default=True, validator=instance_of(bool))
