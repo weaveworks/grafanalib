@@ -432,17 +432,19 @@ class SqlTarget(Target):
     """
     Metric target to support SQL queries
     """
+
     rawSql = attr.ib(default="")
+    rawQuery = attr.ib(default=True)
 
     def to_json_data(self):
         """Override the Target to_json_data to add additional fields.
-           rawSql: this will contain the actual SQL queries
-           rawQuery: this needs to be set to True as in case of False
-                     the rawSql would be unused
+        rawSql: this will contain the actual SQL queries
+        rawQuery: this is set to True by default as in case of False
+                  the rawSql would be unused
         """
         super_json = super(SqlTarget, self).to_json_data()
-        super_json['rawSql'] = self.rawSql
-        super_json['rawQuery'] = True
+        super_json["rawSql"] = self.rawSql
+        super_json["rawQuery"] = self.rawQuery
         return super_json
 
 
