@@ -2,28 +2,14 @@
 Changelog
 =========
 
-x.x.x (TBD)
-==================
-
-* Added missing attributes to the Logs panel
-* Added Cloudwatch Logs Insights Target
-* Added overrides to panels
-* ...
-
-Changes
--------
-
-* ...
-
 0.6.1 (TBD)
 ==================
 
 * Added new SqlTarget to core to be able to define SQL queries as well
+* Added missing attributes to the Logs panel
+* Added Cloudwatch Logs Insights Target
+* Added overrides to panels
 
-Changes
--------
-
-* Add SqlTarget
 
 0.6.0 (2021-10-26)
 ===================
