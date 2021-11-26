@@ -2,12 +2,27 @@
 Changelog
 =========
 
-x.x.x (TBD)
+0.6.1 (TBD)
+==================
+
+* Added new SqlTarget to core to be able to define SQL queries as well
+* Added missing attributes to the Logs panel
+* Added Cloudwatch Logs Insights Target
+* Added overrides to panels
+
+
+0.6.0 (2021-10-26)
 ===================
 
 * Added Discrete panel
 * Added support for colors in stat mapping panel with StatValueMappings & StatRangeMappings
 * Added missing auto interval properties in Template
+* Added param to RowPanel to collapse the row
+* Added StateTimeline panel which was added in Grafana v8
+* Added support for timeseries panel added in Grafana v8
+* Added MinMetricAgg and PercentilesMetricAgg to Elasticsearch
+* Added support for News panel
+* Added support for Pie Chart v2 from Grafana v8
 
 Changes
 -------
@@ -16,6 +31,9 @@ Changes
 * Deprecated StatMapping, StatValueMapping & StatRangeMapping
 * Change YAxis min value default from 0 to None
 * Extend ``SeriesOverride`` options
+* Support for Table panel for Grafana v8 may have broken backwards compatibility in old Table panel
+* Breaking change, support for styled columns in tables removed, no longer used in Grafana v8 new Table
+* Move development to ``main`` branch on GitHub. If you have work tracking the ``master`` you will need to update this.
 
 0.5.14 (2021-09-14)
 ==================

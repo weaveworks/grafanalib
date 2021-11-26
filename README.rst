@@ -17,9 +17,9 @@ How it works
 ============
 
 Take a look at `the examples directory
-<https://github.com/weaveworks/grafanalib/blob/master/grafanalib/tests/examples/>`_,
+<https://github.com/weaveworks/grafanalib/blob/main/grafanalib/tests/examples/>`_,
 e.g. `this dashboard
-<https://github.com/weaveworks/grafanalib/blob/master/grafanalib/tests/examples/example.dashboard.py>`_
+<https://github.com/weaveworks/grafanalib/blob/main/grafanalib/tests/examples/example.dashboard.py>`_
 will configure a dashboard with a single row, with one QPS graph broken down
 by status code and another latency graph showing median and 99th percentile
 latency.
@@ -27,7 +27,7 @@ latency.
 In the code is a fair bit of repetition here, but once you figure out what
 works for your needs, you can factor that out.
 See `our Weave-specific customizations
-<https://github.com/weaveworks/grafanalib/blob/master/grafanalib/weave.py>`_
+<https://github.com/weaveworks/grafanalib/blob/main/grafanalib/weave.py>`_
 for inspiration.
 
 You can read the entire grafanlib documentation on `readthedocs.io
@@ -47,7 +47,7 @@ Generate the JSON dashboard like so:
 
 .. code-block:: console
 
-  $ curl -o example.dashboard.py https://raw.githubusercontent.com/weaveworks/grafanalib/master/grafanalib/tests/examples/example.dashboard.py
+  $ curl -o example.dashboard.py https://raw.githubusercontent.com/weaveworks/grafanalib/main/grafanalib/tests/examples/example.dashboard.py
   $ generate-dashboard -o frontend.json example.dashboard.py
 
 

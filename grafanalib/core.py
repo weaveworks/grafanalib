@@ -80,6 +80,7 @@ GRAPH_TYPE = 'graph'
 DISCRETE_TYPE = 'natel-discrete-panel'
 STAT_TYPE = 'stat'
 SINGLESTAT_TYPE = 'singlestat'
+STATE_TIMELINE_TYPE = 'state-timeline'
 TABLE_TYPE = 'table'
 TEXT_TYPE = 'text'
 ALERTLIST_TYPE = 'alertlist'
@@ -91,7 +92,10 @@ HEATMAP_TYPE = 'heatmap'
 STATUSMAP_TYPE = 'flant-statusmap-panel'
 SVG_TYPE = 'marcuscalidus-svg-panel'
 PIE_CHART_TYPE = 'grafana-piechart-panel'
+PIE_CHART_V2_TYPE = 'piechart'
+TIMESERIES_TYPE = 'timeseries'
 WORLD_MAP_TYPE = 'grafana-worldmap-panel'
+NEWS_TYPE = 'news'
 
 DEFAULT_FILL = 1
 DEFAULT_REFRESH = '10s'
@@ -421,6 +425,27 @@ class Target(object):
             'instant': self.instant,
             'datasource': self.datasource,
         }
+
+
+@attr.s
+class SqlTarget(Target):
+    """
+    Metric target to support SQL queries
+    """
+
+    rawSql = attr.ib(default="")
+    rawQuery = attr.ib(default=True)
+
+    def to_json_data(self):
+        """Override the Target to_json_data to add additional fields.
+        rawSql: this will contain the actual SQL queries
+        rawQuery: this is set to True by default as in case of False
+                  the rawSql would be unused
+        """
+        super_json = super(SqlTarget, self).to_json_data()
+        super_json["rawSql"] = self.rawSql
+        super_json["rawQuery"] = self.rawQuery
+        return super_json
 
 
 @attr.s
@@ -1266,10 +1291,12 @@ class RowPanel(Panel):
     Generates Row panel json structure.
 
     :param title: title of the panel
-    :param panels: list of panels in the row
+    :param collapsed: set True if row should be collapsed
+    :param panels: list of panels in the row, only to be used when collapsed=True
     """
-
+    collapsed = attr.ib(default=False, validator=instance_of(bool))
     panels = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+    collapsed = attr.ib(default=False, validator=instance_of(bool))
 
     def _iter_panels(self):
         return iter(self.panels)
@@ -1281,7 +1308,7 @@ class RowPanel(Panel):
     def to_json_data(self):
         return self.panel_json(
             {
-                'collapsed': False,
+                'collapsed': self.collapsed,
                 'panels': self.panels,
                 'type': ROW_TYPE
             }
@@ -1474,6 +1501,121 @@ class Graph(Panel):
             return t if t.refId else attr.evolve(t, refId=next(auto_ref_ids))
 
         return self._map_targets(set_refid)
+
+
+@attr.s
+class TimeSeries(Panel):
+    """Generates Time Series panel json structure added in Grafana v8
+
+    Grafana doc on time series: https://grafana.com/docs/grafana/latest/panels/visualizations/time-series/
+
+    :param axisPlacement: auto(Default), left. right, hidden
+    :param axisLabel: axis label string
+    :param barAlignment: bar alignment
+        -1 (left), 0 (centre, default), 1
+    :param colorMode: Color mode
+        palette-classic (Default),
+    :param drawStyle: how to display your time series data
+        line (Default), bars, points
+    :param fillOpacity: fillOpacity
+    :param gradientMode: gradientMode
+    :param legendDisplayMode: refine how the legend appears in your visualization
+        list (Default), table, hidden
+    :param legendPlacement: bottom (Default), right
+    :param lineInterpolation: line interpolation
+        linear (Default), smooth, stepBefore, stepAfter
+    :param lineWidth: line width, default 1
+    :param mappings: To assign colors to boolean or string values, use Value mappings
+    :param overrides: To override the base characteristics of certain timeseries data
+    :param pointSize: point size, default 5
+    :param scaleDistributionType: axis scale linear or log
+    :param scaleDistributionLog: Base of if logarithmic scale type set, default 2
+    :param spanNulls: connect null values, default False
+    :param showPoints: show points
+        auto (Default), always, never
+    :param stacking: dict to enable stacking, {"mode": "normal", "group": "A"}
+    :param thresholds: single stat thresholds
+    :param tooltipMode: When you hover your cursor over the visualization, Grafana can display tooltips
+        single (Default), multi, none
+    :param unit: units
+    """
+
+    axisPlacement = attr.ib(default='auto', validator=instance_of(str))
+    axisLabel = attr.ib(default='', validator=instance_of(str))
+    barAlignment = attr.ib(default=0, validator=instance_of(int))
+    colorMode = attr.ib(default='palette-classic', validator=instance_of(str))
+    drawStyle = attr.ib(default='line', validator=instance_of(str))
+    fillOpacity = attr.ib(default=0, validator=instance_of(int))
+    gradientMode = attr.ib(default='none', validator=instance_of(str))
+    legendDisplayMode = attr.ib(default='list', validator=instance_of(str))
+    legendPlacement = attr.ib(default='bottom', validator=instance_of(str))
+    lineInterpolation = attr.ib(default='linear', validator=instance_of(str))
+    lineWidth = attr.ib(default=1, validator=instance_of(int))
+    mappings = attr.ib(default=attr.Factory(list))
+    overrides = attr.ib(default=attr.Factory(list))
+    pointSize = attr.ib(default=5, validator=instance_of(int))
+    scaleDistributionType = attr.ib(default='linear', validator=instance_of(str))
+    scaleDistributionLog = attr.ib(default=2, validator=instance_of(int))
+    spanNulls = attr.ib(default=False, validator=instance_of(bool))
+    showPoints = attr.ib(default='auto', validator=instance_of(str))
+    stacking = attr.ib(default={}, validator=instance_of(dict))
+    thresholds = attr.ib(default=attr.Factory(list))
+    tooltipMode = attr.ib(default='single', validator=instance_of(str))
+    unit = attr.ib(default='', validator=instance_of(str))
+
+    def to_json_data(self):
+        return self.panel_json(
+            {
+                'fieldConfig': {
+                    'defaults': {
+                        'color': {
+                            'mode': self.colorMode
+                        },
+                        'custom': {
+                            'axisPlacement': self.axisPlacement,
+                            'axisLabel': self.axisLabel,
+                            'drawStyle': self.drawStyle,
+                            'lineInterpolation': self.lineInterpolation,
+                            'barAlignment': self.barAlignment,
+                            'lineWidth': self.lineWidth,
+                            'fillOpacity': self.fillOpacity,
+                            'gradientMode': self.gradientMode,
+                            'spanNulls': self.spanNulls,
+                            'showPoints': self.showPoints,
+                            'pointSize': self.pointSize,
+                            'stacking': self.stacking,
+                            'scaleDistribution': {
+                                'type': self.scaleDistributionType,
+                                'log': self.scaleDistributionLog
+                            },
+                            'hideFrom': {
+                                'tooltip': False,
+                                'viz': False,
+                                'legend': False
+                            },
+                        },
+                        'mappings': self.mappings,
+                        'thresholds': {
+                            'mode': 'absolute',
+                            'steps': self.thresholds
+                        },
+                        'unit': self.unit
+                    },
+                    'overrides': self.overrides
+                },
+                'options': {
+                    'legend': {
+                        'displayMode': self.legendDisplayMode,
+                        'placement': self.legendPlacement,
+                        'calcs': []
+                    },
+                    'tooltip': {
+                        'mode': self.tooltipMode
+                    }
+                },
+                'type': TIMESERIES_TYPE,
+            }
+        )
 
 
 @attr.s
@@ -1826,10 +1968,12 @@ class Stat(Panel):
     :param decimals: number of decimals to display
     :param format: defines value units
     :param graphMode: defines if Grafana will draw graph: keys 'area' 'none'
+    :param noValue: define the default value if no value is found
     :param mappings: the list of values to text mappings
         This should be a list of StatMapping objects
         https://grafana.com/docs/grafana/latest/panels/field-configuration-options/#value-mapping
     :param orientation: Stacking direction in case of multiple series or fields: keys 'auto' 'horizontal' 'vertical'
+    :param overrides: To override the base characteristics of certain timeseries data
     :param reduceCalc: algorithm for reduction to a single value: keys
         'mean' 'lastNotNull' 'last' 'first' 'firstNotNull' 'min' 'max' 'sum' 'total'
     :param textMode: define Grafana will show name or value: keys: 'auto' 'name' 'none' 'value' 'value_and_name'
@@ -1842,7 +1986,9 @@ class Stat(Panel):
     format = attr.ib(default='none')
     graphMode = attr.ib(default='area')
     mappings = attr.ib(default=attr.Factory(list))
+    noValue = attr.ib(default='none')
     orientation = attr.ib(default='auto')
+    overrides = attr.ib(default=attr.Factory(list))
     reduceCalc = attr.ib(default='mean', type=str)
     textMode = attr.ib(default='auto')
     thresholds = attr.ib(default="")
@@ -1856,11 +2002,13 @@ class Stat(Panel):
                         'decimals': self.decimals,
                         'mappings': self.mappings,
                         'thresholds': {
-                            'mode': 'absolute',
+                            'mode': ABSOLUTE_TYPE,
                             'steps': self.thresholds,
                         },
-                        'unit': self.format
-                    }
+                        'unit': self.format,
+                        'noValue': self.noValue
+                    },
+                    'overrides': self.overrides
                 },
                 'options': {
                     'textMode': self.textMode,
@@ -2302,109 +2450,73 @@ class Column(object):
         }
 
 
-def _style_columns(columns):
-    """Generate a list of column styles given some styled columns.
-
-    The 'Table' object in Grafana separates column definitions from column
-    style definitions. However, when defining dashboards it can be very useful
-    to define the style next to the column. This function helps that happen.
-
-    :param columns: A list of (Column, ColumnStyle) pairs. The associated
-        ColumnStyles must not have a 'pattern' specified. You can also provide
-       'None' if you want to use the default styles.
-    :return: A list of ColumnStyle values that can be used in a Grafana
-        definition.
-    """
-    new_columns = []
-    styles = []
-    for column, style in columns:
-        new_columns.append(column)
-        if not style:
-            continue
-        if style.pattern and style.pattern != column.text:
-            raise ValueError(
-                "ColumnStyle pattern (%r) must match the column name (%r) if "
-                "specified" % (style.pattern, column.text))
-        styles.append(attr.evolve(style, pattern=column.text))
-    return new_columns, styles
-
-
 @attr.s
 class Table(Panel):
     """Generates Table panel json structure
 
-    Grafana doc on table: https://grafana.com/docs/grafana/latest/features/panels/table_panel/#table-panel
+    Now supports Grafana v8+
+    Grafana doc on table: https://grafana.com/docs/grafana/latest/visualizations/table/
 
-    :param columns: table columns for Aggregations view
-    :param fontSize: defines value font size
-    :param pageSize: rows per page (None is unlimited)
-    :param scroll: scroll the table instead of displaying in full
-    :param showHeader: show the table header
-    :param sort: table sorting
-    :param styles: defines formatting for each column
-    :param transform: table style
+    :param align: Align cell contents; auto (default), left, center, right
+    :param colorMode: Default thresholds
+    :param columns: Table columns for Aggregations view
+    :param displayMode: By default, Grafana automatically chooses display settings, you can choose;
+        color-text, color-background, color-background-solid, gradient-gauge, lcd-gauge, basic, json-view
+    :param fontSize: Defines value font size
+    :param filterable: Allow user to filter columns, default False
+    :param mappings: To assign colors to boolean or string values, use Value mappings
+    :param overrides: To override the base characteristics of certain data
+    :param showHeader: Show the table header
+    :param thresholds: List of thresholds
     """
 
+    align = attr.ib(default='auto', validator=instance_of(str))
+    colorMode = attr.ib(default='thresholds', validator=instance_of(str))
     columns = attr.ib(default=attr.Factory(list))
+    displayMode = attr.ib(default='auto', validator=instance_of(str))
     fontSize = attr.ib(default='100%')
-    pageSize = attr.ib(default=None)
-    scroll = attr.ib(default=True, validator=instance_of(bool))
+    filterable = attr.ib(default=False, validator=instance_of(bool))
+    mappings = attr.ib(default=attr.Factory(list))
+    overrides = attr.ib(default=attr.Factory(list))
     showHeader = attr.ib(default=True, validator=instance_of(bool))
     span = attr.ib(default=6)
-    sort = attr.ib(
-        default=attr.Factory(ColumnSort), validator=instance_of(ColumnSort))
-    styles = attr.ib()
-
-    transform = attr.ib(default=COLUMNS_TRANSFORM)
-
-    @styles.default
-    def styles_default(self):
-        return [
-            ColumnStyle(
-                alias='Time',
-                pattern='Time',
-                type=DateColumnStyleType(),
-            ),
-            ColumnStyle(
-                alias='time',
-                pattern='time',
-                type=DateColumnStyleType(),
-            ),
-            ColumnStyle(
-                pattern='/.*/',
-            ),
-        ]
+    thresholds = attr.ib(default=attr.Factory(list))
 
     @classmethod
     def with_styled_columns(cls, columns, styles=None, **kwargs):
-        """Construct a table where each column has an associated style.
-
-        :param columns: A list of (Column, ColumnStyle) pairs, where the
-            ColumnStyle is the style for the column and does not have a
-            pattern set (or the pattern is set to exactly the column name).
-            The ColumnStyle may also be None.
-        :param styles: An optional list of extra column styles that will be
-            appended to the table's list of styles.
-        :param kwargs: Other parameters to the Table constructor.
-        :return: A Table.
-        """
-        extraStyles = styles if styles else []
-        columns, styles = _style_columns(columns)
-        return cls(columns=columns, styles=styles + extraStyles, **kwargs)
+        """Styled columns is not support in Grafana v8 Table"""
+        print("Error: Styled columns is not support in Grafana v8 Table")
+        print("Please see https://grafana.com/docs/grafana/latest/visualizations/table/ for more options")
+        raise NotImplementedError
 
     def to_json_data(self):
         return self.panel_json(
             {
+                "color": {
+                    "mode": self.colorMode
+                },
                 'columns': self.columns,
                 'fontSize': self.fontSize,
+                'fieldConfig': {
+                    'defaults': {
+                        'custom': {
+                            'align': self.align,
+                            'displayMode': self.displayMode,
+                            'filterable': self.filterable
+                        },
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": self.thresholds
+                        }
+                    },
+                    'overrides': self.overrides
+                },
                 'hideTimeOverride': self.hideTimeOverride,
+                'mappings': self.mappings,
                 'minSpan': self.minSpan,
-                'pageSize': self.pageSize,
-                'scroll': self.scroll,
-                'showHeader': self.showHeader,
-                'sort': self.sort,
-                'styles': self.styles,
-                'transform': self.transform,
+                'options': {
+                    'showHeader': self.showHeader
+                },
                 'type': TABLE_TYPE,
             }
         )
@@ -2842,22 +2954,27 @@ class Svg(Panel):
 @attr.s
 class PieChart(Panel):
     """Generates Pie Chart panel json structure
+
+    This panel was deprecated in Grafana 8.0, please use PieChartv2 instead
+
     Grafana doc on Pie Chart: https://grafana.com/grafana/plugins/grafana-piechart-panel
 
     :param aliasColors: dictionary of color overrides
     :param format: defines value units
+    :param legendType: defines where the legend position
+    :param overrides: To override the base characteristics of certain data
     :param pieType: defines the shape of the pie chart (pie or donut)
     :param percentageDecimals: Number of decimal places to show if percentages shown in legned
     :param showLegend: defines if the legend should be shown
     :param showLegendValues: defines if the legend should show values
     :param showLegendPercentage: Show percentages in the legend
-    :param legendType: defines where the legend position
     :param thresholds: defines thresholds
     """
 
     aliasColors = attr.ib(default=attr.Factory(dict))
     format = attr.ib(default='none')
     legendType = attr.ib(default='Right side')
+    overrides = attr.ib(default=attr.Factory(list))
     pieType = attr.ib(default='pie')
     percentageDecimals = attr.ib(default=0, validator=instance_of(int))
     showLegend = attr.ib(default=True)
@@ -2866,6 +2983,7 @@ class PieChart(Panel):
     thresholds = attr.ib(default="")
 
     def to_json_data(self):
+        print('PieChart panel was deprecated in Grafana 8.0, please use PieChartv2 instead')
         return self.panel_json(
             {
                 'aliasColors': self.aliasColors,
@@ -2876,7 +2994,7 @@ class PieChart(Panel):
                     'defaults': {
                         'custom': {},
                     },
-                    'overrides': []
+                    'overrides': self.overrides
                 },
                 'legend': {
                     'show': self.showLegend,
@@ -2886,6 +3004,78 @@ class PieChart(Panel):
                 },
                 'legendType': self.legendType,
                 'type': PIE_CHART_TYPE,
+            }
+        )
+
+
+@attr.s
+class PieChartv2(Panel):
+    """Generates Pie Chart panel json structure
+    Grafana docs on Pie Chart: https://grafana.com/docs/grafana/latest/visualizations/pie-chart-panel/
+
+    :param custom: Custom overides
+    :param colorMode: Color mode
+        palette-classic (Default),
+    :param legendDisplayMode: Display mode of legend: list, table or hidden
+    :param legendPlacement: Location of the legend in the panel: bottom or right
+    :param legendValues: List of value to be shown in legend eg. ['value', 'percent']
+    :param mappings: To assign colors to boolean or string values, use Value mappings
+    :param overrides: Overrides
+    :param pieType: Pie chart type
+        pie (Default), donut
+    :param reduceOptionsCalcs: Reducer function / calculation
+    :param reduceOptionsFields: Fields that should be included in the panel
+    :param reduceOptionsValues: Calculate a single value per column or series or show each row
+    :param tooltipMode: Tooltip mode
+        single (Default), multi, none
+    :param unit: units
+    """
+
+    custom = attr.ib(default={}, validator=instance_of(dict))
+    colorMode = attr.ib(default='palette-classic', validator=instance_of(str))
+    legendDisplayMode = attr.ib(default='list', validator=instance_of(str))
+    legendPlacement = attr.ib(default='bottom', validator=instance_of(str))
+    legendValues = attr.ib(default=[], validator=instance_of(list))
+    mappings = attr.ib(default=attr.Factory(list))
+    overrides = attr.ib(default=[], validator=instance_of(list))
+    pieType = attr.ib(default='pie', validator=instance_of(str))
+    reduceOptionsCalcs = attr.ib(default=['lastNotNull'], validator=instance_of(list))
+    reduceOptionsFields = attr.ib(default='', validator=instance_of(str))
+    reduceOptionsValues = attr.ib(default=False, validator=instance_of(bool))
+    tooltipMode = attr.ib(default='single', validator=instance_of(str))
+    unit = attr.ib(default='', validator=instance_of(str))
+
+    def to_json_data(self):
+        return self.panel_json(
+            {
+                'fieldConfig': {
+                    'defaults': {
+                        'color': {
+                            'mode': self.colorMode
+                        },
+                        'custom': self.custom,
+                        'mappings': self.mappings,
+                        'unit': self.unit,
+                    },
+                    'overrides': self.overrides,
+                },
+                'options': {
+                    'reduceOptions': {
+                        'values': self.reduceOptionsValues,
+                        'calcs': self.reduceOptionsCalcs,
+                        'fields': self.reduceOptionsFields
+                    },
+                    'pieType': self.pieType,
+                    'tooltip': {
+                        'mode': self.tooltipMode
+                    },
+                    'legend': {
+                        'displayMode': self.legendDisplayMode,
+                        'placement': self.legendPlacement,
+                        'values': self.legendValues
+                    },
+                },
+                'type': PIE_CHART_V2_TYPE,
             }
         )
 
@@ -2903,6 +3093,7 @@ class DashboardList(Panel):
     :param maxItems: Sets the maximum number of items to list per section
     :param searchQuery: Enter the query you want to search by
     :param searchTags: List of tags you want to search by
+    :param overrides: To override the base characteristics of certain data
     """
     showHeadings = attr.ib(default=True, validator=instance_of(bool))
     showSearch = attr.ib(default=False, validator=instance_of(bool))
@@ -2911,6 +3102,7 @@ class DashboardList(Panel):
     maxItems = attr.ib(default=10, validator=instance_of(int))
     searchQuery = attr.ib(default='', validator=instance_of(str))
     searchTags = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+    overrides = attr.ib(default=attr.Factory(list))
 
     def to_json_data(self):
         return self.panel_json(
@@ -2919,7 +3111,7 @@ class DashboardList(Panel):
                     'defaults': {
                         'custom': {},
                     },
-                    'overrides': []
+                    'overrides': self.overrides
                 },
                 'headings': self.showHeadings,
                 'search': self.showSearch,
@@ -2939,15 +3131,25 @@ class Logs(Panel):
     Grafana doc on Logs panel: https://grafana.com/docs/grafana/latest/panels/visualizations/logs-panel/
 
     :param showLabels: Show or hide the unique labels column, which shows only non-common labels
+    :param showCommonLabels: Show or hide the common labels.
     :param showTime: Show or hide the log timestamp column
     :param wrapLogMessages: Toggle line wrapping
     :param sortOrder: Display results in 'Descending' or 'Ascending' time order. The default is Descending,
         showing the newest logs first.
+    :param dedupStrategy: One of none, exact, numbers, signature. Default is none
+    :param enableLogDetails: Set this to True to see the log details view for each log row.
+    :param overrides: To override the base characteristics of certain data
+    :param prettifyLogMessage: Set this to true to pretty print all JSON logs. This setting does not affect logs in any format other than JSON.
     """
     showLabels = attr.ib(default=False, validator=instance_of(bool))
+    showCommonLabels = attr.ib(default=False, validator=instance_of(bool))
     showTime = attr.ib(default=False, validator=instance_of(bool))
     wrapLogMessages = attr.ib(default=False, validator=instance_of(bool))
     sortOrder = attr.ib(default='Descending', validator=instance_of(str))
+    dedupStrategy = attr.ib(default='none', validator=instance_of(str))
+    enableLogDetails = attr.ib(default=False, validator=instance_of(bool))
+    overrides = attr.ib(default=attr.Factory(list))
+    prettifyLogMessage = attr.ib(default=False, validator=instance_of(bool))
 
     def to_json_data(self):
         return self.panel_json(
@@ -2956,13 +3158,17 @@ class Logs(Panel):
                     'defaults': {
                         'custom': {},
                     },
-                    'overrides': []
+                    'overrides': self.overrides
                 },
                 'options': {
                     'showLabels': self.showLabels,
+                    'showCommonLabels': self.showCommonLabels,
                     'showTime': self.showTime,
+                    'wrapLogMessage': self.wrapLogMessages,
                     'sortOrder': self.sortOrder,
-                    'wrapLogMessage': self.wrapLogMessages
+                    'dedupStrategy': self.dedupStrategy,
+                    'enableLogDetails': self.enableLogDetails,
+                    'prettifyLogMessage': self.prettifyLogMessage
                 },
                 'type': LOGS_TYPE,
             }
@@ -3183,5 +3389,102 @@ class Worldmap(Panel):
                     'metricField': 'metric'
                 },
                 'type': WORLD_MAP_TYPE
+            }
+        )
+
+
+@attr.s
+class StateTimeline(Panel):
+    """Generates State Timeline panel json structure
+    Grafana docs on State Timeline panel: https://grafana.com/docs/grafana/latest/visualizations/state-timeline/
+
+    :param alignValue: Controls value alignment inside state regions, default left
+    :param colorMode: Default thresholds
+    :param fillOpacity: Controls the opacity of state regions, default 0.9
+    :param legendDisplayMode: refine how the legend appears, list, table or hidden
+    :param legendPlacement: bottom or top
+    :param lineWidth: Controls line width of state regions
+    :param mappings: To assign colors to boolean or string values, use Value mappings
+    :param overrides: To override the base characteristics of certain data
+    :param mergeValues: Controls whether Grafana merges identical values if they are next to each other, default True
+    :param rowHeight: Controls how much space between rows there are. 1 = no space = 0.5 = 50% space
+    :param showValue: Controls whether values are rendered inside the state regions. Auto will render values if there is sufficient space.
+    :param tooltipMode: Default single
+    :param thresholds: Thresholds are used to turn the time series into discrete colored state regions
+    """
+    alignValue = attr.ib(default='left', validator=instance_of(str))
+    colorMode = attr.ib(default='thresholds', validator=instance_of(str))
+    fillOpacity = attr.ib(default=70, validator=instance_of(int))
+    legendDisplayMode = attr.ib(default='list', validator=instance_of(str))
+    legendPlacement = attr.ib(default='bottom', validator=instance_of(str))
+    lineWidth = attr.ib(default=0, validator=instance_of(int))
+    mappings = attr.ib(default=attr.Factory(list))
+    overrides = attr.ib(default=attr.Factory(list))
+    mergeValues = attr.ib(default=True, validator=instance_of(bool))
+    rowHeight = attr.ib(default=0.9, validator=instance_of(float))
+    showValue = attr.ib(default='auto', validator=instance_of(str))
+    tooltipMode = attr.ib(default='single', validator=instance_of(str))
+    thresholds = attr.ib(default=attr.Factory(list))
+
+    def to_json_data(self):
+        return self.panel_json(
+            {
+                'fieldConfig': {
+                    'defaults': {
+                        'custom': {
+                            'lineWidth': self.lineWidth,
+                            'fillOpacity': self.fillOpacity
+                        },
+                        'color': {
+                            'mode': self.colorMode
+                        },
+                        'thresholds': {
+                            'mode': ABSOLUTE_TYPE,
+                            'steps': self.thresholds,
+                        },
+                        'mappings': self.mappings
+                    },
+                    'overrides': self.overrides
+                },
+                'options': {
+                    'mergeValues': self.mergeValues,
+                    'showValue': self.showValue,
+                    'alignValue': self.alignValue,
+                    'rowHeight': self.rowHeight,
+                    'legend': {
+                        'displayMode': self.legendDisplayMode,
+                        'placement': self.legendPlacement
+                    },
+                    'tooltip': {
+                        'mode': self.tooltipMode
+                    }
+                },
+                'type': STATE_TIMELINE_TYPE,
+            }
+        )
+
+
+@attr.s
+class News(Panel):
+    """Generates News panel json structure
+    Grafana docs on State Timeline panel: https://grafana.com/docs/grafana/next/visualizations/news-panel/
+
+    :param feedUrl: URL to query, only RSS feed formats are supported (not Atom).
+    :param showImage: Controls if the news item social (og:image) image is shown above text content
+    :param useProxy: If the feed is unable to connect, consider a CORS proxy
+    """
+    feedUrl = attr.ib(default='', validator=instance_of(str))
+    showImage = attr.ib(default=True, validator=instance_of(bool))
+    useProxy = attr.ib(default=False, validator=instance_of(bool))
+
+    def to_json_data(self):
+        return self.panel_json(
+            {
+                'options': {
+                    'feedUrl': self.feedUrl,
+                    'showImage': self.showImage,
+                    'useProxy': self.useProxy
+                },
+                'type': NEWS_TYPE,
             }
         )

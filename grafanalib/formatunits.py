@@ -1,6 +1,6 @@
 """
 Grafana unit formats
-(https://github.com/grafana/grafana/blob/master/packages/grafana-data/src/valueFormats/categories.ts)
+(https://github.com/grafana/grafana/blob/main/packages/grafana-data/src/valueFormats/categories.ts)
 
 To use:
 from grafanalib import formatunits as UNITS
