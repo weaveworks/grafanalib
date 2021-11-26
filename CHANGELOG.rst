@@ -15,6 +15,7 @@ Changes
 * Refine expectations of is_color_code
 * Deprecated StatMapping, StatValueMapping & StatRangeMapping
 * Change YAxis min value default from 0 to None
+* Extend ``SeriesOverride`` options
 
 0.5.14 (2021-09-14)
 ==================
