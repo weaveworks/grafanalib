@@ -484,6 +484,13 @@ def test_SeriesOverride_exception_checks():
     with pytest.raises(TypeError):
         G.SeriesOverride('alias', fillBelowTo=123)
 
+    with pytest.raises(ValueError):
+        G.SeriesOverride('alias', fill="foo")
+    with pytest.raises(ValueError):
+        G.SeriesOverride('alias', fill=123)
+    with pytest.raises(ValueError):
+        G.SeriesOverride('alias', fill=-2)
+
 
 def test_SeriesOverride():
     t = G.SeriesOverride('alias').to_json_data()
@@ -492,6 +499,7 @@ def test_SeriesOverride():
     assert t['bars'] is False
     assert t['lines'] is True
     assert t['yaxis'] == 1
+    assert t['fill'] == 1
     assert t['color'] is None
     assert t['fillBelowTo'] is None
 
@@ -500,6 +508,7 @@ def test_SeriesOverride():
         bars=True,
         lines=False,
         yaxis=2,
+        fill=7,
         color='#abc',
         fillBelowTo='other_alias'
     ).to_json_data()
@@ -508,6 +517,7 @@ def test_SeriesOverride():
     assert t['bars'] is True
     assert t['lines'] is False
     assert t['yaxis'] == 2
+    assert t['fill'] == 7
     assert t['color'] == '#abc'
     assert t['fillBelowTo'] == 'other_alias'
 
