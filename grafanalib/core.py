@@ -3061,7 +3061,7 @@ class GraphThreshold(object):
 @attr.s
 class SeriesOverride(object):
     """
-    To override properties of e.g. Graphs
+    To override properties of e.g. Graphs.
 
     :param alias: Name of the metric to apply to
     :param bars: Whether to show data point bars
