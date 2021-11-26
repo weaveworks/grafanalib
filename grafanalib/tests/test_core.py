@@ -1,5 +1,6 @@
 """Tests for core."""
 
+import random
 import grafanalib.core as G
 import pytest
 
