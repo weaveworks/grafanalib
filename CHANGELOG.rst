@@ -9,6 +9,7 @@ Changelog
 * Added missing attributes to the Logs panel
 * Added Cloudwatch Logs Insights Target
 * Added overrides to panels
+* Extend ``SeriesOverride`` options
 
 
 0.6.0 (2021-10-26)
@@ -30,7 +31,6 @@ Changes
 * Refine expectations of is_color_code
 * Deprecated StatMapping, StatValueMapping & StatRangeMapping
 * Change YAxis min value default from 0 to None
-* Extend ``SeriesOverride`` options
 * Support for Table panel for Grafana v8 may have broken backwards compatibility in old Table panel
 * Breaking change, support for styled columns in tables removed, no longer used in Grafana v8 new Table
 * Move development to ``main`` branch on GitHub. If you have work tracking the ``master`` you will need to update this.
