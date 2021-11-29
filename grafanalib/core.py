@@ -3266,11 +3266,27 @@ class GraphThreshold(object):
 
 @attr.s
 class SeriesOverride(object):
-    alias = attr.ib()
-    bars = attr.ib(default=False)
-    lines = attr.ib(default=True)
-    yaxis = attr.ib(default=1)
+    """
+    To override properties of e.g. Graphs.
+
+    :param alias: Name of the metric to apply to
+    :param bars: Whether to show data point bars
+    :param lines: Whether to keep graph lines
+    :param yaxis: Whether to move axis of the metric to the right (=2) or not (=1)
+    :param fill: Fill strength (0...10)
+    :param color: Whether to change color to
+    :param fillBelowTo: Alias of the other metric to fill below
+    """
+    alias = attr.ib(validator=instance_of(str))
+    bars = attr.ib(default=False, validator=instance_of(bool))
+    lines = attr.ib(default=True, validator=instance_of(bool))
+    yaxis = attr.ib(default=1, validator=attr.validators.in_([1, 2]))
+    fill = attr.ib(default=1, validator=attr.validators.in_(range(11)))
     color = attr.ib(default=None)
+    fillBelowTo = attr.ib(
+        default=None,
+        validator=attr.validators.instance_of((str, type(None)))
+    )
 
     def to_json_data(self):
         return {
@@ -3278,7 +3294,9 @@ class SeriesOverride(object):
             'bars': self.bars,
             'lines': self.lines,
             'yaxis': self.yaxis,
+            'fill': self.fill,
             'color': self.color,
+            'fillBelowTo': self.fillBelowTo,
         }
 
 
