@@ -9,6 +9,7 @@ Changelog
 * Added missing attributes to the Logs panel
 * Added Cloudwatch Logs Insights Target
 * Added overrides to panels
+* Extend ``SeriesOverride`` options
 
 
 0.6.0 (2021-10-26)
