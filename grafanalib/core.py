@@ -430,6 +430,27 @@ class Target(object):
 
 
 @attr.s
+class SqlTarget(Target):
+    """
+    Metric target to support SQL queries
+    """
+
+    rawSql = attr.ib(default="")
+    rawQuery = attr.ib(default=True)
+
+    def to_json_data(self):
+        """Override the Target to_json_data to add additional fields.
+        rawSql: this will contain the actual SQL queries
+        rawQuery: this is set to True by default as in case of False
+                  the rawSql would be unused
+        """
+        super_json = super(SqlTarget, self).to_json_data()
+        super_json["rawSql"] = self.rawSql
+        super_json["rawQuery"] = self.rawQuery
+        return super_json
+
+
+@attr.s
 class Tooltip(object):
 
     msResolution = attr.ib(default=True, validator=instance_of(bool))
@@ -2189,6 +2210,7 @@ class Stat(Panel):
         This should be a list of StatMapping objects
         https://grafana.com/docs/grafana/latest/panels/field-configuration-options/#value-mapping
     :param orientation: Stacking direction in case of multiple series or fields: keys 'auto' 'horizontal' 'vertical'
+    :param overrides: To override the base characteristics of certain timeseries data
     :param reduceCalc: algorithm for reduction to a single value: keys
         'mean' 'lastNotNull' 'last' 'first' 'firstNotNull' 'min' 'max' 'sum' 'total'
     :param textMode: define Grafana will show name or value: keys: 'auto' 'name' 'none' 'value' 'value_and_name'
@@ -2203,6 +2225,7 @@ class Stat(Panel):
     mappings = attr.ib(default=attr.Factory(list))
     noValue = attr.ib(default='none')
     orientation = attr.ib(default='auto')
+    overrides = attr.ib(default=attr.Factory(list))
     reduceCalc = attr.ib(default='mean', type=str)
     textMode = attr.ib(default='auto')
     thresholds = attr.ib(default="")
@@ -2221,7 +2244,8 @@ class Stat(Panel):
                         },
                         'unit': self.format,
                         'noValue': self.noValue
-                    }
+                    },
+                    'overrides': self.overrides
                 },
                 'options': {
                     'textMode': self.textMode,
@@ -2678,6 +2702,7 @@ class Table(Panel):
     :param fontSize: Defines value font size
     :param filterable: Allow user to filter columns, default False
     :param mappings: To assign colors to boolean or string values, use Value mappings
+    :param overrides: To override the base characteristics of certain data
     :param showHeader: Show the table header
     :param thresholds: List of thresholds
     """
@@ -2689,6 +2714,7 @@ class Table(Panel):
     fontSize = attr.ib(default='100%')
     filterable = attr.ib(default=False, validator=instance_of(bool))
     mappings = attr.ib(default=attr.Factory(list))
+    overrides = attr.ib(default=attr.Factory(list))
     showHeader = attr.ib(default=True, validator=instance_of(bool))
     span = attr.ib(default=6)
     thresholds = attr.ib(default=attr.Factory(list))
@@ -2719,7 +2745,8 @@ class Table(Panel):
                             "mode": "absolute",
                             "steps": self.thresholds
                         }
-                    }
+                    },
+                    'overrides': self.overrides
                 },
                 'hideTimeOverride': self.hideTimeOverride,
                 'mappings': self.mappings,
@@ -3171,18 +3198,20 @@ class PieChart(Panel):
 
     :param aliasColors: dictionary of color overrides
     :param format: defines value units
+    :param legendType: defines where the legend position
+    :param overrides: To override the base characteristics of certain data
     :param pieType: defines the shape of the pie chart (pie or donut)
     :param percentageDecimals: Number of decimal places to show if percentages shown in legned
     :param showLegend: defines if the legend should be shown
     :param showLegendValues: defines if the legend should show values
     :param showLegendPercentage: Show percentages in the legend
-    :param legendType: defines where the legend position
     :param thresholds: defines thresholds
     """
 
     aliasColors = attr.ib(default=attr.Factory(dict))
     format = attr.ib(default='none')
     legendType = attr.ib(default='Right side')
+    overrides = attr.ib(default=attr.Factory(list))
     pieType = attr.ib(default='pie')
     percentageDecimals = attr.ib(default=0, validator=instance_of(int))
     showLegend = attr.ib(default=True)
@@ -3202,7 +3231,7 @@ class PieChart(Panel):
                     'defaults': {
                         'custom': {},
                     },
-                    'overrides': []
+                    'overrides': self.overrides
                 },
                 'legend': {
                     'show': self.showLegend,
@@ -3301,6 +3330,7 @@ class DashboardList(Panel):
     :param maxItems: Sets the maximum number of items to list per section
     :param searchQuery: Enter the query you want to search by
     :param searchTags: List of tags you want to search by
+    :param overrides: To override the base characteristics of certain data
     """
     showHeadings = attr.ib(default=True, validator=instance_of(bool))
     showSearch = attr.ib(default=False, validator=instance_of(bool))
@@ -3309,6 +3339,7 @@ class DashboardList(Panel):
     maxItems = attr.ib(default=10, validator=instance_of(int))
     searchQuery = attr.ib(default='', validator=instance_of(str))
     searchTags = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+    overrides = attr.ib(default=attr.Factory(list))
 
     def to_json_data(self):
         return self.panel_json(
@@ -3317,7 +3348,7 @@ class DashboardList(Panel):
                     'defaults': {
                         'custom': {},
                     },
-                    'overrides': []
+                    'overrides': self.overrides
                 },
                 'headings': self.showHeadings,
                 'search': self.showSearch,
@@ -3344,6 +3375,7 @@ class Logs(Panel):
         showing the newest logs first.
     :param dedupStrategy: One of none, exact, numbers, signature. Default is none
     :param enableLogDetails: Set this to True to see the log details view for each log row.
+    :param overrides: To override the base characteristics of certain data
     :param prettifyLogMessage: Set this to true to pretty print all JSON logs. This setting does not affect logs in any format other than JSON.
     """
     showLabels = attr.ib(default=False, validator=instance_of(bool))
@@ -3353,6 +3385,7 @@ class Logs(Panel):
     sortOrder = attr.ib(default='Descending', validator=instance_of(str))
     dedupStrategy = attr.ib(default='none', validator=instance_of(str))
     enableLogDetails = attr.ib(default=False, validator=instance_of(bool))
+    overrides = attr.ib(default=attr.Factory(list))
     prettifyLogMessage = attr.ib(default=False, validator=instance_of(bool))
 
     def to_json_data(self):
@@ -3362,7 +3395,7 @@ class Logs(Panel):
                     'defaults': {
                         'custom': {},
                     },
-                    'overrides': []
+                    'overrides': self.overrides
                 },
                 'options': {
                     'showLabels': self.showLabels,
@@ -3470,11 +3503,27 @@ class GraphThreshold(object):
 
 @attr.s
 class SeriesOverride(object):
-    alias = attr.ib()
-    bars = attr.ib(default=False)
-    lines = attr.ib(default=True)
-    yaxis = attr.ib(default=1)
+    """
+    To override properties of e.g. Graphs.
+
+    :param alias: Name of the metric to apply to
+    :param bars: Whether to show data point bars
+    :param lines: Whether to keep graph lines
+    :param yaxis: Whether to move axis of the metric to the right (=2) or not (=1)
+    :param fill: Fill strength (0...10)
+    :param color: Whether to change color to
+    :param fillBelowTo: Alias of the other metric to fill below
+    """
+    alias = attr.ib(validator=instance_of(str))
+    bars = attr.ib(default=False, validator=instance_of(bool))
+    lines = attr.ib(default=True, validator=instance_of(bool))
+    yaxis = attr.ib(default=1, validator=attr.validators.in_([1, 2]))
+    fill = attr.ib(default=1, validator=attr.validators.in_(range(11)))
     color = attr.ib(default=None)
+    fillBelowTo = attr.ib(
+        default=None,
+        validator=attr.validators.instance_of((str, type(None)))
+    )
 
     def to_json_data(self):
         return {
@@ -3482,7 +3531,9 @@ class SeriesOverride(object):
             'bars': self.bars,
             'lines': self.lines,
             'yaxis': self.yaxis,
+            'fill': self.fill,
             'color': self.color,
+            'fillBelowTo': self.fillBelowTo,
         }
 
 
@@ -3594,6 +3645,7 @@ class StateTimeline(Panel):
     :param legendPlacement: bottom or top
     :param lineWidth: Controls line width of state regions
     :param mappings: To assign colors to boolean or string values, use Value mappings
+    :param overrides: To override the base characteristics of certain data
     :param mergeValues: Controls whether Grafana merges identical values if they are next to each other, default True
     :param rowHeight: Controls how much space between rows there are. 1 = no space = 0.5 = 50% space
     :param showValue: Controls whether values are rendered inside the state regions. Auto will render values if there is sufficient space.
@@ -3607,6 +3659,7 @@ class StateTimeline(Panel):
     legendPlacement = attr.ib(default='bottom', validator=instance_of(str))
     lineWidth = attr.ib(default=0, validator=instance_of(int))
     mappings = attr.ib(default=attr.Factory(list))
+    overrides = attr.ib(default=attr.Factory(list))
     mergeValues = attr.ib(default=True, validator=instance_of(bool))
     rowHeight = attr.ib(default=0.9, validator=instance_of(float))
     showValue = attr.ib(default='auto', validator=instance_of(str))
@@ -3631,7 +3684,7 @@ class StateTimeline(Panel):
                         },
                         'mappings': self.mappings
                     },
-                    'overrides': []
+                    'overrides': self.overrides
                 },
                 'options': {
                     'mergeValues': self.mergeValues,

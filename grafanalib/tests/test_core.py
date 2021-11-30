@@ -711,6 +711,65 @@ def test_alert_list():
     alert_list.to_json_data()
 
 
+def test_SeriesOverride_exception_checks():
+    with pytest.raises(TypeError):
+        G.SeriesOverride()
+
+    with pytest.raises(TypeError):
+        G.SeriesOverride(123)
+
+    with pytest.raises(TypeError):
+        G.SeriesOverride('alias', bars=123)
+
+    with pytest.raises(TypeError):
+        G.SeriesOverride('alias', lines=123)
+
+    with pytest.raises(ValueError):
+        G.SeriesOverride('alias', yaxis=123)
+    with pytest.raises(ValueError):
+        G.SeriesOverride('alias', yaxis='abc')
+
+    with pytest.raises(TypeError):
+        G.SeriesOverride('alias', fillBelowTo=123)
+
+    with pytest.raises(ValueError):
+        G.SeriesOverride('alias', fill="foo")
+    with pytest.raises(ValueError):
+        G.SeriesOverride('alias', fill=123)
+    with pytest.raises(ValueError):
+        G.SeriesOverride('alias', fill=-2)
+
+
+def test_SeriesOverride():
+    t = G.SeriesOverride('alias').to_json_data()
+
+    assert t['alias'] == 'alias'
+    assert t['bars'] is False
+    assert t['lines'] is True
+    assert t['yaxis'] == 1
+    assert t['fill'] == 1
+    assert t['color'] is None
+    assert t['fillBelowTo'] is None
+
+    t = G.SeriesOverride(
+        'alias',
+        bars=True,
+        lines=False,
+        yaxis=2,
+        fill=7,
+        color='#abc',
+        fillBelowTo='other_alias'
+    ).to_json_data()
+
+    assert t['alias'] == 'alias'
+    assert t['bars'] is True
+    assert t['lines'] is False
+    assert t['yaxis'] == 2
+    assert t['fill'] == 7
+    assert t['color'] == '#abc'
+    assert t['fillBelowTo'] == 'other_alias'
+
+
 def test_alert():
     alert = G.Alert(
         name='dummy name',
@@ -786,27 +845,39 @@ def test_timeseries_with_overrides():
         overrides=overrides,
     )
     data = timeseries.to_json_data()
-    assert data['targets'] == targets
-    assert data['datasource'] == data_source
-    assert data['title'] == title
-    assert data['fieldConfig']['overrides'] == overrides
+    assert data["targets"] == targets
+    assert data["datasource"] == data_source
+    assert data["title"] == title
+    assert data["fieldConfig"]["overrides"] == overrides
 
 
 def test_news():
-    title = 'dummy title'
+    title = "dummy title"
     feedUrl = "www.example.com"
     news = G.News(title=title, feedUrl=feedUrl)
     data = news.to_json_data()
-    assert data['options']['feedUrl'] == feedUrl
-    assert data['title'] == title
+    assert data["options"]["feedUrl"] == feedUrl
+    assert data["title"] == title
 
 
 def test_pieChartv2():
-    data_source = 'dummy data source'
-    targets = ['dummy_prom_query']
-    title = 'dummy title'
+    data_source = "dummy data source"
+    targets = ["dummy_prom_query"]
+    title = "dummy title"
     pie = G.PieChartv2(data_source, targets, title)
     data = pie.to_json_data()
-    assert data['targets'] == targets
-    assert data['datasource'] == data_source
-    assert data['title'] == title
+    assert data["targets"] == targets
+    assert data["datasource"] == data_source
+    assert data["title"] == title
+
+
+def test_sql_target():
+    t = G.Table(
+        dataSource="some data source",
+        targets=[
+            G.SqlTarget(rawSql="SELECT * FROM example"),
+        ],
+        title="table title",
+    )
+    assert t.to_json_data()["targets"][0].rawQuery is True
+    assert t.to_json_data()["targets"][0].rawSql == "SELECT * FROM example"
