@@ -1190,6 +1190,9 @@ def _deep_update(base_dict, extra_dict):
     if extra_dict is None:
         return base_dict
 
+    if isinstance(extra_dict, list):
+        return base_dict
+
     for k, v in extra_dict.items():
         if k in base_dict and hasattr(base_dict[k], "to_json_data"):
             base_dict[k] = base_dict[k].to_json_data()
@@ -1292,7 +1295,7 @@ class Panel(object):
             'transparent': self.transparent,
             'transformations': self.transformations,
         }
-        res.update(overrides)
+        _deep_update(res, overrides)
         _deep_update(res, self.extraJson)
         return res
 
@@ -2657,17 +2660,15 @@ class GaugePanel(Panel):
     def to_json_data(self):
         return self.panel_json(
             {
-                'options': {
-                    'fieldOptions': {
+                'fieldConfig': {
+                    'defaults': {
                         'calcs': [self.calc],
-                        'defaults': {
-                            'decimals': self.decimals,
-                            'max': self.max,
-                            'min': self.min,
-                            'title': self.label,
-                            'unit': self.format,
-                            'links': self.dataLinks,
-                        },
+                        'decimals': self.decimals,
+                        'max': self.max,
+                        'min': self.min,
+                        'title': self.label,
+                        'unit': self.format,
+                        'links': self.dataLinks,
                         'limit': self.limit,
                         'mappings': self.valueMaps,
                         'override': {},
