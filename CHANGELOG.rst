@@ -10,6 +10,7 @@ Changelog
 * Added Cloudwatch Logs Insights Target
 * Added overrides to panels
 * Extend ``SeriesOverride`` options
+* Added percentage type for thresholds
 
 
 0.6.0 (2021-10-26)

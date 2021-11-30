@@ -1190,9 +1190,6 @@ def _deep_update(base_dict, extra_dict):
     if extra_dict is None:
         return base_dict
 
-    if isinstance(extra_dict, list):
-        return base_dict
-
     for k, v in extra_dict.items():
         if k in base_dict and hasattr(base_dict[k], "to_json_data"):
             base_dict[k] = base_dict[k].to_json_data()
@@ -3411,7 +3408,6 @@ class StateTimeline(Panel):
     :param rowHeight: Controls how much space between rows there are. 1 = no space = 0.5 = 50% space
     :param showValue: Controls whether values are rendered inside the state regions. Auto will render values if there is sufficient space.
     :param tooltipMode: Default single
-    :param thresholds: Thresholds are used to turn the time series into discrete colored state regions
     """
     alignValue = attr.ib(default='left', validator=instance_of(str))
     colorMode = attr.ib(default='thresholds', validator=instance_of(str))
@@ -3425,7 +3421,6 @@ class StateTimeline(Panel):
     rowHeight = attr.ib(default=0.9, validator=instance_of(float))
     showValue = attr.ib(default='auto', validator=instance_of(str))
     tooltipMode = attr.ib(default='single', validator=instance_of(str))
-    thresholds = attr.ib(default=attr.Factory(list))
 
     def to_json_data(self):
         return self.panel_json(
@@ -3439,7 +3434,6 @@ class StateTimeline(Panel):
                         'color': {
                             'mode': self.colorMode
                         },
-                        'thresholds': self.thresholds,
                         'mappings': self.mappings
                     },
                     'overrides': self.overrides
