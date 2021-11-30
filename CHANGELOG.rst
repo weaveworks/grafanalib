@@ -5,17 +5,21 @@ Changelog
 0.6.1 (TBD)
 ==================
 
+* Added ImageIt panel (https://grafana.com/grafana/plugins/pierosavi-imageit-panel/)
 * Added new SqlTarget to core to be able to define SQL queries as well
 * Added missing attributes to the Logs panel
 * Added Cloudwatch Logs Insights Target
 * Added overrides to panels
 * Extend ``SeriesOverride`` options
 
+Changes
+-------
+
+* Fix Text panel (and add tests)
 
 0.6.0 (2021-10-26)
 ===================
 
-* Added ImageIt panel (https://grafana.com/grafana/plugins/pierosavi-imageit-panel/)
 * Added Discrete panel (https://grafana.com/grafana/plugins/natel-discrete-panel/)
 * Added support for colors in stat mapping panel with StatValueMappings & StatRangeMappings
 * Added missing auto interval properties in Template
@@ -29,7 +33,6 @@ Changelog
 Changes
 -------
 
-* Fix Text panel (and add tests)
 * Refine expectations of is_color_code
 * Deprecated StatMapping, StatValueMapping & StatRangeMapping
 * Change YAxis min value default from 0 to None
