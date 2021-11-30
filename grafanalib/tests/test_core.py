@@ -181,18 +181,74 @@ def test_DiscreteColorMappingItem():
     assert json_data['color'] == 'bar'
 
 
+def test_Discrete_exceptions():
+    with pytest.raises(ValueError):
+        G.Discrete(legendSortBy='foo')
+
+    with pytest.raises(TypeError):
+        G.Discrete(rangeMaps=[123, 456])
+
+    with pytest.raises(TypeError):
+        G.Discrete(valueMaps=['foo', 'bar'])
+
+    with pytest.raises(TypeError):
+        G.Discrete(lineColor=123)
+
+    with pytest.raises(TypeError):
+        G.Discrete(highlightOnMouseover=123)
+
+
 def test_Discrete():
     colorMap = [
         G.DiscreteColorMappingItem('bar', color='baz'),
         G.DiscreteColorMappingItem('foz', color='faz')
     ]
 
-    t = G.Discrete('foo', colorMapsItems=colorMap)
+    t = G.Discrete(
+        title='foo',
+        colorMaps=colorMap,
+        lineColor='#aabbcc',
+        metricNameColor=G.RGBA(1, 2, 3, .5),
+        decimals=123,
+        highlightOnMouseover=False,
+        showDistinctCount=True,
+        showLegendCounts=False,
+    )
 
     json_data = t.to_json_data()
     assert json_data['colorMaps'] == colorMap
-    assert json_data['title'] == ''
+    assert json_data['title'] == 'foo'
     assert json_data['type'] == G.DISCRETE_TYPE
+    assert json_data['rangeMaps'] == []
+    assert json_data['valueMaps'] == []
+
+    assert json_data['backgroundColor'] == G.RGBA(128, 128, 128, 0.1)
+    assert json_data['lineColor'] == '#aabbcc'
+    assert json_data['metricNameColor'] == G.RGBA(1, 2, 3, .5)
+    assert json_data['timeTextColor'] == "#d8d9da"
+    assert json_data['valueTextColor'] == "#000000"
+
+    assert json_data['decimals'] == 123
+    assert json_data['legendPercentDecimals'] == 0
+    assert json_data['rowHeight'] == 50
+    assert json_data['textSize'] == 24
+    assert json_data['textSizeTime'] == 12
+
+    assert json_data['highlightOnMouseover'] is False
+    assert json_data['showLegend'] is True
+    assert json_data['showLegendPercent'] is True
+    assert json_data['showLegendNames'] is True
+    assert json_data['showLegendValues'] is True
+    assert json_data['showTimeAxis'] is True
+    assert json_data['use12HourClock'] is False
+    assert json_data['writeMetricNames'] is False
+    assert json_data['writeLastValue'] is True
+    assert json_data['writeAllValues'] is False
+
+    assert json_data['showDistinctCount'] is True
+    assert json_data['showLegendCounts'] is False
+    assert json_data['showLegendTime'] is None
+    assert json_data['showTransitionCount'] is None
 
 
 def test_StatValueMappings_exception_checks():
