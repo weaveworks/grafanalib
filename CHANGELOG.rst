@@ -16,6 +16,8 @@ Changes
 
 * Fix Text panel (and add tests)
 
+  **ATTENTION:** This might break panels generated for Grafana <8.0.6
+
 0.6.0 (2021-10-26)
 ===================
 
