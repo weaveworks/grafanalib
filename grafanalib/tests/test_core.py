@@ -138,6 +138,33 @@ def test_stat_no_repeat():
     assert t.to_json_data()['maxPerRow'] is None
 
 
+def test_Text_exception_checks():
+    with pytest.raises(TypeError):
+        G.Text(content=123)
+
+    with pytest.raises(TypeError):
+        G.Text(error=123)
+
+    with pytest.raises(ValueError):
+        G.Text(mode=123)
+
+
+def test_Text():
+    t = G.Text()
+
+    json_data = t.to_json_data()
+    assert json_data['error'] is False
+    assert json_data['options']['content'] == ""
+    assert json_data['options']['mode'] == G.TEXT_MODE_MARKDOWN
+
+    t = G.Text(content='foo', error=True, mode=G.TEXT_MODE_HTML)
+
+    json_data = t.to_json_data()
+    assert json_data['error'] is True
+    assert json_data['options']['content'] == "foo"
+    assert json_data['options']['mode'] == G.TEXT_MODE_HTML
+
+
 def test_DiscreteColorMappingItem_exception_checks():
     with pytest.raises(TypeError):
         G.DiscreteColorMappingItem(123)

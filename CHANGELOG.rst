@@ -11,11 +11,17 @@ Changelog
 * Added overrides to panels
 * Extend ``SeriesOverride`` options
 
+Changes
+-------
+
+* Fix Text panel (and add tests)
+
+  **ATTENTION:** This might break panels generated for Grafana <8.0.6
 
 0.6.0 (2021-10-26)
 ===================
 
-* Added Discrete panel
+* Added Discrete panel (https://grafana.com/grafana/plugins/natel-discrete-panel/)
 * Added support for colors in stat mapping panel with StatValueMappings & StatRangeMappings
 * Added missing auto interval properties in Template
 * Added param to RowPanel to collapse the row

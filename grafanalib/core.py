@@ -1871,19 +1871,22 @@ class Discrete(Panel):
 class Text(Panel):
     """Generates a Text panel."""
 
-    content = attr.ib(default="")
+    content = attr.ib(default="", validator=instance_of(str))
     error = attr.ib(default=False, validator=instance_of(bool))
-    mode = attr.ib(default=TEXT_MODE_MARKDOWN)
+    mode = attr.ib(
+        default=TEXT_MODE_MARKDOWN,
+        validator=in_([TEXT_MODE_MARKDOWN, TEXT_MODE_HTML, TEXT_MODE_TEXT])
+    )
 
     def to_json_data(self):
-        return self.panel_json(
-            {
+        return self.panel_json({
+            'type': TEXT_TYPE,
+            'error': self.error,
+            'options': {
                 'content': self.content,
-                'error': self.error,
                 'mode': self.mode,
-                'type': TEXT_TYPE,
-            }
-        )
+            },
+        })
 
 
 @attr.s
