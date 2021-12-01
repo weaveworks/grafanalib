@@ -2,7 +2,9 @@
 Changelog
 =========
 
-0.6.1 (TBD)
+* Added percentage type for thresholds
+
+0.6.1 (2021-11-23)
 ==================
 
 * Added new SqlTarget to core to be able to define SQL queries as well
@@ -10,7 +12,6 @@ Changelog
 * Added Cloudwatch Logs Insights Target
 * Added overrides to panels
 * Extend ``SeriesOverride`` options
-* Added percentage type for thresholds
 
 
 0.6.0 (2021-10-26)
