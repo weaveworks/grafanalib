@@ -1220,6 +1220,8 @@ class Panel(object):
     :param repeat: Template's name to repeat Graph on
     :param span: defines the number of spans that will be used for panel
     :param targets: list of metric requests for chosen datasource
+    :param thresholds: single stat thresholds
+    :param thresholdType: type of threshold, absolute or percentage
     :param timeFrom: time range that Override relative time
     :param title: of the panel
     :param transparent: defines if panel should be transparent
@@ -1245,6 +1247,8 @@ class Panel(object):
     minSpan = attr.ib(default=None)
     repeat = attr.ib(default=attr.Factory(Repeat), validator=instance_of(Repeat))
     span = attr.ib(default=None)
+    thresholds = attr.ib(default=attr.Factory(list))
+    thresholdType = attr.ib(default='absolute')
     timeFrom = attr.ib(default=None)
     timeShift = attr.ib(default=None)
     transparent = attr.ib(default=False, validator=instance_of(bool))
@@ -1261,6 +1265,14 @@ class Panel(object):
             'description': self.description,
             'editable': self.editable,
             'error': self.error,
+            'fieldConfig': {
+                'defaults': {
+                    'thresholds': {
+                        'mode': self.thresholdType,
+                        'steps': self.thresholds
+                    },
+                },
+            },
             'height': self.height,
             'gridPos': self.gridPos,
             'hideTimeOverride': self.hideTimeOverride,
@@ -1278,9 +1290,9 @@ class Panel(object):
             'timeShift': self.timeShift,
             'title': self.title,
             'transparent': self.transparent,
-            'transformations': self.transformations
+            'transformations': self.transformations,
         }
-        res.update(overrides)
+        _deep_update(res, overrides)
         _deep_update(res, self.extraJson)
         return res
 
@@ -1383,6 +1395,7 @@ class Graph(Panel):
     :param stack: Each series is stacked on top of another
     :param percentage: Available when Stack is selected. Each series is drawn as a percentage of the total of all series
     :param thresholds: List of GraphThresholds - Only valid when alert not defined
+
     """
 
     alert = attr.ib(default=None)
@@ -1559,7 +1572,6 @@ class TimeSeries(Panel):
     spanNulls = attr.ib(default=False, validator=instance_of(bool))
     showPoints = attr.ib(default='auto', validator=instance_of(str))
     stacking = attr.ib(default={}, validator=instance_of(dict))
-    thresholds = attr.ib(default=attr.Factory(list))
     tooltipMode = attr.ib(default='single', validator=instance_of(str))
     unit = attr.ib(default='', validator=instance_of(str))
 
@@ -1595,10 +1607,6 @@ class TimeSeries(Panel):
                             },
                         },
                         'mappings': self.mappings,
-                        'thresholds': {
-                            'mode': 'absolute',
-                            'steps': self.thresholds
-                        },
                         'unit': self.unit
                     },
                     'overrides': self.overrides
@@ -2004,10 +2012,6 @@ class Stat(Panel):
                         'custom': {},
                         'decimals': self.decimals,
                         'mappings': self.mappings,
-                        'thresholds': {
-                            'mode': ABSOLUTE_TYPE,
-                            'steps': self.thresholds,
-                        },
                         'unit': self.format,
                         'noValue': self.noValue
                     },
@@ -2470,7 +2474,6 @@ class Table(Panel):
     :param mappings: To assign colors to boolean or string values, use Value mappings
     :param overrides: To override the base characteristics of certain data
     :param showHeader: Show the table header
-    :param thresholds: List of thresholds
     """
 
     align = attr.ib(default='auto', validator=instance_of(str))
@@ -2483,7 +2486,6 @@ class Table(Panel):
     overrides = attr.ib(default=attr.Factory(list))
     showHeader = attr.ib(default=True, validator=instance_of(bool))
     span = attr.ib(default=6)
-    thresholds = attr.ib(default=attr.Factory(list))
 
     @classmethod
     def with_styled_columns(cls, columns, styles=None, **kwargs):
@@ -2507,10 +2509,6 @@ class Table(Panel):
                             'displayMode': self.displayMode,
                             'filterable': self.filterable
                         },
-                        "thresholds": {
-                            "mode": "absolute",
-                            "steps": self.thresholds
-                        }
                     },
                     'overrides': self.overrides
                 },
@@ -2662,21 +2660,18 @@ class GaugePanel(Panel):
     def to_json_data(self):
         return self.panel_json(
             {
-                'options': {
-                    'fieldOptions': {
+                'fieldConfig': {
+                    'defaults': {
                         'calcs': [self.calc],
-                        'defaults': {
-                            'decimals': self.decimals,
-                            'max': self.max,
-                            'min': self.min,
-                            'title': self.label,
-                            'unit': self.format,
-                            'links': self.dataLinks,
-                        },
+                        'decimals': self.decimals,
+                        'max': self.max,
+                        'min': self.min,
+                        'title': self.label,
+                        'unit': self.format,
+                        'links': self.dataLinks,
                         'limit': self.limit,
                         'mappings': self.valueMaps,
                         'override': {},
-                        'thresholds': self.thresholds,
                         'values': self.allValues,
                     },
                     'showThresholdLabels': self.thresholdLabels,
@@ -3416,7 +3411,6 @@ class StateTimeline(Panel):
     :param rowHeight: Controls how much space between rows there are. 1 = no space = 0.5 = 50% space
     :param showValue: Controls whether values are rendered inside the state regions. Auto will render values if there is sufficient space.
     :param tooltipMode: Default single
-    :param thresholds: Thresholds are used to turn the time series into discrete colored state regions
     """
     alignValue = attr.ib(default='left', validator=instance_of(str))
     colorMode = attr.ib(default='thresholds', validator=instance_of(str))
@@ -3430,7 +3424,6 @@ class StateTimeline(Panel):
     rowHeight = attr.ib(default=0.9, validator=instance_of(float))
     showValue = attr.ib(default='auto', validator=instance_of(str))
     tooltipMode = attr.ib(default='single', validator=instance_of(str))
-    thresholds = attr.ib(default=attr.Factory(list))
 
     def to_json_data(self):
         return self.panel_json(
@@ -3443,10 +3436,6 @@ class StateTimeline(Panel):
                         },
                         'color': {
                             'mode': self.colorMode
-                        },
-                        'thresholds': {
-                            'mode': ABSOLUTE_TYPE,
-                            'steps': self.thresholds,
                         },
                         'mappings': self.mappings
                     },
