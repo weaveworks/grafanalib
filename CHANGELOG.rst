@@ -3,6 +3,7 @@ Changelog
 =========
 
 * Added percentage type for thresholds
+* Added ``datasource`` parameter to CloudWatch targets
 
 0.6.1 (2021-11-23)
 ==================
