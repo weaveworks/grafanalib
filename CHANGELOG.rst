@@ -4,6 +4,7 @@ Changelog
 
 * Added percentage type for thresholds
 * Added ``datasource`` parameter to CloudWatch targets
+* Added support for auto panels ids to AlertList panel
 
 0.6.1 (2021-11-23)
 ==================
