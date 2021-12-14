@@ -28,6 +28,7 @@ class CloudwatchMetricsTarget(object):
     :param region: Cloudwatch region
     :param statistics: Cloudwatch mathematic statistic
     :param hide: controls if given metric is displayed on visualization
+    :param datasource: Grafana datasource name
     """
     alias = attr.ib(default="")
     dimensions = attr.ib(default={}, validator=instance_of(dict))
@@ -41,6 +42,7 @@ class CloudwatchMetricsTarget(object):
     region = attr.ib(default="default")
     statistics = attr.ib(default=["Average"], validator=instance_of(list))
     hide = attr.ib(default=False, validator=instance_of(bool))
+    datasource = attr.ib(default=None)
 
     def to_json_data(self):
 
@@ -57,6 +59,7 @@ class CloudwatchMetricsTarget(object):
             "region": self.region,
             "statistics": self.statistics,
             "hide": self.hide,
+            "datasource": self.datasource,
         }
 
 
@@ -79,6 +82,7 @@ class CloudwatchLogsInsightsTarget(object):
     :param region: Cloudwatch region
     :param statsGroups: Cloudwatch statsGroups
     :param hide: controls if given metric is displayed on visualization
+    :param datasource: Grafana datasource name
     """
     expression = attr.ib(default="")
     id = attr.ib(default="")
@@ -88,6 +92,7 @@ class CloudwatchLogsInsightsTarget(object):
     region = attr.ib(default="default")
     statsGroups = attr.ib(default=[], validator=instance_of(list))
     hide = attr.ib(default=False, validator=instance_of(bool))
+    datasource = attr.ib(default=None)
 
     def to_json_data(self):
 
@@ -101,4 +106,5 @@ class CloudwatchLogsInsightsTarget(object):
             "region": self.region,
             "statsGroups": self.statsGroups,
             "hide": self.hide,
+            "datasource": self.datasource,
         }
