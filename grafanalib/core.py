@@ -1948,6 +1948,9 @@ class AlertList(object):
     title = attr.ib(default="")
     transparent = attr.ib(default=False, validator=instance_of(bool))
 
+    def _map_panels(self, f):
+        return f(self)
+
     def to_json_data(self):
         return {
             'dashboardTags': self.dashboardTags,
