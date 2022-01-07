@@ -1922,6 +1922,7 @@ class AlertList(object):
         An empty list means all alerts.
     :param title: The panel title.
     :param transparent: If true, display the panel without a background.
+    :param alertName: Show only alerts that contain alertName in their name.
     """
 
     dashboardTags = attr.ib(
@@ -1947,6 +1948,7 @@ class AlertList(object):
     stateFilter = attr.ib(default=attr.Factory(list))
     title = attr.ib(default="")
     transparent = attr.ib(default=False, validator=instance_of(bool))
+    alertName = attr.ib(default="", validator=instance_of(str))
 
     def _map_panels(self, f):
         return f(self)
@@ -1968,6 +1970,9 @@ class AlertList(object):
             'title': self.title,
             'transparent': self.transparent,
             'type': ALERTLIST_TYPE,
+            "options": {
+                "alertName": self.alertName
+            },
         }
 
 
