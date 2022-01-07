@@ -1990,6 +1990,7 @@ class Stat(Panel):
     :param overrides: To override the base characteristics of certain timeseries data
     :param reduceCalc: algorithm for reduction to a single value: keys
         'mean' 'lastNotNull' 'last' 'first' 'firstNotNull' 'min' 'max' 'sum' 'total'
+    :param fields: should be included in the panel
     :param textMode: define Grafana will show name or value: keys: 'auto' 'name' 'none' 'value' 'value_and_name'
     :param thresholds: single stat thresholds
     """
@@ -2004,6 +2005,7 @@ class Stat(Panel):
     orientation = attr.ib(default='auto')
     overrides = attr.ib(default=attr.Factory(list))
     reduceCalc = attr.ib(default='mean', type=str)
+    fields = attr.ib(default="")
     textMode = attr.ib(default='auto')
     thresholds = attr.ib(default="")
 
@@ -2030,7 +2032,7 @@ class Stat(Panel):
                         'calcs': [
                             self.reduceCalc
                         ],
-                        'fields': '',
+                        'fields': self.fields,
                         'values': False
                     }
                 },
