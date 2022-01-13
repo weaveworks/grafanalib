@@ -6,6 +6,7 @@ Changelog
 * Added ``datasource`` parameter to CloudWatch targets
 * Added support for auto panels ids to AlertList panel
 * Added support for fields value in Stat panel
+* Added ``alertName`` parameter to AlertList panel
 
 0.6.1 (2021-11-23)
 ==================
