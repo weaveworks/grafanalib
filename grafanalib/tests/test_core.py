@@ -517,6 +517,25 @@ def test_SeriesOverride_exception_checks():
         G.SeriesOverride('alias', fill=123)
     with pytest.raises(ValueError):
         G.SeriesOverride('alias', fill=-2)
+    with pytest.raises(ValueError):
+        G.SeriesOverride('alias', zindex=5)
+
+    with pytest.raises(TypeError):
+        G.SeriesOverride('alias', dashes="foo")
+
+    with pytest.raises(ValueError):
+        G.SeriesOverride('alias', dashLength=-2)
+    with pytest.raises(ValueError):
+        G.SeriesOverride('alias', dashLength=25)
+    with pytest.raises(ValueError):
+        G.SeriesOverride('alias', spaceLength=-2)
+    with pytest.raises(ValueError):
+        G.SeriesOverride('alias', spaceLength=25)
+
+    with pytest.raises(ValueError):
+        G.SeriesOverride('alias', dashLength="foo")
+    with pytest.raises(ValueError):
+        G.SeriesOverride('alias', spaceLength="foo")
 
 
 def test_SeriesOverride():
@@ -529,6 +548,10 @@ def test_SeriesOverride():
     assert t['fill'] == 1
     assert t['color'] is None
     assert t['fillBelowTo'] is None
+    assert t['dashes'] is False
+    assert t['dashLength'] is None
+    assert t['spaceLength'] is None
+    assert t['zindex'] == 0
 
     t = G.SeriesOverride(
         'alias',
@@ -537,7 +560,11 @@ def test_SeriesOverride():
         yaxis=2,
         fill=7,
         color='#abc',
-        fillBelowTo='other_alias'
+        fillBelowTo='other_alias',
+        dashes=True,
+        dashLength=12,
+        spaceLength=17,
+        zindex=-2,
     ).to_json_data()
 
     assert t['alias'] == 'alias'
@@ -547,6 +574,10 @@ def test_SeriesOverride():
     assert t['fill'] == 7
     assert t['color'] == '#abc'
     assert t['fillBelowTo'] == 'other_alias'
+    assert t['dashes'] is True
+    assert t['dashLength'] == 12
+    assert t['spaceLength'] == 17
+    assert t['zindex'] == -2
 
 
 def test_alert():
