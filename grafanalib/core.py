@@ -1551,6 +1551,7 @@ class TimeSeries(Panel):
     :param tooltipMode: When you hover your cursor over the visualization, Grafana can display tooltips
         single (Default), multi, none
     :param unit: units
+    :param thresholdsStyleMode: thresholds style mode off (Default), area, line, line+area
     """
 
     axisPlacement = attr.ib(default='auto', validator=instance_of(str))
@@ -1574,6 +1575,7 @@ class TimeSeries(Panel):
     stacking = attr.ib(default={}, validator=instance_of(dict))
     tooltipMode = attr.ib(default='single', validator=instance_of(str))
     unit = attr.ib(default='', validator=instance_of(str))
+    thresholdsStyleMode = attr.ib(default='off', validator=instance_of(str))
 
     def to_json_data(self):
         return self.panel_json(
@@ -1604,6 +1606,9 @@ class TimeSeries(Panel):
                                 'tooltip': False,
                                 'viz': False,
                                 'legend': False
+                            },
+                            'thresholdsStyle': {
+                                'mode': self.thresholdsStyleMode
                             },
                         },
                         'mappings': self.mappings,
