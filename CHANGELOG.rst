@@ -7,6 +7,7 @@ Changelog
 * Added support for auto panels ids to AlertList panel
 * Added support for fields value in Stat panel
 * Added ``alertName`` parameter to AlertList panel
+* Added ``thresholdsStyleMode`` parameter to TimeSeries panel
 
 0.6.1 (2021-11-23)
 ==================
