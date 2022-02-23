@@ -52,7 +52,7 @@ Changes
 
 * Added colour overrides to pie chart panel
 * Added missing attributes from xAxis class
-* Added transformations for the Panel class (https://grafana.com/docs/grafana/next/panels/transformations/types-options/#transformation-types-and-options)
+* Added transformations for the Panel class (https://grafana.com/docs/grafana/next/panels/reference-transformation-functions/)
 * Added Worldmap panel (https://grafana.com/grafana/plugins/grafana-worldmap-panel/)
 * Added missing fill gradient to Graph panel
 * Added missing align to graph panel
@@ -124,7 +124,7 @@ Changes
 
 * Added Alert Threshold enabled/disabled to Graphs.
 * Added constants for all Grafana value formats
-* Added support for repetitions to Stat Panels (https://grafana.com/docs/grafana/latest/variables/repeat-panels-or-rows/)
+* Added support for repetitions to Stat Panels
 * Added textMode option to Stat Panels
 * Add Panel object for all panels to inherit from
 * Add Dashboard list panel (https://grafana.com/docs/grafana/latest/panels/visualizations/dashboard-list-panel/)

@@ -3186,7 +3186,6 @@ class Logs(Panel):
 @attr.s
 class Threshold(object):
     """Threshold for for panels
-    (https://grafana.com/docs/grafana/latest/panels/thresholds/)
 
     :param color: Color of threshold
     :param index: Index of color in panel
@@ -3226,7 +3225,6 @@ class Threshold(object):
 @attr.s
 class GraphThreshold(object):
     """Threshold for for Graph panel
-    (https://grafana.com/docs/grafana/latest/panels/thresholds/)
 
     :param colorMode: Color mode of the threshold, value can be `ok`, `warning`, `critical` or `custom`.
         If `custom` is selcted a lineColor and fillColor should be provided
