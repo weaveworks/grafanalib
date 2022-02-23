@@ -380,6 +380,13 @@ class Repeat(object):
     variable = attr.ib(default=None)
     maxPerRow = attr.ib(default=None, validator=is_valid_max_per_row)
 
+    def to_json_data(self):
+        return {
+            'direction': self.direction,
+            'variable': self.variable,
+            'maxPerRow': self.maxPerRow,
+        }
+
 
 def is_valid_target(instance, attribute, value):
     """
