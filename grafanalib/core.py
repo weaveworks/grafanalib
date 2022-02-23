@@ -3287,12 +3287,22 @@ class SeriesOverride(object):
     :param fill: Fill strength (0...10)
     :param color: Whether to change color to
     :param fillBelowTo: Alias of the other metric to fill below
+    :param zindex: Move things to front or background (-3...3)
+    :param dashed: Whether to dash the line
+    :param dashLength: Length of dashes (1..20)
+    :param spaceLength: Length of spaces betwee dashed
+    :param zindex: Move things to front or background
     """
     alias = attr.ib(validator=instance_of(str))
     bars = attr.ib(default=False, validator=instance_of(bool))
     lines = attr.ib(default=True, validator=instance_of(bool))
     yaxis = attr.ib(default=1, validator=attr.validators.in_([1, 2]))
     fill = attr.ib(default=1, validator=attr.validators.in_(range(11)))
+    zindex = attr.ib(default=0, validator=attr.validators.in_(range(-3, 4)))
+    dashes = attr.ib(default=False, validator=instance_of(bool))
+    dashLength = attr.ib(default=None, validator=attr.validators.in_([*range(1, 21), None]))
+    spaceLength = attr.ib(default=None, validator=attr.validators.in_([*range(1, 21), None]))
+
     color = attr.ib(default=None)
     fillBelowTo = attr.ib(
         default=None,
@@ -3308,6 +3318,10 @@ class SeriesOverride(object):
             'fill': self.fill,
             'color': self.color,
             'fillBelowTo': self.fillBelowTo,
+            'zindex': self.zindex,
+            'dashes': self.dashes,
+            'dashLength': self.dashLength,
+            'spaceLength': self.spaceLength,
         }
 
 

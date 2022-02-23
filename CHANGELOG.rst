@@ -5,6 +5,7 @@ Changelog
 * Added percentage type for thresholds
 * Added ``datasource`` parameter to CloudWatch targets
 * Added support for auto panels ids to AlertList panel
+* Added ``SeriesOverride`` options (dashes and Z-index)
 * Added support for fields value in Stat panel
 * Added ``alertName`` parameter to AlertList panel
 * Added ``thresholdsStyleMode`` parameter to TimeSeries panel
