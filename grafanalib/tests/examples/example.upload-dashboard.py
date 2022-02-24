@@ -5,7 +5,7 @@ import requests
 from os import getenv
 
 
-def get_dashboard_json(dashboard):
+def get_dashboard_json(dashboard, overwrite=False, message="Updated by grafanlib"):
     '''
     get_dashboard_json generates JSON from grafanalib Dashboard object
 
@@ -13,10 +13,15 @@ def get_dashboard_json(dashboard):
     '''
 
     # grafanalib generates json which need to pack to "dashboard" root element
-    return json.dumps({"dashboard": dashboard.to_json_data()}, sort_keys=True, indent=2, cls=DashboardEncoder)
+    return json.dumps(
+        {
+            "dashboard": dashboard.to_json_data(),
+            "overwrite": overwrite,
+            "message": message
+        }, sort_keys=True, indent=2, cls=DashboardEncoder)
 
 
-def upload_to_grafana(json, server, api_key):
+def upload_to_grafana(json, server, api_key, verify=True):
     '''
     upload_to_grafana tries to upload dashboard to grafana and prints response
 
@@ -26,7 +31,7 @@ def upload_to_grafana(json, server, api_key):
     '''
 
     headers = {'Authorization': f"Bearer {api_key}", 'Content-Type': 'application/json'}
-    r = requests.post(f"https://{server}/api/dashboards/db", data=json, headers=headers)
+    r = requests.post(f"https://{server}/api/dashboards/db", data=json, headers=headers, verify=verify)
     # TODO: add error handling
     print(f"{r.status_code} - {r.content}")
 
@@ -34,6 +39,6 @@ def upload_to_grafana(json, server, api_key):
 grafana_api_key = getenv("GRAFANA_API_KEY")
 grafana_server = getenv("GRAFANA_SERVER")
 
-my_dashboard = Dashboard(title="My awesome dashboard")
-my_dashboard_json = get_dashboard_json(my_dashboard)
+my_dashboard = Dashboard(title="My awesome dashboard", uid='abifsd')
+my_dashboard_json = get_dashboard_json(my_dashboard, overwrite=True)
 upload_to_grafana(my_dashboard_json, grafana_server, grafana_api_key)
