@@ -1000,6 +1000,17 @@ class AlertCondition(object):
     :param operator: One of ``OP_AND`` or ``OP_OR``. How this condition
         combines with other conditions.
     :param reducerType: RTYPE_*
+        Supported reducer types:
+        RTYPE_AVG = 'avg'
+        RTYPE_MIN = 'min'
+        RTYPE_MAX = 'max'
+        RTYPE_SUM = 'sum'
+        RTYPE_COUNT = 'count'
+        RTYPE_LAST = 'last'
+        RTYPE_MEDIAN = 'median'
+        RTYPE_DIFF = 'diff'
+        RTYPE_PERCENT_DIFF = 'percent_diff'
+        RTYPE_COUNT_NON_NULL = 'count_non_null'
     :param type: CTYPE_*
     """
 

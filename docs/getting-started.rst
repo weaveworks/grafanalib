@@ -19,9 +19,8 @@ or submit a PR to the GitHub `repository <https://github.com/weaveworks/grafanal
 Writing dashboards
 ==================
 
-The following will configure a dashboard with a single row, with one QPS graph
-broken down by status code and another latency graph showing median and 99th
-percentile latency:
+The following will configure a dashboard with a couple of example panels that
+use the random walk and Prometheus datasources.
 
 .. literalinclude:: ../grafanalib/tests/examples/example.dashboard.py
    :language: python
@@ -45,7 +44,7 @@ If you save the above as ``example.dashboard.py`` (the suffix must be
 Generating dashboards from code
 ===============================
 
-Sometimes you may need to generate and upload dashboard directly from Python 
+Sometimes you may need to generate and upload dashboard directly from Python
 code. The following example provides minimal code boilerplate for it:
 
 .. literalinclude:: ../grafanalib/tests/examples/example.upload-dashboard.py
