@@ -9,6 +9,7 @@ Changelog
 * Added support for fields value in Stat panel
 * Added ``alertName`` parameter to AlertList panel
 * Added ``thresholdsStyleMode`` parameter to TimeSeries panel
+* Added Histogram panel support
 
 0.6.1 (2021-11-23)
 ==================

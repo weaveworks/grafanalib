@@ -96,6 +96,7 @@ PIE_CHART_V2_TYPE = 'piechart'
 TIMESERIES_TYPE = 'timeseries'
 WORLD_MAP_TYPE = 'grafana-worldmap-panel'
 NEWS_TYPE = 'news'
+HISTOGRAM_TYPE = 'histogram'
 
 DEFAULT_FILL = 1
 DEFAULT_REFRESH = '10s'
@@ -3491,6 +3492,67 @@ class StateTimeline(Panel):
                 'type': STATE_TIMELINE_TYPE,
             }
         )
+
+
+@attr.s
+class Histogram(Panel):
+    """Generates Histogram panel json structure
+    Grafana docs on Histogram panel: https://grafana.com/docs/grafana/latest/visualizations/histogram/#
+
+    :param bucketOffset: Bucket offset for none-zero-based buckets
+    :param bucketSize: Bucket size, default Auto
+    :param colorMode: Default thresholds
+    :param combine: Combine all series into a single histogram
+    :param fillOpacity: Controls the opacity of state regions, default 0.9
+    :param legendDisplayMode: refine how the legend appears, list, table or hidden
+    :param legendPlacement: bottom or top
+    :param lineWidth: Controls line width of state regions
+    :param mappings: To assign colors to boolean or string values, use Value mappings
+    :param overrides: To override the base characteristics of certain data
+    """
+    bucketOffset = attr.ib(default=0, validator=instance_of(int))
+    bucketSize = attr.ib(default=0, validator=instance_of(int))
+    colorMode = attr.ib(default='thresholds', validator=instance_of(str))
+    combine = attr.ib(default=False, validator=instance_of(bool))
+    fillOpacity = attr.ib(default=80, validator=instance_of(int))
+    legendDisplayMode = attr.ib(default='list', validator=instance_of(str))
+    legendPlacement = attr.ib(default='bottom', validator=instance_of(str))
+    lineWidth = attr.ib(default=0, validator=instance_of(int))
+    mappings = attr.ib(default=attr.Factory(list))
+    overrides = attr.ib(default=attr.Factory(list))
+
+    def to_json_data(self):
+        histogram = self.panel_json(
+            {
+                'fieldConfig': {
+                    'defaults': {
+                        'custom': {
+                            'lineWidth': self.lineWidth,
+                            'fillOpacity': self.fillOpacity
+                        },
+                        'color': {
+                            'mode': self.colorMode
+                        },
+                        'mappings': self.mappings
+                    },
+                    'overrides': self.overrides
+                },
+                'options': {
+                    'legend': {
+                        'displayMode': self.legendDisplayMode,
+                        'placement': self.legendPlacement
+                    },
+                    "bucketOffset": self.bucketOffset,
+                    "combine": self.combine,
+                },
+                'type': HISTOGRAM_TYPE,
+            }
+        )
+
+        if self.bucketSize > 0:
+            histogram['options']['bucketSize'] = self.bucketSize
+
+        return histogram
 
 
 @attr.s

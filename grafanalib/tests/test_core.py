@@ -681,6 +681,23 @@ def test_pieChartv2():
     assert data["title"] == title
 
 
+def test_histogram():
+    data_source = "dummy data source"
+    targets = ["dummy_prom_query"]
+    title = "dummy title"
+    panel = G.Histogram(data_source, targets, title)
+    data = panel.to_json_data()
+    assert data["targets"] == targets
+    assert data["datasource"] == data_source
+    assert data["title"] == title
+    assert 'bucketSize' not in data['options']
+
+    bucketSize = 5
+    panel = G.Histogram(data_source, targets, title, bucketSize=bucketSize)
+    data = panel.to_json_data()
+    assert data['options']['bucketSize'] == bucketSize
+
+
 def test_sql_target():
     t = G.Table(
         dataSource="some data source",
