@@ -2,6 +2,9 @@
 Changelog
 =========
 
+0.6.2 (2022-02-24)
+==================
+
 * Added percentage type for thresholds
 * Added ``datasource`` parameter to CloudWatch targets
 * Added support for auto panels ids to AlertList panel
@@ -10,6 +13,7 @@ Changelog
 * Added ``alertName`` parameter to AlertList panel
 * Added ``thresholdsStyleMode`` parameter to TimeSeries panel
 * Added Histogram panel support
+* Dashboard upload script updated to support overwriting dashboards
 
 0.6.1 (2021-11-23)
 ==================
