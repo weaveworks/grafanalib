@@ -2,6 +2,11 @@
 Changelog
 =========
 
+x.x.x (TBD)
+==================
+* Added ``hide`` parameter to ElasticsearchTarget
+* Added ExpressionTarget support for ElasticSearch data sources
+
 0.6.2 (2022-02-24)
 ==================
 

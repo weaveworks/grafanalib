@@ -363,6 +363,7 @@ class ElasticsearchTarget(object):
     :param query: query
     :param refId: target reference id
     :param timeField: name of the elasticsearch time field
+    :param hide: show or hide the results on the panel
     """
 
     alias = attr.ib(default=None)
@@ -373,6 +374,7 @@ class ElasticsearchTarget(object):
     query = attr.ib(default="", validator=instance_of(str))
     refId = attr.ib(default="", validator=instance_of(str))
     timeField = attr.ib(default="@timestamp", validator=instance_of(str))
+    hide = attr.ib(default=False, validator=instance_of(bool))
 
     def _map_bucket_aggs(self, f):
         return attr.evolve(self, bucketAggs=list(map(f, self.bucketAggs)))
@@ -407,6 +409,7 @@ class ElasticsearchTarget(object):
             'query': self.query,
             'refId': self.refId,
             'timeField': self.timeField,
+            'hide': self.hide,
         }
 
 
@@ -497,4 +500,28 @@ class PercentilesMetricAgg(object):
             'field': self.field,
             'inlineScript': self.inline,
             'settings': self.settings,
+        }
+
+
+@attr.s
+class ExpressionTarget(object):
+    """Generates experimental Elasticsearch Expression target JSON structure.
+
+    :param expression: expression to use
+    :param refId: target reference id
+    :param hide: show or hide result
+    :param type: type of expression
+    """
+    expression = attr.ib(default="", validator=instance_of(str))
+    refId = attr.ib(default="", validator=instance_of(str))
+    hide = attr.ib(default=False, validator=instance_of(bool))
+    type = attr.ib(default="math", validator=instance_of(str))
+
+    def to_json_data(self):
+        return {
+            "refId": self.refId,
+            "type": self.type,
+            "datasource": "__expr__",
+            "hide": self.hide,
+            "expression": self.expression
         }
