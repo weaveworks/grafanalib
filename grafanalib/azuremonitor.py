@@ -34,11 +34,13 @@ class AzureMonitorMetricsTarget(object):
     queryType = attr.ib(default="Azure Monitor")
     subscription = attr.ib(default="")
     refId = attr.ib(default="")
+    alias = attr.ib(default="")
 
     def to_json_data(self):
         return {
             "azureMonitor": {
                 "aggregation": self.aggregation,
+                "alias": self.alias,
                 "dimensionFilters": self.dimensionFilters,
                 "metricDefinition": self.metricDefinition,
                 "metricName": self.metricName,
