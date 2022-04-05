@@ -103,7 +103,7 @@ class ZabbixTarget(object):
     to visualize monitoring data from Zabbix and create
     dashboards for analyzing metrics and realtime monitoring.
 
-    Grafana docs on using Zabbix pluging: http://docs.grafana-zabbix.org/
+    Grafana docs on using Zabbix plugin: https://alexanderzobnin.github.io/grafana-zabbix/
 
     :param application: zabbix application name
     :param expr: zabbix arbitary query
@@ -172,7 +172,7 @@ class ZabbixDeltaFunction(object):
     """ZabbixDeltaFunction
 
     Convert absolute values to delta, for example, bits to bits/sec
-    http://docs.grafana-zabbix.org/reference/functions/#delta
+    https://alexanderzobnin.github.io/grafana-zabbix/reference/functions/#delta
     """
     added = attr.ib(default=False, validator=instance_of(bool))
 
@@ -197,7 +197,7 @@ class ZabbixGroupByFunction(object):
 
     Takes each timeseries and consolidate its points falled in given interval
     into one point using function, which can be one of: avg, min, max, median.
-    http://docs.grafana-zabbix.org/reference/functions/#groupBy
+    https://alexanderzobnin.github.io/grafana-zabbix/reference/functions//#groupBy
     """
 
     _options = ('avg', 'min', 'max', 'median')
@@ -238,7 +238,7 @@ class ZabbixScaleFunction(object):
     """ZabbixScaleFunction
 
     Takes timeseries and multiplies each point by the given factor.
-    http://docs.grafana-zabbix.org/reference/functions/#scale
+    https://alexanderzobnin.github.io/grafana-zabbix/reference/functions//#scale
     """
 
     _default_factor = 100
@@ -272,7 +272,7 @@ class ZabbixAggregateByFunction(object):
     Takes all timeseries and consolidate all its points falled in given
     interval into one point using function, which can be one of:
     avg, min, max, median.
-    http://docs.grafana-zabbix.org/reference/functions/#aggregateBy
+    https://alexanderzobnin.github.io/grafana-zabbix/reference/functions/#aggregateBy
     """
 
     _options = ('avg', 'min', 'max', 'median')
@@ -313,7 +313,7 @@ class ZabbixAverageFunction(object):
     """ZabbixAverageFunction
 
     Deprecated, use aggregateBy(interval, avg) instead.
-    http://docs.grafana-zabbix.org/reference/functions/#average
+    https://alexanderzobnin.github.io/grafana-zabbix/reference/functions/#average
     """
 
     _default_interval = '1m'
@@ -347,7 +347,7 @@ class ZabbixMaxFunction(object):
     """ZabbixMaxFunction
 
     Deprecated, use aggregateBy(interval, max) instead.
-    http://docs.grafana-zabbix.org/reference/functions/#max
+    https://alexanderzobnin.github.io/grafana-zabbix/reference/functions/#max
     """
 
     _default_interval = '1m'
@@ -381,7 +381,7 @@ class ZabbixMedianFunction(object):
     """ZabbixMedianFunction
 
     Deprecated, use aggregateBy(interval, median) instead.
-    http://docs.grafana-zabbix.org/reference/functions/#median
+    https://alexanderzobnin.github.io/grafana-zabbix/reference/functions/#median
     """
 
     _default_interval = '1m'
@@ -415,7 +415,7 @@ class ZabbixMinFunction(object):
     """ZabbixMinFunction
 
     Deprecated, use aggregateBy(interval, min) instead.
-    http://docs.grafana-zabbix.org/reference/functions/#min
+    https://alexanderzobnin.github.io/grafana-zabbix/reference/functions/#min
     """
 
     _default_interval = '1m'
@@ -452,7 +452,7 @@ class ZabbixSumSeriesFunction(object):
     This method required interpolation of each timeseries so it may
     cause high CPU load.
     Try to combine it with groupBy() function to reduce load.
-    http://docs.grafana-zabbix.org/reference/functions/#sumSeries
+    https://alexanderzobnin.github.io/grafana-zabbix/reference/functions/#sumSeries
     """
     added = attr.ib(default=False)
 
@@ -549,7 +549,7 @@ class ZabbixTrendValueFunction(object):
 
     Specifying type of trend value returned by Zabbix when
     trends are used (avg, min or max).
-    http://docs.grafana-zabbix.org/reference/functions/#trendValue
+    https://alexanderzobnin.github.io/grafana-zabbix/reference/functions/#trendValue
     """
 
     _options = ('avg', 'min', 'max')
@@ -587,7 +587,7 @@ class ZabbixTimeShiftFunction(object):
     If no sign is given, a minus sign ( - ) is implied which will
     shift the metric back in time.
     If a plus sign ( + ) is given, the metric will be shifted forward in time.
-    http://docs.grafana-zabbix.org/reference/functions/#timeShift
+    https://alexanderzobnin.github.io/grafana-zabbix/reference/functions/#timeShift
     """
 
     _options = ('24h', '7d', '1M', '+24h', '-24h')
@@ -622,7 +622,7 @@ class ZabbixSetAliasFunction(object):
     """ZabbixSetAliasFunction
 
     Returns given alias instead of the metric name.
-    http://docs.grafana-zabbix.org/reference/functions/#setAlias
+    https://alexanderzobnin.github.io/grafana-zabbix/reference/functions/#setAlias
     """
     alias = attr.ib(validator=instance_of(str))
     added = attr.ib(default=False, validator=instance_of(bool))
@@ -649,7 +649,7 @@ class ZabbixSetAliasByRegexFunction(object):
     """ZabbixSetAliasByRegexFunction
 
     Returns part of the metric name matched by regex.
-    http://docs.grafana-zabbix.org/reference/functions/#setAliasByRegex
+    https://alexanderzobnin.github.io/grafana-zabbix/reference/functions/#setAliasByRegex
     """
 
     regexp = attr.ib(validator=instance_of(str))
