@@ -2,6 +2,8 @@
 Changelog
 =========
 
+* Added ``legendCalcs`` parameter to TimeSeries Panel
+
 0.6.2 (2022-02-24)
 ==================
 
