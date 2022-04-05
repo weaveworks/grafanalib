@@ -1554,6 +1554,10 @@ class TimeSeries(Panel):
     :param legendDisplayMode: refine how the legend appears in your visualization
         list (Default), table, hidden
     :param legendPlacement: bottom (Default), right
+    :param legendCalcs: which calculations should be displayed in the legend. Defaults to an empty list.
+        Possible values are: allIsNull, allIsZero, changeCount, count, delta, diff, diffperc,
+        distinctCount, firstNotNull, max, mean, min, logmin, range, step, total. For more information see
+        https://grafana.com/docs/grafana/next/panels/reference-calculation-types/
     :param lineInterpolation: line interpolation
         linear (Default), smooth, stepBefore, stepAfter
     :param lineWidth: line width, default 1
@@ -1582,6 +1586,34 @@ class TimeSeries(Panel):
     gradientMode = attr.ib(default='none', validator=instance_of(str))
     legendDisplayMode = attr.ib(default='list', validator=instance_of(str))
     legendPlacement = attr.ib(default='bottom', validator=instance_of(str))
+    legendCalcs = attr.ib(
+        default=[],
+        validator=attr.validators.deep_iterable(
+            member_validator=in_([
+                'lastNotNull',
+                'min',
+                'mean',
+                'max',
+                'last',
+                'firstNotNull',
+                'first',
+                'sum',
+                'count',
+                'range',
+                'delta',
+                'step',
+                'diff',
+                'logmin',
+                'allIsZero',
+                'allIsNull',
+                'changeCount',
+                'distinctCount',
+                'diffperc',
+                'allValues'
+            ]),
+            iterable_validator=instance_of(list),
+        ),
+    )
     lineInterpolation = attr.ib(default='linear', validator=instance_of(str))
     lineWidth = attr.ib(default=1, validator=instance_of(int))
     mappings = attr.ib(default=attr.Factory(list))
@@ -1639,7 +1671,7 @@ class TimeSeries(Panel):
                     'legend': {
                         'displayMode': self.legendDisplayMode,
                         'placement': self.legendPlacement,
-                        'calcs': []
+                        'calcs': self.legendCalcs
                     },
                     'tooltip': {
                         'mode': self.tooltipMode
