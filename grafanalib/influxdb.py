@@ -17,6 +17,7 @@ class InfluxDBTarget(object):
 
     :param alias: legend alias
     :param format: Bucket aggregators
+    :param datasource: Influxdb name (for multiple datasource with same panel)
     :param measurement: Metric Aggregators
     :param query: query
     :param rawQuery: target reference id
@@ -25,6 +26,7 @@ class InfluxDBTarget(object):
 
     alias = attr.ib(default="")
     format = attr.ib(default=TIME_SERIES_TARGET_FORMAT)
+    datasource = attr.ib(default="")
     measurement = attr.ib(default="")
     query = attr.ib(default="")
     rawQuery = attr.ib(default=True)
@@ -35,6 +37,7 @@ class InfluxDBTarget(object):
             'query': self.query,
             'resultFormat': self.format,
             'alias': self.alias,
+            'datasource': self.datasource,
             'measurement': self.measurement,
             'rawQuery': self.rawQuery,
             'refId': self.refId
