@@ -6,6 +6,7 @@ x.x.x (TBC)
 ===========
 
 * Added ...
+* Added datasource parameter to Influxdb targets
 
 
 0.6.3 (2022-03-30)
