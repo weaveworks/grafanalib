@@ -235,3 +235,7 @@ CUBIC_METER = 'm3'           # m³
 NORMAIL_CUBIC_METER = 'Nm3'  # Nm³
 CUBIC_DECI_METER = 'dm3'     # dm³
 GALLONS = 'gallons'          # g
+# Boolean
+TRUE_FALSE = 'bool'      # True/False
+YES_NO = 'bool_yes_no'   # Yes/No
+ON_OFF = 'bool_on_off'   # On/Off
