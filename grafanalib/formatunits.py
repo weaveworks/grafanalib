@@ -107,6 +107,7 @@ KILO_VAR = 'kvoltampreact'     # kVAR
 WATT_HOUR = 'watth'            # Wh
 WATT_HOUR_KILO = 'watthperkg'  # Wh/kg
 KILO_WATT_HOUR = 'kwatth'      # kWh
+KILO_WATT_MIN = 'kwattm'       # kWm
 AMPERE_HOUR = 'amph'           # Ah
 KILO_AMPERE_HR = 'kamph'       # kAh
 MILLI_AMPER_HOUR = 'mamph'     # mAh
@@ -156,10 +157,12 @@ EXA_HASHES_PER_SEC = 'EHs'   # EH/s
 # Mass
 MILLI_GRAM = 'massmg'  # mg
 GRAM = 'massg'         # g
+POUND = 'masslb'       # lb
 KILO_GRAM = 'masskg'   # kg
 METRIC_TON = 'masst'   # t
 # Length
 MILLI_METER = 'lengthmm'  # mm
+INCH = 'lengthin'         # in
 METER = 'lengthm'         # m
 KILO_METER = 'lengthkm'   # km
 FEET = 'lengthft'         # ft
