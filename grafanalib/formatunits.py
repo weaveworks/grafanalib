@@ -10,9 +10,18 @@ format = UNITS.BYTES
 
 NO_FORMAT = 'none'
 NONE_FORMAT = 'none'
+NUMBER_FORMAT = 'none'
+STRING_FORMAT = 'string'
 PERCENT_UNIT = 'percentunit'
 PERCENT_FORMAT = 'percent'
 SHORT = 'short'
+HUMIDITY = 'humidity'     # %H
+DECIBEL = 'dB'
+HEXADECIMAL_OX = 'hex0x'  # 0x
+HEXADECIMAL = 'hex'
+SCI_NOTATION = 'sci'
+LOCAL_FORMAT = 'locale'
+PIXELS = 'pixel'
 # Acceleration
 METERS_SEC_2 = 'accMS2'  # m/sec²
 FEET_SEC_2 = 'accFS2'    # f/sec²
