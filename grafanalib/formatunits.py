@@ -102,6 +102,15 @@ MEGA_BITS_SEC = 'Mbits'  # Mb/s
 GIGA_BITS_SEC = 'Gbits'  # Gb/s
 TERA_BITS_SEC = 'Tbits'  # Tb/s
 PETA_BITS_SEC = 'Pbits'  # Pb/s
+# Date & Time
+DATE_TIME_ISO = 'dateTimeAsIso'
+DATE_TIME_ISO_TODAY = 'dateTimeAsIsoNoDateIfToday'
+DATE_TIME_US = 'dateTimeAsUS'
+DATE_TIME_US_TODAY = 'dateTimeAsUSNoDateIfToday'
+DATE_TIME_LOCAL = 'dateTimeAsLocal'
+DATE_TIME_LOCAL_TODAY = 'dateTimeAsLocalNoDateIfToday'
+DATE_TIME_DEFAULT = 'dateTimeAsSystem'
+DATE_TIME_FROM_NOW = 'dateTimeFromNow'
 # Energy
 WATT = 'watt'          # W
 KILO_WATT = 'kwatt'    # kW
