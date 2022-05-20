@@ -139,7 +139,7 @@ DATE_TIME_FROM_NOW = 'dateTimeFromNow'
 WATT = 'watt'          # W
 KILO_WATT = 'kwatt'    # kW
 MEGA_WATT = 'megwatt'  # MW
-GAGA_WATT = 'gwatt'    # GW
+GIGA_WATT = 'gwatt'    # GW
 MILLI_WATT = 'mwatt'   # mW
 WATT_SQUARE_METER = 'Wm2'      # W/m²
 VOLT_AMPERE = 'voltamp'        # VA
@@ -277,7 +277,7 @@ KNOTS = 'velocityknot'               # kn
 MILLI_LITRE = 'mlitre'       # mL
 LITRE = 'litre'              # L
 CUBIC_METER = 'm3'           # m³
-NORMAIL_CUBIC_METER = 'Nm3'  # Nm³
+NORMAL_CUBIC_METER = 'Nm3'   # Nm³
 CUBIC_DECI_METER = 'dm3'     # dm³
 GALLONS = 'gallons'          # g
 # Boolean
