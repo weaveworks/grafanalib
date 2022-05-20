@@ -81,21 +81,45 @@ INDIAN_RUPEE = 'currencyINR'        # ₹
 SOUTH_KOREAN_WON = 'currencyKRW'    # ₩
 INDONESIAN_RUPIAH = 'currencyIDR'   # Rp
 PHILIPPINE_PESO = 'currencyPHP'     # PHP
-# Data (metric)
+# Data
+BYTES_IEC = 'bytes'
 BYTES = 'decbytes'          # B
+BITS_IEC = 'bits'
+BITS = 'decbits'
+KIBI_BYTES = 'kbytes'       # KiB
 KILO_BYTES = 'deckbytes'    # kB
+MEBI_BYTES = 'mbytes'       # MiB
 MEGA_BYTES = 'decmbytes'    # MB
+GIBI_BYTES = 'gbytes'       # GiB
 GIGA_BYTES = 'decgbytes'    # GB
+TEBI_BYTES = 'tbytes'       # TiB
 TERA_BYTES = 'dectbytes'    # TB
+PEBI_BYTES = 'pbytes'       # PiB
 PETA_BYTES = 'decpbytes'    # PB
 # Data Rate
 PACKETS_SEC = 'pps'      # p/s
+
+BYTES_SEC_IEC = 'binBps'  # B/s
+KIBI_BYTES_SEC = 'KiBs'   # KiB/s
+MEBI_BYTES_SEC = 'MiBs'   # MiB/s
+GIBI_BYTES_SEC = 'GiBs'   # GiB/s
+TEBI_BYTES_SEC = 'TiBs'   # TiB/s
+PEBI_BYTES_SEC = 'PiBs'   # PB/s
+
 BYTES_SEC = 'Bps'        # B/s
 KILO_BYTES_SEC = 'KBs'   # kB/s
 MEGA_BYTES_SEC = 'MBs'   # MB/s
 GIGA_BYTES_SEC = 'GBs'   # GB/s
 TERA_BYTES_SEC = 'TBs'   # TB/s
 PETA_BYTES_SEC = 'PBs'   # PB/s
+
+BITS_SEC_IEC = 'binbps'   # b/s
+KIBI_BITS_SEC = 'Kibits'  # Kib/s
+MEBI_BITS_SEC = 'Mibits'  # Mib/s
+GIBI_BITS_SEC = 'Gibits'  # Gib/s
+TEBI_BITS_SEC = 'Tibits'  # Tib/s
+PEBI_BITS_SEC = 'Pibits'  # Pib/s
+
 BITS_SEC = 'bps'         # b/s
 KILO_BITS_SEC = 'Kbits'  # kb/s
 MEGA_BITS_SEC = 'Mbits'  # Mb/s

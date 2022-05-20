@@ -7,7 +7,7 @@ x.x.x (TBC)
 
 * Added ...
 * Added datasource parameter to Influxdb targets
-* Added missing units for Boolean, Date & Time, Energy, Length,
+* Added missing units for Boolean, Data, Data Rate, Date & Time, Energy, Length,
   Mass, and Misc
 
 
