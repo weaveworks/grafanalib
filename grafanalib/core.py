@@ -1325,7 +1325,6 @@ class RowPanel(Panel):
     :param collapsed: set True if row should be collapsed
     :param panels: list of panels in the row, only to be used when collapsed=True
     """
-    collapsed = attr.ib(default=False, validator=instance_of(bool))
     panels = attr.ib(default=attr.Factory(list), validator=instance_of(list))
     collapsed = attr.ib(default=False, validator=instance_of(bool))
 
