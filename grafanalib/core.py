@@ -101,6 +101,8 @@ AE3E_PLOTLY_TYPE = 'ae3e-plotly-panel'
 
 DEFAULT_FILL = 1
 DEFAULT_REFRESH = '10s'
+DEFAULT_ALERT_EVALUATE_INTERVAL = '1m'
+DEFAULT_ALERT_EVALUATE_FOR = '5m'
 DEFAULT_ROW_HEIGHT = Pixels(250)
 DEFAULT_LINE_WIDTH = 2
 DEFAULT_POINT_RADIUS = 5
@@ -1093,15 +1095,38 @@ class Alert(object):
 class AlertRuler(object):
     """
     Create Alert Rule for grafana 8.x new system
+
+    :param name: the alert's name
+    :param dataSource: where to fetch the values for the variable from
+    :param target: Metric the alert condition is based on.
+
+    :param operator: Condittional Operator Should be gt or lt.
+        The list can contain a subset of the following statuses:
+        [EVAL_LT, EVAL_GT]
+    :param value: Numeric value for conditional processing.
+
+    :param evaluateInterval: specify the frequency of evaluation. Must be a multiple of 10 seconds. For examples, 1m, 30s
+    :param evaluateFor: specify the duration for which the condition must be true before an alert fires
+    :param alertStateFilterDataNoneOrNull: Define how to alert if data is none or null
+        The list can contain a subset of the following statuses:
+        [ALERTRULE_STATE_DATA_OK, ALERTRULE_STATE_DATA_NODATA, ALERTRULE_STATE_DATA_ALERTING]
+    :param alertStateFilterDataError: Define how to alert if data is on error
+        The list can contain a subset of the following statuses:
+        [ALERTRULE_STATE_DATA_OK, ALERTRULE_STATE_DATA_NODATA, ALERTRULE_STATE_DATA_ALERTING]
+
+    :param timeRangeFrom: Time range interpolation data start from
+    :param timeRangeTo: Time range interpolation data finish at
+    :param uid: Alert UID should be unique
+    :param dashboard_uid: Dashboard UID that should be use for linking on alert message
+    :param panel_id: Panel ID that should should be use for linking on alert message
     """
 
     name = attr.ib()
-    hostname = attr.ib(validator=instance_of(str))
-    measurement = attr.ib(validator=instance_of(str))
-    datasource = attr.ib(validator=instance_of(str))
     target = attr.ib()
-
+    datasource = attr.ib(validator=instance_of(str))
     value = attr.ib(validator=instance_of(int))
+
+    annotations = attr.ib(default={}, validator=instance_of(dict))
     operator = attr.ib(
         default=EVAL_GT,
         validator=in_([
@@ -1131,29 +1156,22 @@ class AlertRuler(object):
     timeRangeFrom = attr.ib(default=300, validator=instance_of(int))
     timeRangeTo = attr.ib(default=0, validator=instance_of(int))
     uid = attr.ib(default=None, validator=instance_of(str|None))
+
     dashboard_uid = attr.ib(default="", validator=instance_of(str))
     panel_id = attr.ib(default=0, validator=instance_of(int))
-    severity = attr.ib(
-        default="ok",
-        validator=in_(["ok", "warn", "crit"])
-    )
 
     def to_json_data(self):
+
+        self.annotations['__dashboardUid__'] = self.dashboard_uid
+        self.annotations['__panelId__'] = str(self.panel_id)
+
         return {
             'name': self.name,
             'interval': self.evaluateInterval,
             "rules": [
                 {
                     "for": self.evaluateFor,
-                    "annotations": {
-                        "__dashboardUid__": self.dashboard_uid,
-                        "__panelId__": str(self.panel_id),
-                        "hostname": self.hostname,
-                        "severity": self.severity.upper(),
-                        "measurement": "",
-                        "operator": self.operator,
-                        "value": str(self.value)
-                    },
+                    "annotations": self.annotations,
                     "grafana_alert": {
                         "condition": "CONDITIONNAL",
                         "data": [
