@@ -6,12 +6,14 @@ x.x.x (TBC)
 ===========
 
 * Added ...
+* Added Grafana 8.x new Alert Rule
 * Added ae3e plotly panel support
 * Added datasource parameter to Influxdb targets
 * Added missing units for Boolean, Data, Data Rate, Date & Time, Energy, Length,
   Mass, and Misc
 * Fix typo in unit constant ``GIGA_WATT`` (was ``GAGA_WATT``)
 * Fix typo in unit constant ``NORMAL_CUBIC_METER`` (was ``NORMAIL_CUBIC_METER``)
+
 
 
 0.6.3 (2022-03-30)

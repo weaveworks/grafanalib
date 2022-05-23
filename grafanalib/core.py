@@ -221,6 +221,11 @@ ALERTLIST_STATE_EXECUTION_ERROR = 'execution_error'
 ALERTLIST_STATE_ALERTING = 'alerting'
 ALERTLIST_STATE_PENDING = 'pending'
 
+# Alert Rule state filter options (Grafana 8.x)
+ALERTRULE_STATE_DATA_OK = 'OK'
+ALERTRULE_STATE_DATA_NODATA = 'No Data'
+ALERTRULE_STATE_DATA_ALERTING = 'Alerting'
+
 # Display Sort Order
 SORT_ASC = 1
 SORT_DESC = 2
@@ -1084,6 +1089,123 @@ class Alert(object):
             'alertRuleTags': self.alertRuleTags,
         }
 
+@attr.s
+class AlertRuler(object):
+    """
+    Create Alert Rule for grafana 8.x new system
+    """
+
+    name = attr.ib()
+    hostname = attr.ib(validator=instance_of(str))
+    measurement = attr.ib(validator=instance_of(str))
+    datasource = attr.ib(validator=instance_of(str))
+    target = attr.ib()
+
+    value = attr.ib(validator=instance_of(int))
+    operator = attr.ib(
+        default=EVAL_GT,
+        validator=in_([
+            EVAL_GT,
+            EVAL_LT
+        ])
+    )
+
+    evaluateInterval = attr.ib(default=DEFAULT_ALERT_EVALUATE_INTERVAL, validator=instance_of(str))
+    evaluateFor = attr.ib(default=DEFAULT_ALERT_EVALUATE_FOR, validator=instance_of(str))
+    alertStateFilterDataNoneOrNull = attr.ib(
+        default=ALERTRULE_STATE_DATA_ALERTING,
+        validator=in_([
+            ALERTRULE_STATE_DATA_OK,
+            ALERTRULE_STATE_DATA_NODATA,
+            ALERTRULE_STATE_DATA_ALERTING
+        ])
+    )
+    alertStateFilterDataError = attr.ib(
+        default=ALERTRULE_STATE_DATA_ALERTING,
+        validator=in_([
+            ALERTRULE_STATE_DATA_OK,
+            ALERTRULE_STATE_DATA_NODATA,
+            ALERTRULE_STATE_DATA_ALERTING
+        ])
+    )
+    timeRangeFrom = attr.ib(default=300, validator=instance_of(int))
+    timeRangeTo = attr.ib(default=0, validator=instance_of(int))
+    uid = attr.ib(default=None, validator=instance_of(str|None))
+    dashboard_uid = attr.ib(default="", validator=instance_of(str))
+    panel_id = attr.ib(default=0, validator=instance_of(int))
+    severity = attr.ib(
+        default="ok",
+        validator=in_(["ok", "warn", "crit"])
+    )
+
+    def to_json_data(self):
+        return {
+            'name': self.name,
+            'interval': self.evaluateInterval,
+            "rules": [
+                {
+                    "for": self.evaluateFor,
+                    "annotations": {
+                        "__dashboardUid__": self.dashboard_uid,
+                        "__panelId__": str(self.panel_id),
+                        "hostname": self.hostname,
+                        "severity": self.severity.upper(),
+                        "measurement": "",
+                        "operator": self.operator,
+                        "value": str(self.value)
+                    },
+                    "grafana_alert": {
+                        "condition": "CONDITIONNAL",
+                        "data": [
+                            {
+                                "refId": "VALUE",
+                                "relativeTimeRange": {
+                                    "from": self.timeRangeFrom,
+                                    "to": self.timeRangeTo
+                                },
+                                "datasourceUid": self.datasource,
+                                "model": self.target
+                            },
+                            {
+                                "refId": "CONDITIONNAL",
+                                "datasourceUid": "-100",
+                                "model": {
+                                    "conditions": [
+                                        {
+                                            "evaluator": {
+                                                "params": [
+                                                    self.value
+                                                ],
+                                                "type": self.operator
+                                            },
+                                            "operator": {
+                                                "type": "and"
+                                            },
+                                            "query": {
+                                                "params": [
+                                                    "VALUE"
+                                                ]
+                                            },
+                                            "reducer": {
+                                                "params": [],
+                                                "type": "last"
+                                            },
+                                            "type": "query"
+                                        }
+                                    ],
+                                    "refId": "CONDITIONNAL",
+                                    "type": "classic_conditions"
+                                }
+                            }
+                        ],
+                        "exec_err_state": self.alertStateFilterDataError,
+                        "no_data_state": self.alertStateFilterDataNoneOrNull,
+                        "uid": self.uid,
+                        "title": self.name
+                    }
+                }
+            ]
+        }
 
 @attr.s
 class Notification(object):
