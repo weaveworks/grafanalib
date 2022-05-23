@@ -589,6 +589,15 @@ def test_alert():
     )
     alert.to_json_data()
 
+def test_alertruler():
+    alert = G.AlertRuler(
+        name=name,
+        target=['dummy_prom_query'],
+        datasource='dummy data source',
+        value=90
+    )
+    alert.to_json_data()
+    assert data['title'] == name
 
 def test_worldmap():
     data_source = 'dummy data source'
