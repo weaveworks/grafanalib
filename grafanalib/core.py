@@ -1147,7 +1147,7 @@ class Dashboard(object):
             if hasattr(panel, 'panels'):
                 yield panel
                 for row_panel in panel._iter_panels():
-                    yield panel
+                    yield row_panel
             else:
                 yield panel
 
