@@ -10,9 +10,18 @@ format = UNITS.BYTES
 
 NO_FORMAT = 'none'
 NONE_FORMAT = 'none'
+NUMBER_FORMAT = 'none'
+STRING_FORMAT = 'string'
 PERCENT_UNIT = 'percentunit'
 PERCENT_FORMAT = 'percent'
 SHORT = 'short'
+HUMIDITY = 'humidity'     # %H
+DECIBEL = 'dB'
+HEXADECIMAL_OX = 'hex0x'  # 0x
+HEXADECIMAL = 'hex'
+SCI_NOTATION = 'sci'
+LOCAL_FORMAT = 'locale'
+PIXELS = 'pixel'
 # Acceleration
 METERS_SEC_2 = 'accMS2'  # m/sec²
 FEET_SEC_2 = 'accFS2'    # f/sec²
@@ -72,32 +81,65 @@ INDIAN_RUPEE = 'currencyINR'        # ₹
 SOUTH_KOREAN_WON = 'currencyKRW'    # ₩
 INDONESIAN_RUPIAH = 'currencyIDR'   # Rp
 PHILIPPINE_PESO = 'currencyPHP'     # PHP
-# Data (metric)
+# Data
+BYTES_IEC = 'bytes'
 BYTES = 'decbytes'          # B
+BITS_IEC = 'bits'
+BITS = 'decbits'
+KIBI_BYTES = 'kbytes'       # KiB
 KILO_BYTES = 'deckbytes'    # kB
+MEBI_BYTES = 'mbytes'       # MiB
 MEGA_BYTES = 'decmbytes'    # MB
+GIBI_BYTES = 'gbytes'       # GiB
 GIGA_BYTES = 'decgbytes'    # GB
+TEBI_BYTES = 'tbytes'       # TiB
 TERA_BYTES = 'dectbytes'    # TB
+PEBI_BYTES = 'pbytes'       # PiB
 PETA_BYTES = 'decpbytes'    # PB
 # Data Rate
 PACKETS_SEC = 'pps'      # p/s
+
+BYTES_SEC_IEC = 'binBps'  # B/s
+KIBI_BYTES_SEC = 'KiBs'   # KiB/s
+MEBI_BYTES_SEC = 'MiBs'   # MiB/s
+GIBI_BYTES_SEC = 'GiBs'   # GiB/s
+TEBI_BYTES_SEC = 'TiBs'   # TiB/s
+PEBI_BYTES_SEC = 'PiBs'   # PB/s
+
 BYTES_SEC = 'Bps'        # B/s
 KILO_BYTES_SEC = 'KBs'   # kB/s
 MEGA_BYTES_SEC = 'MBs'   # MB/s
 GIGA_BYTES_SEC = 'GBs'   # GB/s
 TERA_BYTES_SEC = 'TBs'   # TB/s
 PETA_BYTES_SEC = 'PBs'   # PB/s
+
+BITS_SEC_IEC = 'binbps'   # b/s
+KIBI_BITS_SEC = 'Kibits'  # Kib/s
+MEBI_BITS_SEC = 'Mibits'  # Mib/s
+GIBI_BITS_SEC = 'Gibits'  # Gib/s
+TEBI_BITS_SEC = 'Tibits'  # Tib/s
+PEBI_BITS_SEC = 'Pibits'  # Pib/s
+
 BITS_SEC = 'bps'         # b/s
 KILO_BITS_SEC = 'Kbits'  # kb/s
 MEGA_BITS_SEC = 'Mbits'  # Mb/s
 GIGA_BITS_SEC = 'Gbits'  # Gb/s
 TERA_BITS_SEC = 'Tbits'  # Tb/s
 PETA_BITS_SEC = 'Pbits'  # Pb/s
+# Date & Time
+DATE_TIME_ISO = 'dateTimeAsIso'
+DATE_TIME_ISO_TODAY = 'dateTimeAsIsoNoDateIfToday'
+DATE_TIME_US = 'dateTimeAsUS'
+DATE_TIME_US_TODAY = 'dateTimeAsUSNoDateIfToday'
+DATE_TIME_LOCAL = 'dateTimeAsLocal'
+DATE_TIME_LOCAL_TODAY = 'dateTimeAsLocalNoDateIfToday'
+DATE_TIME_DEFAULT = 'dateTimeAsSystem'
+DATE_TIME_FROM_NOW = 'dateTimeFromNow'
 # Energy
 WATT = 'watt'          # W
 KILO_WATT = 'kwatt'    # kW
 MEGA_WATT = 'megwatt'  # MW
-GAGA_WATT = 'gwatt'    # GW
+GIGA_WATT = 'gwatt'    # GW
 MILLI_WATT = 'mwatt'   # mW
 WATT_SQUARE_METER = 'Wm2'      # W/m²
 VOLT_AMPERE = 'voltamp'        # VA
@@ -107,6 +149,7 @@ KILO_VAR = 'kvoltampreact'     # kVAR
 WATT_HOUR = 'watth'            # Wh
 WATT_HOUR_KILO = 'watthperkg'  # Wh/kg
 KILO_WATT_HOUR = 'kwatth'      # kWh
+KILO_WATT_MIN = 'kwattm'       # kWm
 AMPERE_HOUR = 'amph'           # Ah
 KILO_AMPERE_HR = 'kamph'       # kAh
 MILLI_AMPER_HOUR = 'mamph'     # mAh
@@ -156,10 +199,12 @@ EXA_HASHES_PER_SEC = 'EHs'   # EH/s
 # Mass
 MILLI_GRAM = 'massmg'  # mg
 GRAM = 'massg'         # g
+POUND = 'masslb'       # lb
 KILO_GRAM = 'masskg'   # kg
 METRIC_TON = 'masst'   # t
 # Length
 MILLI_METER = 'lengthmm'  # mm
+INCH = 'lengthin'         # in
 METER = 'lengthm'         # m
 KILO_METER = 'lengthkm'   # km
 FEET = 'lengthft'         # ft
@@ -232,6 +277,10 @@ KNOTS = 'velocityknot'               # kn
 MILLI_LITRE = 'mlitre'       # mL
 LITRE = 'litre'              # L
 CUBIC_METER = 'm3'           # m³
-NORMAIL_CUBIC_METER = 'Nm3'  # Nm³
+NORMAL_CUBIC_METER = 'Nm3'   # Nm³
 CUBIC_DECI_METER = 'dm3'     # dm³
 GALLONS = 'gallons'          # g
+# Boolean
+TRUE_FALSE = 'bool'      # True/False
+YES_NO = 'bool_yes_no'   # Yes/No
+ON_OFF = 'bool_on_off'   # On/Off
