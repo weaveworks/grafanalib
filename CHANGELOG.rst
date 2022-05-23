@@ -6,6 +6,7 @@ x.x.x (TBC)
 ===========
 
 * Added ...
+* Added Grafana 8.x new Alert Rule
 
 
 0.6.3 (2022-03-30)
