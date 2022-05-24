@@ -262,6 +262,10 @@ GAUGE_DISPLAY_MODE_BASIC = 'basic'
 GAUGE_DISPLAY_MODE_LCD = 'lcd'
 GAUGE_DISPLAY_MODE_GRADIENT = 'gradient'
 
+GRAPH_TOOLTIP_MODE_NOT_SHARED = 0
+GRAPH_TOOLTIP_MODE_SHARED_CROSSHAIR = 1
+GRAPH_TOOLTIP_MODE_SHARED_TOOLTIP = 2  # Shared crosshair AND tooltip
+
 DEFAULT_AUTO_COUNT = 30
 DEFAULT_MIN_AUTO_INTERVAL = '10s'
 
@@ -1105,6 +1109,14 @@ class Dashboard(object):
         validator=instance_of(bool),
     )
     gnetId = attr.ib(default=None)
+
+    # Documented in Grafana 6.1.6, and obsoletes sharedCrosshair.  Requires a
+    # newer schema than the current default of 12.
+    graphTooltip = attr.ib(
+        default=GRAPH_TOOLTIP_MODE_NOT_SHARED,
+        validator=instance_of(int),
+    )
+
     hideControls = attr.ib(
         default=False,
         validator=instance_of(bool),
@@ -1185,6 +1197,7 @@ class Dashboard(object):
             'description': self.description,
             'editable': self.editable,
             'gnetId': self.gnetId,
+            'graphTooltip': self.graphTooltip,
             'hideControls': self.hideControls,
             'id': self.id,
             'links': self.links,
