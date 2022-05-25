@@ -1151,7 +1151,7 @@ class AlertRuler(object):
     )
     timeRangeFrom = attr.ib(default=300, validator=instance_of(int))
     timeRangeTo = attr.ib(default=0, validator=instance_of(int))
-    uid = attr.ib(default=None, validator=instance_of(str))
+    uid = attr.ib(default=None, validator=attr.validators.optional(instance_of(str)))
 
     dashboard_uid = attr.ib(default="", validator=instance_of(str))
     panel_id = attr.ib(default=0, validator=instance_of(int))
