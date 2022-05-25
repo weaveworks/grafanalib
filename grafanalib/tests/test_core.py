@@ -599,7 +599,8 @@ def test_alertruler():
         value=90
     )
     data = alert.to_json_data()
-    assert data['title'] == name
+    assert data['name'] == name
+    assert data['rules'][0]['grafana_alert']['title'] == name
 
 
 def test_worldmap():
