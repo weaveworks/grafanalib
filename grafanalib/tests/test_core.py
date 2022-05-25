@@ -591,6 +591,7 @@ def test_alert():
     )
     alert.to_json_data()
 
+
 def test_alertruler():
     name = "Dummy Alert Rule"
     alert = G.AlertRuler(
@@ -601,6 +602,7 @@ def test_alertruler():
     )
     data = alert.to_json_data()
     assert data['title'] == name
+
 
 def test_worldmap():
     data_source = 'dummy data source'
