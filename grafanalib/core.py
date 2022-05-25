@@ -1556,7 +1556,7 @@ class TimeSeries(Panel):
     :param legendCalcs: which calculations should be displayed in the legend. Defaults to an empty list.
         Possible values are: allIsNull, allIsZero, changeCount, count, delta, diff, diffperc,
         distinctCount, firstNotNull, max, mean, min, logmin, range, step, total. For more information see
-        https://grafana.com/docs/grafana/next/panels/reference-calculation-types/
+        https://grafana.com/docs/grafana/next/panels/calculation-types/
     :param lineInterpolation: line interpolation
         linear (Default), smooth, stepBefore, stepAfter
     :param lineWidth: line width, default 1
