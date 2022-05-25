@@ -6,7 +6,9 @@ x.x.x (TBC)
 ===========
 
 * Added ...
-
+* Added Minimun option for Timeserie
+* Added Maximun option for Timeserie
+* Added Number of decimals displays option for Timeserie
 
 0.6.3 (2022-03-30)
 ==================
