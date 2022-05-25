@@ -10,7 +10,7 @@ x.x.x (TBC)
 * Added missing units for Boolean, Data, Data Rate, Date & Time, Energy, Length,
   Mass, and Misc
 * Fix typo in unit constant ``GIGA_WATT`` (was ``GAGA_WATT``)
-* Fix typo in unit constant ``NORMAL_CUBIC_METER`` (was ``NORMAIL_CUBIC_METER``) 
+* Fix typo in unit constant ``NORMAL_CUBIC_METER`` (was ``NORMAIL_CUBIC_METER``)
 
 
 0.6.3 (2022-03-30)
@@ -79,7 +79,7 @@ Changes
 
 * Added colour overrides to pie chart panel
 * Added missing attributes from xAxis class
-* Added transformations for the Panel class (https://grafana.com/docs/grafana/next/panels/reference-transformation-functions/)
+* Added transformations for the Panel class (https://grafana.com/docs/grafana/latest/panels/reference-transformation-functions/)
 * Added Worldmap panel (https://grafana.com/grafana/plugins/grafana-worldmap-panel/)
 * Added missing fill gradient to Graph panel
 * Added missing align to graph panel
