@@ -1574,8 +1574,8 @@ class TimeSeries(Panel):
         single (Default), multi, none
     :param unit: units
     :param thresholdsStyleMode: thresholds style mode off (Default), area, line, line+area
-    :param valueMin: Minimun value for Panel
-    :param valueMax: Minimun value for Panel
+    :param valueMin: Minimum value for Panel
+    :param valueMax: Minimum value for Panel
     :param valueDecimals: Number of display decimals
     """
 

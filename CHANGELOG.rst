@@ -6,9 +6,9 @@ x.x.x (TBC)
 ===========
 
 * Added ...
-* Added Minimun option for Timeserie
-* Added Maximun option for Timeserie
-* Added Number of decimals displays option for Timeserie
+* Added Minimum option for Timeseries
+* Added Maximum option for Timeseries
+* Added Number of decimals displays option for Timeseries
 * Added datasource parameter to Influxdb targets
 * Added missing units for Boolean, Data, Data Rate, Date & Time, Energy, Length,
   Mass, and Misc
