@@ -1444,6 +1444,41 @@ class Panel(object):
 
 
 @attr.s
+class ePict(Panel):
+    """
+    Generates ePict panel json structure.
+    https://grafana.com/grafana/plugins/larona-epict-panel/
+
+    :param autoScale: Whether to auto scale image to panel size.
+    :param bgURL: Where to load the image from.
+    :param boxes: The info boxes to be placed on the image.
+    """
+
+    bgURL = attr.ib(default='', validator=instance_of(str))
+
+    autoScale = attr.ib(default=True, validator=instance_of(bool))
+    boxes = attr.ib(
+        default=[],
+        validator=attr.validators.deep_iterable(
+            member_validator=instance_of(ePictBox),
+            iterable_validator=instance_of(list),
+        ),
+    )
+
+    def to_json_data(self):
+        graph_object = {
+            'type': EPICT_TYPE,
+
+            'options': {
+                'autoScale': self.autoScale,
+                'bgURL': self.bgURL,
+                'boxes': self.boxes
+            }
+        }
+        return self.panel_json(graph_object)
+
+
+@attr.s
 class RowPanel(Panel):
     """
     Generates Row panel json structure.
