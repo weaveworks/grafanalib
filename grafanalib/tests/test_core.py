@@ -269,6 +269,36 @@ def test_ePictBox():
     assert json_data['ypos'] == 19
 
 
+def test_ePict():
+    t = G.ePict()
+    json_data = t.to_json_data()
+
+    assert json_data['type'] == G.EPICT_TYPE
+    assert json_data['options']['autoScale'] is True
+    assert json_data['options']['bgURL'] == ''
+    assert json_data['options']['boxes'] == []
+
+    t = G.ePict(
+        autoScale=False,
+        bgURL='https://example.com/img.jpg',
+        boxes=[
+            G.ePictBox(),
+            G.ePictBox(angle=123),
+        ]
+    )
+    json_data = t.to_json_data()
+
+    print(json_data)
+
+    assert json_data['type'] == G.EPICT_TYPE
+    assert json_data['options']['autoScale'] is False
+    assert json_data['options']['bgURL'] == 'https://example.com/img.jpg'
+    assert json_data['options']['boxes'] == [
+        G.ePictBox(),
+        G.ePictBox(angle=123),
+    ]
+
+
 def test_Text():
     t = G.Text()
 
