@@ -200,13 +200,11 @@ def test_ePictBox():
         colorLow="#400",
         colorMedium="#500",
         colorSymbol=True,
-        customSymbol="data:image/png;base64,...",
         decimal=2,
         fontSize=9,
         hasBackground=True,
         hasOrb=True,
         hasSymbol=True,
-        isUsingThresholds=True,
         orbHideText=True,
         orbLocation="Right",
         orbSize=10,
@@ -240,7 +238,6 @@ def test_ePictBox():
     assert json_data['colorLow'] == "#400"
     assert json_data['colorMedium'] == "#500"
     assert json_data['colorSymbol'] is True
-    assert json_data['customSymbol'] == "data:image/png;base64,..."
     assert json_data['decimal'] == 2
     assert json_data['fontSize'] == 9
     assert json_data['hasBackground'] is True
@@ -267,6 +264,18 @@ def test_ePictBox():
     assert json_data['url'] == "https://google.de"
     assert json_data['xpos'] == 18
     assert json_data['ypos'] == 19
+
+
+def test_ePictBox_custom_symbole_logic():
+    t = G.ePictBox(
+        customSymbol="https://foo.bar/foo.jpg",
+        symbol="will be overiden",
+    )
+
+    json_data = t.to_json_data()
+
+    assert json_data['customSymbol'] == "https://foo.bar/foo.jpg"
+    assert json_data['symbol'] == "custom"
 
 
 def test_ePict():

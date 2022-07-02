@@ -314,7 +314,7 @@ class ePictBox(object):
     :param colorLow: Low value color
     :param colorMedium: In between value color
     :param colorSymbol: Whether to enable background color for symbol
-    :param customSymbol: Dito, format e.g. `data:image/svg+xml;base64,<base64>`
+    :param customSymbol: URL to custom symbol (will set symbol to "custom" if set)
     :param decimal: Number of decimals
     :param fontSize: Dito
     :param hasBackground: Whether to enable background color for text
@@ -339,7 +339,8 @@ class ePictBox(object):
     :param text: Dont know
     :param thresholds: Coloring thresholds: Enter 2
         comma-separated numbers. 20,60 will produce: value <= 20 -> green;
-        value between 20 and 60 -> yellow; value >= 60 -> red
+        value between 20 and 60 -> yellow; value >= 60 -> red. If set, with also set
+        isUsingThresholds to True
     :param url: URL to open when clickt on
     :param xpos: X in (0, X size of image)
     :param ypos: Y in (0, Y size of image)
@@ -386,6 +387,9 @@ class ePictBox(object):
     ypos = attr.ib(default=0, validator=instance_of(int))
 
     def to_json_data(self):
+        self.symbol = "custom" if self.customSymbol else self.symbol
+        self.isUsingThresholds = bool(self.thresholds)
+
         return {
             "angle": self.angle,
             "backgroundColor": self.backgroundColor,
