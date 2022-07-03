@@ -330,7 +330,7 @@ class ePictBox(object):
     :param serie: Which series to use data from
     :param suffix: Value suffix to be displayed
     :param suffixSize: Dito
-    :param symbol: Automatically placed by the plugin format: `data:image/svg+xml;base64,<base64>`
+    :param symbol: Automatically placed by the plugin format: `data:image/svg+xml;base64,<base64>`, check manually.
     :param symbolDefHeight: Dont know
     :param symbolDefWidth: Dont know
     :param symbolHeight: Dito
@@ -339,9 +339,9 @@ class ePictBox(object):
     :param text: Dont know
     :param thresholds: Coloring thresholds: Enter 2
         comma-separated numbers. 20,60 will produce: value <= 20 -> green;
-        value between 20 and 60 -> yellow; value >= 60 -> red. If set, with also set
+        value between 20 and 60 -> yellow; value >= 60 -> red. If set, it will also set
         isUsingThresholds to True
-    :param url: URL to open when clickt on
+    :param url: URL to open when clicked on
     :param xpos: X in (0, X size of image)
     :param ypos: Y in (0, Y size of image)
     """
