@@ -2067,7 +2067,7 @@ class Stat(Panel):
     reduceCalc = attr.ib(default='mean', type=str)
     fields = attr.ib(default="")
     textMode = attr.ib(default='auto')
-    thresholds = attr.ib(default="")
+    thresholds = attr.ib(default={}, type=dict)
 
     def to_json_data(self):
         return self.panel_json(
@@ -2078,7 +2078,8 @@ class Stat(Panel):
                         'decimals': self.decimals,
                         'mappings': self.mappings,
                         'unit': self.format,
-                        'noValue': self.noValue
+                        'noValue': self.noValue,
+                        'thresholds': self.thresholds,
                     },
                     'overrides': self.overrides
                 },

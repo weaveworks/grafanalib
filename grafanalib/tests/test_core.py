@@ -130,12 +130,16 @@ def test_stat_no_repeat():
         dataSource='data source',
         targets=[
             G.Target(expr='some expr')
-        ]
+        ],
+        thresholds={
+            "foo": "bar"
+        }
     )
 
     assert t.to_json_data()['repeat'] is None
     assert t.to_json_data()['repeatDirection'] is None
     assert t.to_json_data()['maxPerRow'] is None
+    assert t.to_json_data()['fieldConfig']['defaults']['thresholds']['foo'] is 'bar'
 
 
 def test_Text_exception_checks():
