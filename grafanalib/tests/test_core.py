@@ -3,6 +3,7 @@
 import random
 import grafanalib.core as G
 import pytest
+import json
 
 
 def dummy_grid_pos() -> G.GridPos:
@@ -591,18 +592,120 @@ def test_alert():
     )
     alert.to_json_data()
 
+def test_alertgroup():
+    name = "Example Alert Group"
+    group=G.AlertGroup(
+            name=name,
+            rules=[
+                G.AlertRule(
+                    title = "My Important Alert!",
+                    triggers=[
+                        (
+                            G.Target(refId="A"),
+                            G.AlertCondition(
+                                evaluator=G.LowerThan(1),
+                                operator=G.OP_OR,
+                            ),
+                        ),
+                        (
+                            G.Target(refId="B"),
+                            G.AlertCondition(
+                                evaluator=G.GreaterThan(1),
+                                operator=G.OP_OR,
+                            )
+                        )
+                    ]
+                )
+            ]
+        )
 
-def test_alertruler():
-    name = "Dummy Alert Rule"
-    alert = G.AlertRuler(
-        name=name,
-        target=['dummy_prom_query'],
-        datasource='dummy data source',
-        value=90
+    output = group.to_json_data()
+
+    assert output["name"] == name
+    assert output["rules"][0]["grafana_alert"]["rule_group"] == name
+
+def test_alertrule():
+    title = "My Important Alert!"
+    annotations = {"summary": "this alert fires when prod is down!!!"}
+    labels = {"severity": "serious"}
+    rule = G.AlertRule(
+        title = title,
+        triggers=[
+            (
+                G.Target(
+                    refId="A",
+                    datasource="Prometheus",
+                ),
+                G.AlertCondition(
+                    evaluator=G.LowerThan(1),
+                    operator=G.OP_OR,
+                ),
+            ),
+            (
+                G.Target(
+                    refId="B",
+                    datasource="Prometheus",
+                ),
+                G.AlertCondition(
+                    evaluator=G.GreaterThan(1),
+                    operator=G.OP_OR,
+                )
+            )
+        ],
+        annotations=annotations,
+        labels=labels,
+        evaluateFor="3m",
     )
-    data = alert.to_json_data()
-    assert data['name'] == name
-    assert data['rules'][0]['grafana_alert']['title'] == name
+
+    data = rule.to_json_data()
+    assert data['grafana_alert']['title'] == title
+    assert data['annotations'] == annotations
+    assert data['labels'] == labels
+    assert data['for'] == "3m"
+
+
+def test_alertrule_invalid_triggers():
+    # test that triggers is a list of [(Target, AlertCondition)]
+
+    with pytest.raises(ValueError):
+        G.AlertRule(
+            title="Invalid rule",
+            triggers=[
+                G.Target(
+                    refId="A",
+                    datasource="Prometheus",
+                ),
+            ],
+        )
+
+    with pytest.raises(ValueError):
+        G.AlertRule(
+            title="Invalid rule",
+            triggers=[
+                (
+                    "foo",
+                    G.AlertCondition(
+                        evaluator=G.GreaterThan(1),
+                        operator=G.OP_OR,
+                    )
+                ),
+            ],
+        )
+
+    with pytest.raises(ValueError):
+        G.AlertRule(
+            title="Invalid rule",
+            triggers=[
+                (
+                    G.Target(
+                        refId="A",
+                        datasource="Prometheus",
+                    ),
+                    "bar"
+                ),
+            ],
+        )
+
 
 
 def test_worldmap():

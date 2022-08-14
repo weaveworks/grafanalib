@@ -14,7 +14,7 @@ setup(
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
-    # https://packaging.python.org/en/latest/single_source_version.html
+    # https://packaging.python.org/en/latest/guides/single-sourcing-package-version/
     version='0.6.3',
     description='Library for building Grafana dashboards',
     long_description=open(README).read(),
@@ -52,6 +52,8 @@ setup(
         'console_scripts': [
             'generate-dashboard=grafanalib._gen:generate_dashboard_script',
             'generate-dashboards=grafanalib._gen:generate_dashboards_script',
+            'generate-alertgroup=grafanalib._gen:generate_alertgroup_script',
+            'generate-alertgroups=grafanalib._gen:generate_alertgroups_script'
         ],
     },
 )

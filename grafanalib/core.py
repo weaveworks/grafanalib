@@ -227,6 +227,7 @@ ALERTLIST_STATE_PENDING = 'pending'
 ALERTRULE_STATE_DATA_OK = 'OK'
 ALERTRULE_STATE_DATA_NODATA = 'No Data'
 ALERTRULE_STATE_DATA_ALERTING = 'Alerting'
+ALERTRULE_STATE_DATA_ERROR = 'Error'
 
 # Display Sort Order
 SORT_ASC = 1
@@ -1002,13 +1003,13 @@ class AlertCondition(object):
     """
     A condition on an alert.
 
-    :param Target target: Metric the alert condition is based on.
+    :param Target target: Metric the alert condition is based on. Not required at instantiation for Grafana 8.x alerts.
     :param Evaluator evaluator: How we decide whether we should alert on the
         metric. e.g. ``GreaterThan(5)`` means the metric must be greater than 5
         to trigger the condition. See ``GreaterThan``, ``LowerThan``,
         ``WithinRange``, ``OutsideRange``, ``NoValue``.
     :param TimeRange timeRange: How long the condition must be true for before
-        we alert.
+        we alert. For Grafana 8.x alerts, this should be specified in the AlertRule instead.
     :param operator: One of ``OP_AND`` or ``OP_OR``. How this condition
         combines with other conditions.
     :param reducerType: RTYPE_*
@@ -1026,25 +1027,30 @@ class AlertCondition(object):
     :param type: CTYPE_*
     """
 
-    target = attr.ib(validator=is_valid_target)
-    evaluator = attr.ib(validator=instance_of(Evaluator))
-    timeRange = attr.ib(validator=instance_of(TimeRange))
-    operator = attr.ib()
-    reducerType = attr.ib()
+    target = attr.ib(default=None, validator=attr.validators.optional(is_valid_target))
+    evaluator = attr.ib(default=None, validator=instance_of(Evaluator))
+    timeRange = attr.ib(default=None, validator=attr.validators.optional(attr.validators.instance_of(TimeRange)))
+    operator = attr.ib(default=OP_AND)
+    reducerType = attr.ib(default=RTYPE_LAST)
+
     type = attr.ib(default=CTYPE_QUERY, kw_only=True)
 
+    def __get_query_params(self):
+        # Grafana 8.x alerts do not put the time range in the query params.
+        if self.useNewAlerts:
+            return [ self.target.refId ]
+
+        return [ self.target.refId, self.timeRange.from_time, self.timeRange.to_time ]
+
     def to_json_data(self):
-        queryParams = [
-            self.target.refId, self.timeRange.from_time, self.timeRange.to_time
-        ]
-        return {
-            'evaluator': self.evaluator,
+        condition = {
+            'evaluator': self.evaluator.to_json_data(),
             'operator': {
                 'type': self.operator,
             },
             'query': {
-                'model': self.target,
-                'params': queryParams,
+                'model': self.target.to_json_data(),
+                'params': self.__get_query_params(),
             },
             'reducer': {
                 'params': [],
@@ -1052,6 +1058,12 @@ class AlertCondition(object):
             },
             'type': self.type,
         }
+
+        # Grafana 8.x alerts do not put the target inside the alert condition.
+        if self.useNewAlerts:
+            del condition['query']['model']
+
+        return condition
 
 
 @attr.s
@@ -1091,29 +1103,66 @@ class Alert(object):
             'alertRuleTags': self.alertRuleTags,
         }
 
+@attr.s
+class AlertGroup(object):
+    """
+    Create an alert group of Grafana 8.x alerts
+
+    :param name: Alert group name
+    :param rules: List of AlertRule
+    """
+    name = attr.ib()
+    rules = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+
+    def group_rules(self,rules):
+        grouped_rules=[]
+        for each in rules:
+            each.rule_group = self.name
+            grouped_rules.append(each.to_json_data())
+        return grouped_rules
+
+    def to_json_data(self):
+        return {
+            'name': self.name,
+            'interval': "1m",
+            'rules': self.group_rules(self.rules),
+        }
+
+
+def is_valid_triggers(instance, attribute, value):
+    """Validator for AlertRule triggers"""
+    for trigger in value:
+        if not isinstance(trigger, tuple):
+            raise ValueError(f"{attribute.name} must be a list of [(Target, AlertCondition)] tuples")
+
+        if list(map(type, trigger)) != [Target, AlertCondition]:
+            raise ValueError(f"{attribute.name} must be a list of [(Target, AlertCondition)] tuples")
+
+        is_valid_target(instance, "alert trigger target", trigger[0])
+
 
 @attr.s
-class AlertRuler(object):
+class AlertRule(object):
     """
-    Create Alert Rule for grafana 8.x new system
+    Create a Grafana 8.x+ Alert Rule
 
-    :param name: the alert's name
-    :param dataSource: where to fetch the values for the variable from
-    :param target: Metric the alert condition is based on.
+    :param title: The alert's title, must be unique per folder
+    :param triggers: A list of Target and AlertCondition tuples, [(Target, AlertCondition)].
+        The Target specifies the query, and the AlertCondition specifies how this is used to alert.
+        Several targets and conditions can be defined, alerts can fire based on all conditions
+        being met by specifying OP_AND on all conditions, or on any single condition being met
+        by specifying OP_OR on all conditions.
+    :param annotations: Summary and annotations
+    :param labels: Custom Labels for the metric, used to handle notifications
 
-    :param operator: Condittional Operator Should be gt or lt.
-        The list can contain a subset of the following statuses:
-        [EVAL_LT, EVAL_GT]
-    :param value: Numeric value for conditional processing.
-
-    :param evaluateInterval: specify the frequency of evaluation. Must be a multiple of 10 seconds. For examples, 1m, 30s
-    :param evaluateFor: specify the duration for which the condition must be true before an alert fires
-    :param alertStateFilterDataNoneOrNull: Define how to alert if data is none or null
-        The list can contain a subset of the following statuses:
-        [ALERTRULE_STATE_DATA_OK, ALERTRULE_STATE_DATA_NODATA, ALERTRULE_STATE_DATA_ALERTING]
-    :param alertStateFilterDataError: Define how to alert if data is on error
-        The list can contain a subset of the following statuses:
-        [ALERTRULE_STATE_DATA_OK, ALERTRULE_STATE_DATA_NODATA, ALERTRULE_STATE_DATA_ALERTING]
+    :param evaluateInterval: The frequency of evaluation. Must be a multiple of 10 seconds. For example, 30s, 1m
+    :param evaluateFor: The duration for which the condition must be true before an alert fires
+    :param noDataAlertState: Alert state if no data or all values are null
+        Must be one of the following:
+        [ALERTRULE_STATE_DATA_OK, ALERTRULE_STATE_DATA_ALERTING, ALERTRULE_STATE_DATA_NODATA ]
+    :param errorAlertState: Alert state if execution error or timeout
+        Must be one of the following:
+        [ALERTRULE_STATE_DATA_OK, ALERTRULE_STATE_DATA_ALERTING, ALERTRULE_STATE_DATA_ERROR ]
 
     :param timeRangeFrom: Time range interpolation data start from
     :param timeRangeTo: Time range interpolation data finish at
@@ -1122,109 +1171,85 @@ class AlertRuler(object):
     :param panel_id: Panel ID that should should be use for linking on alert message
     """
 
-    name = attr.ib()
-    target = attr.ib()
-    datasource = attr.ib(validator=instance_of(str))
-    value = attr.ib(validator=instance_of(int))
-
+    title = attr.ib()
+    triggers = attr.ib(validator=is_valid_triggers)
     annotations = attr.ib(default={}, validator=instance_of(dict))
-    operator = attr.ib(
-        default=EVAL_GT,
-        validator=in_([
-            EVAL_GT,
-            EVAL_LT
-        ])
-    )
+    labels = attr.ib(default={}, validator=instance_of(dict))
 
     evaluateInterval = attr.ib(default=DEFAULT_ALERT_EVALUATE_INTERVAL, validator=instance_of(str))
     evaluateFor = attr.ib(default=DEFAULT_ALERT_EVALUATE_FOR, validator=instance_of(str))
-    alertStateFilterDataNoneOrNull = attr.ib(
+    noDataAlertState = attr.ib(
         default=ALERTRULE_STATE_DATA_ALERTING,
         validator=in_([
             ALERTRULE_STATE_DATA_OK,
-            ALERTRULE_STATE_DATA_NODATA,
-            ALERTRULE_STATE_DATA_ALERTING
+            ALERTRULE_STATE_DATA_ALERTING,
+            ALERTRULE_STATE_DATA_NODATA
         ])
     )
-    alertStateFilterDataError = attr.ib(
+    errorAlertState = attr.ib(
         default=ALERTRULE_STATE_DATA_ALERTING,
         validator=in_([
             ALERTRULE_STATE_DATA_OK,
-            ALERTRULE_STATE_DATA_NODATA,
-            ALERTRULE_STATE_DATA_ALERTING
+            ALERTRULE_STATE_DATA_ALERTING,
+            ALERTRULE_STATE_DATA_ERROR
         ])
     )
     timeRangeFrom = attr.ib(default=300, validator=instance_of(int))
     timeRangeTo = attr.ib(default=0, validator=instance_of(int))
     uid = attr.ib(default=None, validator=attr.validators.optional(instance_of(str)))
-
     dashboard_uid = attr.ib(default="", validator=instance_of(str))
     panel_id = attr.ib(default=0, validator=instance_of(int))
 
-    def to_json_data(self):
+    rule_group = attr.ib(default="")
 
-        self.annotations['__dashboardUid__'] = self.dashboard_uid
-        self.annotations['__panelId__'] = str(self.panel_id)
+    def to_json_data(self):
+        data = []
+        conditions = []
+
+        for target, condition in self.triggers:
+            data += [{
+                "refId": target.refId,
+                "relativeTimeRange": {
+                    "from": self.timeRangeFrom,
+                    "to": self.timeRangeTo
+                },
+                "datasourceUid": target.datasource,
+                "model": target.to_json_data(),
+            }]
+
+            # discard unused features of condition as of grafana 8.x
+            condition.useNewAlerts=True
+
+            condition.target = target
+            conditions += [ condition.to_json_data() ]
+
+        data += [{
+            "refId": "CONDITION",
+            "datasourceUid": "-100",
+            "model": {
+                "conditions": conditions,
+                "refId": "CONDITION",
+                "type": "classic_conditions"
+            }
+        }]
 
         return {
-            'name': self.name,
-            'interval': self.evaluateInterval,
-            "rules": [
-                {
-                    "for": self.evaluateFor,
-                    "annotations": self.annotations,
-                    "grafana_alert": {
-                        "condition": "CONDITIONNAL",
-                        "data": [
-                            {
-                                "refId": "VALUE",
-                                "relativeTimeRange": {
-                                    "from": self.timeRangeFrom,
-                                    "to": self.timeRangeTo
-                                },
-                                "datasourceUid": self.datasource,
-                                "model": self.target
-                            },
-                            {
-                                "refId": "CONDITIONNAL",
-                                "datasourceUid": "-100",
-                                "model": {
-                                    "conditions": [
-                                        {
-                                            "evaluator": {
-                                                "params": [
-                                                    self.value
-                                                ],
-                                                "type": self.operator
-                                            },
-                                            "operator": {
-                                                "type": "and"
-                                            },
-                                            "query": {
-                                                "params": [
-                                                    "VALUE"
-                                                ]
-                                            },
-                                            "reducer": {
-                                                "params": [],
-                                                "type": "last"
-                                            },
-                                            "type": "query"
-                                        }
-                                    ],
-                                    "refId": "CONDITIONNAL",
-                                    "type": "classic_conditions"
-                                }
-                            }
-                        ],
-                        "exec_err_state": self.alertStateFilterDataError,
-                        "no_data_state": self.alertStateFilterDataNoneOrNull,
-                        "uid": self.uid,
-                        "title": self.name
-                    }
-                }
-            ]
+            "for": self.evaluateFor,
+            "labels": self.labels,
+            "annotations": self.annotations,
+            "grafana_alert": {
+                "title": self.title,
+                "condition": "CONDITION",
+                "data": data,
+                "intervalSeconds": self.evaluateInterval,
+                "exec_err_state": self.errorAlertState,
+                "no_data_state": self.noDataAlertState,
+                "uid": self.uid,
+                "rule_group":self.rule_group,
+            }
         }
+
+
 
 
 @attr.s
