@@ -2598,7 +2598,6 @@ class BarGauge(Panel):
     :param decimals: override automatic decimal precision for legend/tooltips
     :param displayMode: style to display bar gauge in
     :param format: defines value units
-    :param labels: option to show gauge level labels
     :param limit: limit of number of values to show when not Calculating
     :param max: maximum value of the gauge
     :param min: minimum value of the gauge
@@ -2626,7 +2625,6 @@ class BarGauge(Panel):
         ),
     )
     format = attr.ib(default='none')
-    label = attr.ib(default=None)
     limit = attr.ib(default=None)
     max = attr.ib(default=100)
     min = attr.ib(default=0)
@@ -2651,24 +2649,22 @@ class BarGauge(Panel):
     def to_json_data(self):
         return self.panel_json(
             {
+                'fieldConfig': {
+                    'calcs': [self.calc],
+                    'defaults': {
+                        'decimals': self.decimals,
+                        'links': self.dataLinks,
+                        'mappings': self.valueMaps,
+                        'max': self.max,
+                        'min': self.min,
+                        'unit': self.format,
+                    },
+                    'limit': self.limit,
+                    'overrides': [],
+                    'values': self.allValues,
+                },
                 'options': {
                     'displayMode': self.displayMode,
-                    'fieldOptions': {
-                        'calcs': [self.calc],
-                        'defaults': {
-                            'decimals': self.decimals,
-                            'max': self.max,
-                            'min': self.min,
-                            'title': self.label,
-                            'unit': self.format,
-                            'links': self.dataLinks,
-                        },
-                        'limit': self.limit,
-                        'mappings': self.valueMaps,
-                        'override': {},
-                        'thresholds': self.thresholds,
-                        'values': self.allValues,
-                    },
                     'orientation': self.orientation,
                     'showThresholdLabels': self.thresholdLabels,
                     'showThresholdMarkers': self.thresholdMarkers,

@@ -123,7 +123,6 @@ def test_table():
     assert len(t.to_json_data()['transformations']) == 2
     assert t.to_json_data()['transformations'][0]["id"] == "seriesToRows"
 
-
 def test_stat_no_repeat():
     t = G.Stat(
         title='dummy',
