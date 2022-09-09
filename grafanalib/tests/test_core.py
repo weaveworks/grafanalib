@@ -26,7 +26,9 @@ def dummy_evaluator() -> G.Evaluator:
 
 def dummy_alert_condition() -> G.AlertCondition:
     return G.AlertCondition(
-        target=G.Target(),
+        target=G.Target(
+            refId="A",
+        ),
         evaluator=G.Evaluator(
             type=G.EVAL_GT,
             params=42),
@@ -430,7 +432,7 @@ def test_graph_panel_alert():
     targets = ['dummy_prom_query']
     title = 'dummy title'
     alert = [
-        G.AlertCondition(G.Target(), G.Evaluator('a', 'b'), G.TimeRange('5', '6'), 'd', 'e')
+        G.AlertCondition(G.Target(refId="A"), G.Evaluator('a', 'b'), G.TimeRange('5', '6'), 'd', 'e')
     ]
     thresholds = [
         G.GraphThreshold(20.0),
@@ -696,6 +698,22 @@ def test_histogram():
     panel = G.Histogram(data_source, targets, title, bucketSize=bucketSize)
     data = panel.to_json_data()
     assert data['options']['bucketSize'] == bucketSize
+
+
+def test_target_invalid():
+    with pytest.raises(ValueError, match=r"target should have non-empty 'refId' attribute"):
+        return G.AlertCondition(
+            target=G.Target(),
+            evaluator=G.Evaluator(
+                type=G.EVAL_GT,
+                params=42),
+            timeRange=G.TimeRange(
+                from_time='5m',
+                to_time='now'
+            ),
+            operator=G.OP_AND,
+            reducerType=G.RTYPE_AVG,
+        )
 
 
 def test_sql_target():

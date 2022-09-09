@@ -395,10 +395,10 @@ class Repeat(object):
 
 def is_valid_target(instance, attribute, value):
     """
-    Check if a given attribute is a valid target
+    Check if a given attribute is a valid Target
     """
-    if not hasattr(value, "refId"):
-        raise ValueError(f"{attribute.name} should have 'refId' attribute")
+    if value.refId == "":
+        raise ValueError(f"{attribute.name} should have non-empty 'refId' attribute")
 
 
 @attr.s
