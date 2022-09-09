@@ -2,7 +2,7 @@
 Changelog
 =========
 
-x.x.x (TBC)
+0.6.4 (TBC)
 ===========
 
 * Added ...
