@@ -11,6 +11,7 @@ x.x.x (TBC)
   Mass, and Misc
 * Fix typo in unit constant ``GIGA_WATT`` (was ``GAGA_WATT``)
 * Fix typo in unit constant ``NORMAL_CUBIC_METER`` (was ``NORMAIL_CUBIC_METER``)
+* Add support for setting Dashboard Tooltip style
 
 
 0.6.3 (2022-03-30)
