@@ -699,6 +699,7 @@ def test_histogram():
     data = panel.to_json_data()
     assert data['options']['bucketSize'] == bucketSize
 
+
 def test_target_invalid():
     with pytest.raises(ValueError, match=r"target should have non-empty 'refId' attribute"):
         return G.AlertCondition(
