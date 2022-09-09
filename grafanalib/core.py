@@ -97,6 +97,7 @@ TIMESERIES_TYPE = 'timeseries'
 WORLD_MAP_TYPE = 'grafana-worldmap-panel'
 NEWS_TYPE = 'news'
 HISTOGRAM_TYPE = 'histogram'
+AE3E_PLOTLY_TYPE = 'ae3e-plotly-panel'
 
 DEFAULT_FILL = 1
 DEFAULT_REFRESH = '10s'
@@ -3634,3 +3635,47 @@ class News(Panel):
                 'type': NEWS_TYPE,
             }
         )
+
+
+@attr.s
+class Ae3ePlotly(Panel):
+    """Generates ae3e plotly panel json structure
+    GitHub repo of the panel: https://github.com/ae3e/ae3e-plotly-panel
+    :param configuration in json format: Plotly configuration. Docs: https://plotly.com/python/configuration-options/
+    :param data: Plotly data: https://plotly.com/python/figure-structure/
+    :param layout: Layout of the chart in json format. Plotly docs: https://plotly.com/python/reference/layout/
+    :param script: Script executed whenever new data is available. Must return an object with one or more of the
+        following properties : data, layout, config f(data, variables){...your code...}
+    :param clickScript: Script executed when chart is clicked. f(data){...your code...}
+    """
+    configuration = attr.ib(default=attr.Factory(dict), validator=attr.validators.instance_of(dict))
+    data = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+    layout = attr.ib(default=attr.Factory(dict), validator=attr.validators.instance_of(dict))
+    script = attr.ib(default="""console.log(data)
+            var trace = {
+              x: data.series[0].fields[0].values.buffer,
+              y: data.series[0].fields[1].values.buffer
+            };
+            return {data:[trace],layout:{title:'My Chart'}};""", validator=instance_of(str))
+    clickScript = attr.ib(default='', validator=instance_of(str))
+
+    def to_json_data(self):
+        plotly = self.panel_json(
+            {
+                'fieldConfig': {
+                    'defaults': {},
+                    'overrides': []
+                },
+                'options': {
+                    'configuration': {},
+                    'data': self.data,
+                    'layout': {},
+                    'onclick': self.clickScript,
+                    'script': self.script,
+                },
+                'type': AE3E_PLOTLY_TYPE,
+            }
+        )
+        _deep_update(plotly["options"]["layout"], self.layout)
+        _deep_update(plotly["options"]["configuration"], self.configuration)
+        return plotly
