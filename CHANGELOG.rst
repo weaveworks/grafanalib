@@ -6,6 +6,7 @@ x.x.x (TBC)
 ===========
 
 * Added ...
+* Added ae3e plotly panel support
 * Added datasource parameter to Influxdb targets
 * Added missing units for Boolean, Data, Data Rate, Date & Time, Energy, Length,
   Mass, and Misc

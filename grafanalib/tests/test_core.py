@@ -700,6 +700,32 @@ def test_histogram():
     assert data['options']['bucketSize'] == bucketSize
 
 
+def test_ae3e_plotly():
+    data_source = "dummy data source"
+    targets = ["dummy_prom_query"]
+    title = "dummy title"
+    panel = G.Ae3ePlotly(data_source, targets, title)
+    data = panel.to_json_data()
+    assert data["targets"] == targets
+    assert data["datasource"] == data_source
+    assert data["title"] == title
+    assert bool(data["options"]["configuration"]) is False
+    assert bool(data["options"]["layout"]) is False
+
+    config = {
+        "displayModeBar": False
+    }
+    layout = {
+        "font": {
+            "color": "darkgrey"
+        },
+    }
+    panel = G.Ae3ePlotly(data_source, targets, title, configuration=config, layout=layout)
+    data = panel.to_json_data()
+    assert data["options"]["configuration"] == config
+    assert data["options"]["layout"] == layout
+
+
 def test_target_invalid():
     with pytest.raises(ValueError, match=r"target should have non-empty 'refId' attribute"):
         return G.AlertCondition(
