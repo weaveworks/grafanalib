@@ -13,6 +13,7 @@ ALERTGROUP_SUFFIX = '.alertgroup.py'
 Common generation functionality
 """
 
+
 class DashboardEncoder(json.JSONEncoder):
     """Encode dashboard objects."""
 
@@ -22,11 +23,14 @@ class DashboardEncoder(json.JSONEncoder):
             return to_json_data()
         return json.JSONEncoder.default(self, obj)
 
+
 class DashboardError(Exception):
     """Raised when there is something wrong with a dashboard."""
 
+
 class AlertGroupError(Exception):
     """Raised when there is something wrong with an alertgroup."""
+
 
 def write_dashboard(dashboard, stream):
     json.dump(
@@ -34,8 +38,13 @@ def write_dashboard(dashboard, stream):
         cls=DashboardEncoder)
     stream.write('\n')
 
+
+write_alertgroup = write_dashboard
+
+
 class DefinitionError(Exception):
     """Raised when there is a problem loading a Grafanalib type from a python definition."""
+
 
 def loader(path):
     """Load a grafanalib type from a Python definition.
@@ -66,12 +75,15 @@ def loader(path):
             "Definition {} does not define a variable '{}'".format(path, gtype))
     return grafanalibtype
 
+
 def run_script(f):
     sys.exit(f(sys.argv[1:]))
+
 
 """
 AlertGroup generation
 """
+
 
 def print_alertgroup(dashboard):
     write_dashboard(dashboard, stream=sys.stdout)
@@ -83,6 +95,7 @@ def write_alertgroups(paths):
         dashboard = loader(path)
         with open(get_alertgroup_json_path(path), 'w') as json_file:
             write_dashboard(dashboard, json_file)
+
 
 def get_alertgroup_json_path(path):
     assert path.endswith(ALERTGROUP_SUFFIX)
@@ -147,9 +160,11 @@ def generate_alertgroup_script():
     """Entry point for generate-alertgroup."""
     run_script(generate_alertgroup)
 
+
 """
 Dashboard generation
 """
+
 
 def print_dashboard(dashboard):
     write_dashboard(dashboard, stream=sys.stdout)

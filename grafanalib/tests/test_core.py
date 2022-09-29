@@ -3,7 +3,6 @@
 import random
 import grafanalib.core as G
 import pytest
-import json
 
 
 def dummy_grid_pos() -> G.GridPos:
@@ -592,44 +591,46 @@ def test_alert():
     )
     alert.to_json_data()
 
+
 def test_alertgroup():
     name = "Example Alert Group"
-    group=G.AlertGroup(
-            name=name,
-            rules=[
-                G.AlertRule(
-                    title = "My Important Alert!",
-                    triggers=[
-                        (
-                            G.Target(refId="A"),
-                            G.AlertCondition(
-                                evaluator=G.LowerThan(1),
-                                operator=G.OP_OR,
-                            ),
+    group = G.AlertGroup(
+        name=name,
+        rules=[
+            G.AlertRule(
+                title="My Important Alert!",
+                triggers=[
+                    (
+                        G.Target(refId="A"),
+                        G.AlertCondition(
+                            evaluator=G.LowerThan(1),
+                            operator=G.OP_OR,
                         ),
-                        (
-                            G.Target(refId="B"),
-                            G.AlertCondition(
-                                evaluator=G.GreaterThan(1),
-                                operator=G.OP_OR,
-                            )
+                    ),
+                    (
+                        G.Target(refId="B"),
+                        G.AlertCondition(
+                            evaluator=G.GreaterThan(1),
+                            operator=G.OP_OR,
                         )
-                    ]
-                )
-            ]
-        )
+                    )
+                ]
+            )
+        ]
+    )
 
     output = group.to_json_data()
 
     assert output["name"] == name
     assert output["rules"][0]["grafana_alert"]["rule_group"] == name
 
+
 def test_alertrule():
     title = "My Important Alert!"
     annotations = {"summary": "this alert fires when prod is down!!!"}
     labels = {"severity": "serious"}
     rule = G.AlertRule(
-        title = title,
+        title=title,
         triggers=[
             (
                 G.Target(
@@ -705,7 +706,6 @@ def test_alertrule_invalid_triggers():
                 ),
             ],
         )
-
 
 
 def test_worldmap():

@@ -1038,9 +1038,9 @@ class AlertCondition(object):
     def __get_query_params(self):
         # Grafana 8.x alerts do not put the time range in the query params.
         if self.useNewAlerts:
-            return [ self.target.refId ]
+            return [self.target.refId]
 
-        return [ self.target.refId, self.timeRange.from_time, self.timeRange.to_time ]
+        return [self.target.refId, self.timeRange.from_time, self.timeRange.to_time]
 
     def to_json_data(self):
         condition = {
@@ -1103,6 +1103,7 @@ class Alert(object):
             'alertRuleTags': self.alertRuleTags,
         }
 
+
 @attr.s
 class AlertGroup(object):
     """
@@ -1114,8 +1115,8 @@ class AlertGroup(object):
     name = attr.ib()
     rules = attr.ib(default=attr.Factory(list), validator=instance_of(list))
 
-    def group_rules(self,rules):
-        grouped_rules=[]
+    def group_rules(self, rules):
+        grouped_rules = []
         for each in rules:
             each.rule_group = self.name
             grouped_rules.append(each.to_json_data())
@@ -1218,10 +1219,10 @@ class AlertRule(object):
             }]
 
             # discard unused features of condition as of grafana 8.x
-            condition.useNewAlerts=True
+            condition.useNewAlerts = True
 
             condition.target = target
-            conditions += [ condition.to_json_data() ]
+            conditions += [condition.to_json_data()]
 
         data += [{
             "refId": "CONDITION",
@@ -1245,11 +1246,9 @@ class AlertRule(object):
                 "exec_err_state": self.errorAlertState,
                 "no_data_state": self.noDataAlertState,
                 "uid": self.uid,
-                "rule_group":self.rule_group,
+                "rule_group": self.rule_group,
             }
         }
-
-
 
 
 @attr.s

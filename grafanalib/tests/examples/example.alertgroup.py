@@ -14,7 +14,7 @@ from grafanalib.core import (
 
 # An AlertGroup is one group contained in an alert folder.
 alertgroup = AlertGroup(
-    name = "Production Alerts",
+    name="Production Alerts",
     # Each AlertRule forms a separate alert.
     rules=[
         AlertRule(
