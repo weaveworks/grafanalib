@@ -5,14 +5,13 @@ Changelog
 x.x.x (TBC)
 ===========
 
-* Added ePict_ plugin.
+* Added ...
 * Added datasource parameter to Influxdb targets
 * Added missing units for Boolean, Data, Data Rate, Date & Time, Energy, Length,
   Mass, and Misc
 * Fix typo in unit constant ``GIGA_WATT`` (was ``GAGA_WATT``)
 * Fix typo in unit constant ``NORMAL_CUBIC_METER`` (was ``NORMAIL_CUBIC_METER``)
 
-.. _ePict: https://grafana.com/grafana/plugins/larona-epict-panel/
 
 0.6.3 (2022-03-30)
 ==================
