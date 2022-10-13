@@ -6,6 +6,7 @@ x.x.x (TBC)
 ===========
 
 * Added ...
+* Added ePict_ plugin.
 * Added ae3e plotly panel support
 * Added datasource parameter to Influxdb targets
 * Added missing units for Boolean, Data, Data Rate, Date & Time, Energy, Length,
@@ -13,6 +14,7 @@ x.x.x (TBC)
 * Fix typo in unit constant ``GIGA_WATT`` (was ``GAGA_WATT``)
 * Fix typo in unit constant ``NORMAL_CUBIC_METER`` (was ``NORMAIL_CUBIC_METER``)
 
+.. _ePict: basehttps://grafana.com/grafana/plugins/larona-epict-panel/
 
 0.6.3 (2022-03-30)
 ==================

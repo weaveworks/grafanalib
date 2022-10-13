@@ -151,6 +151,165 @@ def test_Text_exception_checks():
         G.Text(mode=123)
 
 
+def test_ePictBox():
+    t = G.ePictBox()
+    json_data = t.to_json_data()
+
+    assert json_data['angle'] == 0
+    assert json_data['backgroundColor'] == "#000"
+    assert json_data['blinkHigh'] is False
+    assert json_data['blinkLow'] is False
+    assert json_data['color'] == "#000"
+    assert json_data['colorHigh'] == "#000"
+    assert json_data['colorLow'] == "#000"
+    assert json_data['colorMedium'] == "#000"
+    assert json_data['colorSymbol'] is False
+    assert json_data['customSymbol'] == ""
+    assert json_data['decimal'] == 0
+    assert json_data['fontSize'] == 12
+    assert json_data['hasBackground'] is False
+    assert json_data['hasOrb'] is False
+    assert json_data['hasSymbol'] is False
+    assert json_data['isUsingThresholds'] is False
+    assert json_data['orbHideText'] is False
+    assert json_data['orbLocation'] == "Left"
+    assert json_data['orbSize'] == 13
+    assert json_data['prefix'] == ""
+    assert json_data['prefixSize'] == 10
+    assert json_data['selected'] is False
+    assert json_data['serie'] == ""
+    assert json_data['suffix'] == ""
+    assert json_data['suffixSize'] == 10
+    assert json_data['symbol'] == ""
+    assert json_data['symbolDefHeight'] == 32
+    assert json_data['symbolDefWidth'] == 32
+    assert json_data['symbolHeight'] == 32
+    assert json_data['symbolHideText'] is False
+    assert json_data['symbolWidth'] == 32
+    assert json_data['text'] == "N/A"
+    assert json_data['thresholds'] == ""
+    assert json_data['url'] == ""
+    assert json_data['xpos'] == 0
+    assert json_data['ypos'] == 0
+
+    t = G.ePictBox(
+        angle=1,
+        backgroundColor="#100",
+        blinkHigh=True,
+        blinkLow=True,
+        color="#200",
+        colorHigh="#300",
+        colorLow="#400",
+        colorMedium="#500",
+        colorSymbol=True,
+        decimal=2,
+        fontSize=9,
+        hasBackground=True,
+        hasOrb=True,
+        hasSymbol=True,
+        orbHideText=True,
+        orbLocation="Right",
+        orbSize=10,
+        prefix="prefix",
+        prefixSize=11,
+        selected=True,
+        serie="series",
+        suffix="suffix",
+        suffixSize=12,
+        symbol="data:image/svg+xml;base64,...",
+        symbolDefHeight=13,
+        symbolDefWidth=14,
+        symbolHeight=15,
+        symbolHideText=True,
+        symbolWidth=17,
+        text="text",
+        thresholds="40,50",
+        url="https://google.de",
+        xpos=18,
+        ypos=19,
+    )
+
+    json_data = t.to_json_data()
+
+    assert json_data['angle'] == 1
+    assert json_data['backgroundColor'] == "#100"
+    assert json_data['blinkHigh'] is True
+    assert json_data['blinkLow'] is True
+    assert json_data['color'] == "#200"
+    assert json_data['colorHigh'] == "#300"
+    assert json_data['colorLow'] == "#400"
+    assert json_data['colorMedium'] == "#500"
+    assert json_data['colorSymbol'] is True
+    assert json_data['decimal'] == 2
+    assert json_data['fontSize'] == 9
+    assert json_data['hasBackground'] is True
+    assert json_data['hasOrb'] is True
+    assert json_data['hasSymbol'] is True
+    assert json_data['isUsingThresholds'] is True
+    assert json_data['orbHideText'] is True
+    assert json_data['orbLocation'] == "Right"
+    assert json_data['orbSize'] == 10
+    assert json_data['prefix'] == "prefix"
+    assert json_data['prefixSize'] == 11
+    assert json_data['selected'] is True
+    assert json_data['serie'] == "series"
+    assert json_data['suffix'] == "suffix"
+    assert json_data['suffixSize'] == 12
+    assert json_data['symbol'] == "data:image/svg+xml;base64,..."
+    assert json_data['symbolDefHeight'] == 13
+    assert json_data['symbolDefWidth'] == 14
+    assert json_data['symbolHeight'] == 15
+    assert json_data['symbolHideText'] is True
+    assert json_data['symbolWidth'] == 17
+    assert json_data['text'] == "text"
+    assert json_data['thresholds'] == "40,50"
+    assert json_data['url'] == "https://google.de"
+    assert json_data['xpos'] == 18
+    assert json_data['ypos'] == 19
+
+
+def test_ePictBox_custom_symbole_logic():
+    t = G.ePictBox(
+        customSymbol="https://foo.bar/foo.jpg",
+        symbol="will be overiden",
+    )
+
+    json_data = t.to_json_data()
+
+    assert json_data['customSymbol'] == "https://foo.bar/foo.jpg"
+    assert json_data['symbol'] == "custom"
+
+
+def test_ePict():
+    t = G.ePict()
+    json_data = t.to_json_data()
+
+    assert json_data['type'] == G.EPICT_TYPE
+    assert json_data['options']['autoScale'] is True
+    assert json_data['options']['bgURL'] == ''
+    assert json_data['options']['boxes'] == []
+
+    t = G.ePict(
+        autoScale=False,
+        bgURL='https://example.com/img.jpg',
+        boxes=[
+            G.ePictBox(),
+            G.ePictBox(angle=123),
+        ]
+    )
+    json_data = t.to_json_data()
+
+    print(json_data)
+
+    assert json_data['type'] == G.EPICT_TYPE
+    assert json_data['options']['autoScale'] is False
+    assert json_data['options']['bgURL'] == 'https://example.com/img.jpg'
+    assert json_data['options']['boxes'] == [
+        G.ePictBox(),
+        G.ePictBox(angle=123),
+    ]
+
+
 def test_Text():
     t = G.Text()
 

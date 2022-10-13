@@ -78,6 +78,7 @@ DASHBOARD_TYPE = 'dashboard'
 ROW_TYPE = 'row'
 GRAPH_TYPE = 'graph'
 DISCRETE_TYPE = 'natel-discrete-panel'
+EPICT_TYPE = 'larona-epict-panel'
 STAT_TYPE = 'stat'
 SINGLESTAT_TYPE = 'singlestat'
 STATE_TIMELINE_TYPE = 'state-timeline'
@@ -302,6 +303,136 @@ VTYPE_FIRST = 'first'
 VTYPE_DELTA = 'delta'
 VTYPE_RANGE = 'range'
 VTYPE_DEFAULT = VTYPE_AVG
+
+
+@attr.s
+class ePictBox(object):
+    """
+    ePict Box.
+
+    :param angle: Rotation angle of box
+    :param backgroundColor: Dito
+    :param blinkHigh: Blink if below threshold
+    :param blinkLow: Blink if above threshold
+    :param color: Text color
+    :param colorHigh: High value color
+    :param colorLow: Low value color
+    :param colorMedium: In between value color
+    :param colorSymbol: Whether to enable background color for symbol
+    :param customSymbol: URL to custom symbol (will set symbol to "custom" if set)
+    :param decimal: Number of decimals
+    :param fontSize: Dito
+    :param hasBackground: Whether to enable background color for text
+    :param hasOrb: Whether an orb should be displayed
+    :param hasSymbol: Whether a (custom) symbol should be displayed
+    :param isUsingThresholds: Whether to enable thresholds.
+    :param orbHideText: Whether to hide text next to orb
+    :param orbLocation: Orb location (choose from 'Left', 'Right', 'Top' or 'Bottom')
+    :param orbSize: Dito
+    :param prefix: Value prefix to be displayed (e.g. °C)
+    :param prefixSize: Dito
+    :param selected: Dont know
+    :param serie: Which series to use data from
+    :param suffix: Value suffix to be displayed
+    :param suffixSize: Dito
+    :param symbol: Automatically placed by the plugin format: `data:image/svg+xml;base64,<base64>`, check manually.
+    :param symbolDefHeight: Dont know
+    :param symbolDefWidth: Dont know
+    :param symbolHeight: Dito
+    :param symbolHideText: Whether to hide value text next to symbol
+    :param symbolWidth: Dito
+    :param text: Dont know
+    :param thresholds: Coloring thresholds: Enter 2
+        comma-separated numbers. 20,60 will produce: value <= 20 -> green;
+        value between 20 and 60 -> yellow; value >= 60 -> red. If set, it will also set
+        isUsingThresholds to True
+    :param url: URL to open when clicked on
+    :param xpos: X in (0, X size of image)
+    :param ypos: Y in (0, Y size of image)
+    """
+
+    angle = attr.ib(default=0, validator=instance_of(int))
+    backgroundColor = attr.ib(default="#000", validator=instance_of((RGBA, RGB, str)))
+    blinkHigh = attr.ib(default=False, validator=instance_of(bool))
+    blinkLow = attr.ib(default=False, validator=instance_of(bool))
+    color = attr.ib(default="#000", validator=instance_of((RGBA, RGB, str)))
+    colorHigh = attr.ib(default="#000", validator=instance_of((RGBA, RGB, str)))
+    colorLow = attr.ib(default="#000", validator=instance_of((RGBA, RGB, str)))
+    colorMedium = attr.ib(default="#000", validator=instance_of((RGBA, RGB, str)))
+    colorSymbol = attr.ib(default=False, validator=instance_of(bool))
+    customSymbol = attr.ib(default="", validator=instance_of(str))
+    decimal = attr.ib(default=0, validator=instance_of(int))
+    fontSize = attr.ib(default=12, validator=instance_of(int))
+    hasBackground = attr.ib(default=False, validator=instance_of(bool))
+    hasOrb = attr.ib(default=False, validator=instance_of(bool))
+    hasSymbol = attr.ib(default=False, validator=instance_of(bool))
+    isUsingThresholds = attr.ib(default=False, validator=instance_of(bool))
+    orbHideText = attr.ib(default=False, validator=instance_of(bool))
+    orbLocation = attr.ib(
+        default="Left",
+        validator=in_(['Left', 'Right', 'Top', 'Bottom'])
+    )
+    orbSize = attr.ib(default=13, validator=instance_of(int))
+    prefix = attr.ib(default="", validator=instance_of(str))
+    prefixSize = attr.ib(default=10, validator=instance_of(int))
+    selected = attr.ib(default=False, validator=instance_of(bool))
+    serie = attr.ib(default="", validator=instance_of(str))
+    suffix = attr.ib(default="", validator=instance_of(str))
+    suffixSize = attr.ib(default=10, validator=instance_of(int))
+    symbol = attr.ib(default="", validator=instance_of(str))
+    symbolDefHeight = attr.ib(default=32, validator=instance_of(int))
+    symbolDefWidth = attr.ib(default=32, validator=instance_of(int))
+    symbolHeight = attr.ib(default=32, validator=instance_of(int))
+    symbolHideText = attr.ib(default=False, validator=instance_of(bool))
+    symbolWidth = attr.ib(default=32, validator=instance_of(int))
+    text = attr.ib(default="N/A", validator=instance_of(str))
+    thresholds = attr.ib(default="", validator=instance_of(str))
+    url = attr.ib(default="", validator=instance_of(str))
+    xpos = attr.ib(default=0, validator=instance_of(int))
+    ypos = attr.ib(default=0, validator=instance_of(int))
+
+    def to_json_data(self):
+        self.symbol = "custom" if self.customSymbol else self.symbol
+        self.isUsingThresholds = bool(self.thresholds)
+
+        return {
+            "angle": self.angle,
+            "backgroundColor": self.backgroundColor,
+            "blinkHigh": self.blinkHigh,
+            "blinkLow": self.blinkLow,
+            "color": self.color,
+            "colorHigh": self.colorHigh,
+            "colorLow": self.colorLow,
+            "colorMedium": self.colorMedium,
+            "colorSymbol": self.colorSymbol,
+            "customSymbol": self.customSymbol,
+            "decimal": self.decimal,
+            "fontSize": self.fontSize,
+            "hasBackground": self.hasBackground,
+            "hasOrb": self.hasOrb,
+            "hasSymbol": self.hasSymbol,
+            "isUsingThresholds": self.isUsingThresholds,
+            "orbHideText": self.orbHideText,
+            "orbLocation": self.orbLocation,
+            "orbSize": self.orbSize,
+            "prefix": self.prefix,
+            "prefixSize": self.prefixSize,
+            "selected": self.selected,
+            "serie": self.serie,
+            "suffix": self.suffix,
+            "suffixSize": self.suffixSize,
+            "symbol": self.symbol,
+            "symbolDefHeight": self.symbolDefHeight,
+            "symbolDefWidth": self.symbolDefWidth,
+            "symbolHeight": self.symbolHeight,
+            "symbolHideText": self.symbolHideText,
+            "symbolWidth": self.symbolWidth,
+            "text": self.text,
+            "thresholds": self.thresholds,
+            "url": self.url,
+            "xpos": self.xpos,
+            "ypos": self.ypos,
+        }
 
 
 @attr.s
@@ -1328,6 +1459,41 @@ class Panel(object):
         _deep_update(res, overrides)
         _deep_update(res, self.extraJson)
         return res
+
+
+@attr.s
+class ePict(Panel):
+    """
+    Generates ePict panel json structure.
+    https://grafana.com/grafana/plugins/larona-epict-panel/
+
+    :param autoScale: Whether to auto scale image to panel size.
+    :param bgURL: Where to load the image from.
+    :param boxes: The info boxes to be placed on the image.
+    """
+
+    bgURL = attr.ib(default='', validator=instance_of(str))
+
+    autoScale = attr.ib(default=True, validator=instance_of(bool))
+    boxes = attr.ib(
+        default=[],
+        validator=attr.validators.deep_iterable(
+            member_validator=instance_of(ePictBox),
+            iterable_validator=instance_of(list),
+        ),
+    )
+
+    def to_json_data(self):
+        graph_object = {
+            'type': EPICT_TYPE,
+
+            'options': {
+                'autoScale': self.autoScale,
+                'bgURL': self.bgURL,
+                'boxes': self.boxes
+            }
+        }
+        return self.panel_json(graph_object)
 
 
 @attr.s
