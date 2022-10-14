@@ -1,0 +1,199 @@
+{
+  "interval": "1m",
+  "name": "Production Alerts",
+  "rules": [
+    {
+      "annotations": {
+        "runbook_url": "https://runbook-for-this-scenario.com/foo",
+        "summary": "The database is down"
+      },
+      "for": "3m",
+      "grafana_alert": {
+        "condition": "CONDITION",
+        "data": [
+          {
+            "datasourceUid": "VictoriaMetrics",
+            "model": {
+              "datasource": "VictoriaMetrics",
+              "expr": "sum(kube_pod_container_status_ready{exported_pod=~\"database-/*\"})",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "",
+              "metric": "",
+              "refId": "A",
+              "step": 10,
+              "target": ""
+            },
+            "refId": "A",
+            "relativeTimeRange": {
+              "from": 300,
+              "to": 0
+            }
+          },
+          {
+            "datasourceUid": "Loki",
+            "model": {
+              "datasource": "Loki",
+              "expr": "sum by (app) (count_over_time({app=\"database\"}[5m]))",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "",
+              "metric": "",
+              "refId": "B",
+              "step": 10,
+              "target": ""
+            },
+            "refId": "B",
+            "relativeTimeRange": {
+              "from": 300,
+              "to": 0
+            }
+          },
+          {
+            "datasourceUid": "-100",
+            "model": {
+              "conditions": [
+                {
+                  "evaluator": {
+                    "params": [
+                      1
+                    ],
+                    "type": "lt"
+                  },
+                  "operator": {
+                    "type": "or"
+                  },
+                  "query": {
+                    "params": [
+                      "A"
+                    ]
+                  },
+                  "reducer": {
+                    "params": [],
+                    "type": "last"
+                  },
+                  "type": "query"
+                },
+                {
+                  "evaluator": {
+                    "params": [
+                      1000
+                    ],
+                    "type": "lt"
+                  },
+                  "operator": {
+                    "type": "or"
+                  },
+                  "query": {
+                    "params": [
+                      "B"
+                    ]
+                  },
+                  "reducer": {
+                    "params": [],
+                    "type": "last"
+                  },
+                  "type": "query"
+                }
+              ],
+              "refId": "CONDITION",
+              "type": "classic_conditions"
+            },
+            "refId": "CONDITION"
+          }
+        ],
+        "exec_err_state": "Alerting",
+        "intervalSeconds": "1m",
+        "no_data_state": "Alerting",
+        "rule_group": "Production Alerts",
+        "title": "Database is unresponsive",
+        "uid": null
+      },
+      "labels": {
+        "environment": "prod",
+        "slack": "prod-alerts"
+      }
+    },
+    {
+      "annotations": {
+        "runbook_url": "https://runbook-for-this-scenario.com/foo",
+        "summary": "Service API has been unavailable for 3 minutes"
+      },
+      "for": "3m",
+      "grafana_alert": {
+        "condition": "CONDITION",
+        "data": [
+          {
+            "datasourceUid": "VictoriaMetrics",
+            "model": {
+              "datasource": "VictoriaMetrics",
+              "expr": "probe_success{instance=\"https://my-service.foo.com/ready\"}",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "",
+              "metric": "",
+              "refId": "A",
+              "step": 10,
+              "target": ""
+            },
+            "refId": "A",
+            "relativeTimeRange": {
+              "from": 300,
+              "to": 0
+            }
+          },
+          {
+            "datasourceUid": "-100",
+            "model": {
+              "conditions": [
+                {
+                  "evaluator": {
+                    "params": [
+                      1
+                    ],
+                    "type": "lt"
+                  },
+                  "operator": {
+                    "type": "and"
+                  },
+                  "query": {
+                    "params": [
+                      "A"
+                    ]
+                  },
+                  "reducer": {
+                    "params": [],
+                    "type": "last"
+                  },
+                  "type": "query"
+                }
+              ],
+              "refId": "CONDITION",
+              "type": "classic_conditions"
+            },
+            "refId": "CONDITION"
+          }
+        ],
+        "exec_err_state": "Alerting",
+        "intervalSeconds": "1m",
+        "no_data_state": "Alerting",
+        "rule_group": "Production Alerts",
+        "title": "Service API blackbox failure",
+        "uid": null
+      },
+      "labels": {
+        "environment": "prod",
+        "slack": "prod-alerts"
+      }
+    }
+  ]
+}
