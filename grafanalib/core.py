@@ -187,12 +187,25 @@ CTYPE_QUERY = 'query'
 OP_AND = 'and'
 OP_OR = 'or'
 
-# Expression Types
+# Alert Expression Types
 # classic/reduce/resample/math
 EXP_TYPE_CLASSIC = 'classic_conditions'
 EXP_TYPE_REDUCE = 'reduce'
 EXP_TYPE_RESAMPLE = 'resample'
 EXP_TYPE_MATH = 'math'
+
+# Alert Expression Reducer Function
+EXP_REDUCER_FUNC_MIN = 'min'
+EXP_REDUCER_FUNC_MAX = 'max'
+EXP_REDUCER_FUNC_MEAN = 'mean'
+EXP_REDUCER_FUNC_SUM = 'sum'
+EXP_REDUCER_FUNC_COUNT = 'count'
+EXP_REDUCER_FUNC_LAST = 'last'
+
+# Alert Expression Reducer Mode
+EXP_REDUCER_MODE_STRICT = 'strict'
+EXP_REDUCER_FUNC_DROP_NN = 'dropNN'
+EXP_REDUCER_FUNC_REPLACE_NN = 'replaceNN'
 
 # Text panel modes
 TEXT_MODE_MARKDOWN = 'markdown'
@@ -1211,7 +1224,7 @@ class AlertExpression(object):
     A alert expression to be evaluated in Grafana v9.x+
 
     :param refId: Expression reference ID (A,B,C,D,...)
-    :param expression: Reference ID (A,B,C,D,...) for expression to evaluate, or in the case of the Math type the expression to evaluate
+    :param expression: Input reference ID (A,B,C,D,...) for expression to evaluate, or in the case of the Math type the expression to evaluate
     :param conditions: list of AlertConditions
     :param expressionType: Expression type EXP_TYPE_*
         Supported expression types:
@@ -1219,6 +1232,31 @@ class AlertExpression(object):
         EXP_TYPE_REDUCE
         EXP_TYPE_RESAMPLE
         EXP_TYPE_MATH
+    :param hide: Hide alert boolean
+    :param intervalMs: Expression evaluation interval
+    :param maxDataPoints: Maximum number fo data points to be evaluated
+
+    :param reduceFunction: Reducer function (Only used if expressionType=EXP_TYPE_REDUCE)
+        Supported reducer functions:
+        EXP_REDUCER_FUNC_MIN
+        EXP_REDUCER_FUNC_MAX
+        EXP_REDUCER_FUNC_MEAN
+        EXP_REDUCER_FUNC_SUM
+        EXP_REDUCER_FUNC_COUNT
+        EXP_REDUCER_FUNC_LAST
+    :param reduceMode: Reducer mode (Only used if expressionType=EXP_TYPE_REDUCE)
+        Supported reducer modes:
+        EXP_REDUCER_MODE_STRICT
+        EXP_REDUCER_FUNC_DROP_NN
+        EXP_REDUCER_FUNC_REPLACE_NN
+    :param reduceReplaceWith: When using mode EXP_REDUCER_FUNC_REPLACE_NN number that will replace non numeric values
+
+    :param resampleWindow: Intervale to resample to eg. 10s, 1m, 30m, 1h
+    :param resampleDownsampler: 'mean', 'min', 'max', 'sum'
+    :param resampleUpsampler:
+        'fillna' - Fill with NaN's
+        'pad' - fill with the last known value
+        'backfilling' - fill with the next know value
     """
 
     refId = attr.ib()
@@ -1231,6 +1269,7 @@ class AlertExpression(object):
 
     reduceFunction = attr.ib(default='mean')
     reduceMode = attr.ib(default='dropNN')
+    reduceReplaceWith = attr.ib(default=0)
 
     resampleWindow = attr.ib(default='10s', validator=instance_of(str))
     resampleDownsampler = attr.ib(default='mean')
@@ -1268,7 +1307,8 @@ class AlertExpression(object):
                 'type': self.expressionType,
                 'reducer': self.reduceFunction,
                 'settings': {
-                    'mode': self.reduceMode
+                    'mode': self.reduceMode,
+                    'replaceWithValue': self.reduceReplaceWith
                 },
                 'downsampler': self.resampleDownsampler,
                 'upsampler': self.resampleUpsampler,
