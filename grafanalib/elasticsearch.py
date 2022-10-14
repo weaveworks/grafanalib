@@ -430,7 +430,7 @@ class ElasticsearchAlertCondition(AlertCondition):
     :param type: CTYPE_*
     """
 
-    target = attr.ib(validator=instance_of(ElasticsearchTarget))
+    target = attr.ib(default=None, validator=instance_of(ElasticsearchTarget))
 
 
 @attr.s

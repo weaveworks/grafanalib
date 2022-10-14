@@ -12,6 +12,7 @@ test-results/junit-*.xml
 /.coverage
 /venv*/
 /.idea/
+/.vscode/
 
 # Documentation
 docs/build

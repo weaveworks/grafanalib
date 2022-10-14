@@ -751,6 +751,122 @@ def test_alert():
     alert.to_json_data()
 
 
+def test_alertgroup():
+    name = "Example Alert Group"
+    group = G.AlertGroup(
+        name=name,
+        rules=[
+            G.AlertRule(
+                title="My Important Alert!",
+                triggers=[
+                    (
+                        G.Target(refId="A"),
+                        G.AlertCondition(
+                            evaluator=G.LowerThan(1),
+                            operator=G.OP_OR,
+                        ),
+                    ),
+                    (
+                        G.Target(refId="B"),
+                        G.AlertCondition(
+                            evaluator=G.GreaterThan(1),
+                            operator=G.OP_OR,
+                        )
+                    )
+                ]
+            )
+        ]
+    )
+
+    output = group.to_json_data()
+
+    assert output["name"] == name
+    assert output["rules"][0]["grafana_alert"]["rule_group"] == name
+
+
+def test_alertrule():
+    title = "My Important Alert!"
+    annotations = {"summary": "this alert fires when prod is down!!!"}
+    labels = {"severity": "serious"}
+    rule = G.AlertRule(
+        title=title,
+        triggers=[
+            (
+                G.Target(
+                    refId="A",
+                    datasource="Prometheus",
+                ),
+                G.AlertCondition(
+                    evaluator=G.LowerThan(1),
+                    operator=G.OP_OR,
+                ),
+            ),
+            (
+                G.Target(
+                    refId="B",
+                    datasource="Prometheus",
+                ),
+                G.AlertCondition(
+                    evaluator=G.GreaterThan(1),
+                    operator=G.OP_OR,
+                )
+            )
+        ],
+        annotations=annotations,
+        labels=labels,
+        evaluateFor="3m",
+    )
+
+    data = rule.to_json_data()
+    assert data['grafana_alert']['title'] == title
+    assert data['annotations'] == annotations
+    assert data['labels'] == labels
+    assert data['for'] == "3m"
+
+
+def test_alertrule_invalid_triggers():
+    # test that triggers is a list of [(Target, AlertCondition)]
+
+    with pytest.raises(ValueError):
+        G.AlertRule(
+            title="Invalid rule",
+            triggers=[
+                G.Target(
+                    refId="A",
+                    datasource="Prometheus",
+                ),
+            ],
+        )
+
+    with pytest.raises(ValueError):
+        G.AlertRule(
+            title="Invalid rule",
+            triggers=[
+                (
+                    "foo",
+                    G.AlertCondition(
+                        evaluator=G.GreaterThan(1),
+                        operator=G.OP_OR,
+                    )
+                ),
+            ],
+        )
+
+    with pytest.raises(ValueError):
+        G.AlertRule(
+            title="Invalid rule",
+            triggers=[
+                (
+                    G.Target(
+                        refId="A",
+                        datasource="Prometheus",
+                    ),
+                    "bar"
+                ),
+            ],
+        )
+
+
 def test_worldmap():
     data_source = 'dummy data source'
     targets = ['dummy_prom_query']

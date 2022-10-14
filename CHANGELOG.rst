@@ -6,6 +6,7 @@ x.x.x (TBC)
 ===========
 
 * Added ...
+* Added Grafana 8.x new Alert Rule
 * Added ePict_ plugin.
 * Added ae3e plotly panel support
 * Added datasource parameter to Influxdb targets
@@ -15,6 +16,7 @@ x.x.x (TBC)
 * Fix typo in unit constant ``NORMAL_CUBIC_METER`` (was ``NORMAIL_CUBIC_METER``)
 
 .. _ePict: basehttps://grafana.com/grafana/plugins/larona-epict-panel/
+
 
 0.6.3 (2022-03-30)
 ==================
