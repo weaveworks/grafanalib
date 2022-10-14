@@ -6,7 +6,6 @@ jobs:
   build-n-publish:
     name: Build and publish Python 🐍 distributions 📦 to PyPI
     runs-on: ubuntu-18.04
-    if: github.ref == 'refs/heads/main'
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.7
