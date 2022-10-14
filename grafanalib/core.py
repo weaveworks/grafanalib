@@ -1268,7 +1268,7 @@ class AlertExpression(object):
     maxDataPoints = attr.ib(default=43200, validator=instance_of(int))
 
     reduceFunction = attr.ib(default='mean')
-    reduceMode = attr.ib(default='dropNN')
+    reduceMode = attr.ib(default=EXP_REDUCER_MODE_STRICT)
     reduceReplaceWith = attr.ib(default=0)
 
     resampleWindow = attr.ib(default='10s', validator=instance_of(str))

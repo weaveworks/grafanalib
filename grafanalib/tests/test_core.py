@@ -908,6 +908,52 @@ def test_alertrulev9():
     assert data['condition'] == condition
 
 
+def test_alertexpression():
+    refId = 'D'
+    expression = 'C'
+    expressionType = G.EXP_TYPE_REDUCE
+    reduceFunction = G.EXP_REDUCER_FUNC_MAX
+    reduceMode = G.EXP_REDUCER_FUNC_DROP_NN
+
+    alert_exp = G.AlertExpression(
+        refId=refId,
+        expression=expression,
+        expressionType=expressionType,
+        reduceFunction=reduceFunction,
+        reduceMode=reduceMode
+    )
+
+    data = alert_exp.to_json_data()
+
+    assert data['refId'] == refId
+    assert data['datasourceUid'] == '-100'
+    assert data['model']['conditions'] == []
+    assert data['model']['datasource'] == {
+        'type': '__expr__',
+        'uid': '-100'
+    }
+    assert data['model']['expression'] == expression
+    assert data['model']['refId'] == refId
+    assert data['model']['type'] == expressionType
+    assert data['model']['reducer'] == reduceFunction
+    assert data['model']['settings']['mode'] == reduceMode
+
+
+def test_alertfilefasedfrovisioning():
+    groups = [{
+        'foo': 'bar'
+    }]
+
+    rules = G.AlertFileBasedProvisioning(
+        groups=groups
+    )
+
+    data = rules.to_json_data()
+
+    assert data['apiVersion'] == 1
+    assert data['groups'] == groups
+
+
 def test_worldmap():
     data_source = 'dummy data source'
     targets = ['dummy_prom_query']
