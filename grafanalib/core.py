@@ -2142,7 +2142,6 @@ class TimeSeries(Panel):
     :param legendCalcs: which calculations should be displayed in the legend. Defaults to an empty list.
         Possible values are: allIsNull, allIsZero, changeCount, count, delta, diff, diffperc,
         distinctCount, firstNotNull, max, mean, min, logmin, range, step, total. For more information see
-        https://grafana.com/docs/grafana/next/panels/calculation-types/
     :param lineInterpolation: line interpolation
         linear (Default), smooth, stepBefore, stepAfter
     :param lineWidth: line width, default 1
@@ -4186,7 +4185,6 @@ class Histogram(Panel):
 @attr.s
 class News(Panel):
     """Generates News panel json structure
-    Grafana docs on State Timeline panel: https://grafana.com/docs/grafana/next/visualizations/news-panel/
 
     :param feedUrl: URL to query, only RSS feed formats are supported (not Atom).
     :param showImage: Controls if the news item social (og:image) image is shown above text content
