@@ -7,6 +7,7 @@ x.x.x (TBC)
 
 * Added ...
 * Added Grafana 8.x new Alert Rule
+* Added Grafana 9.x new Alert Rule
 * Added ePict_ plugin.
 * Added ae3e plotly panel support
 * Added datasource parameter to Influxdb targets
