@@ -1261,14 +1261,42 @@ class AlertExpression(object):
 
     refId = attr.ib()
     expression = attr.ib(validator=instance_of(str))
-    conditions = attr.ib(default=attr.Factory(list), validator=instance_of(list))
-    expressionType = attr.ib(default=EXP_TYPE_CLASSIC)
+    conditions = attr.ib(default=attr.Factory(list), validator=attr.validators.deep_iterable(
+        member_validator=instance_of(AlertCondition),
+        iterable_validator=instance_of(list)
+    ))
+    expressionType = attr.ib(
+        default=EXP_TYPE_CLASSIC,
+        validator=in_([
+            EXP_TYPE_CLASSIC,
+            EXP_TYPE_REDUCE,
+            EXP_TYPE_RESAMPLE,
+            EXP_TYPE_MATH
+        ])
+    )
     hide = attr.ib(default=False, validator=instance_of(bool))
     intervalMs = attr.ib(default=1000, validator=instance_of(int))
     maxDataPoints = attr.ib(default=43200, validator=instance_of(int))
 
-    reduceFunction = attr.ib(default='mean')
-    reduceMode = attr.ib(default=EXP_REDUCER_MODE_STRICT)
+    reduceFunction = attr.ib(
+        default=EXP_REDUCER_FUNC_MEAN,
+        validator=in_([
+            EXP_REDUCER_FUNC_MIN,
+            EXP_REDUCER_FUNC_MAX,
+            EXP_REDUCER_FUNC_MEAN,
+            EXP_REDUCER_FUNC_SUM,
+            EXP_REDUCER_FUNC_COUNT,
+            EXP_REDUCER_FUNC_LAST
+        ])
+    )
+    reduceMode = attr.ib(
+        default=EXP_REDUCER_MODE_STRICT,
+        validator=in_([
+            EXP_REDUCER_MODE_STRICT,
+            EXP_REDUCER_FUNC_DROP_NN,
+            EXP_REDUCER_FUNC_REPLACE_NN
+        ])
+    )
     reduceReplaceWith = attr.ib(default=0)
 
     resampleWindow = attr.ib(default='10s', validator=instance_of(str))
@@ -1401,16 +1429,17 @@ def is_valid_triggers(instance, attribute, value):
 def is_valid_triggersv9(instance, attribute, value):
     """Validator for AlertRule triggers for Grafana v9"""
     for trigger in value:
-        if not (isinstance(trigger, Target) or isinstance(trigger, AlertCondition)):
+        if not (isinstance(trigger, Target) or isinstance(trigger, AlertExpression)):
             raise ValueError(f"{attribute.name} must either be a Target or AlertCondition")
 
-        is_valid_target(instance, "alert trigger target", trigger)
+        if isinstance(trigger, Target):
+            is_valid_target(instance, "alert trigger target", trigger)
 
 
 @attr.s
 class AlertRulev8(object):
     """
-    Create a Grafana 8.x+ Alert Rule
+    Create a Grafana 8.x Alert Rule
 
     :param title: The alert's title, must be unique per folder
     :param triggers: A list of Target and AlertCondition tuples, [(Target, AlertCondition)].
@@ -1545,7 +1574,7 @@ class AlertRulev9(object):
     """
 
     title = attr.ib()
-    triggers = attr.ib(default=[], validator=instance_of(list))
+    triggers = attr.ib(default=[], validator=is_valid_triggersv9)
     annotations = attr.ib(default={}, validator=instance_of(dict))
     labels = attr.ib(default={}, validator=instance_of(dict))
 
