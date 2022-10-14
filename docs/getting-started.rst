@@ -61,17 +61,21 @@ The following will configure a couple of alerts inside a group.
 Although this example has a fair amount of boilerplate, when creating large numbers
 of similar alerts it can save lots of time to programatically fill these fields.
 
-Each `AlertGroup` represents a folder within Grafana's alerts tab. This consists
-of one or more `AlertRule`, which contains one or more triggers. Triggers define
+Each ``AlertGroup`` represents a folder within Grafana's alerts tab. This consists
+of one or more ``AlertRule``, which contains one or more triggers. Triggers define
 what will cause the alert to fire.
 
-A trigger is made up of a `Target` (a Grafana query on a datasource) and an
+A trigger is made up of a ``Target`` (a Grafana query on a datasource) and an
 `AlertCondition` (a condition this query must satisfy in order to alert).
 
 Finally, there are additional settings like:
-* How the alert will behave when data sources have problems (`noDataAlertState` and `errorAlertState`)
-* How frequently the trigger is evaluated (`evaluateInterval`)
-* How long the AlertCondition needs to be met before the alert fires (`evaluateFor`)
+
+* How the alert will behave when data sources have problems (``noDataAlertState`` and ``errorAlertState``)
+
+* How frequently the trigger is evaluated (``evaluateInterval``)
+
+* How long the AlertCondition needs to be met before the alert fires (``evaluateFor``)
+
 * Annotations and labels, which help provide contextual information and direct where
   your alerts will go
 
