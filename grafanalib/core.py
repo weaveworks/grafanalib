@@ -187,6 +187,13 @@ CTYPE_QUERY = 'query'
 OP_AND = 'and'
 OP_OR = 'or'
 
+# Expression Types
+# classic/reduce/resample/math
+EXP_TYPE_CLASSIC = 'classic_conditions'
+EXP_TYPE_REDUCE = 'reduce'
+EXP_TYPE_RESAMPLE = 'resample'
+EXP_TYPE_MATH = 'math'
+
 # Text panel modes
 TEXT_MODE_MARKDOWN = 'markdown'
 TEXT_MODE_HTML = 'html'
@@ -565,6 +572,7 @@ class Target(object):
     def to_json_data(self):
         return {
             'expr': self.expr,
+            'query': self.expr,
             'target': self.target,
             'format': self.format,
             'hide': self.hide,
@@ -1198,6 +1206,80 @@ class AlertCondition(object):
 
 
 @attr.s
+class AlertExpression(object):
+    """
+    A alert expression to be evaluated in Grafana v9.x+
+
+    :param refId: Expression reference ID (A,B,C,D,...)
+    :param expression: Reference ID (A,B,C,D,...) for expression to evaluate, or in the case of the Math type the expression to evaluate
+    :param conditions: list of AlertConditions
+    :param expressionType: Expression type EXP_TYPE_*
+        Supported expression types:
+        EXP_TYPE_CLASSIC
+        EXP_TYPE_REDUCE
+        EXP_TYPE_RESAMPLE
+        EXP_TYPE_MATH
+    """
+
+    refId = attr.ib()
+    expression = attr.ib(validator=instance_of(str))
+    conditions = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+    expressionType = attr.ib(default=EXP_TYPE_CLASSIC)
+    hide = attr.ib(default=False, validator=instance_of(bool))
+    intervalMs = attr.ib(default=1000, validator=instance_of(int))
+    maxDataPoints = attr.ib(default=43200, validator=instance_of(int))
+
+    reduceFunction = attr.ib(default='mean')
+    reduceMode = attr.ib(default='dropNN')
+
+    resampleWindow = attr.ib(default='10s', validator=instance_of(str))
+    resampleDownsampler = attr.ib(default='mean')
+    resampleUpsampler = attr.ib(default='fillna')
+
+    def to_json_data(self):
+
+        conditions = []
+
+        for condition in self.conditions:
+            # discard unused features of condition as of grafana 8.x
+            condition.useNewAlerts = True
+            condition.target = Target() # Not used, but needed so to_json can be called
+            conditions += [condition.to_json_data()]
+
+        expression = {
+            'refId': self.refId,
+            'queryType': '',
+            'relativeTimeRange': {
+                'from': 0,
+                'to': 0
+            },
+            'datasourceUid': '-100',
+            'model': {
+                'conditions': conditions,
+                'datasource': {
+                    'type': '__expr__',
+                    'uid': '-100'
+                },
+                'expression': self.expression,
+                'hide': self.hide,
+                'intervalMs': self.intervalMs,
+                'maxDataPoints': self.maxDataPoints,
+                'refId': self.refId,
+                'type': self.expressionType,
+                'reducer': self.reduceFunction,
+                'settings': {
+                    'mode': self.reduceMode
+                },
+                'downsampler': self.resampleDownsampler,
+                'upsampler': self.resampleUpsampler,
+                'window': self.resampleWindow
+            }
+        }
+
+        return expression
+
+
+@attr.s
 class Alert(object):
     """
     :param alertRuleTags: Key Value pairs to be sent with Alert notifications.
@@ -1242,9 +1324,11 @@ class AlertGroup(object):
 
     :param name: Alert group name
     :param rules: List of AlertRule
+    :param folder: Folder to hold alert (Grafana 9.x)
     """
     name = attr.ib()
     rules = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+    folder = attr.ib(default='alert')
 
     def group_rules(self, rules):
         grouped_rules = []
@@ -1258,6 +1342,7 @@ class AlertGroup(object):
             'name': self.name,
             'interval': "1m",
             'rules': self.group_rules(self.rules),
+            'folder': self.folder
         }
 
 
@@ -1272,9 +1357,17 @@ def is_valid_triggers(instance, attribute, value):
 
         is_valid_target(instance, "alert trigger target", trigger[0])
 
+def is_valid_triggersv9(instance, attribute, value):
+    """Validator for AlertRule triggers for Grafana v9"""
+    for trigger in value:
+        if not (isinstance(trigger, Target) or isinstance(trigger, AlertCondition)) :
+            raise ValueError(f"{attribute.name} must either be a Target or AlertCondition")
+
+        is_valid_target(instance, "alert trigger target", trigger)
+
 
 @attr.s
-class AlertRule(object):
+class AlertRulev8(object):
     """
     Create a Grafana 8.x+ Alert Rule
 
@@ -1381,6 +1474,111 @@ class AlertRule(object):
             }
         }
 
+
+@attr.s
+class AlertRulev9(object):
+    """
+    Create a Grafana 9.x+ Alert Rule
+
+    :param title: The alert's title, must be unique per folder
+    :param triggers: A list of Targets and AlertConditions.
+        The Target specifies the query, and the AlertCondition specifies how this is used to alert.
+    :param annotations: Summary and annotations
+    :param labels: Custom Labels for the metric, used to handle notifications
+    :param condition: Set one of the queries or expressions as the alert condition by refID (Grafana 9.x)
+
+    :param evaluateInterval: The frequency of evaluation. Must be a multiple of 10 seconds. For example, 30s, 1m
+    :param evaluateFor: The duration for which the condition must be true before an alert fires
+    :param noDataAlertState: Alert state if no data or all values are null
+        Must be one of the following:
+        [ALERTRULE_STATE_DATA_OK, ALERTRULE_STATE_DATA_ALERTING, ALERTRULE_STATE_DATA_NODATA ]
+    :param errorAlertState: Alert state if execution error or timeout
+        Must be one of the following:
+        [ALERTRULE_STATE_DATA_OK, ALERTRULE_STATE_DATA_ALERTING, ALERTRULE_STATE_DATA_ERROR ]
+
+    :param timeRangeFrom: Time range interpolation data start from
+    :param timeRangeTo: Time range interpolation data finish at
+    :param uid: Alert UID should be unique
+    :param dashboard_uid: Dashboard UID that should be use for linking on alert message
+    :param panel_id: Panel ID that should should be use for linking on alert message
+    """
+
+    title = attr.ib()
+    triggers = attr.ib(default=[], validator=instance_of(list))
+    annotations = attr.ib(default={}, validator=instance_of(dict))
+    labels = attr.ib(default={}, validator=instance_of(dict))
+
+    evaluateInterval = attr.ib(default=DEFAULT_ALERT_EVALUATE_INTERVAL, validator=instance_of(str))
+    evaluateFor = attr.ib(default=DEFAULT_ALERT_EVALUATE_FOR, validator=instance_of(str))
+    noDataAlertState = attr.ib(
+        default=ALERTRULE_STATE_DATA_ALERTING,
+        validator=in_([
+            ALERTRULE_STATE_DATA_OK,
+            ALERTRULE_STATE_DATA_ALERTING,
+            ALERTRULE_STATE_DATA_NODATA
+        ])
+    )
+    errorAlertState = attr.ib(
+        default=ALERTRULE_STATE_DATA_ALERTING,
+        validator=in_([
+            ALERTRULE_STATE_DATA_OK,
+            ALERTRULE_STATE_DATA_ALERTING,
+            ALERTRULE_STATE_DATA_ERROR
+        ])
+    )
+    condition = attr.ib(default='B')
+    timeRangeFrom = attr.ib(default=300, validator=instance_of(int))
+    timeRangeTo = attr.ib(default=0, validator=instance_of(int))
+    uid = attr.ib(default=None, validator=attr.validators.optional(instance_of(str)))
+    dashboard_uid = attr.ib(default="", validator=instance_of(str))
+    panel_id = attr.ib(default=0, validator=instance_of(int))
+
+    rule_group = attr.ib(default="")
+
+    def to_json_data(self):
+        data = []
+        conditions = []
+
+        for trigger in self.triggers:
+            if isinstance(trigger, Target):
+                target = trigger
+                data += [{
+                    "refId": target.refId,
+                    "relativeTimeRange": {
+                        "from": self.timeRangeFrom,
+                        "to": self.timeRangeTo
+                    },
+                    "datasourceUid": target.datasource,
+                    "model": target.to_json_data(),
+                }]
+            else:
+                data += [trigger.to_json_data()]
+
+        return {
+            "title": self.title,
+            "uid": self.uid,
+            "condition": self.condition,
+            "for": self.evaluateFor,
+            "labels": self.labels,
+            "annotations": self.annotations,
+            "data": data
+        }
+
+@attr.s
+class AlertFileBasedProvisioning(object):
+    """
+    Used to generate JSON data valid for file based alert provisioning
+
+    param alertGroup: List of AlertGroups
+    """
+
+    groups = attr.ib()
+
+    def to_json_data(self):
+        return {
+            'apiVersion': 1,
+            'groups': self.groups,
+        }
 
 @attr.s
 class Notification(object):
