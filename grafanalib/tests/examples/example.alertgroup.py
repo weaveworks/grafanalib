@@ -3,7 +3,7 @@
 
 from grafanalib.core import (
     AlertGroup,
-    AlertRule,
+    AlertRulev8,
     Target,
     AlertCondition,
     LowerThan,
@@ -17,7 +17,7 @@ alertgroup = AlertGroup(
     name="Production Alerts",
     # Each AlertRule forms a separate alert.
     rules=[
-        AlertRule(
+        AlertRulev8(
             # Each rule must have a unique title
             title="Database is unresponsive",
             # Several triggers can be used per alert, a trigger is a combination of a Target and its AlertCondition in a tuple.
@@ -62,7 +62,7 @@ alertgroup = AlertGroup(
         ),
 
         # Second alert
-        AlertRule(
+        AlertRulev8(
             title="Service API blackbox failure",
             triggers=[
                 (

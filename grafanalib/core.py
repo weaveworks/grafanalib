@@ -1397,10 +1397,11 @@ def is_valid_triggers(instance, attribute, value):
 
         is_valid_target(instance, "alert trigger target", trigger[0])
 
+
 def is_valid_triggersv9(instance, attribute, value):
     """Validator for AlertRule triggers for Grafana v9"""
     for trigger in value:
-        if not (isinstance(trigger, Target) or isinstance(trigger, AlertCondition)) :
+        if not (isinstance(trigger, Target) or isinstance(trigger, AlertCondition)):
             raise ValueError(f"{attribute.name} must either be a Target or AlertCondition")
 
         is_valid_target(instance, "alert trigger target", trigger)
@@ -1577,7 +1578,6 @@ class AlertRulev9(object):
 
     def to_json_data(self):
         data = []
-        conditions = []
 
         for trigger in self.triggers:
             if isinstance(trigger, Target):
@@ -1604,6 +1604,7 @@ class AlertRulev9(object):
             "data": data
         }
 
+
 @attr.s
 class AlertFileBasedProvisioning(object):
     """
@@ -1619,6 +1620,7 @@ class AlertFileBasedProvisioning(object):
             'apiVersion': 1,
             'groups': self.groups,
         }
+
 
 @attr.s
 class Notification(object):
