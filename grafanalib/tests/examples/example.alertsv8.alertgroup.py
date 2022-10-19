@@ -51,7 +51,7 @@ alertgroup = AlertGroup(
             ],
             annotations={
                 "summary": "The database is down",
-                "runbook_url": "https://runbook-for-this-scenario.com/foo",
+                "runbook_url": "runbook-for-this-scenario.com/foo",
             },
             labels={
                 "environment": "prod",
@@ -80,7 +80,7 @@ alertgroup = AlertGroup(
             ],
             annotations={
                 "summary": "Service API has been unavailable for 3 minutes",
-                "runbook_url": "https://runbook-for-this-scenario.com/foo",
+                "runbook_url": "runbook-for-this-scenario.com/foo",
             },
             labels={
                 "environment": "prod",
