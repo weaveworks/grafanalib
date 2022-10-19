@@ -1393,10 +1393,12 @@ class AlertGroup(object):
     :param name: Alert group name
     :param rules: List of AlertRule
     :param folder: Folder to hold alert (Grafana 9.x)
+    :param interval: Interval at which the group of alerts is to be evaluated
     """
     name = attr.ib()
     rules = attr.ib(default=attr.Factory(list), validator=instance_of(list))
-    folder = attr.ib(default='alert')
+    folder = attr.ib(default='alert', validator=instance_of(str))
+    interval = attr.ib(default='1m', validator=instance_of(str))
 
     def group_rules(self, rules):
         grouped_rules = []
@@ -1408,7 +1410,7 @@ class AlertGroup(object):
     def to_json_data(self):
         return {
             'name': self.name,
-            'interval': "1m",
+            'interval': self.interval,
             'rules': self.group_rules(self.rules),
             'folder': self.folder
         }
@@ -1554,11 +1556,13 @@ class AlertRulev9(object):
     :param triggers: A list of Targets and AlertConditions.
         The Target specifies the query, and the AlertCondition specifies how this is used to alert.
     :param annotations: Summary and annotations
+        Dictionary with one of the following key or custom key
+        ['runbook_url', 'summary', 'description', '__alertId__', '__dashboardUid__', '__panelId__']
     :param labels: Custom Labels for the metric, used to handle notifications
     :param condition: Set one of the queries or expressions as the alert condition by refID (Grafana 9.x)
 
-    :param evaluateInterval: The frequency of evaluation. Must be a multiple of 10 seconds. For example, 30s, 1m
     :param evaluateFor: The duration for which the condition must be true before an alert fires
+        The Interval is set by the alert group
     :param noDataAlertState: Alert state if no data or all values are null
         Must be one of the following:
         [ALERTRULE_STATE_DATA_OK, ALERTRULE_STATE_DATA_ALERTING, ALERTRULE_STATE_DATA_NODATA ]
@@ -1578,7 +1582,6 @@ class AlertRulev9(object):
     annotations = attr.ib(default={}, validator=instance_of(dict))
     labels = attr.ib(default={}, validator=instance_of(dict))
 
-    evaluateInterval = attr.ib(default=DEFAULT_ALERT_EVALUATE_INTERVAL, validator=instance_of(str))
     evaluateFor = attr.ib(default=DEFAULT_ALERT_EVALUATE_FOR, validator=instance_of(str))
     noDataAlertState = attr.ib(
         default=ALERTRULE_STATE_DATA_ALERTING,
@@ -1602,8 +1605,6 @@ class AlertRulev9(object):
     uid = attr.ib(default=None, validator=attr.validators.optional(instance_of(str)))
     dashboard_uid = attr.ib(default="", validator=instance_of(str))
     panel_id = attr.ib(default=0, validator=instance_of(int))
-
-    rule_group = attr.ib(default="")
 
     def to_json_data(self):
         data = []
@@ -1630,7 +1631,9 @@ class AlertRulev9(object):
             "for": self.evaluateFor,
             "labels": self.labels,
             "annotations": self.annotations,
-            "data": data
+            "data": data,
+            "noDataState": self.noDataAlertState,
+            "execErrState": self.errorAlertState
         }
 
 
