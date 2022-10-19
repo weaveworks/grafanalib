@@ -55,7 +55,6 @@ alertgroup = AlertGroup(
                 "environment": "prod",
                 "slack": "prod-alerts",
             },
-            evaluateInterval="1m",
             evaluateFor="3m",
         ),
         # Alert rule using reduce and Math
@@ -93,7 +92,6 @@ alertgroup = AlertGroup(
                 "environment": "prod",
                 "slack": "prod-alerts",
             },
-            evaluateInterval="1m",
             evaluateFor="3m",
         )
     ]
