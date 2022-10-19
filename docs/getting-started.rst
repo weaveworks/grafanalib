@@ -130,7 +130,7 @@ Finally, there are additional settings like:
 Generating Alerts
 =================
 
-If you save ether of the above examples for Grafana v8 or v9 as ``example.alertgroup.py``
+If you save either of the above examples for Grafana v8 or v9 as ``example.alertgroup.py``
 (the suffix must be ``.alertgroup.py``), you can then generate the JSON alert with:
 
 .. code-block:: console
@@ -188,7 +188,7 @@ Support
 This library is in its very early stages. We'll probably make changes that
 break backwards compatibility, although we'll try hard not to.
 
-grafanalib works with Python 3.6, 3.7, 3.8 and 3.9.
+grafanalib works with Python 3.7, 3.8, 3.9 and 3.10.
 
 Developing
 ==========
