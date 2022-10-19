@@ -1393,12 +1393,12 @@ class AlertGroup(object):
     :param name: Alert group name
     :param rules: List of AlertRule
     :param folder: Folder to hold alert (Grafana 9.x)
-    :param interval: Interval at which the group of alerts is to be evaluated
+    :param evaluateInterval: Interval at which the group of alerts is to be evaluated
     """
     name = attr.ib()
     rules = attr.ib(default=attr.Factory(list), validator=instance_of(list))
     folder = attr.ib(default='alert', validator=instance_of(str))
-    interval = attr.ib(default='1m', validator=instance_of(str))
+    evaluateInterval = attr.ib(default='1m', validator=instance_of(str))
 
     def group_rules(self, rules):
         grouped_rules = []
@@ -1410,7 +1410,7 @@ class AlertGroup(object):
     def to_json_data(self):
         return {
             'name': self.name,
-            'interval': self.interval,
+            'interval': self.evaluateInterval,
             'rules': self.group_rules(self.rules),
             'folder': self.folder
         }
