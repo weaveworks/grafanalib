@@ -67,7 +67,7 @@ alertgroup = AlertGroup(
             triggers=[
                 (
                     Target(
-                        expr='probe_success{instance="https://my-service.foo.com/ready"}',
+                        expr='probe_success{instance="my-service.foo.com/ready"}',
                         datasource="VictoriaMetrics",
                         refId="A",
                     ),
