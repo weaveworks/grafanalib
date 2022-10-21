@@ -32,6 +32,7 @@ alertgroup = AlertGroup(
                 # A target refId must be assigned, and exist only once per AlertRule.
                 Target(
                     expr="from(bucket: \"sensors\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"remote_cpu\")\n  |> filter(fn: (r) => r[\"_field\"] == \"usage_system\")\n  |> filter(fn: (r) => r[\"cpu\"] == \"cpu-total\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+                    # Set datasource to name of your datasource
                     datasource="influxdb",
                     refId="A",
                 ),
@@ -69,6 +70,7 @@ alertgroup = AlertGroup(
                 # A target refId must be assigned, and exist only once per AlertRule.
                 Target(
                     expr="from(bucket: \"sensors\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"remote_cpu\")\n  |> filter(fn: (r) => r[\"_field\"] == \"usage_system\")\n  |> filter(fn: (r) => r[\"cpu\"] == \"cpu-total\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+                    # Set datasource to name of your datasource
                     datasource="influxdb",
                     refId="A",
                 ),

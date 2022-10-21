@@ -26,6 +26,7 @@ alertgroup = AlertGroup(
                     # A target refId must be assigned, and exist only once per AlertRule.
                     Target(
                         expr='sum(kube_pod_container_status_ready{exported_pod=~"database-/*"})',
+                        # Set datasource to name of your datasource
                         datasource="VictoriaMetrics",
                         refId="A",
                     ),
@@ -39,6 +40,7 @@ alertgroup = AlertGroup(
                 (
                     Target(
                         expr='sum by (app) (count_over_time({app="database"}[5m]))',
+                        # Set datasource to name of your datasource
                         datasource="Loki",
                         refId="B",
                     ),
@@ -68,6 +70,7 @@ alertgroup = AlertGroup(
                 (
                     Target(
                         expr='probe_success{instance="my-service.foo.com/ready"}',
+                        # Set datasource to name of your datasource
                         datasource="VictoriaMetrics",
                         refId="A",
                     ),
