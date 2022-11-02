@@ -135,7 +135,7 @@ If you save either of the above examples for Grafana v8 or v9 as ``example.alert
 
 .. code-block:: console
 
-  $ generate-alertgroups -o alerts.json example.alertgroup.py
+  $ generate-alertgroup -o alerts.json example.alertgroup.py
 
 Uploading alerts from code
 ==========================
@@ -168,7 +168,7 @@ Save the above example as ``example.alertfilebasedprovisioning.py``
 
 .. code-block:: console
 
-  $ generate-alertgroups -o alerts.json example.alertfilebasedprovisioning.py
+  $ generate-alertgroup -o alerts.json example.alertfilebasedprovisioning.py
 
 Then place the file in the ``provisioning/alerting`` directory and start Grafana
 Tools like Anisble can assist with the deployment of the alert file.
