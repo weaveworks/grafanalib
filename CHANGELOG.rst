@@ -2,10 +2,9 @@
 Changelog
 =========
 
-x.x.x (TBC)
+0.7.0 (2022-10-02)
 ===========
 
-* Added ...
 * Added Grafana 8.x new Alert Rule
 * Added Grafana 9.x new Alert Rule
 * Added ePict_ plugin.
