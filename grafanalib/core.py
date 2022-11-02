@@ -187,6 +187,26 @@ CTYPE_QUERY = 'query'
 OP_AND = 'and'
 OP_OR = 'or'
 
+# Alert Expression Types
+# classic/reduce/resample/math
+EXP_TYPE_CLASSIC = 'classic_conditions'
+EXP_TYPE_REDUCE = 'reduce'
+EXP_TYPE_RESAMPLE = 'resample'
+EXP_TYPE_MATH = 'math'
+
+# Alert Expression Reducer Function
+EXP_REDUCER_FUNC_MIN = 'min'
+EXP_REDUCER_FUNC_MAX = 'max'
+EXP_REDUCER_FUNC_MEAN = 'mean'
+EXP_REDUCER_FUNC_SUM = 'sum'
+EXP_REDUCER_FUNC_COUNT = 'count'
+EXP_REDUCER_FUNC_LAST = 'last'
+
+# Alert Expression Reducer Mode
+EXP_REDUCER_MODE_STRICT = 'strict'
+EXP_REDUCER_FUNC_DROP_NN = 'dropNN'
+EXP_REDUCER_FUNC_REPLACE_NN = 'replaceNN'
+
 # Text panel modes
 TEXT_MODE_MARKDOWN = 'markdown'
 TEXT_MODE_HTML = 'html'
@@ -565,6 +585,7 @@ class Target(object):
     def to_json_data(self):
         return {
             'expr': self.expr,
+            'query': self.expr,
             'target': self.target,
             'format': self.format,
             'hide': self.hide,
@@ -1198,6 +1219,135 @@ class AlertCondition(object):
 
 
 @attr.s
+class AlertExpression(object):
+    """
+    A alert expression to be evaluated in Grafana v9.x+
+
+    :param refId: Expression reference ID (A,B,C,D,...)
+    :param expression: Input reference ID (A,B,C,D,...) for expression to evaluate, or in the case of the Math type the expression to evaluate
+    :param conditions: list of AlertConditions
+    :param expressionType: Expression type EXP_TYPE_*
+        Supported expression types:
+        EXP_TYPE_CLASSIC
+        EXP_TYPE_REDUCE
+        EXP_TYPE_RESAMPLE
+        EXP_TYPE_MATH
+    :param hide: Hide alert boolean
+    :param intervalMs: Expression evaluation interval
+    :param maxDataPoints: Maximum number fo data points to be evaluated
+
+    :param reduceFunction: Reducer function (Only used if expressionType=EXP_TYPE_REDUCE)
+        Supported reducer functions:
+        EXP_REDUCER_FUNC_MIN
+        EXP_REDUCER_FUNC_MAX
+        EXP_REDUCER_FUNC_MEAN
+        EXP_REDUCER_FUNC_SUM
+        EXP_REDUCER_FUNC_COUNT
+        EXP_REDUCER_FUNC_LAST
+    :param reduceMode: Reducer mode (Only used if expressionType=EXP_TYPE_REDUCE)
+        Supported reducer modes:
+        EXP_REDUCER_MODE_STRICT
+        EXP_REDUCER_FUNC_DROP_NN
+        EXP_REDUCER_FUNC_REPLACE_NN
+    :param reduceReplaceWith: When using mode EXP_REDUCER_FUNC_REPLACE_NN number that will replace non numeric values
+
+    :param resampleWindow: Intervale to resample to eg. 10s, 1m, 30m, 1h
+    :param resampleDownsampler: 'mean', 'min', 'max', 'sum'
+    :param resampleUpsampler:
+        'fillna' - Fill with NaN's
+        'pad' - fill with the last known value
+        'backfilling' - fill with the next know value
+    """
+
+    refId = attr.ib()
+    expression = attr.ib(validator=instance_of(str))
+    conditions = attr.ib(default=attr.Factory(list), validator=attr.validators.deep_iterable(
+        member_validator=instance_of(AlertCondition),
+        iterable_validator=instance_of(list)
+    ))
+    expressionType = attr.ib(
+        default=EXP_TYPE_CLASSIC,
+        validator=in_([
+            EXP_TYPE_CLASSIC,
+            EXP_TYPE_REDUCE,
+            EXP_TYPE_RESAMPLE,
+            EXP_TYPE_MATH
+        ])
+    )
+    hide = attr.ib(default=False, validator=instance_of(bool))
+    intervalMs = attr.ib(default=1000, validator=instance_of(int))
+    maxDataPoints = attr.ib(default=43200, validator=instance_of(int))
+
+    reduceFunction = attr.ib(
+        default=EXP_REDUCER_FUNC_MEAN,
+        validator=in_([
+            EXP_REDUCER_FUNC_MIN,
+            EXP_REDUCER_FUNC_MAX,
+            EXP_REDUCER_FUNC_MEAN,
+            EXP_REDUCER_FUNC_SUM,
+            EXP_REDUCER_FUNC_COUNT,
+            EXP_REDUCER_FUNC_LAST
+        ])
+    )
+    reduceMode = attr.ib(
+        default=EXP_REDUCER_MODE_STRICT,
+        validator=in_([
+            EXP_REDUCER_MODE_STRICT,
+            EXP_REDUCER_FUNC_DROP_NN,
+            EXP_REDUCER_FUNC_REPLACE_NN
+        ])
+    )
+    reduceReplaceWith = attr.ib(default=0)
+
+    resampleWindow = attr.ib(default='10s', validator=instance_of(str))
+    resampleDownsampler = attr.ib(default='mean')
+    resampleUpsampler = attr.ib(default='fillna')
+
+    def to_json_data(self):
+
+        conditions = []
+
+        for condition in self.conditions:
+            # discard unused features of condition as of grafana 8.x
+            condition.useNewAlerts = True
+            condition.target = Target(refId=self.expression)
+            conditions += [condition.to_json_data()]
+
+        expression = {
+            'refId': self.refId,
+            'queryType': '',
+            'relativeTimeRange': {
+                'from': 0,
+                'to': 0
+            },
+            'datasourceUid': '-100',
+            'model': {
+                'conditions': conditions,
+                'datasource': {
+                    'type': '__expr__',
+                    'uid': '-100'
+                },
+                'expression': self.expression,
+                'hide': self.hide,
+                'intervalMs': self.intervalMs,
+                'maxDataPoints': self.maxDataPoints,
+                'refId': self.refId,
+                'type': self.expressionType,
+                'reducer': self.reduceFunction,
+                'settings': {
+                    'mode': self.reduceMode,
+                    'replaceWithValue': self.reduceReplaceWith
+                },
+                'downsampler': self.resampleDownsampler,
+                'upsampler': self.resampleUpsampler,
+                'window': self.resampleWindow
+            }
+        }
+
+        return expression
+
+
+@attr.s
 class Alert(object):
     """
     :param alertRuleTags: Key Value pairs to be sent with Alert notifications.
@@ -1242,9 +1392,13 @@ class AlertGroup(object):
 
     :param name: Alert group name
     :param rules: List of AlertRule
+    :param folder: Folder to hold alert (Grafana 9.x)
+    :param evaluateInterval: Interval at which the group of alerts is to be evaluated
     """
     name = attr.ib()
     rules = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+    folder = attr.ib(default='alert', validator=instance_of(str))
+    evaluateInterval = attr.ib(default='1m', validator=instance_of(str))
 
     def group_rules(self, rules):
         grouped_rules = []
@@ -1256,8 +1410,9 @@ class AlertGroup(object):
     def to_json_data(self):
         return {
             'name': self.name,
-            'interval': "1m",
+            'interval': self.evaluateInterval,
             'rules': self.group_rules(self.rules),
+            'folder': self.folder
         }
 
 
@@ -1273,10 +1428,20 @@ def is_valid_triggers(instance, attribute, value):
         is_valid_target(instance, "alert trigger target", trigger[0])
 
 
+def is_valid_triggersv9(instance, attribute, value):
+    """Validator for AlertRule triggers for Grafana v9"""
+    for trigger in value:
+        if not (isinstance(trigger, Target) or isinstance(trigger, AlertExpression)):
+            raise ValueError(f"{attribute.name} must either be a Target or AlertCondition")
+
+        if isinstance(trigger, Target):
+            is_valid_target(instance, "alert trigger target", trigger)
+
+
 @attr.s
-class AlertRule(object):
+class AlertRulev8(object):
     """
-    Create a Grafana 8.x+ Alert Rule
+    Create a Grafana 8.x Alert Rule
 
     :param title: The alert's title, must be unique per folder
     :param triggers: A list of Target and AlertCondition tuples, [(Target, AlertCondition)].
@@ -1379,6 +1544,113 @@ class AlertRule(object):
                 "uid": self.uid,
                 "rule_group": self.rule_group,
             }
+        }
+
+
+@attr.s
+class AlertRulev9(object):
+    """
+    Create a Grafana 9.x+ Alert Rule
+
+    :param title: The alert's title, must be unique per folder
+    :param triggers: A list of Targets and AlertConditions.
+        The Target specifies the query, and the AlertCondition specifies how this is used to alert.
+    :param annotations: Summary and annotations
+        Dictionary with one of the following key or custom key
+        ['runbook_url', 'summary', 'description', '__alertId__', '__dashboardUid__', '__panelId__']
+    :param labels: Custom Labels for the metric, used to handle notifications
+    :param condition: Set one of the queries or expressions as the alert condition by refID (Grafana 9.x)
+
+    :param evaluateFor: The duration for which the condition must be true before an alert fires
+        The Interval is set by the alert group
+    :param noDataAlertState: Alert state if no data or all values are null
+        Must be one of the following:
+        [ALERTRULE_STATE_DATA_OK, ALERTRULE_STATE_DATA_ALERTING, ALERTRULE_STATE_DATA_NODATA ]
+    :param errorAlertState: Alert state if execution error or timeout
+        Must be one of the following:
+        [ALERTRULE_STATE_DATA_OK, ALERTRULE_STATE_DATA_ALERTING, ALERTRULE_STATE_DATA_ERROR ]
+
+    :param timeRangeFrom: Time range interpolation data start from
+    :param timeRangeTo: Time range interpolation data finish at
+    :param uid: Alert UID should be unique
+    :param dashboard_uid: Dashboard UID that should be use for linking on alert message
+    :param panel_id: Panel ID that should should be use for linking on alert message
+    """
+
+    title = attr.ib()
+    triggers = attr.ib(default=[], validator=is_valid_triggersv9)
+    annotations = attr.ib(default={}, validator=instance_of(dict))
+    labels = attr.ib(default={}, validator=instance_of(dict))
+
+    evaluateFor = attr.ib(default=DEFAULT_ALERT_EVALUATE_FOR, validator=instance_of(str))
+    noDataAlertState = attr.ib(
+        default=ALERTRULE_STATE_DATA_ALERTING,
+        validator=in_([
+            ALERTRULE_STATE_DATA_OK,
+            ALERTRULE_STATE_DATA_ALERTING,
+            ALERTRULE_STATE_DATA_NODATA
+        ])
+    )
+    errorAlertState = attr.ib(
+        default=ALERTRULE_STATE_DATA_ALERTING,
+        validator=in_([
+            ALERTRULE_STATE_DATA_OK,
+            ALERTRULE_STATE_DATA_ALERTING,
+            ALERTRULE_STATE_DATA_ERROR
+        ])
+    )
+    condition = attr.ib(default='B')
+    timeRangeFrom = attr.ib(default=300, validator=instance_of(int))
+    timeRangeTo = attr.ib(default=0, validator=instance_of(int))
+    uid = attr.ib(default=None, validator=attr.validators.optional(instance_of(str)))
+    dashboard_uid = attr.ib(default="", validator=instance_of(str))
+    panel_id = attr.ib(default=0, validator=instance_of(int))
+
+    def to_json_data(self):
+        data = []
+
+        for trigger in self.triggers:
+            if isinstance(trigger, Target):
+                target = trigger
+                data += [{
+                    "refId": target.refId,
+                    "relativeTimeRange": {
+                        "from": self.timeRangeFrom,
+                        "to": self.timeRangeTo
+                    },
+                    "datasourceUid": target.datasource,
+                    "model": target.to_json_data(),
+                }]
+            else:
+                data += [trigger.to_json_data()]
+
+        return {
+            "title": self.title,
+            "uid": self.uid,
+            "condition": self.condition,
+            "for": self.evaluateFor,
+            "labels": self.labels,
+            "annotations": self.annotations,
+            "data": data,
+            "noDataState": self.noDataAlertState,
+            "execErrState": self.errorAlertState
+        }
+
+
+@attr.s
+class AlertFileBasedProvisioning(object):
+    """
+    Used to generate JSON data valid for file based alert provisioning
+
+    param alertGroup: List of AlertGroups
+    """
+
+    groups = attr.ib()
+
+    def to_json_data(self):
+        return {
+            'apiVersion': 1,
+            'groups': self.groups,
         }
 
 
@@ -1902,7 +2174,6 @@ class TimeSeries(Panel):
     :param legendCalcs: which calculations should be displayed in the legend. Defaults to an empty list.
         Possible values are: allIsNull, allIsZero, changeCount, count, delta, diff, diffperc,
         distinctCount, firstNotNull, max, mean, min, logmin, range, step, total. For more information see
-        https://grafana.com/docs/grafana/next/panels/calculation-types/
     :param lineInterpolation: line interpolation
         linear (Default), smooth, stepBefore, stepAfter
     :param lineWidth: line width, default 1
@@ -3946,7 +4217,6 @@ class Histogram(Panel):
 @attr.s
 class News(Panel):
     """Generates News panel json structure
-    Grafana docs on State Timeline panel: https://grafana.com/docs/grafana/next/visualizations/news-panel/
 
     :param feedUrl: URL to query, only RSS feed formats are supported (not Atom).
     :param showImage: Controls if the news item social (og:image) image is shown above text content

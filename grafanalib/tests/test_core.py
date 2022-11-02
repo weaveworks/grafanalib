@@ -756,7 +756,7 @@ def test_alertgroup():
     group = G.AlertGroup(
         name=name,
         rules=[
-            G.AlertRule(
+            G.AlertRulev8(
                 title="My Important Alert!",
                 triggers=[
                     (
@@ -784,11 +784,11 @@ def test_alertgroup():
     assert output["rules"][0]["grafana_alert"]["rule_group"] == name
 
 
-def test_alertrule():
+def test_alertrulev8():
     title = "My Important Alert!"
     annotations = {"summary": "this alert fires when prod is down!!!"}
     labels = {"severity": "serious"}
-    rule = G.AlertRule(
+    rule = G.AlertRulev8(
         title=title,
         triggers=[
             (
@@ -828,7 +828,7 @@ def test_alertrule_invalid_triggers():
     # test that triggers is a list of [(Target, AlertCondition)]
 
     with pytest.raises(ValueError):
-        G.AlertRule(
+        G.AlertRulev8(
             title="Invalid rule",
             triggers=[
                 G.Target(
@@ -839,7 +839,7 @@ def test_alertrule_invalid_triggers():
         )
 
     with pytest.raises(ValueError):
-        G.AlertRule(
+        G.AlertRulev8(
             title="Invalid rule",
             triggers=[
                 (
@@ -853,7 +853,7 @@ def test_alertrule_invalid_triggers():
         )
 
     with pytest.raises(ValueError):
-        G.AlertRule(
+        G.AlertRulev8(
             title="Invalid rule",
             triggers=[
                 (
@@ -865,6 +865,93 @@ def test_alertrule_invalid_triggers():
                 ),
             ],
         )
+
+
+def test_alertrulev9():
+    title = "My Important Alert!"
+    annotations = {"summary": "this alert fires when prod is down!!!"}
+    labels = {"severity": "serious"}
+    condition = 'C'
+    rule = G.AlertRulev9(
+        title=title,
+        uid='alert1',
+        condition=condition,
+        triggers=[
+            G.Target(
+                expr='query',
+                refId='A',
+                datasource='Prometheus',
+            ),
+            G.AlertExpression(
+                refId='B',
+                expressionType=G.EXP_TYPE_CLASSIC,
+                expression='A',
+                conditions=[
+                    G.AlertCondition(
+                        evaluator=G.GreaterThan(3),
+                        operator=G.OP_AND,
+                        reducerType=G.RTYPE_LAST
+                    )
+                ]
+            ),
+        ],
+        annotations=annotations,
+        labels=labels,
+        evaluateFor="3m",
+    )
+
+    data = rule.to_json_data()
+    assert data['title'] == title
+    assert data['annotations'] == annotations
+    assert data['labels'] == labels
+    assert data['for'] == "3m"
+    assert data['condition'] == condition
+
+
+def test_alertexpression():
+    refId = 'D'
+    expression = 'C'
+    expressionType = G.EXP_TYPE_REDUCE
+    reduceFunction = G.EXP_REDUCER_FUNC_MAX
+    reduceMode = G.EXP_REDUCER_FUNC_DROP_NN
+
+    alert_exp = G.AlertExpression(
+        refId=refId,
+        expression=expression,
+        expressionType=expressionType,
+        reduceFunction=reduceFunction,
+        reduceMode=reduceMode
+    )
+
+    data = alert_exp.to_json_data()
+
+    assert data['refId'] == refId
+    assert data['datasourceUid'] == '-100'
+    assert data['model']['conditions'] == []
+    assert data['model']['datasource'] == {
+        'type': '__expr__',
+        'uid': '-100'
+    }
+    assert data['model']['expression'] == expression
+    assert data['model']['refId'] == refId
+    assert data['model']['type'] == expressionType
+    assert data['model']['reducer'] == reduceFunction
+    assert data['model']['settings']['mode'] == reduceMode
+
+
+def test_alertfilefasedfrovisioning():
+    groups = [{
+        'foo': 'bar'
+    }]
+
+    rules = G.AlertFileBasedProvisioning(
+        groups=groups
+    )
+
+    data = rules.to_json_data()
+
+    assert data['apiVersion'] == 1
+    assert data['groups'] == groups
 
 
 def test_worldmap():

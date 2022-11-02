@@ -12,7 +12,7 @@ Grafana migrates dashboards to the latest Grafana schema version on import,
 meaning that dashboards created with grafanalib are supported by
 all versions of Grafana. You may find that some of the latest features are
 missing from grafanalib, please refer to the `module documentation
-<https://grafanalib.readthedocs.io/en/latest/api/modules.html>`_ for information
+<https://grafanalib.readthedocs.io/en/main/api/modules.html>`_ for information
 about supported features. If you find a missing feature please raise an issue
 or submit a PR to the GitHub `repository <https://github.com/weaveworks/grafanalib>`_
 
@@ -50,23 +50,34 @@ code. The following example provides minimal code boilerplate for it:
 .. literalinclude:: ../grafanalib/tests/examples/example.upload-dashboard.py
    :language: python
 
+Alternatively Grafana supports file based provisioning, where dashboard files
+are periodically loaded into the Grafana database. Tools like Anisble can
+assist with the deployment.
+
 Writing Alerts
-==================
+==============
+
+Between Grafana versions there have been significant changes in how alerts
+are managed. Bellow are some example of how to configure alerting in
+Grafana v8 and Grafana v9.
+
+Alerts in Grafana v8
+--------------------
 
 The following will configure a couple of alerts inside a group.
 
-.. literalinclude:: ../grafanalib/tests/examples/example.alertgroup.py
+.. literalinclude:: ../grafanalib/tests/examples/example.alertsv8.alertgroup.py
    :language: python
 
 Although this example has a fair amount of boilerplate, when creating large numbers
-of similar alerts it can save lots of time to programatically fill these fields.
+of similar alerts it can save lots of time to programmatically fill these fields.
 
 Each ``AlertGroup`` represents a folder within Grafana's alerts tab. This consists
-of one or more ``AlertRule``, which contains one or more triggers. Triggers define
+of one or more ``AlertRulev8``, which contains one or more triggers. Triggers define
 what will cause the alert to fire.
 
 A trigger is made up of a ``Target`` (a Grafana query on a datasource) and an
-`AlertCondition` (a condition this query must satisfy in order to alert).
+``AlertCondition`` (a condition this query must satisfy in order to alert).
 
 Finally, there are additional settings like:
 
@@ -79,26 +90,88 @@ Finally, there are additional settings like:
 * Annotations and labels, which help provide contextual information and direct where
   your alerts will go
 
-Generating Alerts
-=====================
+Alerts in Grafana v9
+--------------------
 
-If you save the above as ``example.alertgroup.py`` (the suffix must be
-``.alertgroup.py``), you can then generate the JSON dashboard with:
+The following will configure a couple of alerts inside a group for Grafana v9.x+.
+
+.. literalinclude:: ../grafanalib/tests/examples/example.alertsv9.alertgroup.py
+   :language: python
+
+Although this example has a fair amount of boilerplate, when creating large numbers
+of similar alerts it can save lots of time to programmatically fill these fields.
+
+Each ``AlertGroup`` represents a folder within Grafana's alerts tab. This consists
+of one or more ``AlertRulev9``, which contains a list of triggers, that define what
+will cause the alert to fire.
+
+A trigger can either be a ``Target`` (a Grafana query on a datasource) or an
+``AlertExpression`` (a expression performed on one of the triggers).
+
+An ``AlertExpression`` can be one of 4 types
+
+* Classic - Contains and list of ``AlertCondition``'s that are evaluated
+* Reduce - Reduce the queried data
+* Resample - Resample the queried data
+* Math - Expression with the condition for the rule
+
+Finally, there are additional settings like:
+
+* How the alert will behave when data sources have problems (``noDataAlertState`` and ``errorAlertState``)
+
+* How frequently the each rule in the Alert Group is evaluated (``evaluateInterval``)
+
+* How long the AlertCondition needs to be met before the alert fires (``evaluateFor``)
+
+* Annotations and labels, which help provide contextual information and direct where
+  your alerts will go
+
+
+Generating Alerts
+=================
+
+If you save either of the above examples for Grafana v8 or v9 as ``example.alertgroup.py``
+(the suffix must be ``.alertgroup.py``), you can then generate the JSON alert with:
 
 .. code-block:: console
 
-  $ generate-alertgroups -o alerts.json example.alertgroup.py
+  $ generate-alertgroup -o alerts.json example.alertgroup.py
 
 Uploading alerts from code
-===============================
+==========================
 
 As Grafana does not currently have a user interface for importing alertgroup JSON,
-you must upload the alerts via Grafana's REST API.
+you must either upload the alerts via Grafana's REST API or use file based provisioning.
+
+Uploading alerts from code using REST API
+-----------------------------------------
 
 The following example provides minimal code boilerplate for it:
 
 .. literalinclude:: ../grafanalib/tests/examples/example.upload-alerts.py
    :language: python
+
+Uploading alerts from code using File Based Provisioning
+--------------------------------------------------------
+
+The alternative to using Grafana's REST API is to use its file based provisioning for
+alerting.
+
+The following example uses the ``AlertFileBasedProvisioning`` class to provision a list
+of alert groups:
+
+.. literalinclude:: ../grafanalib/tests/examples/example.alertsv9.alertfilebasedprovisioning.py
+   :language: python
+
+Save the above example as ``example.alertfilebasedprovisioning.py``
+(the suffix must be ``.alertfilebasedprovisioning.py``), you can then generate the JSON alert with:
+
+.. code-block:: console
+
+  $ generate-alertgroup -o alerts.json example.alertfilebasedprovisioning.py
+
+Then place the file in the ``provisioning/alerting`` directory and start Grafana
+Tools like Anisble can assist with the deployment of the alert file.
 
 Installation
 ============
@@ -115,7 +188,7 @@ Support
 This library is in its very early stages. We'll probably make changes that
 break backwards compatibility, although we'll try hard not to.
 
-grafanalib works with Python 3.6, 3.7, 3.8 and 3.9.
+grafanalib works with Python 3.7, 3.8, 3.9 and 3.10.
 
 Developing
 ==========

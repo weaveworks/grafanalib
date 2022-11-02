@@ -25,6 +25,17 @@ def test_examples():
 
     # Run alertgroup example
     alerts = glob.glob('{}/*.alertgroup.py'.format(examples_dir))
+    assert len(alerts) == 2
+
+    stdout = io.StringIO()
+    for example in alerts:
+        with redirect_stdout(stdout):
+            ret = _gen.generate_alertgroup([example])
+            assert ret == 0
+        assert stdout.getvalue() != ''
+
+    # Run file based provisioning of alerts example
+    alerts = glob.glob('{}/*.alertfilebasedprovisioning.py'.format(examples_dir))
     assert len(alerts) == 1
 
     stdout = io.StringIO()

@@ -3,7 +3,7 @@
 
 from grafanalib.core import (
     AlertGroup,
-    AlertRule,
+    AlertRulev8,
     Target,
     AlertCondition,
     LowerThan,
@@ -17,7 +17,7 @@ alertgroup = AlertGroup(
     name="Production Alerts",
     # Each AlertRule forms a separate alert.
     rules=[
-        AlertRule(
+        AlertRulev8(
             # Each rule must have a unique title
             title="Database is unresponsive",
             # Several triggers can be used per alert, a trigger is a combination of a Target and its AlertCondition in a tuple.
@@ -26,6 +26,7 @@ alertgroup = AlertGroup(
                     # A target refId must be assigned, and exist only once per AlertRule.
                     Target(
                         expr='sum(kube_pod_container_status_ready{exported_pod=~"database-/*"})',
+                        # Set datasource to name of your datasource
                         datasource="VictoriaMetrics",
                         refId="A",
                     ),
@@ -39,6 +40,7 @@ alertgroup = AlertGroup(
                 (
                     Target(
                         expr='sum by (app) (count_over_time({app="database"}[5m]))',
+                        # Set datasource to name of your datasource
                         datasource="Loki",
                         refId="B",
                     ),
@@ -51,7 +53,7 @@ alertgroup = AlertGroup(
             ],
             annotations={
                 "summary": "The database is down",
-                "runbook_url": "https://runbook-for-this-scenario.com/foo",
+                "runbook_url": "runbook-for-this-scenario.com/foo",
             },
             labels={
                 "environment": "prod",
@@ -62,12 +64,13 @@ alertgroup = AlertGroup(
         ),
 
         # Second alert
-        AlertRule(
+        AlertRulev8(
             title="Service API blackbox failure",
             triggers=[
                 (
                     Target(
-                        expr='probe_success{instance="https://my-service.foo.com/ready"}',
+                        expr='probe_success{instance="my-service.foo.com/ready"}',
+                        # Set datasource to name of your datasource
                         datasource="VictoriaMetrics",
                         refId="A",
                     ),
@@ -80,7 +83,7 @@ alertgroup = AlertGroup(
             ],
             annotations={
                 "summary": "Service API has been unavailable for 3 minutes",
-                "runbook_url": "https://runbook-for-this-scenario.com/foo",
+                "runbook_url": "runbook-for-this-scenario.com/foo",
             },
             labels={
                 "environment": "prod",
