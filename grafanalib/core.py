@@ -1625,15 +1625,17 @@ class AlertRulev9(object):
                 data += [trigger.to_json_data()]
 
         return {
-            "title": self.title,
             "uid": self.uid,
-            "condition": self.condition,
             "for": self.evaluateFor,
             "labels": self.labels,
             "annotations": self.annotations,
-            "data": data,
-            "noDataState": self.noDataAlertState,
-            "execErrState": self.errorAlertState
+            "grafana_alert": {
+                "title": self.title,
+                "condition": self.condition,
+                "data": data,
+                "no_data_state": self.noDataAlertState,
+                "exec_err_state": self.errorAlertState,
+            },
         }
 
 
