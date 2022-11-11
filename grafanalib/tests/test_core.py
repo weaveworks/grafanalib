@@ -901,11 +901,11 @@ def test_alertrulev9():
     )
 
     data = rule.to_json_data()
-    assert data['title'] == title
     assert data['annotations'] == annotations
     assert data['labels'] == labels
     assert data['for'] == "3m"
-    assert data['condition'] == condition
+    assert data['grafana_alert']['title'] == title
+    assert data['grafana_alert']['condition'] == condition
 
 
 def test_alertexpression():
