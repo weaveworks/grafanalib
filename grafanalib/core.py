@@ -4332,7 +4332,6 @@ class BarChart(Panel):
     legendDisplayMode = attr.ib(default='list', validator=instance_of(str))
     legendPlacement = attr.ib(default="bottom", validator=instance_of(str))
     legendCalcs = attr.ib(default=[], validator=instance_of(list))
-
     lineWidth = attr.ib(default=1, validator=instance_of(int))
     fillOpacity = attr.ib(default=80, validator=instance_of(int))
     gradientMode = attr.ib(default='none', validator=instance_of(str))
@@ -4347,16 +4346,19 @@ class BarChart(Panel):
     colorMode = attr.ib(default='palette-classic', validator=instance_of(str))
     mappings = attr.ib(default=[], validator=instance_of(list))
     thresholdsMode = attr.ib(default='absolute', validator=instance_of(str))
-    thresholdSteps = attr.ib(default=[
-          {
-            "value": None,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ], validator=instance_of(list))
+    thresholdSteps = attr.ib(
+        default=[
+            {
+                "value": None,
+                "color": "green"
+            },
+            {
+                "value": 80,
+                "color": "red"
+            }
+        ],
+        validator=instance_of(list)
+    )
     overrides = attr.ib(default=[], validator=instance_of(list))
 
     def to_json_data(self):
