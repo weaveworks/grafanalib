@@ -4335,10 +4335,6 @@ class BarChart(Panel):
         barchart = self.panel_json(
             {
                 'type': "barchart",
-                'fieldConfig':{
-                    'defaults': {},
-                    'overrides': []
-                },
                 'options': {
                     'orientation': self.orientation,
                     'xTickLabelRotation': self.xTickLabelRotation,
@@ -4358,36 +4354,36 @@ class BarChart(Panel):
                         'placement': self.legendPlacement,
                         'calcs': self.legendCalcs
                     },
-                    'fieldConfig': {
-                        'defaults': {
-                            'custom': {
-                                'lineWidth': self.lineWidth,
-                                'fillOpacity': self.fillOpacity,
-                                'gradientMode': self.gradientMode,
-                                'axisPlacement': self.axisPlacement,
-                                'axisLabel': self.axisLabel,
-                                'axisColorMode': self.axisColorMode,
-                                'scaleDistribution': {
-                                    'type': self.scaleDistributionType
-                                },
-                                'axisCenteredZero': self.axisCenteredZero,
-                                'hideFrom': {
-                                    'tooltip': self.hideFromTooltip,
-                                    'viz': self.hideFromViz,
-                                    'legend': self.hideFromLegend
-                                }
+                },
+                'fieldConfig': {
+                    'defaults': {
+                        'custom': {
+                            'lineWidth': self.lineWidth,
+                            'fillOpacity': self.fillOpacity,
+                            'gradientMode': self.gradientMode,
+                            'axisPlacement': self.axisPlacement,
+                            'axisLabel': self.axisLabel,
+                            'axisColorMode': self.axisColorMode,
+                            'scaleDistribution': {
+                                'type': self.scaleDistributionType
                             },
-                            'color': {
-                                'mode': self.colorMode
-                            },
-                            'mappings': self.mappings,
-                            'thresholds': {
-                                'mode': self.thresholdsMode,
-                                'steps': self.thresholdSteps
+                            'axisCenteredZero': self.axisCenteredZero,
+                            'hideFrom': {
+                                'tooltip': self.hideFromTooltip,
+                                'viz': self.hideFromViz,
+                                'legend': self.hideFromLegend
                             }
                         },
-                        'overrides': self.overrides
-                    }
+                        'color': {
+                            'mode': self.colorMode
+                        },
+                        'mappings': self.mappings,
+                        'thresholds': {
+                            'mode': self.thresholdsMode,
+                            'steps': self.thresholdSteps
+                        }
+                    },
+                    'overrides': self.overrides
                 },
             }
         )
