@@ -4285,9 +4285,39 @@ class Ae3ePlotly(Panel):
 
 @attr.s
 class BarChart(Panel):
-    """Generates barchart panel json structure"""
+    """Generates barchart panel json structure
 
-    # options
+    :param orientation: Controls the orientation of the chart
+    :param xTickLabelRotation: Controls the rotation of bar labels
+    :param xTickLabelSpacing: Controls the spacing of bar labels
+    :param showValue: Controls the visibility of values
+    :param stacking: Controls the stacking of the bar chart
+    :param groupWidth: Controls the width of the group
+    :param barWidth: Controls the width of the bars
+    :param barRadius: Controls the radius of the bars
+    :param toolTipMode: Controls the style of tooltips
+    :param toolTipSort: Controls the sort order of tooltips, when toolTipMode is "All"
+    :param showLegend: Controls the visibility of legends
+    :param legendDisplayMode: Controls the style of legends, if they are shown.
+    :param legendPlacement: Controls the placement of legends, if they are shown
+    :param legendCalcs: Controls the calculations to show on legends
+    :param lineWidth: Controls the width of lines
+    :param fillOpacity: Contorls the opacity of bars
+    :param gradientMode: Controls the gradient style of the bars
+    :param axisPlacement: Controls the axis placement
+    :param axisLabel: Controls the axis labels
+    :param axisColorMode: Controls the axis color style
+    :param scaleDistributionType: Controls the type of distribution
+    :param axisCenteredZero: Center the axis
+    :param hideFromTooltip: Controls the hiding of tooltips
+    :param hideFromViz: Controls the hiding of bars
+    :param hideFromLegend: Controls the hiding of legends
+    :param colorMode: Controls the color palette of the bars
+    :param mappings: Controls the mapping of values
+    :param thresholdsMode: Controls the style threshold
+    :param thresholdSteps: Controls the treshold steps
+    :param overrides: Controls the overriding of certain datas base characteristics
+    """
     orientation = attr.ib(default='auto', validator=instance_of(str))
     xTickLabelRotation = attr.ib(default=0, validator=instance_of(int))
     xTickLabelSpacing = attr.ib(default=0, validator=instance_of(int))
@@ -4295,7 +4325,7 @@ class BarChart(Panel):
     stacking = attr.ib(default='none', validator=instance_of(str))
     groupWidth = attr.ib(default=0.7, validator=instance_of(float))
     barWidth = attr.ib(default=0.97, validator=instance_of(float))
-    barRadius = attr.ib(default=0, validator=instance_of(float))
+    barRadius = attr.ib(default=0.0, validator=instance_of(float))
     tooltipMode = attr.ib(default='single', validator=instance_of(str))
     tooltipSort = attr.ib(default='none', validator=instance_of(str))
     showLegend = attr.ib(default=True, validator=instance_of(bool))
@@ -4303,7 +4333,6 @@ class BarChart(Panel):
     legendPlacement = attr.ib(default="bottom", validator=instance_of(str))
     legendCalcs = attr.ib(default=[], validator=instance_of(list))
 
-    #fieldConfig
     lineWidth = attr.ib(default=1, validator=instance_of(int))
     fillOpacity = attr.ib(default=80, validator=instance_of(int))
     gradientMode = attr.ib(default='none', validator=instance_of(str))
@@ -4329,7 +4358,6 @@ class BarChart(Panel):
           }
         ], validator=instance_of(list))
     overrides = attr.ib(default=[], validator=instance_of(list))
-
 
     def to_json_data(self):
         barchart = self.panel_json(

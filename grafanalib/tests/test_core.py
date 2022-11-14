@@ -1094,20 +1094,16 @@ def test_barchart():
     title = "dummy title"
     panel = G.BarChart(data_source, targets, title)
     data = panel.to_json_data()
-
     assert data["targets"] == targets
     assert data["datasource"] == data_source
     assert data["title"] == title
-
     assert data["options"] is not None
     assert data["fieldConfig"] is not None
-
     assert data["options"]["orientation"] == 'auto'
     assert data["fieldConfig"]["defaults"]["color"]["mode"] == 'palette-classic'
 
     panel = G.BarChart(data_source, targets, title, orientation='horizontal', axisCenteredZero=True, showLegend=False)
     data = panel.to_json_data()
-
     assert data["options"]["orientation"] == 'horizontal'
     assert data["fieldConfig"]["defaults"]["custom"]["axisCenteredZero"] == True
     assert data["options"]["legend"]["showLegend"] == False
