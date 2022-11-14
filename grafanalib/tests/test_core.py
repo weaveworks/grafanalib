@@ -1105,8 +1105,8 @@ def test_barchart():
     panel = G.BarChart(data_source, targets, title, orientation='horizontal', axisCenteredZero=True, showLegend=False)
     data = panel.to_json_data()
     assert data["options"]["orientation"] == 'horizontal'
-    assert data["fieldConfig"]["defaults"]["custom"]["axisCenteredZero"] == True
-    assert data["options"]["legend"]["showLegend"] == False
+    assert data["fieldConfig"]["defaults"]["custom"]["axisCenteredZero"]
+    assert not data["options"]["legend"]["showLegend"]
 
 
 def test_target_invalid():

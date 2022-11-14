@@ -99,6 +99,7 @@ WORLD_MAP_TYPE = 'grafana-worldmap-panel'
 NEWS_TYPE = 'news'
 HISTOGRAM_TYPE = 'histogram'
 AE3E_PLOTLY_TYPE = 'ae3e-plotly-panel'
+BAR_CHART_TYPE = 'barchart'
 
 DEFAULT_FILL = 1
 DEFAULT_REFRESH = '10s'
@@ -4285,7 +4286,8 @@ class Ae3ePlotly(Panel):
 
 @attr.s
 class BarChart(Panel):
-    """Generates barchart panel json structure
+    """Generates bar chart panel json structure
+    Grafana docs on Bar chart panel: https://grafana.com/docs/grafana/latest/panels-visualizations/visualizations/bar-chart/
 
     :param orientation: Controls the orientation of the chart
     :param xTickLabelRotation: Controls the rotation of bar labels
@@ -4296,7 +4298,7 @@ class BarChart(Panel):
     :param barWidth: Controls the width of the bars
     :param barRadius: Controls the radius of the bars
     :param toolTipMode: Controls the style of tooltips
-    :param toolTipSort: Controls the sort order of tooltips, when toolTipMode is "All"
+    :param toolTipSort: Controls the sort order of tooltips, when toolTipMode is 'All'
     :param showLegend: Controls the visibility of legends
     :param legendDisplayMode: Controls the style of legends, if they are shown.
     :param legendPlacement: Controls the placement of legends, if they are shown
@@ -4330,7 +4332,7 @@ class BarChart(Panel):
     tooltipSort = attr.ib(default='none', validator=instance_of(str))
     showLegend = attr.ib(default=True, validator=instance_of(bool))
     legendDisplayMode = attr.ib(default='list', validator=instance_of(str))
-    legendPlacement = attr.ib(default="bottom", validator=instance_of(str))
+    legendPlacement = attr.ib(default='bottom', validator=instance_of(str))
     legendCalcs = attr.ib(default=[], validator=instance_of(list))
     lineWidth = attr.ib(default=1, validator=instance_of(int))
     fillOpacity = attr.ib(default=80, validator=instance_of(int))
@@ -4347,24 +4349,23 @@ class BarChart(Panel):
     mappings = attr.ib(default=[], validator=instance_of(list))
     thresholdsMode = attr.ib(default='absolute', validator=instance_of(str))
     thresholdSteps = attr.ib(
-        default=[
+        default=attr.Factory(lambda: [
             {
-                "value": None,
-                "color": "green"
+                'value': None,
+                'color': 'green'
             },
             {
-                "value": 80,
-                "color": "red"
+                'value': 80,
+                'color': 'red'
             }
-        ],
+        ]),
         validator=instance_of(list)
     )
     overrides = attr.ib(default=[], validator=instance_of(list))
 
     def to_json_data(self):
-        barchart = self.panel_json(
+        bar_chart = self.panel_json(
             {
-                'type': "barchart",
                 'options': {
                     'orientation': self.orientation,
                     'xTickLabelRotation': self.xTickLabelRotation,
@@ -4415,6 +4416,7 @@ class BarChart(Panel):
                     },
                     'overrides': self.overrides
                 },
+                'type': BAR_CHART_TYPE
             }
         )
-        return barchart
+        return bar_chart
