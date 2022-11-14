@@ -4310,7 +4310,7 @@ class BarChart(Panel):
     :param axisLabel: Controls the axis labels
     :param axisColorMode: Controls the axis color style
     :param scaleDistributionType: Controls the type of distribution
-    :param axisCenteredZero: Center the axis
+    :param axisCenteredZero: Controls the centering of the axis
     :param hideFromTooltip: Controls the hiding of tooltips
     :param hideFromViz: Controls the hiding of bars
     :param hideFromLegend: Controls the hiding of legends
