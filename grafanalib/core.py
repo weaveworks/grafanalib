@@ -4317,7 +4317,7 @@ class BarChart(Panel):
     hideFromLegend = attr.ib(default=False, validator=instance_of(bool))
     colorMode = attr.ib(default='palette-classic', validator=instance_of(str))
     mappings = attr.ib(default=[], validator=instance_of(list))
-    thresholdsMode = attr.ib(default='absolute' validator=instance_of(str))
+    thresholdsMode = attr.ib(default='absolute', validator=instance_of(str))
     thresholdSteps = attr.ib(default=[
           {
             "value": None,
