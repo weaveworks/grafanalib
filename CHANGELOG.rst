@@ -2,6 +2,14 @@
 Changelog
 =========
 
+0.7.1 (2022-11-14)
+===========
+
+* Added Bar_Chart_ panel support
+
+.. _Bar_Chart: basehttps://grafana.com/docs/grafana/latest/panels-visualizations/visualizations/bar-chart/
+
+
 0.7.0 (2022-10-02)
 ===========
 
