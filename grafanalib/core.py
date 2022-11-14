@@ -4281,3 +4281,114 @@ class Ae3ePlotly(Panel):
         _deep_update(plotly["options"]["layout"], self.layout)
         _deep_update(plotly["options"]["configuration"], self.configuration)
         return plotly
+
+
+@attr.s
+class BarChart(Panel):
+    """Generates barchart panel json structure"""
+
+    # options
+    orientation = attr.ib(default='auto', validator=instance_of(str))
+    xTickLabelRotation = attr.ib(default=0, validator=instance_of(int))
+    xTickLabelSpacing = attr.ib(default=0, validator=instance_of(int))
+    showValue = attr.ib(default='auto', validator=instance_of(str))
+    stacking = attr.ib(default='none', validator=instance_of(str))
+    groupWidth = attr.ib(default=0.7, validator=instance_of(float))
+    barWidth = attr.ib(default=0.97, validator=instance_of(float))
+    barRadius = attr.ib(default=0, validator=instance_of(float))
+    tooltipMode = attr.ib(default='single', validator=instance_of(str))
+    tooltipSort = attr.ib(default='none', validator=instance_of(str))
+    showLegend = attr.ib(default=True, validator=instance_of(bool))
+    legendDisplayMode = attr.ib(default='list', validator=instance_of(str))
+    legendPlacement = attr.ib(default="bottom", validator=instance_of(str))
+    legendCalcs = attr.ib(default=[], validator=instance_of(list))
+
+    #fieldConfig
+    lineWidth = attr.ib(default=1, validator=instance_of(int))
+    fillOpacity = attr.ib(default=80, validator=instance_of(int))
+    gradientMode = attr.ib(default='none', validator=instance_of(str))
+    axisPlacement = attr.ib(default='auto', validator=instance_of(str))
+    axisLabel = attr.ib(default='', validator=instance_of(str))
+    axisColorMode = attr.ib(default='text', validator=instance_of(str))
+    scaleDistributionType = attr.ib(default='linear', validator=instance_of(str))
+    axisCenteredZero = attr.ib(default=False, validator=instance_of(bool))
+    hideFromTooltip = attr.ib(default=False, validator=instance_of(bool))
+    hideFromViz = attr.ib(default=False, validator=instance_of(bool))
+    hideFromLegend = attr.ib(default=False, validator=instance_of(bool))
+    colorMode = attr.ib(default='palette-classic', validator=instance_of(str))
+    mappings = attr.ib(default=[], validator=instance_of(list))
+    thresholdsMode = attr.ib(default='absolute' validator=instance_of(str))
+    thresholdSteps = attr.ib(default=[
+          {
+            "value": None,
+            "color": "green"
+          },
+          {
+            "value": 80,
+            "color": "red"
+          }
+        ], validator=instance_of(list))
+    overrides = attr.ib(default=[], validator=instance_of(list))
+
+
+    def to_json_data(self):
+        barchart = self.panel_json(
+            {
+                'type': "barchart",
+                'fieldConfig':{
+                    'defaults': {},
+                    'overrides': []
+                },
+                'options': {
+                    'orientation': self.orientation,
+                    'xTickLabelRotation': self.xTickLabelRotation,
+                    'xTickLabelSpacing': self.xTickLabelSpacing,
+                    'showValue': self.showValue,
+                    'stacking': self.stacking,
+                    'groupWidth': self.groupWidth,
+                    'barWidth': self.barWidth,
+                    'barRadius': self.barRadius,
+                    'tooltip': {
+                        'mode': self.tooltipMode,
+                        'sort': self.tooltipSort
+                    },
+                    'legend': {
+                        'showLegend': self.showLegend,
+                        'displayMode': self.legendDisplayMode,
+                        'placement': self.legendPlacement,
+                        'calcs': self.legendCalcs
+                    },
+                    'fieldConfig': {
+                        'defaults': {
+                            'custom': {
+                                'lineWidth': self.lineWidth,
+                                'fillOpacity': self.fillOpacity,
+                                'gradientMode': self.gradientMode,
+                                'axisPlacement': self.axisPlacement,
+                                'axisLabel': self.axisLabel,
+                                'axisColorMode': self.axisColorMode,
+                                'scaleDistribution': {
+                                    'type': self.scaleDistributionType
+                                },
+                                'axisCenteredZero': self.axisCenteredZero,
+                                'hideFrom': {
+                                    'tooltip': self.hideFromTooltip,
+                                    'viz': self.hideFromViz,
+                                    'legend': self.hideFromLegend
+                                }
+                            },
+                            'color': {
+                                'mode': self.colorMode
+                            },
+                            'mappings': self.mappings,
+                            'thresholds': {
+                                'mode': self.thresholdsMode,
+                                'steps': self.thresholdSteps
+                            }
+                        },
+                        'overrides': self.overrides
+                    }
+                },
+            }
+        )
+        return barchart
