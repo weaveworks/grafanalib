@@ -4315,6 +4315,7 @@ class BarChart(Panel):
     :param hideFromViz: Controls the hiding of bars
     :param hideFromLegend: Controls the hiding of legends
     :param colorMode: Controls the color palette of the bars
+    :param fixedColor: Controls the color of the bars, when the colorMode is fixed
     :param mappings: Controls the mapping of values
     :param thresholdsMode: Controls the style threshold
     :param thresholdSteps: Controls the treshold steps
@@ -4346,6 +4347,7 @@ class BarChart(Panel):
     hideFromViz = attr.ib(default=False, validator=instance_of(bool))
     hideFromLegend = attr.ib(default=False, validator=instance_of(bool))
     colorMode = attr.ib(default='palette-classic', validator=instance_of(str))
+    fixedColor = attr.ib(default='blue', validator=instance_of(str))
     mappings = attr.ib(default=[], validator=instance_of(list))
     thresholdsMode = attr.ib(default='absolute', validator=instance_of(str))
     thresholdSteps = attr.ib(
@@ -4406,7 +4408,8 @@ class BarChart(Panel):
                             }
                         },
                         'color': {
-                            'mode': self.colorMode
+                            'mode': self.colorMode,
+                            'fixedColor': self.fixedColor if self.colorMode == 'fixed' else 'none'
                         },
                         'mappings': self.mappings,
                         'thresholds': {
