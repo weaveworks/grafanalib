@@ -1,3 +1,3 @@
-SELECT repo, count(id)
+SELECT example, count(id)
 FROM test
-GROUP BY repo;
+GROUP BY example;

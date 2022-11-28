@@ -1,3 +1,3 @@
-SELECT name
+SELECT example
 FROM test
-WHERE name='{name}' AND commit_date BETWEEN '{starting_date}' AND '{ending_date}';
+WHERE example='{example}' AND example_date BETWEEN '{starting_date}' AND '{ending_date}';
