@@ -1310,7 +1310,8 @@ class AlertExpression(object):
         for condition in self.conditions:
             # discard unused features of condition as of grafana 8.x
             condition.useNewAlerts = True
-            condition.target = Target(refId=self.expression)
+            if condition.target is None:
+                condition.target = Target(refId=self.expression)
             conditions += [condition.to_json_data()]
 
         expression = {
