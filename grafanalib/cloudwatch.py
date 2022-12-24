@@ -3,10 +3,11 @@
 import attr
 
 from attr.validators import instance_of
+from grafanalib.core import Target
 
 
 @attr.s
-class CloudwatchMetricsTarget(object):
+class CloudwatchMetricsTarget(Target):
     """
     Generates Cloudwatch target JSON structure.
 

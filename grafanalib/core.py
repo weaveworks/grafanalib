@@ -1432,7 +1432,7 @@ def is_valid_triggersv9(instance, attribute, value):
     """Validator for AlertRule triggers for Grafana v9"""
     for trigger in value:
         if not (isinstance(trigger, Target) or isinstance(trigger, AlertExpression)):
-            raise ValueError(f"{attribute.name} must either be a Target or AlertCondition")
+            raise ValueError(f"{attribute.name} must either be a Target or AlertExpression")
 
         if isinstance(trigger, Target):
             is_valid_target(instance, "alert trigger target", trigger)
