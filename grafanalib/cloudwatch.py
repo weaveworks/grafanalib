@@ -65,7 +65,7 @@ class CloudwatchMetricsTarget(Target):
 
 
 @attr.s
-class CloudwatchLogsInsightsTarget(object):
+class CloudwatchLogsInsightsTarget(Target):
     """
     Generates Cloudwatch Logs Insights target JSON structure.
 
