@@ -1,10 +1,5 @@
 name: Run tests
 
-on:
-  push:
-    branches: main
-  pull_request:
-
 jobs:
   build-n-publish:
     name: Run tests
