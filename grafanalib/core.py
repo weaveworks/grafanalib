@@ -842,6 +842,27 @@ class DataSourceInput(object):
 
 
 @attr.s
+class DataSourceForTargets(object):
+    uid = attr.ib(validator=instance_of(str))
+    type = attr.ib(
+        validator=in_([
+            PLUGIN_ID_CLOUDWATCH,
+            PLUGIN_ID_GRAPHITE,
+            PLUGIN_ID_INFLUXDB,
+            PLUGIN_ID_OPENTSDB,
+            PLUGIN_ID_PROMETHEUS,
+            PLUGIN_ID_ELASTICSEARCH,
+        ])
+    )
+
+    def to_json_data(self):
+        return {
+            'uid': self.uid,
+            'type': self.type,
+        }
+
+
+@attr.s
 class ConstantInput(object):
     name = attr.ib()
     label = attr.ib()
@@ -1574,7 +1595,7 @@ class AlertRulev9(object):
     :param timeRangeTo: Time range interpolation data finish at
     :param uid: Alert UID should be unique
     :param dashboard_uid: Dashboard UID that should be use for linking on alert message
-    :param panel_id: Panel ID that should should be use for linking on alert message
+    :param panel_id: Panel ID that should be use for linking on alert message
     """
 
     title = attr.ib()
@@ -1618,11 +1639,17 @@ class AlertRulev9(object):
                         "from": self.timeRangeFrom,
                         "to": self.timeRangeTo
                     },
-                    "datasourceUid": target.datasource,
+                    "datasourceUid": target.datasource.uid,
                     "model": target.to_json_data(),
                 }]
             else:
                 data += [trigger.to_json_data()]
+
+        if self.panel_id and '__panelId__' not in self.annotations:
+            self.annotations['__panelId__'] = str(self.panel_id)
+
+        if self.dashboard_uid and '__dashboardUid__' not in self.annotations:
+            self.annotations['__dashboardUid__'] = self.dashboard_uid
 
         return {
             "title": self.title,
