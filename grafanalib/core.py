@@ -1602,6 +1602,8 @@ class AlertRulev9(object):
     triggers = attr.ib(default=[], validator=is_valid_triggersv9)
     annotations = attr.ib(default={}, validator=instance_of(dict))
     labels = attr.ib(default={}, validator=instance_of(dict))
+    folderUid = attr.ib(default=None, validator=attr.validators.optional(instance_of(str)))
+    ruleGroup = attr.ib(default=None, validator=attr.validators.optional(instance_of(str)))
 
     evaluateFor = attr.ib(default=DEFAULT_ALERT_EVALUATE_FOR, validator=instance_of(str))
     noDataAlertState = attr.ib(
@@ -1660,7 +1662,9 @@ class AlertRulev9(object):
             "annotations": self.annotations,
             "data": data,
             "noDataState": self.noDataAlertState,
-            "execErrState": self.errorAlertState
+            "execErrState": self.errorAlertState,
+            "folderUid": self.folderUid,
+            "ruleGroup": self.ruleGroup,
         }
 
 
