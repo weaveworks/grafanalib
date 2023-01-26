@@ -1600,8 +1600,8 @@ class AlertRulev9(object):
 
     title = attr.ib()
     triggers = attr.ib(default=[], validator=is_valid_triggersv9)
-    annotations = attr.ib(default={}, validator=instance_of(dict))
-    labels = attr.ib(default={}, validator=instance_of(dict))
+    annotations = attr.ib(factory=dict, validator=instance_of(dict))
+    labels = attr.ib(factory=dict, validator=instance_of(dict))
     folderUid = attr.ib(default=None, validator=attr.validators.optional(instance_of(str)))
     ruleGroup = attr.ib(default=None, validator=attr.validators.optional(instance_of(str)))
 
@@ -1626,8 +1626,8 @@ class AlertRulev9(object):
     timeRangeFrom = attr.ib(default=300, validator=instance_of(int))
     timeRangeTo = attr.ib(default=0, validator=instance_of(int))
     uid = attr.ib(default=None, validator=attr.validators.optional(instance_of(str)))
-    dashboard_uid = attr.ib(default="", validator=instance_of(str))
-    panel_id = attr.ib(default=0, validator=instance_of(int))
+    dashboard_uid = attr.ib(default=None, validator=attr.validators.optional(instance_of(str)))
+    panel_id = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
 
     def to_json_data(self):
         data = []
@@ -1647,10 +1647,10 @@ class AlertRulev9(object):
             else:
                 data += [trigger.to_json_data()]
 
-        if self.panel_id and '__panelId__' not in self.annotations:
+        if self.panel_id:
             self.annotations['__panelId__'] = str(self.panel_id)
 
-        if self.dashboard_uid and '__dashboardUid__' not in self.annotations:
+        if self.dashboard_uid:
             self.annotations['__dashboardUid__'] = self.dashboard_uid
 
         return {
