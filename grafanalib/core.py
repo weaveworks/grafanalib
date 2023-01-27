@@ -842,18 +842,9 @@ class DataSourceInput(object):
 
 
 @attr.s
-class DataSourceForTargets(object):
+class DataSource(object):
     uid = attr.ib(validator=instance_of(str))
-    type = attr.ib(
-        validator=in_([
-            PLUGIN_ID_CLOUDWATCH,
-            PLUGIN_ID_GRAPHITE,
-            PLUGIN_ID_INFLUXDB,
-            PLUGIN_ID_OPENTSDB,
-            PLUGIN_ID_PROMETHEUS,
-            PLUGIN_ID_ELASTICSEARCH,
-        ])
-    )
+    type = attr.ib(validator=instance_of(str))
 
     def to_json_data(self):
         return {
