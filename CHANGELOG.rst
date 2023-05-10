@@ -2,6 +2,12 @@
 Changelog
 =========
 
+0.7.1
+===========
+
+* Fix AlertCondition backwards compatibility (``useNewAlerts`` default to ``False``)
+
+
 0.7.0 (2022-10-02)
 ===========
 
