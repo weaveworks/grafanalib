@@ -1331,7 +1331,8 @@ class AlertExpression(object):
         for condition in self.conditions:
             # discard unused features of condition as of grafana 8.x
             condition.useNewAlerts = True
-            condition.target = Target(refId=self.expression)
+            if condition.target is None:
+                condition.target = Target(refId=self.expression)
             conditions += [condition.to_json_data()]
 
         expression = {
@@ -1453,7 +1454,7 @@ def is_valid_triggersv9(instance, attribute, value):
     """Validator for AlertRule triggers for Grafana v9"""
     for trigger in value:
         if not (isinstance(trigger, Target) or isinstance(trigger, AlertExpression)):
-            raise ValueError(f"{attribute.name} must either be a Target or AlertCondition")
+            raise ValueError(f"{attribute.name} must either be a Target or AlertExpression")
 
         if isinstance(trigger, Target):
             is_valid_target(instance, "alert trigger target", trigger)
