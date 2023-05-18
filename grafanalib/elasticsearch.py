@@ -79,7 +79,7 @@ class CardinalityMetricAgg(object):
 
     https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-cardinality-aggregation.html
 
-    :param field: name of elasticsearch field to provide the maximum for
+    :param field: name of elasticsearch field to provide the cardinality for
     :param id: id of the metric
     :param hide: show/hide the metric in the final panel display
     :param inline: script to apply to the data, using '_value'
@@ -111,7 +111,7 @@ class AverageMetricAgg(object):
 
     https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-avg-aggregation.html
 
-    :param field: name of elasticsearch field to provide the maximum for
+    :param field: name of elasticsearch metric aggregator to provide the average of
     :param id: id of the metric
     :param hide: show/hide the metric in the final panel display
     :param inline: script to apply to the data, using '_value'
@@ -437,7 +437,7 @@ class ElasticsearchAlertCondition(AlertCondition):
 class MinMetricAgg(object):
     """An aggregator that provides the min. value among the values.
     https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-min-aggregation.html
-    :param field: name of elasticsearch field to provide the maximum for
+    :param field: name of elasticsearch field to provide the minimum for
     :param hide: show/hide the metric in the final panel display
     :param id: id of the metric
     :param inline: script to apply to the data, using '_value'
@@ -468,7 +468,7 @@ class MinMetricAgg(object):
 class PercentilesMetricAgg(object):
     """A multi-value metrics aggregation that calculates one or more percentiles over numeric values extracted from the aggregated documents
     https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-percentile-aggregation.html
-    :param field: name of elasticsearch field to provide the maximum for
+    :param field: name of elasticsearch field to provide the percentiles for
     :param hide: show/hide the metric in the final panel display
     :param id: id of the metric
     :param inline: script to apply to the data, using '_value'
