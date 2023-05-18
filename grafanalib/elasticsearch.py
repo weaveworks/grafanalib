@@ -2,7 +2,7 @@
 
 import attr
 import itertools
-from attr.validators import instance_of
+from attr.validators import in_, instance_of
 from grafanalib.core import AlertCondition
 
 DATE_HISTOGRAM_DEFAULT_FIELD = 'time_iso8601'
@@ -497,4 +497,50 @@ class PercentilesMetricAgg(object):
             'field': self.field,
             'inlineScript': self.inline,
             'settings': self.settings,
+        }
+
+
+@attr.s
+class RateMetricAgg(object):
+    """An aggregator that provides the rate of the values.
+    https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-rate-aggregation.html
+    :param field: name of elasticsearch field to provide the sum over
+    :param hide: show/hide the metric in the final panel display
+    :param id: id of the metric
+    :param unit: calendar interval to group by
+        supported calendar intervals
+        https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-datehistogram-aggregation.html#calendar_intervals
+        "minute"
+        "hour"
+        "day"
+        "week"
+        "month"
+        "quarter"
+        "year"
+    :param mode: sum or count the values
+    :param script: script to apply to the data, using '_value'
+    """
+
+    field = attr.ib(default="", validator=instance_of(str))
+    id = attr.ib(default=0, validator=instance_of(int))
+    hide = attr.ib(default=False, validator=instance_of(bool))
+    unit = attr.ib(default="", validator=instance_of(str))
+    mode = attr.ib(default="", validator=in_(["", "value_count", "sum"]))
+    script = attr.ib(default="", validator=instance_of(str))
+
+    def to_json_data(self):
+        self.settings = {}
+
+        if self.mode:
+            self.settings["mode"] = self.mode
+
+        if self.script:
+            self.settings["script"] = self.script
+
+        return {
+            "id": str(self.id),
+            "hide": self.hide,
+            "field": self.field,
+            "settings": self.settings,
+            "type": "rate",
         }
