@@ -609,6 +609,20 @@ class SqlTarget(Target):
 
     rawSql = attr.ib(default="")
     rawQuery = attr.ib(default=True)
+    srcFilePath = attr.ib(default="", validator=instance_of(str))
+    sqlParams = attr.ib(default={}, validator=instance_of(dict))
+
+    def __attrs_post_init__(self):
+        """Override rawSql if a path to a source file is provided,
+        if it is a parameterized query, fill in the parameters.
+        srcFilePath: this will containt the path to the source file
+        sqlParams: this will contain the sql parameters to use in the read query
+        """
+        if self.srcFilePath:
+            with open(self.srcFilePath, "r") as f:
+                self.rawSql = f.read()
+                if self.sqlParams is not None:
+                    self.rawSql = self.rawSql.format(**self.sqlParams)
 
     def to_json_data(self):
         """Override the Target to_json_data to add additional fields.

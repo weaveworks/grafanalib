@@ -10,6 +10,7 @@ Changelog
 * Added Minimum option for Timeseries
 * Added Maximum option for Timeseries
 * Added Number of decimals displays option for Timeseries* Added Bar_Chart_ panel support
+* Extended SqlTarget to support parsing queries from files
 
 .. _Bar_Chart: basehttps://grafana.com/docs/grafana/latest/panels-visualizations/visualizations/bar-chart/
 
