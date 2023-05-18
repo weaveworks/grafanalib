@@ -247,7 +247,7 @@ class BucketScriptAgg(object):
     :param id: id of the aggregator
     :param hide: show/hide the metric in the final panel display
     """
-    fields = attr.ib(default={}, validator=instance_of(dict))
+    fields = attr.ib(factory=dict, validator=instance_of(dict))
     id = attr.ib(default=0, validator=instance_of(int))
     hide = attr.ib(default=False, validator=instance_of(bool))
     script = attr.ib(default="", validator=instance_of(str))
@@ -480,7 +480,7 @@ class PercentilesMetricAgg(object):
     hide = attr.ib(default=False, validator=instance_of(bool))
     inline = attr.ib(default="", validator=instance_of(str))
     percents = attr.ib(default=attr.Factory(list))
-    settings = attr.ib(default={})
+    settings = attr.ib(factory=dict)
 
     def to_json_data(self):
         self.settings = {}

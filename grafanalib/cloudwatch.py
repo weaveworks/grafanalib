@@ -33,7 +33,7 @@ class CloudwatchMetricsTarget(Target):
     :param datasource: Grafana datasource name
     """
     alias = attr.ib(default="")
-    dimensions = attr.ib(default={}, validator=instance_of(dict))
+    dimensions = attr.ib(factory=dict, validator=instance_of(dict))
     expression = attr.ib(default="")
     id = attr.ib(default="")
     matchExact = attr.ib(default=True, validator=instance_of(bool))
@@ -90,11 +90,11 @@ class CloudwatchLogsInsightsTarget(Target):
     """
     expression = attr.ib(default="")
     id = attr.ib(default="")
-    logGroupNames = attr.ib(default=[], validator=instance_of(list))
+    logGroupNames = attr.ib(factory=list, validator=instance_of(list))
     namespace = attr.ib(default="")
     refId = attr.ib(default="")
     region = attr.ib(default="default")
-    statsGroups = attr.ib(default=[], validator=instance_of(list))
+    statsGroups = attr.ib(factory=list, validator=instance_of(list))
     hide = attr.ib(default=False, validator=instance_of(bool))
     datasource = attr.ib(default=None)
 
