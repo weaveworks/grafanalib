@@ -954,6 +954,33 @@ def test_alertfilefasedfrovisioning():
     assert data['groups'] == groups
 
 
+def test_alertCondition_useNewAlerts_default():
+    alert_condition = G.AlertCondition(
+        G.Target(refId="A"),
+        G.Evaluator('a', 'b'),
+        G.TimeRange('5', '6'),
+        'd',
+        'e'
+    )
+    data = alert_condition.to_json_data()
+    assert data['query']['model'] is not None
+    assert len(data['query']['params']) == 3
+
+
+def test_alertCondition_useNewAlerts_true():
+    alert_condition = G.AlertCondition(
+        G.Target(refId="A"),
+        G.Evaluator('a', 'b'),
+        G.TimeRange('5', '6'),
+        'd',
+        'e',
+        useNewAlerts=True
+    )
+    data = alert_condition.to_json_data()
+    assert 'model' not in data['query']
+    assert len(data['query']['params']) == 1
+
+
 def test_worldmap():
     data_source = 'dummy data source'
     targets = ['dummy_prom_query']

@@ -1197,6 +1197,9 @@ class AlertCondition(object):
         RTYPE_DIFF = 'diff'
         RTYPE_PERCENT_DIFF = 'percent_diff'
         RTYPE_COUNT_NON_NULL = 'count_non_null'
+    :param useNewAlerts: Whether or not the alert condition is used as part of the Grafana 8.x alerts.
+        Defaults to False for compatibility with old Grafana alerts, but automatically overridden to true
+        when used inside ``AlertExpression`` or ``AlertRulev8``
     :param type: CTYPE_*
     """
 
@@ -1205,6 +1208,7 @@ class AlertCondition(object):
     timeRange = attr.ib(default=None, validator=attr.validators.optional(attr.validators.instance_of(TimeRange)))
     operator = attr.ib(default=OP_AND)
     reducerType = attr.ib(default=RTYPE_LAST)
+    useNewAlerts = attr.ib(default=False)
 
     type = attr.ib(default=CTYPE_QUERY, kw_only=True)
 
