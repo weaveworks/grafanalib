@@ -5,7 +5,7 @@ Getting Started with grafanalib
 .. image:: https://readthedocs.org/projects/grafanalib/badge/?version=main
     :alt: Documentation Status
     :scale: 100%
-    :target: https://grafanalib.readthedocs.io/en/latest/?badge=main
+    :target: https://grafanalib.readthedocs.io/en/main
 
 Do you like `Grafana <http://grafana.org/>`_ but wish you could version your
 dashboard configuration? Do you find yourself repeating common patterns? If
