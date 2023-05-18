@@ -2,7 +2,7 @@
 
 import attr
 import itertools
-from attr.validators import instance_of
+from attr.validators import in_, instance_of
 from grafanalib.core import AlertCondition
 
 DATE_HISTOGRAM_DEFAULT_FIELD = 'time_iso8601'
