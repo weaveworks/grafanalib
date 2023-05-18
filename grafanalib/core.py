@@ -2193,6 +2193,9 @@ class TimeSeries(Panel):
         single (Default), multi, none
     :param unit: units
     :param thresholdsStyleMode: thresholds style mode off (Default), area, line, line+area
+    :param valueMin: Minimum value for Panel
+    :param valueMax: Maximum value for Panel
+    :param valueDecimals: Number of display decimals
     """
 
     axisPlacement = attr.ib(default='auto', validator=instance_of(str))
@@ -2246,6 +2249,10 @@ class TimeSeries(Panel):
     unit = attr.ib(default='', validator=instance_of(str))
     thresholdsStyleMode = attr.ib(default='off', validator=instance_of(str))
 
+    valueMin = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
+    valueMax = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
+    valueDecimals = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
+
     def to_json_data(self):
         return self.panel_json(
             {
@@ -2281,6 +2288,9 @@ class TimeSeries(Panel):
                             },
                         },
                         'mappings': self.mappings,
+                        "min": self.valueMin,
+                        "max": self.valueMax,
+                        "decimals": self.valueDecimals,
                         'unit': self.unit
                     },
                     'overrides': self.overrides
