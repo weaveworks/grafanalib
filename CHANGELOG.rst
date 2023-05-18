@@ -2,13 +2,17 @@
 Changelog
 =========
 
+
 0.x.x (?)
 ==================
 
 * Added ...
 * Added Minimum option for Timeseries
 * Added Maximum option for Timeseries
-* Added Number of decimals displays option for Timeseries
+* Added Number of decimals displays option for Timeseries* Added Bar_Chart_ panel support
+
+.. _Bar_Chart: basehttps://grafana.com/docs/grafana/latest/panels-visualizations/visualizations/bar-chart/
+
 
 0.7.0 (2022-10-02)
 ==================
