@@ -901,11 +901,11 @@ def test_alertrulev9():
     )
 
     data = rule.to_json_data()
-    assert data['title'] == title
     assert data['annotations'] == annotations
     assert data['labels'] == labels
     assert data['for'] == "3m"
-    assert data['condition'] == condition
+    assert data['grafana_alert']['title'] == title
+    assert data['grafana_alert']['condition'] == condition
 
 
 def test_alertexpression():
@@ -1088,6 +1088,27 @@ def test_ae3e_plotly():
     assert data["options"]["layout"] == layout
 
 
+def test_barchart():
+    data_source = "dummy data source"
+    targets = ["dummy_prom_query"]
+    title = "dummy title"
+    panel = G.BarChart(data_source, targets, title)
+    data = panel.to_json_data()
+    assert data["targets"] == targets
+    assert data["datasource"] == data_source
+    assert data["title"] == title
+    assert data["options"] is not None
+    assert data["fieldConfig"] is not None
+    assert data["options"]["orientation"] == 'auto'
+    assert data["fieldConfig"]["defaults"]["color"]["mode"] == 'palette-classic'
+
+    panel = G.BarChart(data_source, targets, title, orientation='horizontal', axisCenteredZero=True, showLegend=False)
+    data = panel.to_json_data()
+    assert data["options"]["orientation"] == 'horizontal'
+    assert data["fieldConfig"]["defaults"]["custom"]["axisCenteredZero"]
+    assert not data["options"]["legend"]["showLegend"]
+
+
 def test_target_invalid():
     with pytest.raises(ValueError, match=r"target should have non-empty 'refId' attribute"):
         return G.AlertCondition(
@@ -1114,3 +1135,31 @@ def test_sql_target():
     )
     assert t.to_json_data()["targets"][0].rawQuery is True
     assert t.to_json_data()["targets"][0].rawSql == "SELECT * FROM example"
+
+
+def test_sql_target_with_source_files():
+    t = G.Table(
+        dataSource="some data source",
+        targets=[
+            G.SqlTarget(srcFilePath="grafanalib/tests/examples/sqltarget_example_files/example.sql"),
+        ],
+        title="table title",
+    )
+    assert t.to_json_data()["targets"][0].rawQuery is True
+    assert t.to_json_data()["targets"][0].rawSql == "SELECT example, count(id)\nFROM test\nGROUP BY example;\n"
+    print(t.to_json_data()["targets"][0])
+
+    t = G.Table(
+        dataSource="some data source",
+        targets=[
+            G.SqlTarget(srcFilePath="grafanalib/tests/examples/sqltarget_example_files/example_with_params.sql", sqlParams={
+                "example": "example",
+                "starting_date": "1970-01-01",
+                "ending_date": "1971-01-01",
+            },),
+        ],
+        title="table title",
+    )
+    assert t.to_json_data()["targets"][0].rawQuery is True
+    assert t.to_json_data()["targets"][0].rawSql == "SELECT example\nFROM test\nWHERE example='example' AND example_date BETWEEN '1970-01-01' AND '1971-01-01';\n"
+    print(t.to_json_data()["targets"][0])

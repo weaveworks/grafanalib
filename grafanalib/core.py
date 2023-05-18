@@ -99,6 +99,7 @@ WORLD_MAP_TYPE = 'grafana-worldmap-panel'
 NEWS_TYPE = 'news'
 HISTOGRAM_TYPE = 'histogram'
 AE3E_PLOTLY_TYPE = 'ae3e-plotly-panel'
+BAR_CHART_TYPE = 'barchart'
 
 DEFAULT_FILL = 1
 DEFAULT_REFRESH = '10s'
@@ -608,6 +609,20 @@ class SqlTarget(Target):
 
     rawSql = attr.ib(default="")
     rawQuery = attr.ib(default=True)
+    srcFilePath = attr.ib(default="", validator=instance_of(str))
+    sqlParams = attr.ib(default={}, validator=instance_of(dict))
+
+    def __attrs_post_init__(self):
+        """Override rawSql if a path to a source file is provided,
+        if it is a parameterized query, fill in the parameters.
+        srcFilePath: this will containt the path to the source file
+        sqlParams: this will contain the sql parameters to use in the read query
+        """
+        if self.srcFilePath:
+            with open(self.srcFilePath, "r") as f:
+                self.rawSql = f.read()
+                if self.sqlParams is not None:
+                    self.rawSql = self.rawSql.format(**self.sqlParams)
 
     def to_json_data(self):
         """Override the Target to_json_data to add additional fields.
@@ -1055,10 +1070,15 @@ class TimePicker(object):
 
     :param refreshIntervals: dashboard auto-refresh interval options
     :param timeOptions: dashboard time range options
+    :param nowDelay: exclude recent data that may be incomplete, as a
+        number + unit (s: second, m: minute, h: hour, etc)
     :param hidden: hide the time picker from dashboard
     """
     refreshIntervals = attr.ib()
     timeOptions = attr.ib()
+    nowDelay = attr.ib(
+        default=None,
+    )
     hidden = attr.ib(
         default=False,
         validator=instance_of(bool),
@@ -1068,6 +1088,7 @@ class TimePicker(object):
         return {
             'refresh_intervals': self.refreshIntervals,
             'time_options': self.timeOptions,
+            'nowDelay': self.nowDelay,
             'hidden': self.hidden
         }
 
@@ -1310,7 +1331,8 @@ class AlertExpression(object):
         for condition in self.conditions:
             # discard unused features of condition as of grafana 8.x
             condition.useNewAlerts = True
-            condition.target = Target(refId=self.expression)
+            if condition.target is None:
+                condition.target = Target(refId=self.expression)
             conditions += [condition.to_json_data()]
 
         expression = {
@@ -1432,7 +1454,7 @@ def is_valid_triggersv9(instance, attribute, value):
     """Validator for AlertRule triggers for Grafana v9"""
     for trigger in value:
         if not (isinstance(trigger, Target) or isinstance(trigger, AlertExpression)):
-            raise ValueError(f"{attribute.name} must either be a Target or AlertCondition")
+            raise ValueError(f"{attribute.name} must either be a Target or AlertExpression")
 
         if isinstance(trigger, Target):
             is_valid_target(instance, "alert trigger target", trigger)
@@ -1625,15 +1647,17 @@ class AlertRulev9(object):
                 data += [trigger.to_json_data()]
 
         return {
-            "title": self.title,
             "uid": self.uid,
-            "condition": self.condition,
             "for": self.evaluateFor,
             "labels": self.labels,
             "annotations": self.annotations,
-            "data": data,
-            "noDataState": self.noDataAlertState,
-            "execErrState": self.errorAlertState
+            "grafana_alert": {
+                "title": self.title,
+                "condition": self.condition,
+                "data": data,
+                "no_data_state": self.noDataAlertState,
+                "exec_err_state": self.errorAlertState,
+            },
         }
 
 
@@ -2191,6 +2215,9 @@ class TimeSeries(Panel):
         single (Default), multi, none
     :param unit: units
     :param thresholdsStyleMode: thresholds style mode off (Default), area, line, line+area
+    :param valueMin: Minimum value for Panel
+    :param valueMax: Maximum value for Panel
+    :param valueDecimals: Number of display decimals
     """
 
     axisPlacement = attr.ib(default='auto', validator=instance_of(str))
@@ -2244,6 +2271,10 @@ class TimeSeries(Panel):
     unit = attr.ib(default='', validator=instance_of(str))
     thresholdsStyleMode = attr.ib(default='off', validator=instance_of(str))
 
+    valueMin = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
+    valueMax = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
+    valueDecimals = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
+
     def to_json_data(self):
         return self.panel_json(
             {
@@ -2279,6 +2310,9 @@ class TimeSeries(Panel):
                             },
                         },
                         'mappings': self.mappings,
+                        "min": self.valueMin,
+                        "max": self.valueMax,
+                        "decimals": self.valueDecimals,
                         'unit': self.unit
                     },
                     'overrides': self.overrides
@@ -4281,3 +4315,144 @@ class Ae3ePlotly(Panel):
         _deep_update(plotly["options"]["layout"], self.layout)
         _deep_update(plotly["options"]["configuration"], self.configuration)
         return plotly
+
+
+@attr.s
+class BarChart(Panel):
+    """Generates bar chart panel json structure
+    Grafana docs on Bar chart panel: https://grafana.com/docs/grafana/latest/panels-visualizations/visualizations/bar-chart/
+
+    :param orientation: Controls the orientation of the chart
+    :param xTickLabelRotation: Controls the rotation of bar labels
+    :param xTickLabelSpacing: Controls the spacing of bar labels
+    :param showValue: Controls the visibility of values
+    :param stacking: Controls the stacking of the bar chart
+    :param groupWidth: Controls the width of the group
+    :param barWidth: Controls the width of the bars
+    :param barRadius: Controls the radius of the bars
+    :param toolTipMode: Controls the style of tooltips
+    :param toolTipSort: Controls the sort order of tooltips, when toolTipMode is 'All'
+    :param showLegend: Controls the visibility of legends
+    :param legendDisplayMode: Controls the style of legends, if they are shown.
+    :param legendPlacement: Controls the placement of legends, if they are shown
+    :param legendCalcs: Controls the calculations to show on legends
+    :param lineWidth: Controls the width of lines
+    :param fillOpacity: Contorls the opacity of bars
+    :param gradientMode: Controls the gradient style of the bars
+    :param axisPlacement: Controls the axis placement
+    :param axisLabel: Controls the axis labels
+    :param axisColorMode: Controls the axis color style
+    :param scaleDistributionType: Controls the type of distribution
+    :param axisCenteredZero: Controls the centering of the axis
+    :param hideFromTooltip: Controls the hiding of tooltips
+    :param hideFromViz: Controls the hiding of bars
+    :param hideFromLegend: Controls the hiding of legends
+    :param colorMode: Controls the color palette of the bars
+    :param fixedColor: Controls the color of the bars, when the colorMode is fixed
+    :param mappings: Controls the mapping of values
+    :param thresholdsMode: Controls the style threshold
+    :param thresholdSteps: Controls the treshold steps
+    :param overrides: Controls the overriding of certain datas base characteristics
+    """
+    orientation = attr.ib(default='auto', validator=instance_of(str))
+    xTickLabelRotation = attr.ib(default=0, validator=instance_of(int))
+    xTickLabelSpacing = attr.ib(default=0, validator=instance_of(int))
+    showValue = attr.ib(default='auto', validator=instance_of(str))
+    stacking = attr.ib(default='none', validator=instance_of(str))
+    groupWidth = attr.ib(default=0.7, validator=instance_of(float))
+    barWidth = attr.ib(default=0.97, validator=instance_of(float))
+    barRadius = attr.ib(default=0.0, validator=instance_of(float))
+    tooltipMode = attr.ib(default='single', validator=instance_of(str))
+    tooltipSort = attr.ib(default='none', validator=instance_of(str))
+    showLegend = attr.ib(default=True, validator=instance_of(bool))
+    legendDisplayMode = attr.ib(default='list', validator=instance_of(str))
+    legendPlacement = attr.ib(default='bottom', validator=instance_of(str))
+    legendCalcs = attr.ib(default=[], validator=instance_of(list))
+    lineWidth = attr.ib(default=1, validator=instance_of(int))
+    fillOpacity = attr.ib(default=80, validator=instance_of(int))
+    gradientMode = attr.ib(default='none', validator=instance_of(str))
+    axisPlacement = attr.ib(default='auto', validator=instance_of(str))
+    axisLabel = attr.ib(default='', validator=instance_of(str))
+    axisColorMode = attr.ib(default='text', validator=instance_of(str))
+    scaleDistributionType = attr.ib(default='linear', validator=instance_of(str))
+    axisCenteredZero = attr.ib(default=False, validator=instance_of(bool))
+    hideFromTooltip = attr.ib(default=False, validator=instance_of(bool))
+    hideFromViz = attr.ib(default=False, validator=instance_of(bool))
+    hideFromLegend = attr.ib(default=False, validator=instance_of(bool))
+    colorMode = attr.ib(default='palette-classic', validator=instance_of(str))
+    fixedColor = attr.ib(default='blue', validator=instance_of(str))
+    mappings = attr.ib(default=[], validator=instance_of(list))
+    thresholdsMode = attr.ib(default='absolute', validator=instance_of(str))
+    thresholdSteps = attr.ib(
+        default=attr.Factory(lambda: [
+            {
+                'value': None,
+                'color': 'green'
+            },
+            {
+                'value': 80,
+                'color': 'red'
+            }
+        ]),
+        validator=instance_of(list)
+    )
+    overrides = attr.ib(default=[], validator=instance_of(list))
+
+    def to_json_data(self):
+        bar_chart = self.panel_json(
+            {
+                'options': {
+                    'orientation': self.orientation,
+                    'xTickLabelRotation': self.xTickLabelRotation,
+                    'xTickLabelSpacing': self.xTickLabelSpacing,
+                    'showValue': self.showValue,
+                    'stacking': self.stacking,
+                    'groupWidth': self.groupWidth,
+                    'barWidth': self.barWidth,
+                    'barRadius': self.barRadius,
+                    'tooltip': {
+                        'mode': self.tooltipMode,
+                        'sort': self.tooltipSort
+                    },
+                    'legend': {
+                        'showLegend': self.showLegend,
+                        'displayMode': self.legendDisplayMode,
+                        'placement': self.legendPlacement,
+                        'calcs': self.legendCalcs
+                    },
+                },
+                'fieldConfig': {
+                    'defaults': {
+                        'custom': {
+                            'lineWidth': self.lineWidth,
+                            'fillOpacity': self.fillOpacity,
+                            'gradientMode': self.gradientMode,
+                            'axisPlacement': self.axisPlacement,
+                            'axisLabel': self.axisLabel,
+                            'axisColorMode': self.axisColorMode,
+                            'scaleDistribution': {
+                                'type': self.scaleDistributionType
+                            },
+                            'axisCenteredZero': self.axisCenteredZero,
+                            'hideFrom': {
+                                'tooltip': self.hideFromTooltip,
+                                'viz': self.hideFromViz,
+                                'legend': self.hideFromLegend
+                            }
+                        },
+                        'color': {
+                            'mode': self.colorMode,
+                            'fixedColor': self.fixedColor if self.colorMode == 'fixed' else 'none'
+                        },
+                        'mappings': self.mappings,
+                        'thresholds': {
+                            'mode': self.thresholdsMode,
+                            'steps': self.thresholdSteps
+                        }
+                    },
+                    'overrides': self.overrides
+                },
+                'type': BAR_CHART_TYPE
+            }
+        )
+        return bar_chart
