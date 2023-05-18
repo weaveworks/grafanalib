@@ -2,14 +2,21 @@
 Changelog
 =========
 
-0.7.1
-===========
+0.x.x (?)
+==================
 
+* Added ...
+* Added Minimum option for Timeseries
+* Added Maximum option for Timeseries
+* Added Number of decimals displays option for Timeseries* Added Bar_Chart_ panel support
+* Extended SqlTarget to support parsing queries from files
 * Fix AlertCondition backwards compatibility (``useNewAlerts`` default to ``False``)
+
+.. _Bar_Chart: basehttps://grafana.com/docs/grafana/latest/panels-visualizations/visualizations/bar-chart/
 
 
 0.7.0 (2022-10-02)
-===========
+==================
 
 * Added Grafana 8.x new Alert Rule
 * Added Grafana 9.x new Alert Rule
@@ -22,7 +29,6 @@ Changelog
 * Fix typo in unit constant ``NORMAL_CUBIC_METER`` (was ``NORMAIL_CUBIC_METER``)
 
 .. _ePict: basehttps://grafana.com/grafana/plugins/larona-epict-panel/
-
 
 0.6.3 (2022-03-30)
 ==================
