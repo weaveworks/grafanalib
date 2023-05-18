@@ -26,7 +26,7 @@ class CloudwatchMetricsTarget(object):
     :param period: Cloudwatch data period
     :param refId: target reference id
     :param region: Cloudwatch region
-    :param statistics: Cloudwatch mathematic statistics
+    :param statistics: Cloudwatch mathematic statistics (to be deprecated, prefer `statistic` instead)
     :param statistic: Cloudwatch mathematic statistic
     :param hide: controls if given metric is displayed on visualization
     :param datasource: Grafana datasource name
