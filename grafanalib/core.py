@@ -78,6 +78,7 @@ DASHBOARD_TYPE = 'dashboard'
 ROW_TYPE = 'row'
 GRAPH_TYPE = 'graph'
 DISCRETE_TYPE = 'natel-discrete-panel'
+EPICT_TYPE = 'larona-epict-panel'
 STAT_TYPE = 'stat'
 SINGLESTAT_TYPE = 'singlestat'
 STATE_TIMELINE_TYPE = 'state-timeline'
@@ -97,9 +98,12 @@ TIMESERIES_TYPE = 'timeseries'
 WORLD_MAP_TYPE = 'grafana-worldmap-panel'
 NEWS_TYPE = 'news'
 HISTOGRAM_TYPE = 'histogram'
+AE3E_PLOTLY_TYPE = 'ae3e-plotly-panel'
 
 DEFAULT_FILL = 1
 DEFAULT_REFRESH = '10s'
+DEFAULT_ALERT_EVALUATE_INTERVAL = '1m'
+DEFAULT_ALERT_EVALUATE_FOR = '5m'
 DEFAULT_ROW_HEIGHT = Pixels(250)
 DEFAULT_LINE_WIDTH = 2
 DEFAULT_POINT_RADIUS = 5
@@ -183,6 +187,26 @@ CTYPE_QUERY = 'query'
 OP_AND = 'and'
 OP_OR = 'or'
 
+# Alert Expression Types
+# classic/reduce/resample/math
+EXP_TYPE_CLASSIC = 'classic_conditions'
+EXP_TYPE_REDUCE = 'reduce'
+EXP_TYPE_RESAMPLE = 'resample'
+EXP_TYPE_MATH = 'math'
+
+# Alert Expression Reducer Function
+EXP_REDUCER_FUNC_MIN = 'min'
+EXP_REDUCER_FUNC_MAX = 'max'
+EXP_REDUCER_FUNC_MEAN = 'mean'
+EXP_REDUCER_FUNC_SUM = 'sum'
+EXP_REDUCER_FUNC_COUNT = 'count'
+EXP_REDUCER_FUNC_LAST = 'last'
+
+# Alert Expression Reducer Mode
+EXP_REDUCER_MODE_STRICT = 'strict'
+EXP_REDUCER_FUNC_DROP_NN = 'dropNN'
+EXP_REDUCER_FUNC_REPLACE_NN = 'replaceNN'
+
 # Text panel modes
 TEXT_MODE_MARKDOWN = 'markdown'
 TEXT_MODE_HTML = 'html'
@@ -219,6 +243,12 @@ ALERTLIST_STATE_NO_DATA = 'no_data'
 ALERTLIST_STATE_EXECUTION_ERROR = 'execution_error'
 ALERTLIST_STATE_ALERTING = 'alerting'
 ALERTLIST_STATE_PENDING = 'pending'
+
+# Alert Rule state filter options (Grafana 8.x)
+ALERTRULE_STATE_DATA_OK = 'OK'
+ALERTRULE_STATE_DATA_NODATA = 'No Data'
+ALERTRULE_STATE_DATA_ALERTING = 'Alerting'
+ALERTRULE_STATE_DATA_ERROR = 'Error'
 
 # Display Sort Order
 SORT_ASC = 1
@@ -262,6 +292,10 @@ GAUGE_DISPLAY_MODE_BASIC = 'basic'
 GAUGE_DISPLAY_MODE_LCD = 'lcd'
 GAUGE_DISPLAY_MODE_GRADIENT = 'gradient'
 
+GRAPH_TOOLTIP_MODE_NOT_SHARED = 0
+GRAPH_TOOLTIP_MODE_SHARED_CROSSHAIR = 1
+GRAPH_TOOLTIP_MODE_SHARED_TOOLTIP = 2  # Shared crosshair AND tooltip
+
 DEFAULT_AUTO_COUNT = 30
 DEFAULT_MIN_AUTO_INTERVAL = '10s'
 
@@ -297,6 +331,136 @@ VTYPE_FIRST = 'first'
 VTYPE_DELTA = 'delta'
 VTYPE_RANGE = 'range'
 VTYPE_DEFAULT = VTYPE_AVG
+
+
+@attr.s
+class ePictBox(object):
+    """
+    ePict Box.
+
+    :param angle: Rotation angle of box
+    :param backgroundColor: Dito
+    :param blinkHigh: Blink if below threshold
+    :param blinkLow: Blink if above threshold
+    :param color: Text color
+    :param colorHigh: High value color
+    :param colorLow: Low value color
+    :param colorMedium: In between value color
+    :param colorSymbol: Whether to enable background color for symbol
+    :param customSymbol: URL to custom symbol (will set symbol to "custom" if set)
+    :param decimal: Number of decimals
+    :param fontSize: Dito
+    :param hasBackground: Whether to enable background color for text
+    :param hasOrb: Whether an orb should be displayed
+    :param hasSymbol: Whether a (custom) symbol should be displayed
+    :param isUsingThresholds: Whether to enable thresholds.
+    :param orbHideText: Whether to hide text next to orb
+    :param orbLocation: Orb location (choose from 'Left', 'Right', 'Top' or 'Bottom')
+    :param orbSize: Dito
+    :param prefix: Value prefix to be displayed (e.g. °C)
+    :param prefixSize: Dito
+    :param selected: Dont know
+    :param serie: Which series to use data from
+    :param suffix: Value suffix to be displayed
+    :param suffixSize: Dito
+    :param symbol: Automatically placed by the plugin format: `data:image/svg+xml;base64,<base64>`, check manually.
+    :param symbolDefHeight: Dont know
+    :param symbolDefWidth: Dont know
+    :param symbolHeight: Dito
+    :param symbolHideText: Whether to hide value text next to symbol
+    :param symbolWidth: Dito
+    :param text: Dont know
+    :param thresholds: Coloring thresholds: Enter 2
+        comma-separated numbers. 20,60 will produce: value <= 20 -> green;
+        value between 20 and 60 -> yellow; value >= 60 -> red. If set, it will also set
+        isUsingThresholds to True
+    :param url: URL to open when clicked on
+    :param xpos: X in (0, X size of image)
+    :param ypos: Y in (0, Y size of image)
+    """
+
+    angle = attr.ib(default=0, validator=instance_of(int))
+    backgroundColor = attr.ib(default="#000", validator=instance_of((RGBA, RGB, str)))
+    blinkHigh = attr.ib(default=False, validator=instance_of(bool))
+    blinkLow = attr.ib(default=False, validator=instance_of(bool))
+    color = attr.ib(default="#000", validator=instance_of((RGBA, RGB, str)))
+    colorHigh = attr.ib(default="#000", validator=instance_of((RGBA, RGB, str)))
+    colorLow = attr.ib(default="#000", validator=instance_of((RGBA, RGB, str)))
+    colorMedium = attr.ib(default="#000", validator=instance_of((RGBA, RGB, str)))
+    colorSymbol = attr.ib(default=False, validator=instance_of(bool))
+    customSymbol = attr.ib(default="", validator=instance_of(str))
+    decimal = attr.ib(default=0, validator=instance_of(int))
+    fontSize = attr.ib(default=12, validator=instance_of(int))
+    hasBackground = attr.ib(default=False, validator=instance_of(bool))
+    hasOrb = attr.ib(default=False, validator=instance_of(bool))
+    hasSymbol = attr.ib(default=False, validator=instance_of(bool))
+    isUsingThresholds = attr.ib(default=False, validator=instance_of(bool))
+    orbHideText = attr.ib(default=False, validator=instance_of(bool))
+    orbLocation = attr.ib(
+        default="Left",
+        validator=in_(['Left', 'Right', 'Top', 'Bottom'])
+    )
+    orbSize = attr.ib(default=13, validator=instance_of(int))
+    prefix = attr.ib(default="", validator=instance_of(str))
+    prefixSize = attr.ib(default=10, validator=instance_of(int))
+    selected = attr.ib(default=False, validator=instance_of(bool))
+    serie = attr.ib(default="", validator=instance_of(str))
+    suffix = attr.ib(default="", validator=instance_of(str))
+    suffixSize = attr.ib(default=10, validator=instance_of(int))
+    symbol = attr.ib(default="", validator=instance_of(str))
+    symbolDefHeight = attr.ib(default=32, validator=instance_of(int))
+    symbolDefWidth = attr.ib(default=32, validator=instance_of(int))
+    symbolHeight = attr.ib(default=32, validator=instance_of(int))
+    symbolHideText = attr.ib(default=False, validator=instance_of(bool))
+    symbolWidth = attr.ib(default=32, validator=instance_of(int))
+    text = attr.ib(default="N/A", validator=instance_of(str))
+    thresholds = attr.ib(default="", validator=instance_of(str))
+    url = attr.ib(default="", validator=instance_of(str))
+    xpos = attr.ib(default=0, validator=instance_of(int))
+    ypos = attr.ib(default=0, validator=instance_of(int))
+
+    def to_json_data(self):
+        self.symbol = "custom" if self.customSymbol else self.symbol
+        self.isUsingThresholds = bool(self.thresholds)
+
+        return {
+            "angle": self.angle,
+            "backgroundColor": self.backgroundColor,
+            "blinkHigh": self.blinkHigh,
+            "blinkLow": self.blinkLow,
+            "color": self.color,
+            "colorHigh": self.colorHigh,
+            "colorLow": self.colorLow,
+            "colorMedium": self.colorMedium,
+            "colorSymbol": self.colorSymbol,
+            "customSymbol": self.customSymbol,
+            "decimal": self.decimal,
+            "fontSize": self.fontSize,
+            "hasBackground": self.hasBackground,
+            "hasOrb": self.hasOrb,
+            "hasSymbol": self.hasSymbol,
+            "isUsingThresholds": self.isUsingThresholds,
+            "orbHideText": self.orbHideText,
+            "orbLocation": self.orbLocation,
+            "orbSize": self.orbSize,
+            "prefix": self.prefix,
+            "prefixSize": self.prefixSize,
+            "selected": self.selected,
+            "serie": self.serie,
+            "suffix": self.suffix,
+            "suffixSize": self.suffixSize,
+            "symbol": self.symbol,
+            "symbolDefHeight": self.symbolDefHeight,
+            "symbolDefWidth": self.symbolDefWidth,
+            "symbolHeight": self.symbolHeight,
+            "symbolHideText": self.symbolHideText,
+            "symbolWidth": self.symbolWidth,
+            "text": self.text,
+            "thresholds": self.thresholds,
+            "url": self.url,
+            "xpos": self.xpos,
+            "ypos": self.ypos,
+        }
 
 
 @attr.s
@@ -391,10 +555,10 @@ class Repeat(object):
 
 def is_valid_target(instance, attribute, value):
     """
-    Check if a given attribute is a valid target
+    Check if a given attribute is a valid Target
     """
-    if not hasattr(value, "refId"):
-        raise ValueError(f"{attribute.name} should have 'refId' attribute")
+    if value.refId == "":
+        raise ValueError(f"{attribute.name} should have non-empty 'refId' attribute")
 
 
 @attr.s
@@ -421,6 +585,7 @@ class Target(object):
     def to_json_data(self):
         return {
             'expr': self.expr,
+            'query': self.expr,
             'target': self.target,
             'format': self.format,
             'hide': self.hide,
@@ -990,13 +1155,13 @@ class AlertCondition(object):
     """
     A condition on an alert.
 
-    :param Target target: Metric the alert condition is based on.
+    :param Target target: Metric the alert condition is based on. Not required at instantiation for Grafana 8.x alerts.
     :param Evaluator evaluator: How we decide whether we should alert on the
         metric. e.g. ``GreaterThan(5)`` means the metric must be greater than 5
         to trigger the condition. See ``GreaterThan``, ``LowerThan``,
         ``WithinRange``, ``OutsideRange``, ``NoValue``.
     :param TimeRange timeRange: How long the condition must be true for before
-        we alert.
+        we alert. For Grafana 8.x alerts, this should be specified in the AlertRule instead.
     :param operator: One of ``OP_AND`` or ``OP_OR``. How this condition
         combines with other conditions.
     :param reducerType: RTYPE_*
@@ -1014,25 +1179,30 @@ class AlertCondition(object):
     :param type: CTYPE_*
     """
 
-    target = attr.ib(validator=is_valid_target)
-    evaluator = attr.ib(validator=instance_of(Evaluator))
-    timeRange = attr.ib(validator=instance_of(TimeRange))
-    operator = attr.ib()
-    reducerType = attr.ib()
+    target = attr.ib(default=None, validator=attr.validators.optional(is_valid_target))
+    evaluator = attr.ib(default=None, validator=instance_of(Evaluator))
+    timeRange = attr.ib(default=None, validator=attr.validators.optional(attr.validators.instance_of(TimeRange)))
+    operator = attr.ib(default=OP_AND)
+    reducerType = attr.ib(default=RTYPE_LAST)
+
     type = attr.ib(default=CTYPE_QUERY, kw_only=True)
 
+    def __get_query_params(self):
+        # Grafana 8.x alerts do not put the time range in the query params.
+        if self.useNewAlerts:
+            return [self.target.refId]
+
+        return [self.target.refId, self.timeRange.from_time, self.timeRange.to_time]
+
     def to_json_data(self):
-        queryParams = [
-            self.target.refId, self.timeRange.from_time, self.timeRange.to_time
-        ]
-        return {
-            'evaluator': self.evaluator,
+        condition = {
+            'evaluator': self.evaluator.to_json_data(),
             'operator': {
                 'type': self.operator,
             },
             'query': {
-                'model': self.target,
-                'params': queryParams,
+                'model': self.target.to_json_data(),
+                'params': self.__get_query_params(),
             },
             'reducer': {
                 'params': [],
@@ -1040,6 +1210,141 @@ class AlertCondition(object):
             },
             'type': self.type,
         }
+
+        # Grafana 8.x alerts do not put the target inside the alert condition.
+        if self.useNewAlerts:
+            del condition['query']['model']
+
+        return condition
+
+
+@attr.s
+class AlertExpression(object):
+    """
+    A alert expression to be evaluated in Grafana v9.x+
+
+    :param refId: Expression reference ID (A,B,C,D,...)
+    :param expression: Input reference ID (A,B,C,D,...) for expression to evaluate, or in the case of the Math type the expression to evaluate
+    :param conditions: list of AlertConditions
+    :param expressionType: Expression type EXP_TYPE_*
+        Supported expression types:
+        EXP_TYPE_CLASSIC
+        EXP_TYPE_REDUCE
+        EXP_TYPE_RESAMPLE
+        EXP_TYPE_MATH
+    :param hide: Hide alert boolean
+    :param intervalMs: Expression evaluation interval
+    :param maxDataPoints: Maximum number fo data points to be evaluated
+
+    :param reduceFunction: Reducer function (Only used if expressionType=EXP_TYPE_REDUCE)
+        Supported reducer functions:
+        EXP_REDUCER_FUNC_MIN
+        EXP_REDUCER_FUNC_MAX
+        EXP_REDUCER_FUNC_MEAN
+        EXP_REDUCER_FUNC_SUM
+        EXP_REDUCER_FUNC_COUNT
+        EXP_REDUCER_FUNC_LAST
+    :param reduceMode: Reducer mode (Only used if expressionType=EXP_TYPE_REDUCE)
+        Supported reducer modes:
+        EXP_REDUCER_MODE_STRICT
+        EXP_REDUCER_FUNC_DROP_NN
+        EXP_REDUCER_FUNC_REPLACE_NN
+    :param reduceReplaceWith: When using mode EXP_REDUCER_FUNC_REPLACE_NN number that will replace non numeric values
+
+    :param resampleWindow: Intervale to resample to eg. 10s, 1m, 30m, 1h
+    :param resampleDownsampler: 'mean', 'min', 'max', 'sum'
+    :param resampleUpsampler:
+        'fillna' - Fill with NaN's
+        'pad' - fill with the last known value
+        'backfilling' - fill with the next know value
+    """
+
+    refId = attr.ib()
+    expression = attr.ib(validator=instance_of(str))
+    conditions = attr.ib(default=attr.Factory(list), validator=attr.validators.deep_iterable(
+        member_validator=instance_of(AlertCondition),
+        iterable_validator=instance_of(list)
+    ))
+    expressionType = attr.ib(
+        default=EXP_TYPE_CLASSIC,
+        validator=in_([
+            EXP_TYPE_CLASSIC,
+            EXP_TYPE_REDUCE,
+            EXP_TYPE_RESAMPLE,
+            EXP_TYPE_MATH
+        ])
+    )
+    hide = attr.ib(default=False, validator=instance_of(bool))
+    intervalMs = attr.ib(default=1000, validator=instance_of(int))
+    maxDataPoints = attr.ib(default=43200, validator=instance_of(int))
+
+    reduceFunction = attr.ib(
+        default=EXP_REDUCER_FUNC_MEAN,
+        validator=in_([
+            EXP_REDUCER_FUNC_MIN,
+            EXP_REDUCER_FUNC_MAX,
+            EXP_REDUCER_FUNC_MEAN,
+            EXP_REDUCER_FUNC_SUM,
+            EXP_REDUCER_FUNC_COUNT,
+            EXP_REDUCER_FUNC_LAST
+        ])
+    )
+    reduceMode = attr.ib(
+        default=EXP_REDUCER_MODE_STRICT,
+        validator=in_([
+            EXP_REDUCER_MODE_STRICT,
+            EXP_REDUCER_FUNC_DROP_NN,
+            EXP_REDUCER_FUNC_REPLACE_NN
+        ])
+    )
+    reduceReplaceWith = attr.ib(default=0)
+
+    resampleWindow = attr.ib(default='10s', validator=instance_of(str))
+    resampleDownsampler = attr.ib(default='mean')
+    resampleUpsampler = attr.ib(default='fillna')
+
+    def to_json_data(self):
+
+        conditions = []
+
+        for condition in self.conditions:
+            # discard unused features of condition as of grafana 8.x
+            condition.useNewAlerts = True
+            condition.target = Target(refId=self.expression)
+            conditions += [condition.to_json_data()]
+
+        expression = {
+            'refId': self.refId,
+            'queryType': '',
+            'relativeTimeRange': {
+                'from': 0,
+                'to': 0
+            },
+            'datasourceUid': '-100',
+            'model': {
+                'conditions': conditions,
+                'datasource': {
+                    'type': '__expr__',
+                    'uid': '-100'
+                },
+                'expression': self.expression,
+                'hide': self.hide,
+                'intervalMs': self.intervalMs,
+                'maxDataPoints': self.maxDataPoints,
+                'refId': self.refId,
+                'type': self.expressionType,
+                'reducer': self.reduceFunction,
+                'settings': {
+                    'mode': self.reduceMode,
+                    'replaceWithValue': self.reduceReplaceWith
+                },
+                'downsampler': self.resampleDownsampler,
+                'upsampler': self.resampleUpsampler,
+                'window': self.resampleWindow
+            }
+        }
+
+        return expression
 
 
 @attr.s
@@ -1081,6 +1386,277 @@ class Alert(object):
 
 
 @attr.s
+class AlertGroup(object):
+    """
+    Create an alert group of Grafana 8.x alerts
+
+    :param name: Alert group name
+    :param rules: List of AlertRule
+    :param folder: Folder to hold alert (Grafana 9.x)
+    :param evaluateInterval: Interval at which the group of alerts is to be evaluated
+    """
+    name = attr.ib()
+    rules = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+    folder = attr.ib(default='alert', validator=instance_of(str))
+    evaluateInterval = attr.ib(default='1m', validator=instance_of(str))
+
+    def group_rules(self, rules):
+        grouped_rules = []
+        for each in rules:
+            each.rule_group = self.name
+            grouped_rules.append(each.to_json_data())
+        return grouped_rules
+
+    def to_json_data(self):
+        return {
+            'name': self.name,
+            'interval': self.evaluateInterval,
+            'rules': self.group_rules(self.rules),
+            'folder': self.folder
+        }
+
+
+def is_valid_triggers(instance, attribute, value):
+    """Validator for AlertRule triggers"""
+    for trigger in value:
+        if not isinstance(trigger, tuple):
+            raise ValueError(f"{attribute.name} must be a list of [(Target, AlertCondition)] tuples")
+
+        if list(map(type, trigger)) != [Target, AlertCondition]:
+            raise ValueError(f"{attribute.name} must be a list of [(Target, AlertCondition)] tuples")
+
+        is_valid_target(instance, "alert trigger target", trigger[0])
+
+
+def is_valid_triggersv9(instance, attribute, value):
+    """Validator for AlertRule triggers for Grafana v9"""
+    for trigger in value:
+        if not (isinstance(trigger, Target) or isinstance(trigger, AlertExpression)):
+            raise ValueError(f"{attribute.name} must either be a Target or AlertCondition")
+
+        if isinstance(trigger, Target):
+            is_valid_target(instance, "alert trigger target", trigger)
+
+
+@attr.s
+class AlertRulev8(object):
+    """
+    Create a Grafana 8.x Alert Rule
+
+    :param title: The alert's title, must be unique per folder
+    :param triggers: A list of Target and AlertCondition tuples, [(Target, AlertCondition)].
+        The Target specifies the query, and the AlertCondition specifies how this is used to alert.
+        Several targets and conditions can be defined, alerts can fire based on all conditions
+        being met by specifying OP_AND on all conditions, or on any single condition being met
+        by specifying OP_OR on all conditions.
+    :param annotations: Summary and annotations
+    :param labels: Custom Labels for the metric, used to handle notifications
+
+    :param evaluateInterval: The frequency of evaluation. Must be a multiple of 10 seconds. For example, 30s, 1m
+    :param evaluateFor: The duration for which the condition must be true before an alert fires
+    :param noDataAlertState: Alert state if no data or all values are null
+        Must be one of the following:
+        [ALERTRULE_STATE_DATA_OK, ALERTRULE_STATE_DATA_ALERTING, ALERTRULE_STATE_DATA_NODATA ]
+    :param errorAlertState: Alert state if execution error or timeout
+        Must be one of the following:
+        [ALERTRULE_STATE_DATA_OK, ALERTRULE_STATE_DATA_ALERTING, ALERTRULE_STATE_DATA_ERROR ]
+
+    :param timeRangeFrom: Time range interpolation data start from
+    :param timeRangeTo: Time range interpolation data finish at
+    :param uid: Alert UID should be unique
+    :param dashboard_uid: Dashboard UID that should be use for linking on alert message
+    :param panel_id: Panel ID that should should be use for linking on alert message
+    """
+
+    title = attr.ib()
+    triggers = attr.ib(validator=is_valid_triggers)
+    annotations = attr.ib(default={}, validator=instance_of(dict))
+    labels = attr.ib(default={}, validator=instance_of(dict))
+
+    evaluateInterval = attr.ib(default=DEFAULT_ALERT_EVALUATE_INTERVAL, validator=instance_of(str))
+    evaluateFor = attr.ib(default=DEFAULT_ALERT_EVALUATE_FOR, validator=instance_of(str))
+    noDataAlertState = attr.ib(
+        default=ALERTRULE_STATE_DATA_ALERTING,
+        validator=in_([
+            ALERTRULE_STATE_DATA_OK,
+            ALERTRULE_STATE_DATA_ALERTING,
+            ALERTRULE_STATE_DATA_NODATA
+        ])
+    )
+    errorAlertState = attr.ib(
+        default=ALERTRULE_STATE_DATA_ALERTING,
+        validator=in_([
+            ALERTRULE_STATE_DATA_OK,
+            ALERTRULE_STATE_DATA_ALERTING,
+            ALERTRULE_STATE_DATA_ERROR
+        ])
+    )
+    timeRangeFrom = attr.ib(default=300, validator=instance_of(int))
+    timeRangeTo = attr.ib(default=0, validator=instance_of(int))
+    uid = attr.ib(default=None, validator=attr.validators.optional(instance_of(str)))
+    dashboard_uid = attr.ib(default="", validator=instance_of(str))
+    panel_id = attr.ib(default=0, validator=instance_of(int))
+
+    rule_group = attr.ib(default="")
+
+    def to_json_data(self):
+        data = []
+        conditions = []
+
+        for target, condition in self.triggers:
+            data += [{
+                "refId": target.refId,
+                "relativeTimeRange": {
+                    "from": self.timeRangeFrom,
+                    "to": self.timeRangeTo
+                },
+                "datasourceUid": target.datasource,
+                "model": target.to_json_data(),
+            }]
+
+            # discard unused features of condition as of grafana 8.x
+            condition.useNewAlerts = True
+
+            condition.target = target
+            conditions += [condition.to_json_data()]
+
+        data += [{
+            "refId": "CONDITION",
+            "datasourceUid": "-100",
+            "model": {
+                "conditions": conditions,
+                "refId": "CONDITION",
+                "type": "classic_conditions"
+            }
+        }]
+
+        return {
+            "for": self.evaluateFor,
+            "labels": self.labels,
+            "annotations": self.annotations,
+            "grafana_alert": {
+                "title": self.title,
+                "condition": "CONDITION",
+                "data": data,
+                "intervalSeconds": self.evaluateInterval,
+                "exec_err_state": self.errorAlertState,
+                "no_data_state": self.noDataAlertState,
+                "uid": self.uid,
+                "rule_group": self.rule_group,
+            }
+        }
+
+
+@attr.s
+class AlertRulev9(object):
+    """
+    Create a Grafana 9.x+ Alert Rule
+
+    :param title: The alert's title, must be unique per folder
+    :param triggers: A list of Targets and AlertConditions.
+        The Target specifies the query, and the AlertCondition specifies how this is used to alert.
+    :param annotations: Summary and annotations
+        Dictionary with one of the following key or custom key
+        ['runbook_url', 'summary', 'description', '__alertId__', '__dashboardUid__', '__panelId__']
+    :param labels: Custom Labels for the metric, used to handle notifications
+    :param condition: Set one of the queries or expressions as the alert condition by refID (Grafana 9.x)
+
+    :param evaluateFor: The duration for which the condition must be true before an alert fires
+        The Interval is set by the alert group
+    :param noDataAlertState: Alert state if no data or all values are null
+        Must be one of the following:
+        [ALERTRULE_STATE_DATA_OK, ALERTRULE_STATE_DATA_ALERTING, ALERTRULE_STATE_DATA_NODATA ]
+    :param errorAlertState: Alert state if execution error or timeout
+        Must be one of the following:
+        [ALERTRULE_STATE_DATA_OK, ALERTRULE_STATE_DATA_ALERTING, ALERTRULE_STATE_DATA_ERROR ]
+
+    :param timeRangeFrom: Time range interpolation data start from
+    :param timeRangeTo: Time range interpolation data finish at
+    :param uid: Alert UID should be unique
+    :param dashboard_uid: Dashboard UID that should be use for linking on alert message
+    :param panel_id: Panel ID that should should be use for linking on alert message
+    """
+
+    title = attr.ib()
+    triggers = attr.ib(default=[], validator=is_valid_triggersv9)
+    annotations = attr.ib(default={}, validator=instance_of(dict))
+    labels = attr.ib(default={}, validator=instance_of(dict))
+
+    evaluateFor = attr.ib(default=DEFAULT_ALERT_EVALUATE_FOR, validator=instance_of(str))
+    noDataAlertState = attr.ib(
+        default=ALERTRULE_STATE_DATA_ALERTING,
+        validator=in_([
+            ALERTRULE_STATE_DATA_OK,
+            ALERTRULE_STATE_DATA_ALERTING,
+            ALERTRULE_STATE_DATA_NODATA
+        ])
+    )
+    errorAlertState = attr.ib(
+        default=ALERTRULE_STATE_DATA_ALERTING,
+        validator=in_([
+            ALERTRULE_STATE_DATA_OK,
+            ALERTRULE_STATE_DATA_ALERTING,
+            ALERTRULE_STATE_DATA_ERROR
+        ])
+    )
+    condition = attr.ib(default='B')
+    timeRangeFrom = attr.ib(default=300, validator=instance_of(int))
+    timeRangeTo = attr.ib(default=0, validator=instance_of(int))
+    uid = attr.ib(default=None, validator=attr.validators.optional(instance_of(str)))
+    dashboard_uid = attr.ib(default="", validator=instance_of(str))
+    panel_id = attr.ib(default=0, validator=instance_of(int))
+
+    def to_json_data(self):
+        data = []
+
+        for trigger in self.triggers:
+            if isinstance(trigger, Target):
+                target = trigger
+                data += [{
+                    "refId": target.refId,
+                    "relativeTimeRange": {
+                        "from": self.timeRangeFrom,
+                        "to": self.timeRangeTo
+                    },
+                    "datasourceUid": target.datasource,
+                    "model": target.to_json_data(),
+                }]
+            else:
+                data += [trigger.to_json_data()]
+
+        return {
+            "uid": self.uid,
+            "for": self.evaluateFor,
+            "labels": self.labels,
+            "annotations": self.annotations,
+            "grafana_alert": {
+                "title": self.title,
+                "condition": self.condition,
+                "data": data,
+                "no_data_state": self.noDataAlertState,
+                "exec_err_state": self.errorAlertState,
+            },
+        }
+
+
+@attr.s
+class AlertFileBasedProvisioning(object):
+    """
+    Used to generate JSON data valid for file based alert provisioning
+
+    param alertGroup: List of AlertGroups
+    """
+
+    groups = attr.ib()
+
+    def to_json_data(self):
+        return {
+            'apiVersion': 1,
+            'groups': self.groups,
+        }
+
+
+@attr.s
 class Notification(object):
 
     uid = attr.ib()
@@ -1105,6 +1681,14 @@ class Dashboard(object):
         validator=instance_of(bool),
     )
     gnetId = attr.ib(default=None)
+
+    # Documented in Grafana 6.1.6, and obsoletes sharedCrosshair.  Requires a
+    # newer schema than the current default of 12.
+    graphTooltip = attr.ib(
+        default=GRAPH_TOOLTIP_MODE_NOT_SHARED,
+        validator=instance_of(int),
+    )
+
     hideControls = attr.ib(
         default=False,
         validator=instance_of(bool),
@@ -1185,6 +1769,7 @@ class Dashboard(object):
             'description': self.description,
             'editable': self.editable,
             'gnetId': self.gnetId,
+            'graphTooltip': self.graphTooltip,
             'hideControls': self.hideControls,
             'id': self.id,
             'links': self.links,
@@ -1314,6 +1899,41 @@ class Panel(object):
         _deep_update(res, overrides)
         _deep_update(res, self.extraJson)
         return res
+
+
+@attr.s
+class ePict(Panel):
+    """
+    Generates ePict panel json structure.
+    https://grafana.com/grafana/plugins/larona-epict-panel/
+
+    :param autoScale: Whether to auto scale image to panel size.
+    :param bgURL: Where to load the image from.
+    :param boxes: The info boxes to be placed on the image.
+    """
+
+    bgURL = attr.ib(default='', validator=instance_of(str))
+
+    autoScale = attr.ib(default=True, validator=instance_of(bool))
+    boxes = attr.ib(
+        default=[],
+        validator=attr.validators.deep_iterable(
+            member_validator=instance_of(ePictBox),
+            iterable_validator=instance_of(list),
+        ),
+    )
+
+    def to_json_data(self):
+        graph_object = {
+            'type': EPICT_TYPE,
+
+            'options': {
+                'autoScale': self.autoScale,
+                'bgURL': self.bgURL,
+                'boxes': self.boxes
+            }
+        }
+        return self.panel_json(graph_object)
 
 
 @attr.s
@@ -1556,7 +2176,6 @@ class TimeSeries(Panel):
     :param legendCalcs: which calculations should be displayed in the legend. Defaults to an empty list.
         Possible values are: allIsNull, allIsZero, changeCount, count, delta, diff, diffperc,
         distinctCount, firstNotNull, max, mean, min, logmin, range, step, total. For more information see
-        https://grafana.com/docs/grafana/next/panels/reference-calculation-types/
     :param lineInterpolation: line interpolation
         linear (Default), smooth, stepBefore, stepAfter
     :param lineWidth: line width, default 1
@@ -3610,7 +4229,6 @@ class Histogram(Panel):
 @attr.s
 class News(Panel):
     """Generates News panel json structure
-    Grafana docs on State Timeline panel: https://grafana.com/docs/grafana/next/visualizations/news-panel/
 
     :param feedUrl: URL to query, only RSS feed formats are supported (not Atom).
     :param showImage: Controls if the news item social (og:image) image is shown above text content
@@ -3631,3 +4249,47 @@ class News(Panel):
                 'type': NEWS_TYPE,
             }
         )
+
+
+@attr.s
+class Ae3ePlotly(Panel):
+    """Generates ae3e plotly panel json structure
+    GitHub repo of the panel: https://github.com/ae3e/ae3e-plotly-panel
+    :param configuration in json format: Plotly configuration. Docs: https://plotly.com/python/configuration-options/
+    :param data: Plotly data: https://plotly.com/python/figure-structure/
+    :param layout: Layout of the chart in json format. Plotly docs: https://plotly.com/python/reference/layout/
+    :param script: Script executed whenever new data is available. Must return an object with one or more of the
+        following properties : data, layout, config f(data, variables){...your code...}
+    :param clickScript: Script executed when chart is clicked. f(data){...your code...}
+    """
+    configuration = attr.ib(default=attr.Factory(dict), validator=attr.validators.instance_of(dict))
+    data = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+    layout = attr.ib(default=attr.Factory(dict), validator=attr.validators.instance_of(dict))
+    script = attr.ib(default="""console.log(data)
+            var trace = {
+              x: data.series[0].fields[0].values.buffer,
+              y: data.series[0].fields[1].values.buffer
+            };
+            return {data:[trace],layout:{title:'My Chart'}};""", validator=instance_of(str))
+    clickScript = attr.ib(default='', validator=instance_of(str))
+
+    def to_json_data(self):
+        plotly = self.panel_json(
+            {
+                'fieldConfig': {
+                    'defaults': {},
+                    'overrides': []
+                },
+                'options': {
+                    'configuration': {},
+                    'data': self.data,
+                    'layout': {},
+                    'onclick': self.clickScript,
+                    'script': self.script,
+                },
+                'type': AE3E_PLOTLY_TYPE,
+            }
+        )
+        _deep_update(plotly["options"]["layout"], self.layout)
+        _deep_update(plotly["options"]["configuration"], self.configuration)
+        return plotly
