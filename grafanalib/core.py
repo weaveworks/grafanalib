@@ -1056,10 +1056,15 @@ class TimePicker(object):
 
     :param refreshIntervals: dashboard auto-refresh interval options
     :param timeOptions: dashboard time range options
+    :param nowDelay: exclude recent data that may be incomplete, as a
+        number + unit (s: second, m: minute, h: hour, etc)
     :param hidden: hide the time picker from dashboard
     """
     refreshIntervals = attr.ib()
     timeOptions = attr.ib()
+    nowDelay = attr.ib(
+        default=None,
+    )
     hidden = attr.ib(
         default=False,
         validator=instance_of(bool),
@@ -1069,6 +1074,7 @@ class TimePicker(object):
         return {
             'refresh_intervals': self.refreshIntervals,
             'time_options': self.timeOptions,
+            'nowDelay': self.nowDelay,
             'hidden': self.hidden
         }
 
