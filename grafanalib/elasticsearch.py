@@ -499,6 +499,7 @@ class PercentilesMetricAgg(object):
             'settings': self.settings,
         }
 
+
 @attr.s
 class RateMetricAgg(object):
     """An aggregator that provides the rate of the values.
