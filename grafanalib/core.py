@@ -610,7 +610,7 @@ class SqlTarget(Target):
     rawSql = attr.ib(default="")
     rawQuery = attr.ib(default=True)
     srcFilePath = attr.ib(default="", validator=instance_of(str))
-    sqlParams = attr.ib(default={}, validator=instance_of(dict))
+    sqlParams = attr.ib(factory=dict, validator=instance_of(dict))
 
     def __attrs_post_init__(self):
         """Override rawSql if a path to a source file is provided,
@@ -1496,8 +1496,8 @@ class AlertRulev8(object):
 
     title = attr.ib()
     triggers = attr.ib(validator=is_valid_triggers)
-    annotations = attr.ib(default={}, validator=instance_of(dict))
-    labels = attr.ib(default={}, validator=instance_of(dict))
+    annotations = attr.ib(factory=dict, validator=instance_of(dict))
+    labels = attr.ib(factory=dict, validator=instance_of(dict))
 
     evaluateInterval = attr.ib(default=DEFAULT_ALERT_EVALUATE_INTERVAL, validator=instance_of(str))
     evaluateFor = attr.ib(default=DEFAULT_ALERT_EVALUATE_FOR, validator=instance_of(str))
@@ -1604,9 +1604,9 @@ class AlertRulev9(object):
     """
 
     title = attr.ib()
-    triggers = attr.ib(default=[], validator=is_valid_triggersv9)
-    annotations = attr.ib(default={}, validator=instance_of(dict))
-    labels = attr.ib(default={}, validator=instance_of(dict))
+    triggers = attr.ib(factory=list, validator=is_valid_triggersv9)
+    annotations = attr.ib(factory=dict, validator=instance_of(dict))
+    labels = attr.ib(factory=dict, validator=instance_of(dict))
 
     evaluateFor = attr.ib(default=DEFAULT_ALERT_EVALUATE_FOR, validator=instance_of(str))
     noDataAlertState = attr.ib(
@@ -1942,7 +1942,7 @@ class ePict(Panel):
 
     autoScale = attr.ib(default=True, validator=instance_of(bool))
     boxes = attr.ib(
-        default=[],
+        factory=list,
         validator=attr.validators.deep_iterable(
             member_validator=instance_of(ePictBox),
             iterable_validator=instance_of(list),
@@ -2234,7 +2234,7 @@ class TimeSeries(Panel):
     legendDisplayMode = attr.ib(default='list', validator=instance_of(str))
     legendPlacement = attr.ib(default='bottom', validator=instance_of(str))
     legendCalcs = attr.ib(
-        default=[],
+        factory=list,
         validator=attr.validators.deep_iterable(
             member_validator=in_([
                 'lastNotNull',
@@ -2270,7 +2270,7 @@ class TimeSeries(Panel):
     scaleDistributionLog = attr.ib(default=2, validator=instance_of(int))
     spanNulls = attr.ib(default=False, validator=instance_of(bool))
     showPoints = attr.ib(default='auto', validator=instance_of(str))
-    stacking = attr.ib(default={}, validator=instance_of(dict))
+    stacking = attr.ib(factory=dict, validator=instance_of(dict))
     tooltipMode = attr.ib(default='single', validator=instance_of(str))
     unit = attr.ib(default='', validator=instance_of(str))
     thresholdsStyleMode = attr.ib(default='off', validator=instance_of(str))
@@ -2523,21 +2523,21 @@ class Discrete(Panel):
     showTransitionCount = attr.ib(default=None)
 
     colorMaps = attr.ib(
-        default=[],
+        factory=list,
         validator=attr.validators.deep_iterable(
             member_validator=instance_of(DiscreteColorMappingItem),
             iterable_validator=instance_of(list),
         ),
     )
     rangeMaps = attr.ib(
-        default=[],
+        factory=list,
         validator=attr.validators.deep_iterable(
             member_validator=instance_of(RangeMap),
             iterable_validator=instance_of(list),
         ),
     )
     valueMaps = attr.ib(
-        default=[],
+        factory=list,
         validator=attr.validators.deep_iterable(
             member_validator=instance_of(ValueMap),
             iterable_validator=instance_of(list),
@@ -2798,7 +2798,7 @@ class StatValueMappings(object):
     """
 
     mappingItems = attr.ib(
-        default=[],
+        factory=list,
         validator=attr.validators.deep_iterable(
             member_validator=attr.validators.instance_of(StatValueMappingItem),
             iterable_validator=attr.validators.instance_of(list),
@@ -3540,7 +3540,7 @@ class StatusmapColor(object):
     colorScheme = attr.ib(default='GnYlRd', validator=instance_of(str))
     exponent = attr.ib(default=0.5, validator=instance_of(float))
     mode = attr.ib(default='spectrum', validator=instance_of(str))
-    thresholds = attr.ib(default=[], validator=instance_of(list))
+    thresholds = attr.ib(factory=list, validator=instance_of(list))
     max = attr.ib(default=None)
     min = attr.ib(default=None)
 
@@ -3749,13 +3749,13 @@ class PieChartv2(Panel):
     :param unit: units
     """
 
-    custom = attr.ib(default={}, validator=instance_of(dict))
+    custom = attr.ib(factory=dict, validator=instance_of(dict))
     colorMode = attr.ib(default='palette-classic', validator=instance_of(str))
     legendDisplayMode = attr.ib(default='list', validator=instance_of(str))
     legendPlacement = attr.ib(default='bottom', validator=instance_of(str))
-    legendValues = attr.ib(default=[], validator=instance_of(list))
+    legendValues = attr.ib(factory=list, validator=instance_of(list))
     mappings = attr.ib(default=attr.Factory(list))
-    overrides = attr.ib(default=[], validator=instance_of(list))
+    overrides = attr.ib(factory=list, validator=instance_of(list))
     pieType = attr.ib(default='pie', validator=instance_of(str))
     reduceOptionsCalcs = attr.ib(default=['lastNotNull'], validator=instance_of(list))
     reduceOptionsFields = attr.ib(default='', validator=instance_of(str))
@@ -4371,7 +4371,7 @@ class BarChart(Panel):
     showLegend = attr.ib(default=True, validator=instance_of(bool))
     legendDisplayMode = attr.ib(default='list', validator=instance_of(str))
     legendPlacement = attr.ib(default='bottom', validator=instance_of(str))
-    legendCalcs = attr.ib(default=[], validator=instance_of(list))
+    legendCalcs = attr.ib(factory=list, validator=instance_of(list))
     lineWidth = attr.ib(default=1, validator=instance_of(int))
     fillOpacity = attr.ib(default=80, validator=instance_of(int))
     gradientMode = attr.ib(default='none', validator=instance_of(str))
@@ -4385,7 +4385,7 @@ class BarChart(Panel):
     hideFromLegend = attr.ib(default=False, validator=instance_of(bool))
     colorMode = attr.ib(default='palette-classic', validator=instance_of(str))
     fixedColor = attr.ib(default='blue', validator=instance_of(str))
-    mappings = attr.ib(default=[], validator=instance_of(list))
+    mappings = attr.ib(factory=list, validator=instance_of(list))
     thresholdsMode = attr.ib(default='absolute', validator=instance_of(str))
     thresholdSteps = attr.ib(
         default=attr.Factory(lambda: [
@@ -4400,7 +4400,7 @@ class BarChart(Panel):
         ]),
         validator=instance_of(list)
     )
-    overrides = attr.ib(default=[], validator=instance_of(list))
+    overrides = attr.ib(factory=list, validator=instance_of(list))
 
     def to_json_data(self):
         bar_chart = self.panel_json(

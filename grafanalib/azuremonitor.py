@@ -24,7 +24,7 @@ class AzureMonitorMetricsTarget(object):
     """
 
     aggregation = attr.ib(default="Total")
-    dimensionFilters = attr.ib(default=[], validator=instance_of(list))
+    dimensionFilters = attr.ib(factory=list, validator=instance_of(list))
     metricDefinition = attr.ib(default="")
     metricName = attr.ib(default="")
     metricNamespace = attr.ib(default="")
