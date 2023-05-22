@@ -531,6 +531,9 @@ class RateMetricAgg(object):
     def to_json_data(self):
         self.settings = {}
 
+        if self.unit:
+            self.settings["unit"] = self.unit
+
         if self.mode:
             self.settings["mode"] = self.mode
 
