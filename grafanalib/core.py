@@ -2730,7 +2730,7 @@ class Stat(Panel):
             {
                 'fieldConfig': {
                     'defaults': {
-						'color': self.color,
+                        'color': self.color,
                         'custom': {},
                         'decimals': self.decimals,
                         'mappings': self.mappings,
