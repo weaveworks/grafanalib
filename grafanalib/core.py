@@ -857,6 +857,18 @@ class DataSourceInput(object):
 
 
 @attr.s
+class DataSource(object):
+    uid = attr.ib(validator=instance_of(str))
+    type = attr.ib(validator=instance_of(str))
+
+    def to_json_data(self):
+        return {
+            'uid': self.uid,
+            'type': self.type,
+        }
+
+
+@attr.s
 class ConstantInput(object):
     name = attr.ib()
     label = attr.ib()
@@ -1458,7 +1470,7 @@ def is_valid_triggersv9(instance, attribute, value):
     """Validator for AlertRule triggers for Grafana v9"""
     for trigger in value:
         if not (isinstance(trigger, Target) or isinstance(trigger, AlertExpression)):
-            raise ValueError(f"{attribute.name} must either be a Target or AlertExpression")
+            raise ValueError(f"{attribute.name} must either be a Target or AlertCondition")
 
         if isinstance(trigger, Target):
             is_valid_target(instance, "alert trigger target", trigger)
@@ -1599,14 +1611,21 @@ class AlertRulev9(object):
     :param timeRangeFrom: Time range interpolation data start from
     :param timeRangeTo: Time range interpolation data finish at
     :param uid: Alert UID should be unique
-    :param dashboard_uid: Dashboard UID that should be use for linking on alert message
-    :param panel_id: Panel ID that should should be use for linking on alert message
+    :param dashboard_uid: Dashboard UID that should be used for linking on alert message
+    :param panel_id: Panel ID that should be used for linking on alert message
+    :param panel_id: Panel ID that should be used for linking on alert message
+    :param annotations: An array of additional annotations, can be used for alert message
+    :param labels: An array of labels, can be used with Notification Policies
+    :param folderUid: Folder ID that should be used for linking on alert message
+    :param ruleGroup: A group for alerts that are evaluated together
     """
 
     title = attr.ib()
-    triggers = attr.ib(factory=list, validator=is_valid_triggersv9)
+    triggers = attr.ib(default=[], validator=is_valid_triggersv9)
     annotations = attr.ib(factory=dict, validator=instance_of(dict))
     labels = attr.ib(factory=dict, validator=instance_of(dict))
+    folderUid = attr.ib(default=None, validator=attr.validators.optional(instance_of(str)))
+    ruleGroup = attr.ib(default=None, validator=attr.validators.optional(instance_of(str)))
 
     evaluateFor = attr.ib(default=DEFAULT_ALERT_EVALUATE_FOR, validator=instance_of(str))
     noDataAlertState = attr.ib(
@@ -1629,8 +1648,8 @@ class AlertRulev9(object):
     timeRangeFrom = attr.ib(default=300, validator=instance_of(int))
     timeRangeTo = attr.ib(default=0, validator=instance_of(int))
     uid = attr.ib(default=None, validator=attr.validators.optional(instance_of(str)))
-    dashboard_uid = attr.ib(default="", validator=instance_of(str))
-    panel_id = attr.ib(default=0, validator=instance_of(int))
+    dashboard_uid = attr.ib(default=None, validator=attr.validators.optional(instance_of(str)))
+    panel_id = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
 
     def to_json_data(self):
         data = []
@@ -1644,24 +1663,30 @@ class AlertRulev9(object):
                         "from": self.timeRangeFrom,
                         "to": self.timeRangeTo
                     },
-                    "datasourceUid": target.datasource,
+                    "datasourceUid": target.datasource.uid,
                     "model": target.to_json_data(),
                 }]
             else:
                 data += [trigger.to_json_data()]
 
+        if self.panel_id:
+            self.annotations['__panelId__'] = str(self.panel_id)
+
+        if self.dashboard_uid:
+            self.annotations['__dashboardUid__'] = self.dashboard_uid
+
         return {
+            "title": self.title,
             "uid": self.uid,
+            "condition": self.condition,
             "for": self.evaluateFor,
             "labels": self.labels,
             "annotations": self.annotations,
-            "grafana_alert": {
-                "title": self.title,
-                "condition": self.condition,
-                "data": data,
-                "no_data_state": self.noDataAlertState,
-                "exec_err_state": self.errorAlertState,
-            },
+            "data": data,
+            "noDataState": self.noDataAlertState,
+            "execErrState": self.errorAlertState,
+            "folderUid": self.folderUid,
+            "ruleGroup": self.ruleGroup,
         }
 
 
