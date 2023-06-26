@@ -4,6 +4,7 @@
 from grafanalib.core import (
     AlertGroup,
     AlertRulev9,
+    DataSource,
     Target,
     AlertCondition,
     AlertExpression,
@@ -33,7 +34,7 @@ alertgroup = AlertGroup(
                 Target(
                     expr="from(bucket: \"sensors\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"remote_cpu\")\n  |> filter(fn: (r) => r[\"_field\"] == \"usage_system\")\n  |> filter(fn: (r) => r[\"cpu\"] == \"cpu-total\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
                     # Set datasource to name of your datasource
-                    datasource="influxdb",
+                    datasource=DataSource(uid="influxdb", type="influxdb"),
                     refId="A",
                 ),
                 AlertExpression(
@@ -71,7 +72,7 @@ alertgroup = AlertGroup(
                 Target(
                     expr="from(bucket: \"sensors\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"remote_cpu\")\n  |> filter(fn: (r) => r[\"_field\"] == \"usage_system\")\n  |> filter(fn: (r) => r[\"cpu\"] == \"cpu-total\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
                     # Set datasource to name of your datasource
-                    datasource="influxdb",
+                    datasource=DataSource(uid="influxdb", type="influxdb"),
                     refId="A",
                 ),
                 AlertExpression(

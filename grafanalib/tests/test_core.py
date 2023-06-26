@@ -880,7 +880,7 @@ def test_alertrulev9():
             G.Target(
                 expr='query',
                 refId='A',
-                datasource='Prometheus',
+                datasource=G.DataSource(uid='Prometheus', type='Prometheus'),
             ),
             G.AlertExpression(
                 refId='B',
@@ -904,8 +904,8 @@ def test_alertrulev9():
     assert data['annotations'] == annotations
     assert data['labels'] == labels
     assert data['for'] == "3m"
-    assert data['grafana_alert']['title'] == title
-    assert data['grafana_alert']['condition'] == condition
+    assert data['title'] == title
+    assert data['condition'] == condition
 
 
 def test_alertexpression():
