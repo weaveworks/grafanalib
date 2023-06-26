@@ -2,6 +2,13 @@
 Changelog
 =========
 
+0.7.0.post1 (2023-06-26)
+==================
+
+* Adjust Grafana 9.xAlert Rules data model
+
+
+
 0.x.x (?)
 ==================
 
