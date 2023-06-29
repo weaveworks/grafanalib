@@ -251,6 +251,12 @@ ALERTRULE_STATE_DATA_NODATA = 'No Data'
 ALERTRULE_STATE_DATA_ALERTING = 'Alerting'
 ALERTRULE_STATE_DATA_ERROR = 'Error'
 
+# Alert Rule state filter options (Grafana 9.x)
+ALERTRULEV9_STATE_DATA_OK = 'OK'
+ALERTRULEV9_STATE_DATA_NODATA = 'NoData'
+ALERTRULEV9_STATE_DATA_ALERTING = 'Alerting'
+ALERTRULEV9_STATE_DATA_ERROR = 'Error'
+
 # Display Sort Order
 SORT_ASC = 1
 SORT_DESC = 2
@@ -1591,10 +1597,10 @@ class AlertRulev9(object):
         The Interval is set by the alert group
     :param noDataAlertState: Alert state if no data or all values are null
         Must be one of the following:
-        [ALERTRULE_STATE_DATA_OK, ALERTRULE_STATE_DATA_ALERTING, ALERTRULE_STATE_DATA_NODATA ]
+        [ALERTRULEV9_STATE_DATA_OK, ALERTRULEV9_STATE_DATA_ALERTING, ALERTRULEV9_STATE_DATA_NODATA]
     :param errorAlertState: Alert state if execution error or timeout
         Must be one of the following:
-        [ALERTRULE_STATE_DATA_OK, ALERTRULE_STATE_DATA_ALERTING, ALERTRULE_STATE_DATA_ERROR ]
+        [ALERTRULEV9_STATE_DATA_OK, ALERTRULEV9_STATE_DATA_ALERTING, ALERTRULEV9_STATE_DATA_ERROR ]
 
     :param timeRangeFrom: Time range interpolation data start from
     :param timeRangeTo: Time range interpolation data finish at
@@ -1610,19 +1616,19 @@ class AlertRulev9(object):
 
     evaluateFor = attr.ib(default=DEFAULT_ALERT_EVALUATE_FOR, validator=instance_of(str))
     noDataAlertState = attr.ib(
-        default=ALERTRULE_STATE_DATA_ALERTING,
+        default=ALERTRULEV9_STATE_DATA_ALERTING,
         validator=in_([
-            ALERTRULE_STATE_DATA_OK,
-            ALERTRULE_STATE_DATA_ALERTING,
-            ALERTRULE_STATE_DATA_NODATA
+            ALERTRULEV9_STATE_DATA_OK,
+            ALERTRULEV9_STATE_DATA_ALERTING,
+            ALERTRULEV9_STATE_DATA_NODATA
         ])
     )
     errorAlertState = attr.ib(
-        default=ALERTRULE_STATE_DATA_ALERTING,
+        default=ALERTRULEV9_STATE_DATA_ALERTING,
         validator=in_([
-            ALERTRULE_STATE_DATA_OK,
-            ALERTRULE_STATE_DATA_ALERTING,
-            ALERTRULE_STATE_DATA_ERROR
+            ALERTRULEV9_STATE_DATA_OK,
+            ALERTRULEV9_STATE_DATA_ALERTING,
+            ALERTRULEV9_STATE_DATA_ERROR
         ])
     )
     condition = attr.ib(default='B')
