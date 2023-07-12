@@ -2711,6 +2711,7 @@ class Stat(Panel):
     """
 
     alignment = attr.ib(default='auto')
+    color = attr.ib(default=None)
     colorMode = attr.ib(default='value')
     decimals = attr.ib(default=None)
     format = attr.ib(default='none')
@@ -2729,6 +2730,7 @@ class Stat(Panel):
             {
                 'fieldConfig': {
                     'defaults': {
+                        'color': self.color,
                         'custom': {},
                         'decimals': self.decimals,
                         'mappings': self.mappings,
