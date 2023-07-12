@@ -17,6 +17,9 @@ Changelog
 .. _`Bar_Chart`: https://grafana.com/docs/grafana/latest/panels-visualizations/visualizations/bar-chart/
 .. _`RateMetricAgg`: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-rate-aggregation.html
 
+* Added unit parameter to the Table class in core
+* Added a hide parameter to ElasticsearchTarget
+
 0.7.0 (2022-10-02)
 ==================
 

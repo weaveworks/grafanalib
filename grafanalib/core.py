@@ -3196,6 +3196,7 @@ class Table(Panel):
     :param mappings: To assign colors to boolean or string values, use Value mappings
     :param overrides: To override the base characteristics of certain data
     :param showHeader: Show the table header
+    :param unit: units
     """
 
     align = attr.ib(default='auto', validator=instance_of(str))
@@ -3207,7 +3208,8 @@ class Table(Panel):
     mappings = attr.ib(default=attr.Factory(list))
     overrides = attr.ib(default=attr.Factory(list))
     showHeader = attr.ib(default=True, validator=instance_of(bool))
-    span = attr.ib(default=6)
+    span = attr.ib(default=6),
+    unit = attr.ib(default='', validator=instance_of(str))
 
     @classmethod
     def with_styled_columns(cls, columns, styles=None, **kwargs):
@@ -3229,8 +3231,9 @@ class Table(Panel):
                         'custom': {
                             'align': self.align,
                             'displayMode': self.displayMode,
-                            'filterable': self.filterable
+                            'filterable': self.filterable,
                         },
+                        'unit': self.unit
                     },
                     'overrides': self.overrides
                 },

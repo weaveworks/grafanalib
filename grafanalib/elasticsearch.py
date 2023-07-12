@@ -363,6 +363,7 @@ class ElasticsearchTarget(object):
     :param query: query
     :param refId: target reference id
     :param timeField: name of the elasticsearch time field
+    :param hide: show/hide the target result in the final panel display
     """
 
     alias = attr.ib(default=None)
@@ -373,6 +374,7 @@ class ElasticsearchTarget(object):
     query = attr.ib(default="", validator=instance_of(str))
     refId = attr.ib(default="", validator=instance_of(str))
     timeField = attr.ib(default="@timestamp", validator=instance_of(str))
+    hide = attr.ib(default=False, validator=instance_of(bool))
 
     def _map_bucket_aggs(self, f):
         return attr.evolve(self, bucketAggs=list(map(f, self.bucketAggs)))
@@ -407,6 +409,7 @@ class ElasticsearchTarget(object):
             'query': self.query,
             'refId': self.refId,
             'timeField': self.timeField,
+            'hide': self.hide,
         }
 
 
