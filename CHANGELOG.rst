@@ -13,6 +13,7 @@ Changelog
 * Extended SqlTarget to support parsing queries from files
 * Fix AlertCondition backwards compatibility (``useNewAlerts`` default to ``False``)
 * Added RateMetricAgg_ for ElasticSearch
+* added axisSoftMin and axisSoftMax options for TimeSeries
 
 .. _`Bar_Chart`: https://grafana.com/docs/grafana/latest/panels-visualizations/visualizations/bar-chart/
 .. _`RateMetricAgg`: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-rate-aggregation.html
