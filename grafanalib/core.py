@@ -2222,6 +2222,8 @@ class TimeSeries(Panel):
     :param valueMin: Minimum value for Panel
     :param valueMax: Maximum value for Panel
     :param valueDecimals: Number of display decimals
+    :param axisSoftMin: soft minimum Y axis value
+    :param axisSoftMax: soft maximum Y axis value
     """
 
     axisPlacement = attr.ib(default='auto', validator=instance_of(str))
@@ -2278,6 +2280,8 @@ class TimeSeries(Panel):
     valueMin = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
     valueMax = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
     valueDecimals = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
+    axisSoftMin = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
+    axisSoftMax = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
 
     def to_json_data(self):
         return self.panel_json(
@@ -2312,6 +2316,8 @@ class TimeSeries(Panel):
                             'thresholdsStyle': {
                                 'mode': self.thresholdsStyleMode
                             },
+                            'axisSoftMin': self.axisSoftMin,
+                            'axisSoftMax': self.axisSoftMax
                         },
                         'mappings': self.mappings,
                         "min": self.valueMin,
