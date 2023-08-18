@@ -14,12 +14,14 @@ Changelog
 * Fix AlertCondition backwards compatibility (``useNewAlerts`` default to ``False``)
 * Added RateMetricAgg_ for ElasticSearch
 * added axisSoftMin and axisSoftMax options for TimeSeries
+* Added support for Azure Data Explorer datasource plugin (https://github.com/grafana/azure-data-explorer-datasource)
 
 .. _`Bar_Chart`: https://grafana.com/docs/grafana/latest/panels-visualizations/visualizations/bar-chart/
 .. _`RateMetricAgg`: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-rate-aggregation.html
 
 * Added unit parameter to the Table class in core
 * Added a hide parameter to ElasticsearchTarget
+* Fix value literal GAUGE_CALC_TOTAL to sum instead of total
 
 0.7.0 (2022-10-02)
 ==================
