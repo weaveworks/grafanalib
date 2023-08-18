@@ -13,6 +13,7 @@ Changelog
 * Extended SqlTarget to support parsing queries from files
 * Fix AlertCondition backwards compatibility (``useNewAlerts`` default to ``False``)
 * Added RateMetricAgg_ for ElasticSearch
+* Added support for Azure Data Explorer datasource plugin (https://github.com/grafana/azure-data-explorer-datasource)
 
 .. _`Bar_Chart`: https://grafana.com/docs/grafana/latest/panels-visualizations/visualizations/bar-chart/
 .. _`RateMetricAgg`: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-rate-aggregation.html
