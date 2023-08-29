@@ -5,13 +5,14 @@ The functions in this module don't enforce Weaveworks policy, and only mildly
 encourage it by way of some defaults. Rather, they are ways of building
 arbitrary Grafana JSON.
 """
-
+from __future__ import annotations
 import itertools
 import math
 
 import string
 import warnings
 from numbers import Number
+from typing import Literal, Optional
 
 import attr
 from attr.validators import in_, instance_of
@@ -74,7 +75,7 @@ NULL_AS_NULL = 'null'
 FLOT = 'flot'
 
 ABSOLUTE_TYPE = 'absolute'
-DASHBOARD_TYPE = 'dashboard'
+DASHBOARD_TYPE = Literal['dashboards', 'link']
 ROW_TYPE = 'row'
 GRAPH_TYPE = 'graph'
 DISCRETE_TYPE = 'natel-discrete-panel'
@@ -299,6 +300,9 @@ GRAPH_TOOLTIP_MODE_SHARED_TOOLTIP = 2  # Shared crosshair AND tooltip
 
 DEFAULT_AUTO_COUNT = 30
 DEFAULT_MIN_AUTO_INTERVAL = '10s'
+
+DASHBOARD_LINK_ICON = Literal['bolt', 'cloud', 'dashboard', 'doc',
+                              'external link', 'info', 'question']
 
 
 @attr.s
@@ -875,24 +879,36 @@ class ConstantInput(object):
 
 @attr.s
 class DashboardLink(object):
+    as_dropdown = attr.ib(default=False, validator=instance_of(bool))
     dashboard = attr.ib()
-    uri = attr.ib()
+    icon = attr.ib(default='external link', type=DASHBOARD_LINK_ICON,
+                   validator=in_(DASHBOARD_LINK_ICON.__args__))
+    include_vars = attr.ib(default=False, validator=instance_of(bool))
     keepTime = attr.ib(
         default=True,
         validator=instance_of(bool),
     )
-    title = attr.ib(default=None)
-    type = attr.ib(default=DASHBOARD_TYPE)
+    tags = attr.ib(factory=list, type=list[str])
+    target_blank = attr.ib(default=False, validator=instance_of(bool))
+    title = attr.ib(default=None, type=Optional[str])
+    tooltip = attr.ib(default="", type=str, validator=instance_of(str))
+    type = attr.ib(default='dashboard', type=DASHBOARD_TYPE,
+                   validator=in_(DASHBOARD_TYPE.__args__))
+    uri = attr.ib(default="", validator=instance_of(str))
 
     def to_json_data(self):
         title = self.dashboard if self.title is None else self.title
         return {
-            'dashUri': self.uri,
-            'dashboard': self.dashboard,
+            'asDropdown': self.as_dropdown,
+            'icon': self.icon,
+            'includeVars': self.include_vars,
             'keepTime': self.keepTime,
+            'tags': self.tags,
+            'targetBlank': self.target_blank,
             'title': title,
+            'tooltip': self.tooltip,
             'type': self.type,
-            'url': self.uri,
+            'uri': self.uri
         }
 
 
