@@ -890,7 +890,7 @@ class DashboardLink(object):
     for more information.
 
     :param asDropdown: Controls if the list appears in a dropdown rather than
-        tiling across the dashboard. Affects dashboard_list type only. Defaults
+        tiling across the dashboard. Affects 'dashboards' type only. Defaults
         to False
     :param icon: Set the icon, from a predefined list. See
         ``grafanalib.core.DASHBOARD_LINK_ICON`` for allowed values. Affects
@@ -900,13 +900,13 @@ class DashboardLink(object):
     :param keepTime: Controls if the current time range is passed as query
         parameters to the linked target. Defaults to False
     :param tags: A list of tags used to select dashboards for the link.
-        Affects the 'dashboard_list' type only. Defaults to an empty list
+        Affects the 'dashboards' type only. Defaults to an empty list
     :param targetBlank: Controls if the link opens in a new tab. Defaults
         to False
     :param tooltip: Tooltip text that appears when hovering over the link.
         Affects the 'link' type only. Defaults to an empty string
     :param type: Controls the type of DashboardLink generated. Must be
-        one of 'dashboard_list' or 'link'.
+        one of 'dashboards' or 'link'.
     :param uri: The url target of the external link. Affects the 'link'
         type only.
     """
