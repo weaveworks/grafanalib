@@ -12,7 +12,7 @@ import math
 import string
 import warnings
 from numbers import Number
-from typing import Literal, Optional
+from typing import Literal
 
 import attr
 from attr.validators import in_, instance_of
@@ -879,33 +879,62 @@ class ConstantInput(object):
 
 @attr.s
 class DashboardLink(object):
-    as_dropdown = attr.ib(default=False, validator=instance_of(bool))
-    dashboard = attr.ib()
+    """Create a link to other dashboards, or external resources.
+
+    Dashboard Links come in two flavours; a list of dashboards, or a direct 
+    link to an arbitrary URL. These are controlled by the ``type`` parameter. 
+    A dashboard list targets a given set of tags, whereas for a link you must 
+    also provide the URL.
+
+    See `the documentation <https://grafana.com/docs/grafana/latest/dashboards/build-dashboards/manage-dashboard-links/#dashboard-links>`
+    for more information.
+
+    :param asDropdown: Controls if the list appears in a dropdown rather than
+        tiling across the dashboard. Affects dashboard_list type only. Defaults
+        to False
+    :param icon: Set the icon, from a predefined list. See
+        ``grafanalib.core.DASHBOARD_LINK_ICON`` for allowed values. Affects
+        the 'link' type only. Defaults to 'external link'
+    :param includeVars: Controls if data variables from the current dashboard
+        are passed as query parameters to the linked target. Defaults to False
+    :param keepTime: Controls if the current time range is passed as query
+        parameters to the linked target. Defaults to False
+    :param tags: A list of tags used to select dashboards for the link.
+        Affects the 'dashboard_list' type only. Defaults to an empty list
+    :param targetBlank: Controls if the link opens in a new tab. Defaults
+        to False
+    :param tooltip: Tooltip text that appears when hovering over the link.
+        Affects the 'link' type only. Defaults to an empty string
+    :param type: Controls the type of DashboardLink generated. Must be
+        one of 'dashboard_list' or 'link'.
+    :param uri: The url target of the external link. Affects the 'link'
+        type only.
+    """
+    asDropdown = attr.ib(default=False, validator=instance_of(bool))
     icon = attr.ib(default='external link', type=DASHBOARD_LINK_ICON,
                    validator=in_(DASHBOARD_LINK_ICON.__args__))
-    include_vars = attr.ib(default=False, validator=instance_of(bool))
+    includeVars = attr.ib(default=False, validator=instance_of(bool))
     keepTime = attr.ib(
         default=True,
         validator=instance_of(bool),
     )
     tags = attr.ib(factory=list, type=list[str])
-    target_blank = attr.ib(default=False, validator=instance_of(bool))
-    title = attr.ib(default=None, type=Optional[str])
+    targetBlank = attr.ib(default=False, validator=instance_of(bool))
+    title = attr.ib(default="", type=str)
     tooltip = attr.ib(default="", type=str, validator=instance_of(str))
     type = attr.ib(default='dashboard', type=DASHBOARD_TYPE,
                    validator=in_(DASHBOARD_TYPE.__args__))
     uri = attr.ib(default="", validator=instance_of(str))
 
     def to_json_data(self):
-        title = self.dashboard if self.title is None else self.title
         return {
-            'asDropdown': self.as_dropdown,
+            'asDropdown': self.asDropdown,
             'icon': self.icon,
-            'includeVars': self.include_vars,
+            'includeVars': self.includeVars,
             'keepTime': self.keepTime,
             'tags': self.tags,
-            'targetBlank': self.target_blank,
-            'title': title,
+            'targetBlank': self.targetBlank,
+            'title': self.title,
             'tooltip': self.tooltip,
             'type': self.type,
             'uri': self.uri
