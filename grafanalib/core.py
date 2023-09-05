@@ -937,7 +937,7 @@ class DashboardLink(object):
             'title': self.title,
             'tooltip': self.tooltip,
             'type': self.type,
-            'uri': self.uri
+            'url': self.uri
         }
 
 
