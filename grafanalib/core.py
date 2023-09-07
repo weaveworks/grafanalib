@@ -3186,6 +3186,18 @@ class Column(object):
 
 
 @attr.s
+class TableSortByField(object):
+    displayName = attr.ib(default="")
+    desc = attr.ib(default=False)
+
+    def to_json_data(self):
+        return {
+            'displayName': self.displayName,
+            'desc': self.desc,
+        }
+
+
+@attr.s
 class Table(Panel):
     """Generates Table panel json structure
 
@@ -3203,6 +3215,7 @@ class Table(Panel):
     :param overrides: To override the base characteristics of certain data
     :param showHeader: Show the table header
     :param unit: units
+    :param sortBy: Sort rows by table fields
     """
 
     align = attr.ib(default='auto', validator=instance_of(str))
@@ -3216,6 +3229,10 @@ class Table(Panel):
     showHeader = attr.ib(default=True, validator=instance_of(bool))
     span = attr.ib(default=6),
     unit = attr.ib(default='', validator=instance_of(str))
+    sortBy = attr.ib(default=attr.Factory(list), validator=attr.validators.deep_iterable(
+        member_validator=instance_of(TableSortByField),
+        iterable_validator=instance_of(list)
+    ))
 
     @classmethod
     def with_styled_columns(cls, columns, styles=None, **kwargs):
@@ -3247,7 +3264,8 @@ class Table(Panel):
                 'mappings': self.mappings,
                 'minSpan': self.minSpan,
                 'options': {
-                    'showHeader': self.showHeader
+                    'showHeader': self.showHeader,
+                    'sortBy': self.sortBy
                 },
                 'type': TABLE_TYPE,
             }
