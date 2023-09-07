@@ -910,21 +910,21 @@ class DashboardLink(object):
     :param uri: The url target of the external link. Affects the 'link'
         type only.
     """
-    asDropdown = attr.ib(default=False, validator=instance_of(bool))
-    icon = attr.ib(default='external link', type=DASHBOARD_LINK_ICON,
-                   validator=in_(DASHBOARD_LINK_ICON.__args__))
-    includeVars = attr.ib(default=False, validator=instance_of(bool))
-    keepTime = attr.ib(
+    asDropdown: bool = attr.ib(default=False, validator=instance_of(bool))
+    icon: DASHBOARD_LINK_ICON = attr.ib(default='external link',
+                                        validator=in_(DASHBOARD_LINK_ICON.__args__))
+    includeVars: bool = attr.ib(default=False, validator=instance_of(bool))
+    keepTime: bool = attr.ib(
         default=True,
         validator=instance_of(bool),
     )
-    tags = attr.ib(factory=list, type=list[str])
-    targetBlank = attr.ib(default=False, validator=instance_of(bool))
-    title = attr.ib(default="", type=str)
-    tooltip = attr.ib(default="", type=str, validator=instance_of(str))
-    type = attr.ib(default='dashboard', type=DASHBOARD_TYPE,
-                   validator=in_(DASHBOARD_TYPE.__args__))
-    uri = attr.ib(default="", validator=instance_of(str))
+    tags: list[str] = attr.ib(factory=list)
+    targetBlank: bool = attr.ib(default=False, validator=instance_of(bool))
+    title: str = attr.ib(default="")
+    tooltip: str = attr.ib(default="", validator=instance_of(str))
+    type: DASHBOARD_TYPE = attr.ib(default='dashboard',
+                                   validator=in_(DASHBOARD_TYPE.__args__))
+    uri: str = attr.ib(default="", validator=instance_of(str))
 
     def to_json_data(self):
         return {
