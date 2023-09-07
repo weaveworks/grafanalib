@@ -881,9 +881,9 @@ class ConstantInput(object):
 class DashboardLink(object):
     """Create a link to other dashboards, or external resources.
 
-    Dashboard Links come in two flavours; a list of dashboards, or a direct 
-    link to an arbitrary URL. These are controlled by the ``type`` parameter. 
-    A dashboard list targets a given set of tags, whereas for a link you must 
+    Dashboard Links come in two flavours; a list of dashboards, or a direct
+    link to an arbitrary URL. These are controlled by the ``type`` parameter.
+    A dashboard list targets a given set of tags, whereas for a link you must
     also provide the URL.
 
     See `the documentation <https://grafana.com/docs/grafana/latest/dashboards/build-dashboards/manage-dashboard-links/#dashboard-links>`
