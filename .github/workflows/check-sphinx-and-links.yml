@@ -8,21 +8,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v4.7.0
-      with:
-        python-version: 3.9
 
-    - name: "Install prerequisites"
-      run: |
-        pip3 install -r docs/requirements.txt
-
-    - uses: ammaraskar/sphinx-action@master
+    # - uses: ammaraskar/sphinx-action@master
+    # Using fork of sphinx-action to support python version > 3.9
+    # As sphinx-action not updated the sphinx docker image it uses
+    - uses: erpcya/sphinx-action@feature/#update-sphinx-base-image
       with:
         docs-folder: "docs/"
         pre-build-command: |
+          pip3 install --upgrade pip
           sphinx-apidoc -f grafanalib -o docs/api
-          python setup.py install --user
+          python3 setup.py install --user
         build-command: "make html"
 
     - name: Link Checker
