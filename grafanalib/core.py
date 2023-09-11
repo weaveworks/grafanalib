@@ -918,11 +918,11 @@ class DashboardLink(object):
         default=True,
         validator=instance_of(bool),
     )
-    tags: list[str] = attr.ib(factory=list)
+    tags: list[str] = attr.ib(factory=list, validator=instance_of(list))
     targetBlank: bool = attr.ib(default=False, validator=instance_of(bool))
     title: str = attr.ib(default="")
     tooltip: str = attr.ib(default="", validator=instance_of(str))
-    type: DASHBOARD_TYPE = attr.ib(default='dashboard',
+    type: DASHBOARD_TYPE = attr.ib(default='dashboards',
                                    validator=in_(DASHBOARD_TYPE.__args__))
     uri: str = attr.ib(default="", validator=instance_of(str))
 
