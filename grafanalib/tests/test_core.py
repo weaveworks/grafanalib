@@ -1191,6 +1191,7 @@ def test_sql_target_with_source_files():
     assert t.to_json_data()["targets"][0].rawSql == "SELECT example\nFROM test\nWHERE example='example' AND example_date BETWEEN '1970-01-01' AND '1971-01-01';\n"
     print(t.to_json_data()["targets"][0])
 
+
 class TestDashboardLink():
 
     def test_validators(self):
