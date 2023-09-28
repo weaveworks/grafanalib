@@ -6,6 +6,7 @@ Changelog
 ==================
 
 * Added ...
+* Add Unit option for Graph panel
 * Added Minimum option for Timeseries
 * Added Maximum option for Timeseries
 * Added Number of decimals displays option for Timeseries
