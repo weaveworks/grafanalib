@@ -2059,7 +2059,7 @@ class Graph(Panel):
     :param stack: Each series is stacked on top of another
     :param percentage: Available when Stack is selected. Each series is drawn as a percentage of the total of all series
     :param thresholds: List of GraphThresholds - Only valid when alert not defined
-
+    :param unit: Set Y Axis Unit
     """
 
     alert = attr.ib(default=None)
@@ -2093,6 +2093,7 @@ class Graph(Panel):
         validator=instance_of(Tooltip),
     )
     thresholds = attr.ib(default=attr.Factory(list))
+    unit = attr.ib(default='', validator=instance_of(str))
     xAxis = attr.ib(default=attr.Factory(XAxis), validator=instance_of(XAxis))
     try:
         yAxes = attr.ib(
@@ -2112,6 +2113,11 @@ class Graph(Panel):
             'aliasColors': self.aliasColors,
             'bars': self.bars,
             'error': self.error,
+            'fieldConfig': {
+                'defaults': {
+                    'unit': self.unit
+                },
+            },
             'fill': self.fill,
             'grid': self.grid,
             'isNew': self.isNew,
