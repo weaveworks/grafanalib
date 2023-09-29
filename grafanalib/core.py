@@ -5,13 +5,14 @@ The functions in this module don't enforce Weaveworks policy, and only mildly
 encourage it by way of some defaults. Rather, they are ways of building
 arbitrary Grafana JSON.
 """
-
+from __future__ import annotations
 import itertools
 import math
 
 import string
 import warnings
 from numbers import Number
+from typing import Literal
 
 import attr
 from attr.validators import in_, instance_of
@@ -74,7 +75,7 @@ NULL_AS_NULL = 'null'
 FLOT = 'flot'
 
 ABSOLUTE_TYPE = 'absolute'
-DASHBOARD_TYPE = 'dashboard'
+DASHBOARD_TYPE = Literal['dashboards', 'link']
 ROW_TYPE = 'row'
 GRAPH_TYPE = 'graph'
 DISCRETE_TYPE = 'natel-discrete-panel'
@@ -299,6 +300,9 @@ GRAPH_TOOLTIP_MODE_SHARED_TOOLTIP = 2  # Shared crosshair AND tooltip
 
 DEFAULT_AUTO_COUNT = 30
 DEFAULT_MIN_AUTO_INTERVAL = '10s'
+
+DASHBOARD_LINK_ICON = Literal['bolt', 'cloud', 'dashboard', 'doc',
+                              'external link', 'info', 'question']
 
 
 @attr.s
@@ -875,24 +879,65 @@ class ConstantInput(object):
 
 @attr.s
 class DashboardLink(object):
-    dashboard = attr.ib()
-    uri = attr.ib()
-    keepTime = attr.ib(
+    """Create a link to other dashboards, or external resources.
+
+    Dashboard Links come in two flavours; a list of dashboards, or a direct
+    link to an arbitrary URL. These are controlled by the ``type`` parameter.
+    A dashboard list targets a given set of tags, whereas for a link you must
+    also provide the URL.
+
+    See `the documentation <https://grafana.com/docs/grafana/latest/dashboards/build-dashboards/manage-dashboard-links/#dashboard-links>`
+    for more information.
+
+    :param asDropdown: Controls if the list appears in a dropdown rather than
+        tiling across the dashboard. Affects 'dashboards' type only. Defaults
+        to False
+    :param icon: Set the icon, from a predefined list. See
+        ``grafanalib.core.DASHBOARD_LINK_ICON`` for allowed values. Affects
+        the 'link' type only. Defaults to 'external link'
+    :param includeVars: Controls if data variables from the current dashboard
+        are passed as query parameters to the linked target. Defaults to False
+    :param keepTime: Controls if the current time range is passed as query
+        parameters to the linked target. Defaults to False
+    :param tags: A list of tags used to select dashboards for the link.
+        Affects the 'dashboards' type only. Defaults to an empty list
+    :param targetBlank: Controls if the link opens in a new tab. Defaults
+        to False
+    :param tooltip: Tooltip text that appears when hovering over the link.
+        Affects the 'link' type only. Defaults to an empty string
+    :param type: Controls the type of DashboardLink generated. Must be
+        one of 'dashboards' or 'link'.
+    :param uri: The url target of the external link. Affects the 'link'
+        type only.
+    """
+    asDropdown: bool = attr.ib(default=False, validator=instance_of(bool))
+    icon: DASHBOARD_LINK_ICON = attr.ib(default='external link',
+                                        validator=in_(DASHBOARD_LINK_ICON.__args__))
+    includeVars: bool = attr.ib(default=False, validator=instance_of(bool))
+    keepTime: bool = attr.ib(
         default=True,
         validator=instance_of(bool),
     )
-    title = attr.ib(default=None)
-    type = attr.ib(default=DASHBOARD_TYPE)
+    tags: list[str] = attr.ib(factory=list, validator=instance_of(list))
+    targetBlank: bool = attr.ib(default=False, validator=instance_of(bool))
+    title: str = attr.ib(default="")
+    tooltip: str = attr.ib(default="", validator=instance_of(str))
+    type: DASHBOARD_TYPE = attr.ib(default='dashboards',
+                                   validator=in_(DASHBOARD_TYPE.__args__))
+    uri: str = attr.ib(default="", validator=instance_of(str))
 
     def to_json_data(self):
-        title = self.dashboard if self.title is None else self.title
         return {
-            'dashUri': self.uri,
-            'dashboard': self.dashboard,
+            'asDropdown': self.asDropdown,
+            'icon': self.icon,
+            'includeVars': self.includeVars,
             'keepTime': self.keepTime,
-            'title': title,
+            'tags': self.tags,
+            'targetBlank': self.targetBlank,
+            'title': self.title,
+            'tooltip': self.tooltip,
             'type': self.type,
-            'url': self.uri,
+            'url': self.uri
         }
 
 

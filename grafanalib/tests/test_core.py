@@ -1190,3 +1190,37 @@ def test_sql_target_with_source_files():
     assert t.to_json_data()["targets"][0].rawQuery is True
     assert t.to_json_data()["targets"][0].rawSql == "SELECT example\nFROM test\nWHERE example='example' AND example_date BETWEEN '1970-01-01' AND '1971-01-01';\n"
     print(t.to_json_data()["targets"][0])
+
+
+class TestDashboardLink():
+
+    def test_validators(self):
+        with pytest.raises(ValueError):
+            G.DashboardLink(
+                type='dashboard',
+            )
+        with pytest.raises(ValueError):
+            G.DashboardLink(
+                icon='not an icon'
+            )
+
+    def test_initialisation(self):
+        dl = G.DashboardLink().to_json_data()
+        assert dl['asDropdown'] is False
+        assert dl['icon'] == 'external link'
+        assert dl['includeVars'] is False
+        assert dl['keepTime'] is True
+        assert not dl['tags']
+        assert dl['targetBlank'] is False
+        assert dl['title'] == ""
+        assert dl['tooltip'] == ""
+        assert dl['type'] == 'dashboards'
+        assert dl['url'] == ""
+
+        url = 'https://grafana.com'
+        dl = G.DashboardLink(
+            uri=url,
+            type='link'
+        ).to_json_data()
+        assert dl['url'] == url
+        assert dl['type'] == 'link'
