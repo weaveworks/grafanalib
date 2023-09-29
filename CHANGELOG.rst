@@ -10,6 +10,7 @@ Changelog
 .. _`docs`: https://grafana.com/docs/grafana/latest/dashboards/build-dashboards/manage-dashboard-links/#dashboard-links
 
 * Added ...
+* Add Unit option for Graph panel
 * Added Minimum option for Timeseries
 * Added Maximum option for Timeseries
 * Added Number of decimals displays option for Timeseries
