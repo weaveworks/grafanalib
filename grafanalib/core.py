@@ -2262,6 +2262,8 @@ class TimeSeries(Panel):
     :param thresholds: single stat thresholds
     :param tooltipMode: When you hover your cursor over the visualization, Grafana can display tooltips
         single (Default), multi, none
+    :param tooltipSort: To sort the tooltips
+        none (Default), asc, desc
     :param unit: units
     :param thresholdsStyleMode: thresholds style mode off (Default), area, line, line+area
     :param valueMin: Minimum value for Panel
@@ -2319,6 +2321,7 @@ class TimeSeries(Panel):
     showPoints = attr.ib(default='auto', validator=instance_of(str))
     stacking = attr.ib(factory=dict, validator=instance_of(dict))
     tooltipMode = attr.ib(default='single', validator=instance_of(str))
+    tooltipSort = attr.ib(default='none', validator=instance_of(str))
     unit = attr.ib(default='', validator=instance_of(str))
     thresholdsStyleMode = attr.ib(default='off', validator=instance_of(str))
 
@@ -2379,7 +2382,8 @@ class TimeSeries(Panel):
                         'calcs': self.legendCalcs
                     },
                     'tooltip': {
-                        'mode': self.tooltipMode
+                        'mode': self.tooltipMode,
+                        'sort': self.tooltipSort
                     }
                 },
                 'type': TIMESERIES_TYPE,
