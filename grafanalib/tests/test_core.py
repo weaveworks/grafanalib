@@ -1192,6 +1192,12 @@ def test_sql_target_with_source_files():
     print(t.to_json_data()["targets"][0])
 
 
+def test_default_heatmap():
+    h = G.Heatmap()
+
+    assert h.to_json_data()["options"] == []
+
+
 class TestDashboardLink():
 
     def test_validators(self):

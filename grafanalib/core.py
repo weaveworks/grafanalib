@@ -3561,7 +3561,7 @@ class Heatmap(Panel):
     heatmap = {}
     hideZeroBuckets = attr.ib(default=False)
     highlightCards = attr.ib(default=True)
-    options = attr.ib(default=None)
+    options = attr.ib(default=attr.Factory(list))
 
     xAxis = attr.ib(
         default=attr.Factory(XAxis),
