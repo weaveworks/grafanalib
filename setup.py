@@ -15,8 +15,8 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/guides/single-sourcing-package-version/
-    version='0.7.0',
-    description='Library for building Grafana dashboards',
+    version='1.0.3',
+    description='Valerann Fork: Library for building Grafana dashboards',
     long_description=open(README).read(),
     url='https://github.com/weaveworks/grafanalib',
     project_urls={
