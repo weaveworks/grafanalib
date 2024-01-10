@@ -1,0 +1,18 @@
+Install twine:
+pip install twine
+
+Build:
+python -m build
+
+Login:
+aws codeartifact login --tool twine --repository dev --domain valerann --domain-owner 711148563459 --region eu-west-1 --profile hub-dev
+
+Setup:
+export TWINE_USERNAME=aws
+export TWINE_PASSWORD=`aws codeartifact get-authorization-token --domain valerann --domain-owner 711148563459 --region eu-west-1 --profile hub-dev --query authorizationToken --output text`
+export TWINE_REPOSITORY_URL=`aws codeartifact get-repository-endpoint --domain valerann --domain-owner 711148563459 --repository dev --region eu-west-1 --profile hub-dev --format pypi --output text`
+
+
+aws codeartifact login --tool twine --repository dev --domain valerann --domain-owner 711148563459 --region eu-west-1 --profile hub-dev
+
+twine upload --repository codeartifact dist/grafanalib-0.7.0.tar.gz --verbose
