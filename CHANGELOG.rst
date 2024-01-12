@@ -2,6 +2,11 @@
 Changelog
 =========
 
+x.x.x ?
+==================
+
+* Added ...
+
 0.7.1 2024-01-12
 ==================
 
@@ -9,7 +14,6 @@ Changelog
 
 .. _`docs`: https://grafana.com/docs/grafana/latest/dashboards/build-dashboards/manage-dashboard-links/#dashboard-links
 
-* Added ...
 * Fix default options for Heatmap
 * Add Unit option for Graph panel
 * Added Minimum option for Timeseries
