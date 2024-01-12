@@ -289,6 +289,7 @@ GAUGE_CALC_DISTINCT_COUNT = 'distinctCount'
 
 ORIENTATION_HORIZONTAL = 'horizontal'
 ORIENTATION_VERTICAL = 'vertical'
+ORIENTATION_AUTO = 'auto'
 
 GAUGE_DISPLAY_MODE_BASIC = 'basic'
 GAUGE_DISPLAY_MODE_LCD = 'lcd'
@@ -3371,7 +3372,9 @@ class BarGauge(Panel):
     min = attr.ib(default=0)
     orientation = attr.ib(
         default=ORIENTATION_HORIZONTAL,
-        validator=in_([ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL]),
+        validator=in_([ORIENTATION_HORIZONTAL,
+                       ORIENTATION_VERTICAL,
+                       ORIENTATION_AUTO]),
     )
     rangeMaps = attr.ib(default=attr.Factory(list))
     thresholdLabels = attr.ib(default=False, validator=instance_of(bool))

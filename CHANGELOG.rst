@@ -30,6 +30,7 @@ Changelog
 * Added unit parameter to the Table class in core
 * Added a hide parameter to ElasticsearchTarget
 * Fix value literal GAUGE_CALC_TOTAL to sum instead of total
+* Fix `BarGauge` orientation validation to accept `'auto'`
 
 0.7.0 (2022-10-02)
 ==================
