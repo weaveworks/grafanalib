@@ -2,7 +2,7 @@
 Changelog
 =========
 
-0.x.x (?)
+0.7.1 2024-01-12
 ==================
 
 * Extended DashboardLink to support links to dashboards and urls, as per the docs_
@@ -23,14 +23,14 @@ Changelog
 * Added support for Azure Data Explorer datasource plugin (https://github.com/grafana/azure-data-explorer-datasource)
 * Added ``sortBy`` parameter to Table panel
 * Added ``tooltipSort`` parameter to TimeSeries panel
-
-.. _`Bar_Chart`: https://grafana.com/docs/grafana/latest/panels-visualizations/visualizations/bar-chart/
-.. _`RateMetricAgg`: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-rate-aggregation.html
-
 * Added unit parameter to the Table class in core
 * Added a hide parameter to ElasticsearchTarget
 * Fix value literal GAUGE_CALC_TOTAL to sum instead of total
 * Fix `BarGauge` orientation validation to accept `'auto'`
+
+.. _`Bar_Chart`: https://grafana.com/docs/grafana/latest/panels-visualizations/visualizations/bar-chart/
+.. _`RateMetricAgg`: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-rate-aggregation.html
+
 
 0.7.0 (2022-10-02)
 ==================

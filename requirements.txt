@@ -1,0 +1,3 @@
+tox
+pytest
+flake8
