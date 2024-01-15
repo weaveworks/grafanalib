@@ -23,7 +23,7 @@ jobs:
 
     - name: Link Checker
       id: lc
-      uses: lycheeverse/lychee-action@v1.8.0
+      uses: lycheeverse/lychee-action@v1.9.1
       with:
         args: --verbose **/*.html
     - name: Fail if there were link errors
