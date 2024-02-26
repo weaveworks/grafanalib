@@ -5,7 +5,8 @@ Changelog
 x.x.x ?
 ==================
 
-* Added ...
+* Added `neutral` option for `GaugePanel` (supported by Grafana 9.3.0 - https://github.com/grafana/grafana/discussions/38273)
+* Added support `alias` via the `legendFormat` option for `Target`
 
 0.7.1 2024-01-12
 ==================
