@@ -5,7 +5,7 @@ Changelog
 x.x.x ?
 ==================
 
-* Added ...
+* Verify support for Python 3.12
 
 0.7.1 2024-01-12
 ==================
