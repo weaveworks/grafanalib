@@ -195,6 +195,7 @@ EXP_TYPE_CLASSIC = 'classic_conditions'
 EXP_TYPE_REDUCE = 'reduce'
 EXP_TYPE_RESAMPLE = 'resample'
 EXP_TYPE_MATH = 'math'
+EXP_TYPE_THRESHOLD = 'threshold'
 
 # Alert Expression Reducer Function
 EXP_REDUCER_FUNC_MIN = 'min'
@@ -1418,6 +1419,23 @@ class AlertExpression(object):
 
         return expression
 
+@attr.s
+class AlertExpressionv10(AlertExpression):
+    """
+    Specific to Grafana v10.x, adds support for threshold expression type
+    """
+    
+    expressionType = attr.ib(
+        default=EXP_TYPE_CLASSIC,
+        validator=in_([
+            EXP_TYPE_CLASSIC,
+            EXP_TYPE_REDUCE,
+            EXP_TYPE_RESAMPLE,
+            EXP_TYPE_MATH,
+            EXP_TYPE_THRESHOLD
+        ])
+    )
+
 
 @attr.s
 class Alert(object):
@@ -1505,6 +1523,16 @@ def is_valid_triggersv9(instance, attribute, value):
     for trigger in value:
         if not (isinstance(trigger, Target) or isinstance(trigger, AlertExpression)):
             raise ValueError(f"{attribute.name} must either be a Target or AlertExpression")
+
+        if isinstance(trigger, Target):
+            is_valid_target(instance, "alert trigger target", trigger)
+
+
+def is_valid_triggersv10(instance, attribute, value):
+    """Validator for AlertRule triggers for Grafana v9"""
+    for trigger in value:
+        if not (isinstance(trigger, Target) or isinstance(trigger, AlertExpressionv10)):
+            raise ValueError(f"{attribute.name} must either be a Target or AlertExpressionV10")
 
         if isinstance(trigger, Target):
             is_valid_target(instance, "alert trigger target", trigger)
@@ -1620,10 +1648,8 @@ class AlertRulev8(object):
 
 
 @attr.s
-class AlertRulev9(object):
+class _BaseAlertRule(object):
     """
-    Create a Grafana 9.x+ Alert Rule
-
     :param title: The alert's title, must be unique per folder
     :param triggers: A list of Targets and AlertConditions.
         The Target specifies the query, and the AlertCondition specifies how this is used to alert.
@@ -1650,7 +1676,6 @@ class AlertRulev9(object):
     """
 
     title = attr.ib()
-    triggers = attr.ib(factory=list, validator=is_valid_triggersv9)
     annotations = attr.ib(factory=dict, validator=instance_of(dict))
     labels = attr.ib(factory=dict, validator=instance_of(dict))
 
@@ -1678,7 +1703,7 @@ class AlertRulev9(object):
     dashboard_uid = attr.ib(default="", validator=instance_of(str))
     panel_id = attr.ib(default=0, validator=instance_of(int))
 
-    def to_json_data(self):
+    def _render_triggers(self):
         data = []
 
         for trigger in self.triggers:
@@ -1696,6 +1721,21 @@ class AlertRulev9(object):
             else:
                 data += [trigger.to_json_data()]
 
+        return data
+
+    def to_json_data(self):
+        pass
+
+
+@attr.s
+class AlertRulev9(_BaseAlertRule):
+    """
+    Create a Grafana 9.x+ Alert Rule
+    """
+    
+    triggers = attr.ib(factory=list, validator=is_valid_triggersv9)
+
+    def to_json_data(self):
         return {
             "uid": self.uid,
             "for": self.evaluateFor,
@@ -1704,10 +1744,32 @@ class AlertRulev9(object):
             "grafana_alert": {
                 "title": self.title,
                 "condition": self.condition,
-                "data": data,
+                "data": self._render_triggers(),
                 "no_data_state": self.noDataAlertState,
                 "exec_err_state": self.errorAlertState,
             },
+        }
+
+
+@attr.s
+class AlertRulev10(_BaseAlertRule):
+    """
+    Create a Grafana 10.x+ Alert Rule
+    """
+    
+    triggers = attr.ib(factory=list, validator=is_valid_triggersv10)
+
+    def to_json_data(self):
+        return {
+            "uid": self.uid,
+            "for": self.evaluateFor,
+            "labels": self.labels,
+            "annotations": self.annotations,
+            "title": self.title,
+            "condition": self.condition,
+            "data": self._render_triggers(),
+            "noDataState": self.noDataAlertState,
+            "execErrState": self.errorAlertState,
         }
 
 
