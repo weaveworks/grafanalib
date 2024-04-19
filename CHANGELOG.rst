@@ -5,7 +5,7 @@ Changelog
 x.x.x ?
 ==================
 
-* Added ...
+* AlertRulev9 propagates dashbord_uid and panel_uid to the alert rule
 
 0.7.1 2024-01-12
 ==================
