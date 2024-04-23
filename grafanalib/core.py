@@ -573,6 +573,7 @@ class Target(object):
     Metric to show.
 
     :param target: Graphite way to select data
+    :param legendFormat: Target alias. Prometheus use legendFormat, other like Influx use alias. This set legendFormat as well as alias.
     """
 
     expr = attr.ib(default="")
@@ -598,6 +599,7 @@ class Target(object):
             'interval': self.interval,
             'intervalFactor': self.intervalFactor,
             'legendFormat': self.legendFormat,
+            'alias': self.legendFormat,
             'metric': self.metric,
             'refId': self.refId,
             'step': self.step,

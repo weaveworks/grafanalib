@@ -5,7 +5,7 @@ Changelog
 x.x.x ?
 ==================
 
-* Added ...
+* Added support `alias` via the `legendFormat` option for `Target`
 
 0.7.1 2024-01-12
 ==================
