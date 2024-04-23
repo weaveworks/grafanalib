@@ -1152,6 +1152,32 @@ def test_target_invalid():
         )
 
 
+def test_loki_target():
+    t = G.Dashboard(
+        title='unittest',
+        uid='unit-test-uid',
+        timezone='browser',
+        panels=[
+            G.TimeSeries(
+                title='Some logs',
+                targets=[
+                    G.LokiTarget(
+                        datasource='my-logs',
+                        expr='{pod="unittest"} |= "hello"',
+                    ),
+                ],
+                gridPos=G.GridPos(h=10, w=24, x=0, y=0),
+            ),
+        ],
+    ).auto_panel_ids()
+
+    dashboard_json = t.to_json_data()
+    target_json = dashboard_json['panels'][0].targets[0].to_json_data()
+    # Grafana wants type/uid fields for Loki targets (as of 2024-04)
+    assert target_json['datasource']['type'] == 'loki'
+    assert target_json['datasource']['uid'] == 'my-logs'
+
+
 def test_sql_target():
     t = G.Table(
         dataSource="some data source",

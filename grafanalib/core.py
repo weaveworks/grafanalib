@@ -606,6 +606,29 @@ class Target(object):
         }
 
 
+# Currently not deriving from `Target` because Grafana errors if fields like `query` are added to Loki targets
+@attr.s
+class LokiTarget(object):
+    """
+    Target for Loki LogQL queries
+    """
+
+    datasource = attr.ib(default='', validator=instance_of(str))
+    expr = attr.ib(default='', validator=instance_of(str))
+    hide = attr.ib(default=False, validator=instance_of(bool))
+
+    def to_json_data(self):
+        return {
+            'datasource': {
+                'type': 'loki',
+                'uid': self.datasource,
+            },
+            'expr': self.expr,
+            'hide': self.hide,
+            'queryType': 'range',
+        }
+
+
 @attr.s
 class SqlTarget(Target):
     """
