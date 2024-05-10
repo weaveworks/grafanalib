@@ -5,7 +5,7 @@ Changelog
 x.x.x ?
 ==================
 
-* Added ...
+* Added ``tooltipSort`` parameter to PieChartv2 panel
 
 0.7.1 2024-01-12
 ==================
