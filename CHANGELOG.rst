@@ -2,10 +2,10 @@
 Changelog
 =========
 
-x.x.x ?
+0.7.2 2024-06-18
 ==================
 
-* Added ...
+* Added support for AWS Cross-Account in CloudwatchMetricsTarget
 
 0.7.1 2024-01-12
 ==================
