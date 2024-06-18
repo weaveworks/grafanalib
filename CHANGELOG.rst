@@ -2,10 +2,10 @@
 Changelog
 =========
 
-x.x.x ?
+0.7.2 ?
 ==================
 
-* Added ...
+* Add `QueryMode` parameter in CloudwatchMetricsTarget
 
 0.7.1 2024-01-12
 ==================
