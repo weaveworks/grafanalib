@@ -573,6 +573,7 @@ class Target(object):
     Metric to show.
 
     :param target: Graphite way to select data
+    :param legendFormat: Target alias. Prometheus use legendFormat, other like Influx use alias. This set legendFormat as well as alias.
     """
 
     expr = attr.ib(default="")
@@ -598,11 +599,35 @@ class Target(object):
             'interval': self.interval,
             'intervalFactor': self.intervalFactor,
             'legendFormat': self.legendFormat,
+            'alias': self.legendFormat,
             'metric': self.metric,
             'refId': self.refId,
             'step': self.step,
             'instant': self.instant,
             'datasource': self.datasource,
+        }
+
+
+# Currently not deriving from `Target` because Grafana errors if fields like `query` are added to Loki targets
+@attr.s
+class LokiTarget(object):
+    """
+    Target for Loki LogQL queries
+    """
+
+    datasource = attr.ib(default='', validator=instance_of(str))
+    expr = attr.ib(default='', validator=instance_of(str))
+    hide = attr.ib(default=False, validator=instance_of(bool))
+
+    def to_json_data(self):
+        return {
+            'datasource': {
+                'type': 'loki',
+                'uid': self.datasource,
+            },
+            'expr': self.expr,
+            'hide': self.hide,
+            'queryType': 'range',
         }
 
 
@@ -3440,6 +3465,7 @@ class GaugePanel(Panel):
     :param thresholdMarkers: option to show marker of level on gauge
     :param thresholds: single stat thresholds
     :param valueMaps: the list of value to text mappings
+    :param neutral: neutral point of gauge, leave empty to use Min as neutral point
     """
 
     allValues = attr.ib(default=False, validator=instance_of(bool))
@@ -3464,6 +3490,7 @@ class GaugePanel(Panel):
         validator=instance_of(list),
     )
     valueMaps = attr.ib(default=attr.Factory(list))
+    neutral = attr.ib(default=None)
 
     def to_json_data(self):
         return self.panel_json(
@@ -3481,6 +3508,9 @@ class GaugePanel(Panel):
                         'mappings': self.valueMaps,
                         'override': {},
                         'values': self.allValues,
+                        'custom': {
+                            'neutral': self.neutral,
+                        },
                     },
                     'showThresholdLabels': self.thresholdLabels,
                     'showThresholdMarkers': self.thresholdMarkers,
@@ -3834,6 +3864,8 @@ class PieChartv2(Panel):
     :param reduceOptionsValues: Calculate a single value per column or series or show each row
     :param tooltipMode: Tooltip mode
         single (Default), multi, none
+    :param tooltipSort: To sort the tooltips
+        none (Default), asc, desc
     :param unit: units
     """
 
@@ -3849,6 +3881,7 @@ class PieChartv2(Panel):
     reduceOptionsFields = attr.ib(default='', validator=instance_of(str))
     reduceOptionsValues = attr.ib(default=False, validator=instance_of(bool))
     tooltipMode = attr.ib(default='single', validator=instance_of(str))
+    tooltipSort = attr.ib(default='none', validator=instance_of(str))
     unit = attr.ib(default='', validator=instance_of(str))
 
     def to_json_data(self):
@@ -3873,7 +3906,8 @@ class PieChartv2(Panel):
                     },
                     'pieType': self.pieType,
                     'tooltip': {
-                        'mode': self.tooltipMode
+                        'mode': self.tooltipMode,
+                        'sort': self.tooltipSort
                     },
                     'legend': {
                         'displayMode': self.legendDisplayMode,
