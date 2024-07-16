@@ -3335,7 +3335,8 @@ class Table(Panel):
                             'displayMode': self.displayMode,
                             'filterable': self.filterable,
                         },
-                        'unit': self.unit
+                        'unit': self.unit,
+                        'mappings': self.mappings
                     },
                     'overrides': self.overrides
                 },
@@ -3856,6 +3857,8 @@ class PieChartv2(Panel):
     :param reduceOptionsValues: Calculate a single value per column or series or show each row
     :param tooltipMode: Tooltip mode
         single (Default), multi, none
+    :param tooltipSort: To sort the tooltips
+        none (Default), asc, desc
     :param unit: units
     """
 
@@ -3871,6 +3874,7 @@ class PieChartv2(Panel):
     reduceOptionsFields = attr.ib(default='', validator=instance_of(str))
     reduceOptionsValues = attr.ib(default=False, validator=instance_of(bool))
     tooltipMode = attr.ib(default='single', validator=instance_of(str))
+    tooltipSort = attr.ib(default='none', validator=instance_of(str))
     unit = attr.ib(default='', validator=instance_of(str))
 
     def to_json_data(self):
@@ -3895,7 +3899,8 @@ class PieChartv2(Panel):
                     },
                     'pieType': self.pieType,
                     'tooltip': {
-                        'mode': self.tooltipMode
+                        'mode': self.tooltipMode,
+                        'sort': self.tooltipSort
                     },
                     'legend': {
                         'displayMode': self.legendDisplayMode,
