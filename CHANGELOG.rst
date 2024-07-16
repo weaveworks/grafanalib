@@ -3,6 +3,8 @@ Changelog
 =========
 
 x.x.x ?
+* Fix mappings for Table
+
 ==================
 
 * Added ...
