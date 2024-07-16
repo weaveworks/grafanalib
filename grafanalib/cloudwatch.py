@@ -23,7 +23,7 @@ class CloudwatchMetricsTarget(Target):
     :param id: unique id
     :param matchExact: Only show metrics that exactly match all defined dimension names.
     :param account: AWS Account where Cloudwatch is used
-    :param account: AWS Account ID where Cloudwatch is used
+    :param accountId: AWS Account ID where Cloudwatch is used
     :param metricName: Cloudwatch metric name
     :param namespace: Cloudwatch namespace
     :param period: Cloudwatch data period
