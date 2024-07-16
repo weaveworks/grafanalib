@@ -1719,7 +1719,6 @@ class AlertRulev9(object):
             else:
                 data += [trigger.to_json_data()]
 
-
         if self.dashboard_uid:
             self.annotations['__dashboardUid__'] = self.dashboard_uid
         if self.panel_id:
