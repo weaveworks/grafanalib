@@ -3312,7 +3312,8 @@ class Table(Panel):
                             'displayMode': self.displayMode,
                             'filterable': self.filterable,
                         },
-                        'unit': self.unit
+                        'unit': self.unit,
+                        'mappings': self.mappings
                     },
                     'overrides': self.overrides
                 },
