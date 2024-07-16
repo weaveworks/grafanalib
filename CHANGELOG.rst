@@ -6,6 +6,7 @@ Changelog
 x.x.x ?
 =======
 
+* AlertRulev9 propagates dashbord_uid and panel_uid to the alert rule
 * Added ``tooltipSort`` parameter to PieChartv2 panel
 * Fix mappings for Table
 * Added support for AWS Cross-Account in CloudwatchMetricsTarget
