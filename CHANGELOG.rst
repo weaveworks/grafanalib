@@ -2,15 +2,15 @@
 Changelog
 =========
 
+
 x.x.x ?
+=======
+
 * Fix mappings for Table
-
-==================
-
-* Added ...
+* Added support for AWS Cross-Account in CloudwatchMetricsTarget
 
 0.7.1 2024-01-12
-==================
+================
 
 * Extended DashboardLink to support links to dashboards and urls, as per the docs_
 
