@@ -9,7 +9,7 @@ x.x.x ?
 * Added ``tooltipSort`` parameter to PieChartv2 panel
 * Fix mappings for Table
 * Added support for AWS Cross-Account in CloudwatchMetricsTarget
-
+* Added `LokiTarget`
 
 0.7.1 2024-01-12
 ================
