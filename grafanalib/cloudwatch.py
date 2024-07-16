@@ -31,6 +31,7 @@ class CloudwatchMetricsTarget(Target):
     :param statistic: Cloudwatch mathematic statistic
     :param hide: controls if given metric is displayed on visualization
     :param datasource: Grafana datasource name
+    :param queryMode: queryMode for cloudwatch metric request
     """
 
     alias = attr.ib(default="")
