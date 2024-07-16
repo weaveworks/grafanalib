@@ -238,9 +238,9 @@ HERTZ_ROTATION = 'rothz'        # Hz
 RADS_PER_SEC = 'rotrads'        # rad/s
 DEGREES_PER_SECOND = 'rotdegs'  # °/s
 # Temperature
-CELSUIS = 'celsius'       # °C
-FARENHEIT = 'fahrenheit'  # °F
-KELVIN = 'kelvin'         # K
+CELSIUS = 'celsius'        # °C
+FAHRENHEIT = 'fahrenheit'  # °F
+KELVIN = 'kelvin'          # K
 # Time
 HERTZ = 'hertz'  # Hz
 NANO_SECONDS = 'ns'   # ns
