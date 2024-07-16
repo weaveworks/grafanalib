@@ -2,14 +2,19 @@
 Changelog
 =========
 
+
 x.x.x ?
-==================
+=======
 
 * Added `neutral` option for `GaugePanel` (supported by Grafana 9.3.0 - https://github.com/grafana/grafana/discussions/38273)
 * Added support `alias` via the `legendFormat` option for `Target`
+* Added ``tooltipSort`` parameter to PieChartv2 panel
+* Fix mappings for Table
+* Added support for AWS Cross-Account in CloudwatchMetricsTarget
+* Added `LokiTarget`
 
 0.7.1 2024-01-12
-==================
+================
 
 * Extended DashboardLink to support links to dashboards and urls, as per the docs_
 
