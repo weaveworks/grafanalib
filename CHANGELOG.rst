@@ -6,6 +6,8 @@ Changelog
 x.x.x ?
 =======
 
+* Added `neutral` option for `GaugePanel` (supported by Grafana 9.3.0 - https://github.com/grafana/grafana/discussions/38273)
+* Added support `alias` via the `legendFormat` option for `Target`
 * **Breaking change:** Fixed spelling errors for temperature units, corrected 'CELSUIS' to 'CELSIUS' and 'FARENHEIT' to 'FAHRENHEIT'.
 * Added ``tooltipSort`` parameter to PieChartv2 panel
 * Fix mappings for Table

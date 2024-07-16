@@ -573,6 +573,7 @@ class Target(object):
     Metric to show.
 
     :param target: Graphite way to select data
+    :param legendFormat: Target alias. Prometheus use legendFormat, other like Influx use alias. This set legendFormat as well as alias.
     """
 
     expr = attr.ib(default="")
@@ -598,6 +599,7 @@ class Target(object):
             'interval': self.interval,
             'intervalFactor': self.intervalFactor,
             'legendFormat': self.legendFormat,
+            'alias': self.legendFormat,
             'metric': self.metric,
             'refId': self.refId,
             'step': self.step,
@@ -3463,6 +3465,7 @@ class GaugePanel(Panel):
     :param thresholdMarkers: option to show marker of level on gauge
     :param thresholds: single stat thresholds
     :param valueMaps: the list of value to text mappings
+    :param neutral: neutral point of gauge, leave empty to use Min as neutral point
     """
 
     allValues = attr.ib(default=False, validator=instance_of(bool))
@@ -3487,6 +3490,7 @@ class GaugePanel(Panel):
         validator=instance_of(list),
     )
     valueMaps = attr.ib(default=attr.Factory(list))
+    neutral = attr.ib(default=None)
 
     def to_json_data(self):
         return self.panel_json(
@@ -3504,6 +3508,9 @@ class GaugePanel(Panel):
                         'mappings': self.valueMaps,
                         'override': {},
                         'values': self.allValues,
+                        'custom': {
+                            'neutral': self.neutral,
+                        },
                     },
                     'showThresholdLabels': self.thresholdLabels,
                     'showThresholdMarkers': self.thresholdMarkers,
