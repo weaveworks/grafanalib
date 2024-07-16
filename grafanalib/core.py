@@ -606,6 +606,29 @@ class Target(object):
         }
 
 
+# Currently not deriving from `Target` because Grafana errors if fields like `query` are added to Loki targets
+@attr.s
+class LokiTarget(object):
+    """
+    Target for Loki LogQL queries
+    """
+
+    datasource = attr.ib(default='', validator=instance_of(str))
+    expr = attr.ib(default='', validator=instance_of(str))
+    hide = attr.ib(default=False, validator=instance_of(bool))
+
+    def to_json_data(self):
+        return {
+            'datasource': {
+                'type': 'loki',
+                'uid': self.datasource,
+            },
+            'expr': self.expr,
+            'hide': self.hide,
+            'queryType': 'range',
+        }
+
+
 @attr.s
 class SqlTarget(Target):
     """
@@ -3320,7 +3343,8 @@ class Table(Panel):
                             'displayMode': self.displayMode,
                             'filterable': self.filterable,
                         },
-                        'unit': self.unit
+                        'unit': self.unit,
+                        'mappings': self.mappings
                     },
                     'overrides': self.overrides
                 },
@@ -3841,6 +3865,8 @@ class PieChartv2(Panel):
     :param reduceOptionsValues: Calculate a single value per column or series or show each row
     :param tooltipMode: Tooltip mode
         single (Default), multi, none
+    :param tooltipSort: To sort the tooltips
+        none (Default), asc, desc
     :param unit: units
     """
 
@@ -3856,6 +3882,7 @@ class PieChartv2(Panel):
     reduceOptionsFields = attr.ib(default='', validator=instance_of(str))
     reduceOptionsValues = attr.ib(default=False, validator=instance_of(bool))
     tooltipMode = attr.ib(default='single', validator=instance_of(str))
+    tooltipSort = attr.ib(default='none', validator=instance_of(str))
     unit = attr.ib(default='', validator=instance_of(str))
 
     def to_json_data(self):
@@ -3880,7 +3907,8 @@ class PieChartv2(Panel):
                     },
                     'pieType': self.pieType,
                     'tooltip': {
-                        'mode': self.tooltipMode
+                        'mode': self.tooltipMode,
+                        'sort': self.tooltipSort
                     },
                     'legend': {
                         'displayMode': self.legendDisplayMode,
