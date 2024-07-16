@@ -2,10 +2,10 @@
 Changelog
 =========
 
-
 x.x.x ?
 =======
 
+* Add `QueryMode` parameter in CloudwatchMetricsTarget
 * Added support `alias` via the `legendFormat` option for `Target`
 * Added `neutral` option for `GaugePanel` (supported by Grafana 9.3.0 - https://github.com/grafana/grafana/discussions/38273)
 * Added support `alias` via the `legendFormat` option for `Target`

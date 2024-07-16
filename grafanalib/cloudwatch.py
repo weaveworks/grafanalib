@@ -33,6 +33,7 @@ class CloudwatchMetricsTarget(Target):
     :param statistic: Cloudwatch mathematic statistic
     :param hide: controls if given metric is displayed on visualization
     :param datasource: Grafana datasource name
+    :param queryMode: queryMode for cloudwatch metric request
     """
 
     alias = attr.ib(default="")
@@ -51,6 +52,7 @@ class CloudwatchMetricsTarget(Target):
     statistic = attr.ib(default="Average")
     hide = attr.ib(default=False, validator=instance_of(bool))
     datasource = attr.ib(default=None)
+    queryMode = attr.ib(default="")
 
     def to_json_data(self):
         return {
@@ -70,6 +72,7 @@ class CloudwatchMetricsTarget(Target):
             "statistic": self.statistic,
             "hide": self.hide,
             "datasource": self.datasource,
+            "queryMode": self.queryMode,
         }
 
 
