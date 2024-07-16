@@ -6,6 +6,7 @@ Changelog
 x.x.x ?
 =======
 
+* **Breaking change:** Fixed spelling errors for temperature units, corrected 'CELSUIS' to 'CELSIUS' and 'FARENHEIT' to 'FAHRENHEIT'.
 * Added ``tooltipSort`` parameter to PieChartv2 panel
 * Fix mappings for Table
 * Added support for AWS Cross-Account in CloudwatchMetricsTarget
