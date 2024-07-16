@@ -2,13 +2,17 @@
 Changelog
 =========
 
-x.x.x ?
-==================
 
-* Added ...
+x.x.x ?
+=======
+
+* Added ``tooltipSort`` parameter to PieChartv2 panel
+* Fix mappings for Table
+* Added support for AWS Cross-Account in CloudwatchMetricsTarget
+
 
 0.7.1 2024-01-12
-==================
+================
 
 * Extended DashboardLink to support links to dashboards and urls, as per the docs_
 
