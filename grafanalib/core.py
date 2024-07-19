@@ -3452,6 +3452,7 @@ class GaugePanel(Panel):
 
     :param allValue: If All values should be shown or a Calculation
     :param calc: Calculation to perform on metrics
+    :param color: color mode
     :param dataLinks: list of data links hooked to datapoints on the graph
     :param decimals: override automatic decimal precision for legend/tooltips
     :param format: defines value units
@@ -3463,23 +3464,26 @@ class GaugePanel(Panel):
     :param thresholdLabel: label for gauge. Template Variables:
         "$__series_namei" "$__field_name" "$__cell_{N} / $__calc"
     :param thresholdMarkers: option to show marker of level on gauge
+    :param thresholdType: threshold mode
     :param thresholds: single stat thresholds
     :param valueMaps: the list of value to text mappings
-    :param neutral: neutral point of gauge, leave empty to use Min as neutral point
     """
 
     allValues = attr.ib(default=False, validator=instance_of(bool))
     calc = attr.ib(default=GAUGE_CALC_MEAN)
+    color = attr.ib(default=None)
     dataLinks = attr.ib(default=attr.Factory(list))
     decimals = attr.ib(default=None)
+    fieldMinMax = attr.ib(default=None)
     format = attr.ib(default='none')
     label = attr.ib(default=None)
     limit = attr.ib(default=None)
-    max = attr.ib(default=100)
-    min = attr.ib(default=0)
+    max = attr.ib(default=0)
+    min = attr.ib(default=100)
     rangeMaps = attr.ib(default=attr.Factory(list))
     thresholdLabels = attr.ib(default=False, validator=instance_of(bool))
     thresholdMarkers = attr.ib(default=True, validator=instance_of(bool))
+    thresholdType = attr.ib(default='absolute')
     thresholds = attr.ib(
         default=attr.Factory(
             lambda: [
@@ -3489,8 +3493,8 @@ class GaugePanel(Panel):
         ),
         validator=instance_of(list),
     )
+
     valueMaps = attr.ib(default=attr.Factory(list))
-    neutral = attr.ib(default=None)
 
     def to_json_data(self):
         return self.panel_json(
@@ -3498,7 +3502,9 @@ class GaugePanel(Panel):
                 'fieldConfig': {
                     'defaults': {
                         'calcs': [self.calc],
+                        'color': self.color,
                         'decimals': self.decimals,
+                        'fieldMinMax': self.fieldMinMax,
                         'max': self.max,
                         'min': self.min,
                         'title': self.label,
@@ -3508,9 +3514,6 @@ class GaugePanel(Panel):
                         'mappings': self.valueMaps,
                         'override': {},
                         'values': self.allValues,
-                        'custom': {
-                            'neutral': self.neutral,
-                        },
                     },
                     'showThresholdLabels': self.thresholdLabels,
                     'showThresholdMarkers': self.thresholdMarkers,
