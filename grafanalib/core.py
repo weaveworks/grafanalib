@@ -3515,6 +3515,8 @@ class GaugePanel(Panel):
                         'limit': self.limit,
                         'mappings': self.valueMaps,
                         'override': {},
+                        'thresholds': self.thresholds,
+                        'thresholdType': self.thresholdType,
                         'values': self.allValues,
                         'custom': {
                             'neutral': self.neutral,
