@@ -588,6 +588,7 @@ class Target(object):
     target = attr.ib(default="")
     instant = attr.ib(validator=instance_of(bool), default=False)
     datasource = attr.ib(default=None)
+    range = attr.ib(validator=instance_of(bool), default=False)
 
     def to_json_data(self):
         return {
@@ -605,6 +606,7 @@ class Target(object):
             'step': self.step,
             'instant': self.instant,
             'datasource': self.datasource,
+            'range': self.range,
         }
 
 
@@ -2811,6 +2813,7 @@ class Stat(Panel):
     fields = attr.ib(default="")
     textMode = attr.ib(default='auto')
     thresholds = attr.ib(default="")
+    transformations = attr.ib(default=attr.Factory(list), validator=instance_of(list))
 
     def to_json_data(self):
         return self.panel_json(
@@ -2840,6 +2843,7 @@ class Stat(Panel):
                         'values': False
                     }
                 },
+                'transformations': self.transformations,
                 'type': STAT_TYPE,
             }
         )
@@ -3360,6 +3364,7 @@ class BarGauge(Panel):
 
     :param allValue: If All values should be shown or a Calculation
     :param calc: Calculation to perform on metrics
+    :param color: color mode
     :param dataLinks: list of data links hooked to datapoints on the graph
     :param decimals: override automatic decimal precision for legend/tooltips
     :param displayMode: style to display bar gauge in
@@ -3379,6 +3384,7 @@ class BarGauge(Panel):
 
     allValues = attr.ib(default=False, validator=instance_of(bool))
     calc = attr.ib(default=GAUGE_CALC_MEAN)
+    color = attr.ib(default=None)
     dataLinks = attr.ib(default=attr.Factory(list))
     decimals = attr.ib(default=None)
     displayMode = attr.ib(
@@ -3419,27 +3425,27 @@ class BarGauge(Panel):
     def to_json_data(self):
         return self.panel_json(
             {
-                'options': {
-                    'displayMode': self.displayMode,
-                    'fieldOptions': {
+                'fieldConfig': {
+                    'defaults': {
                         'calcs': [self.calc],
-                        'defaults': {
-                            'decimals': self.decimals,
-                            'max': self.max,
-                            'min': self.min,
-                            'title': self.label,
-                            'unit': self.format,
-                            'links': self.dataLinks,
-                        },
+                        'color': self.color,
+                        'decimals': self.decimals,
+                        'max': self.max,
+                        'min': self.min,
+                        'title': self.label,
+                        'unit': self.format,
+                        'links': self.dataLinks,
                         'limit': self.limit,
                         'mappings': self.valueMaps,
                         'override': {},
-                        'thresholds': self.thresholds,
                         'values': self.allValues,
                     },
-                    'orientation': self.orientation,
                     'showThresholdLabels': self.thresholdLabels,
                     'showThresholdMarkers': self.thresholdMarkers,
+                },
+                'options': {
+                    'displayMode': self.displayMode,
+                    'orientation': self.orientation,
                 },
                 'type': BARGAUGE_TYPE,
             }
