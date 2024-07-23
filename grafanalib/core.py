@@ -634,6 +634,54 @@ class LokiTarget(object):
 
 
 @attr.s
+class TempoTarget(Target):
+    """
+    Metric target to support Tempo queries
+    """
+
+    filters = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+    limit = attr.ib(default="")
+    queryType = attr.ib(default="")
+    tableType = attr.ib(default="")
+
+    def to_json_data(self):
+        """Override the Target to_json_data to add addtional fields.
+        """
+        super_json = super(TempoTarget, self).to_json_data()
+        super_json["filters"] = self.filters
+        super_json["limit"] = self.limit
+        super_json["queryType"] = self.queryType
+        super_json["tableType"] = self.tableType
+        return super_json
+
+@attr.s
+class TempoFilter(object):
+    """
+    Constructor for Tempo filtering
+    """
+
+    id = attr.ib(default="")
+    dataSource = attr.ib(default=None)
+    operator = attr.ib(default="")
+    scope = attr.ib(default="")
+    tag = attr.ib(default="")
+    value = attr.ib(default="")
+    #value = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+    valueType = attr.ib(default="")
+
+    def to_json_data(self):
+        return {
+            'id': self.id,
+            'dataSource': self.dataSource,
+            'operator': self.operator,
+            'scope': self.scope,
+            'tag': self.tag,
+            'value': self.value,
+            'valueType': self.valueType,
+        }
+
+
+@attr.s
 class SqlTarget(Target):
     """
     Metric target to support SQL queries

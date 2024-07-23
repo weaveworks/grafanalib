@@ -15,6 +15,7 @@ x.x.x ?
 * Added support for AWS Cross-Account in CloudwatchMetricsTarget
 * Added `LokiTarget`
 * Added `color`, `fieldMinMax`, and `thresholdType` option for `GaugePanel`
+* Added `TempoTarget` and `TempoFilter` to target Tempo queries
 
 0.7.1 2024-01-12
 ================
