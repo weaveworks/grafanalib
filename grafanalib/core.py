@@ -3934,6 +3934,7 @@ class DashboardList(Panel):
     :param searchQuery: Enter the query you want to search by
     :param searchTags: List of tags you want to search by
     :param overrides: To override the base characteristics of certain data
+    :param folderUID: Display dashboards from the specified folder only
     """
     showHeadings = attr.ib(default=True, validator=instance_of(bool))
     showSearch = attr.ib(default=False, validator=instance_of(bool))

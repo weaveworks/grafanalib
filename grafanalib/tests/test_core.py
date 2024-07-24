@@ -506,7 +506,7 @@ def test_dashboard_list():
     assert data['targets'] == []
     assert data['datasource'] is None
     assert data['title'] == title
-    assert data['starred'] is True
+    assert data['options']['showStarred'] is True
 
 
 def test_logs_panel():
