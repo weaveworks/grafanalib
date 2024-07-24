@@ -654,6 +654,7 @@ class TempoTarget(Target):
         super_json["tableType"] = self.tableType
         return super_json
 
+
 @attr.s
 class TempoFilter(object):
     """
@@ -666,7 +667,6 @@ class TempoFilter(object):
     scope = attr.ib(default="")
     tag = attr.ib(default="")
     value = attr.ib(default="")
-    #value = attr.ib(default=attr.Factory(list), validator=instance_of(list))
     valueType = attr.ib(default="")
 
     def to_json_data(self):
