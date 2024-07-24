@@ -3953,14 +3953,16 @@ class DashboardList(Panel):
                     },
                     'overrides': self.overrides
                 },
-                'headings': self.showHeadings,
-                'search': self.showSearch,
-                'recent': self.showRecent,
-                'starred': self.showStarred,
-                'limit': self.maxItems,
-                'query': self.searchQuery,
-                'tags': self.searchTags,
-                'type': DASHBOARDLIST_TYPE,
+                'options': {
+                    'headings': self.showHeadings,
+                    'search': self.showSearch,
+                    'recent': self.showRecent,
+                    'starred': self.showStarred,
+                    'limit': self.maxItems,
+                    'query': self.searchQuery,
+                    'tags': self.searchTags,
+                    'type': DASHBOARDLIST_TYPE,
+                },
             }
         )
 
