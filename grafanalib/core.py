@@ -3943,28 +3943,34 @@ class DashboardList(Panel):
     searchQuery = attr.ib(default='', validator=instance_of(str))
     searchTags = attr.ib(default=attr.Factory(list), validator=instance_of(list))
     overrides = attr.ib(default=attr.Factory(list))
+    folderUID = attr.ib(default=None, validator=optional(instance_of(str)))
+
+    def __attrs_post_init__(self):
+        if self.folderUID is not None:
+            self.showSearch = True
 
     def to_json_data(self):
-        return self.panel_json(
-            {
-                'fieldConfig': {
-                    'defaults': {
-                        'custom': {},
-                    },
-                    'overrides': self.overrides
+        panel_data = {
+            'fieldConfig': {
+                'defaults': {
+                    'custom': {},
                 },
-                'options': {
-                    'headings': self.showHeadings,
-                    'search': self.showSearch,
-                    'recent': self.showRecent,
-                    'starred': self.showStarred,
-                    'limit': self.maxItems,
-                    'query': self.searchQuery,
-                    'tags': self.searchTags,
-                    'type': DASHBOARDLIST_TYPE,
-                },
-            }
-        )
+                'overrides': self.overrides
+            },
+            'options': {
+                'headings': self.showHeadings,
+                'search': self.showSearch,
+                'recent': self.showRecent,
+                'starred': self.showStarred,
+                'limit': self.maxItems,
+                'query': self.searchQuery,
+                'tags': self.searchTags,
+                'type': DASHBOARDLIST_TYPE,
+            },
+        }
+        if self.folderUID is not None:
+            panel_data['options']['folderUID'] = self.folderUID
+        return self.panel_json(panel_data)
 
 
 @attr.s
