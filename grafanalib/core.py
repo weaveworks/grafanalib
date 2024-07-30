@@ -2084,6 +2084,35 @@ class ePict(Panel):
 
 
 @attr.s
+class LibraryPanel(object):
+    title = attr.ib(default="")
+    gridPos = attr.ib(default=None)
+    id = attr.ib(default=None)
+    libraryPanel = attr.ib(default="")
+
+    def to_json_data(self):
+        return self.panel_json(
+            {
+                #'gridPos': self.gridPos,
+                'id': self.id,
+                'libraryPanel': self.libraryPanel,
+            }
+        )
+    
+    def _map_panels(self, f):
+        return f(self)
+    
+    def panel_json(self, overrides):
+        res = {
+            'gridPos': self.gridPos,
+            'id': self.id,
+            'libraryPanel': self.libraryPanel,
+        }
+        _deep_update(res, overrides)
+        return res
+
+
+@attr.s
 class RowPanel(Panel):
     """
     Generates Row panel json structure.
