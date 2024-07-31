@@ -3958,15 +3958,15 @@ class DashboardList(Panel):
                 'overrides': self.overrides
             },
             'options': {
-                'headings': self.showHeadings,
-                'search': self.showSearch,
+                'showHeadings': self.showHeadings,
+                'showSearch': self.showSearch,
                 'recent': self.showRecent,
-                'starred': self.showStarred,
-                'limit': self.maxItems,
+                'showStarred': self.showStarred,
+                'maxItems': self.maxItems,
                 'query': self.searchQuery,
                 'tags': self.searchTags,
-                'type': DASHBOARDLIST_TYPE,
             },
+            'type': DASHBOARDLIST_TYPE,
         }
         if self.folderUID is not None:
             panel_data['options']['folderUID'] = self.folderUID
