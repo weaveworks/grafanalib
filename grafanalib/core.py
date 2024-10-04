@@ -2279,6 +2279,10 @@ class TimeSeries(Panel):
     :param legendCalcs: which calculations should be displayed in the legend. Defaults to an empty list.
         Possible values are: allIsNull, allIsZero, changeCount, count, delta, diff, diffperc,
         distinctCount, firstNotNull, max, mean, min, logmin, range, step, total. For more information see
+    :param legendSortBy: what to sort legend based on.
+        Possible values are same as legendCalcs values
+    :param legendSortByOrder: In what order to sort legend
+        Possible values: ascending, descending
     :param lineInterpolation: line interpolation
         linear (Default), smooth, stepBefore, stepAfter
     :param lineWidth: line width, default 1
@@ -2297,6 +2301,7 @@ class TimeSeries(Panel):
     :param tooltipSort: To sort the tooltips
         none (Default), asc, desc
     :param unit: units
+    :param noValue: text to display when there is nothing to display
     :param thresholdsStyleMode: thresholds style mode off (Default), area, line, line+area
     :param valueMin: Minimum value for Panel
     :param valueMax: Maximum value for Panel
@@ -2342,6 +2347,33 @@ class TimeSeries(Panel):
             iterable_validator=instance_of(list),
         ),
     )
+    legendSortBy = attr.ib(
+        default = '',
+        validator=in_([
+                '',
+                'lastNotNull',
+                'min',
+                'mean',
+                'max',
+                'last',
+                'firstNotNull',
+                'first',
+                'sum',
+                'count',
+                'range',
+                'delta',
+                'step',
+                'diff',
+                'logmin',
+                'allIsZero',
+                'allIsNull',
+                'changeCount',
+                'distinctCount',
+                'diffperc',
+                'allValues'
+            ]),
+    )
+    legendSortByOrder = attr.ib(default='ascending', validator=in_(['ascending','descending']))
     lineInterpolation = attr.ib(default='linear', validator=instance_of(str))
     lineWidth = attr.ib(default=1, validator=instance_of(int))
     mappings = attr.ib(default=attr.Factory(list))
@@ -2355,6 +2387,7 @@ class TimeSeries(Panel):
     tooltipMode = attr.ib(default='single', validator=instance_of(str))
     tooltipSort = attr.ib(default='none', validator=instance_of(str))
     unit = attr.ib(default='', validator=instance_of(str))
+    noValue = attr.ib(default='', validator=instance_of(str))
     thresholdsStyleMode = attr.ib(default='off', validator=instance_of(str))
 
     valueMin = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
@@ -2403,7 +2436,8 @@ class TimeSeries(Panel):
                         "min": self.valueMin,
                         "max": self.valueMax,
                         "decimals": self.valueDecimals,
-                        'unit': self.unit
+                        'unit': self.unit,
+                        'noValue': self.noValue
                     },
                     'overrides': self.overrides
                 },
@@ -2411,7 +2445,9 @@ class TimeSeries(Panel):
                     'legend': {
                         'displayMode': self.legendDisplayMode,
                         'placement': self.legendPlacement,
-                        'calcs': self.legendCalcs
+                        'calcs': self.legendCalcs,
+                        'sortBy': self.legendSortBy,
+                        'sortDesc': True if self.legendSortByOrder == 'descending' else False
                     },
                     'tooltip': {
                         'mode': self.tooltipMode,
