@@ -2844,6 +2844,42 @@ class Stat(Panel):
             }
         )
 
+@attr.s
+class StatSpecialMapping(object):
+    """
+    Generates json structure for special value mapping item for the StatPanel:
+
+    :param text: String that will replace input value
+    :param match: Special value to look for
+        Possible values: null, nan, null+nan, true, false, empty
+    :param color: How to color the text if mapping occurs
+    :param index: index
+    """
+
+    text = attr.ib()
+    match = attr.ib(default='', validator=in_([
+        'null',
+        'nan',
+        'null+nan',
+        'true',
+        'false',
+        'empty'
+    ]))
+    color = attr.ib(default='', validator=instance_of(str))
+    index = attr.ib(default=None)
+
+    def to_json_data(self):
+        return {
+            'options': {
+                'match': self.match,
+                'result': {
+                    'color': self.color,
+                    'index': self.index,
+                    'text': self.text
+                }
+            },
+            'type': 'special'
+        }
 
 @attr.s
 class StatValueMappingItem(object):
