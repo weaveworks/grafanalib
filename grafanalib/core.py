@@ -2746,6 +2746,7 @@ class AlertList(object):
     title = attr.ib(default="")
     transparent = attr.ib(default=False, validator=instance_of(bool))
     alertName = attr.ib(default="", validator=instance_of(str))
+    alertInstanceLabelFilter = attr.ib(default="", validator=instance_of(str))
 
     def _map_panels(self, f):
         return f(self)
@@ -2768,7 +2769,8 @@ class AlertList(object):
             'transparent': self.transparent,
             'type': ALERTLIST_TYPE,
             "options": {
-                "alertName": self.alertName
+                "alertName": self.alertName,
+                "alertInstanceLabelFilter": self.alertInstanceLabelFilter
             },
         }
 

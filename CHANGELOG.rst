@@ -14,6 +14,7 @@ x.x.x ?
 * Fix mappings for Table
 * Added support for AWS Cross-Account in CloudwatchMetricsTarget
 * Added `LokiTarget`
+* Added `alertInstanceLabelFilter` parameter to AlertList panel
 
 0.7.1 2024-01-12
 ================
