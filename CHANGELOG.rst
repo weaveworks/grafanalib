@@ -14,6 +14,9 @@ x.x.x ?
 * Fix mappings for Table
 * Added support for AWS Cross-Account in CloudwatchMetricsTarget
 * Added `LokiTarget`
+* Added Status_History_ panel support
+
+.. _`Status_History`: https://grafana.com/docs/grafana/latest/panels-visualizations/visualizations/status-history
 
 0.7.1 2024-01-12
 ================
