@@ -1825,12 +1825,10 @@ class Dashboard(object):
                 yield panel
 
         for panel in self.panels:
-            if hasattr(panel, 'panels'):
-                yield panel
+            yield panel
+            if hasattr(panel, '_iter_panels'):
                 for row_panel in panel._iter_panels():
                     yield row_panel
-            else:
-                yield panel
 
     def _map_panels(self, f):
         return attr.evolve(
