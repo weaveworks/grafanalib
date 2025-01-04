@@ -1224,6 +1224,31 @@ def test_default_heatmap():
     assert h.to_json_data()["options"] == []
 
 
+def test_status_history_default():
+    data_source = "dummy data source"
+    targets = ["dummy_prom_query"]
+    title = "dummy title"
+    panel = G.StatusHistory(data_source, targets, title)
+
+    data = panel.to_json_data()
+
+    assert data['type'] == G.STATUS_HISTORY_TYPE
+    assert data['options']['colWidth'] == 1.0
+    assert data['options']['rowHeight'] == 1.0
+    assert data['options']['showValue'] == 'auto'
+
+
+def test_status_history():
+    data_source = "dummy data source"
+    targets = ["dummy_prom_query"]
+    title = "dummy title"
+    showHistoryValues = 'never'
+    panel = G.StatusHistory(data_source, targets, title, showHistoryValues = showHistoryValues)
+    data = panel.to_json_data()
+
+    assert data['options']['showValue'] == showHistoryValues
+
+
 class TestDashboardLink():
 
     def test_validators(self):

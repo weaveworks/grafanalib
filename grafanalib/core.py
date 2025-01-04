@@ -92,6 +92,7 @@ DASHBOARDLIST_TYPE = 'dashlist'
 LOGS_TYPE = 'logs'
 HEATMAP_TYPE = 'heatmap'
 STATUSMAP_TYPE = 'flant-statusmap-panel'
+STATUS_HISTORY_TYPE = 'status-history'
 SVG_TYPE = 'marcuscalidus-svg-panel'
 PIE_CHART_TYPE = 'grafana-piechart-panel'
 PIE_CHART_V2_TYPE = 'piechart'
@@ -3737,6 +3738,96 @@ class Statusmap(Panel):
         if self.alert:
             graphObject['alert'] = self.alert
         return self.panel_json(graphObject)
+
+
+@attr.s
+class StatusHistory(Panel):
+    """Generates Status History panel json structure (https://grafana.com/docs/grafana/latest/panels-visualizations/visualizations/status-history/)
+
+    :param showHistoryValues: define how the history values appear in your visualization
+        auto (Default), always, never
+    :param rowHeight: how tall row in visialization should be
+    :param colWidth: how wide cells in visialization should be
+    :param lineWidth: how thick lines in visialization should be
+    :param fillOpacity: fillOpacity
+    :param legendShow: show legend (enabled by default)
+    :param legendDisplayMode: define how the legend appear in your visualization
+        list (Default), table, hidden
+    :param tooltipMode: When you hover your cursor over the visualization, Grafana can display tooltips
+        single (Default), multi, none
+    :param tooltipSort: To sort the tooltips
+        none (Default), asc, desc
+    :param format: units
+    :param valueMin: Minimum value for Panel
+    :param valueMax: Maximum value for Panel
+    :param valueDecimals: Number of display decimals
+    :param displayName: Change the field or series name
+    :param colorMode: Color mode
+        palette-classic (Default),
+    :param noValue: What to display when there are no values
+    :param dataLinks: Additional web links to be presented for data
+    :param mappings: To assign colors to boolean or string values, use Value mappings
+    """
+
+    showHistoryValues = attr.ib(default='auto', validator=instance_of(str))
+    rowHeight = attr.ib(default=1.0, validator=instance_of(float))
+    colWidth = attr.ib(default=1.0, validator=instance_of(float))
+    lineWidth = attr.ib(default=5, validator=instance_of(int))
+    fillOpacity = attr.ib(default=70, validator=instance_of(int))
+    legendShow = attr.ib(default=True, validator=instance_of(bool))
+    legendDisplayMode = attr.ib(default='list', validator=instance_of(str))
+    legendPlacement = attr.ib(default='bottom', validator=instance_of(str))
+    tooltipMode = attr.ib(default='single', validator=instance_of(str))
+    tooltipSort = attr.ib(default='none', validator=instance_of(str))
+    format = attr.ib(default='', validator=instance_of(str))
+    valueMin = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
+    valueMax = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
+    valueDecimals = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
+    displayName = attr.ib(default='', validator=instance_of(str))
+    colorMode = attr.ib(default='thresholds', validator=instance_of(str))
+    noValue = attr.ib(default='', validator=instance_of(str))
+    dataLinks = attr.ib(default=attr.Factory(list))
+    mappings = attr.ib(default=attr.Factory(list))
+
+    def to_json_data(self):
+        return self.panel_json(
+            {
+                'fieldConfig': {
+                    'defaults': {
+                        'color': {
+                            'mode': self.colorMode
+                        },
+                        'unit': self.format,
+                        'custom': {
+                            'fillOpacity': self.fillOpacity,
+                            'lineWidth': self.lineWidth,
+                        },
+                        'displayName': self.displayName,
+                        "min": self.valueMin,
+                        "max": self.valueMax,
+                        'decimals': self.valueDecimals,
+                        'noValue': self.noValue,
+                        'links': self.dataLinks,
+                        'mappings': self.mappings
+                    }
+                },
+                'options': {
+                    'showValue': self.showHistoryValues,
+                    'rowHeight': self.rowHeight,
+                    'colWidth': self.colWidth,
+                    'legend': {
+                        'displayMode': self.legendDisplayMode,
+                        'showLegend': self.legendShow,
+                        'placement': self.legendPlacement
+                    },
+                    'tooltip': {
+                        'mode': self.tooltipMode,
+                        'sort': self.tooltipSort
+                    }
+                },
+                'type': STATUS_HISTORY_TYPE
+            }
+        )
 
 
 @attr.s
