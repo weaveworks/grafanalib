@@ -588,6 +588,7 @@ class Target(object):
     target = attr.ib(default="")
     instant = attr.ib(validator=instance_of(bool), default=False)
     datasource = attr.ib(default=None)
+    range = attr.ib(validator=instance_of(bool), default=False)
 
     def to_json_data(self):
         return {
@@ -605,6 +606,7 @@ class Target(object):
             'step': self.step,
             'instant': self.instant,
             'datasource': self.datasource,
+            'range': self.range,
         }
 
 
@@ -628,6 +630,54 @@ class LokiTarget(object):
             'expr': self.expr,
             'hide': self.hide,
             'queryType': 'range',
+        }
+
+
+@attr.s
+class TempoTarget(Target):
+    """
+    Metric target to support Tempo queries
+    """
+
+    filters = attr.ib(default=attr.Factory(list), validator=instance_of(list))
+    limit = attr.ib(default="")
+    queryType = attr.ib(default="")
+    tableType = attr.ib(default="")
+
+    def to_json_data(self):
+        """Override the Target to_json_data to add addtional fields.
+        """
+        super_json = super(TempoTarget, self).to_json_data()
+        super_json["filters"] = self.filters
+        super_json["limit"] = self.limit
+        super_json["queryType"] = self.queryType
+        super_json["tableType"] = self.tableType
+        return super_json
+
+
+@attr.s
+class TempoFilter(object):
+    """
+    Constructor for Tempo filtering
+    """
+
+    id = attr.ib(default="")
+    dataSource = attr.ib(default=None)
+    operator = attr.ib(default="")
+    scope = attr.ib(default="")
+    tag = attr.ib(default="")
+    value = attr.ib(default="")
+    valueType = attr.ib(default="")
+
+    def to_json_data(self):
+        return {
+            'id': self.id,
+            'dataSource': self.dataSource,
+            'operator': self.operator,
+            'scope': self.scope,
+            'tag': self.tag,
+            'value': self.value,
+            'valueType': self.valueType,
         }
 
 
@@ -2032,6 +2082,35 @@ class ePict(Panel):
 
 
 @attr.s
+class LibraryPanel(object):
+    title = attr.ib(default="")
+    gridPos = attr.ib(default=None)
+    id = attr.ib(default=None)
+    libraryPanel = attr.ib(default="")
+
+    def to_json_data(self):
+        return self.panel_json(
+            {
+                #'gridPos': self.gridPos,
+                'id': self.id,
+                'libraryPanel': self.libraryPanel,
+            }
+        )
+    
+    def _map_panels(self, f):
+        return f(self)
+    
+    def panel_json(self, overrides):
+        res = {
+            'gridPos': self.gridPos,
+            'id': self.id,
+            'libraryPanel': self.libraryPanel,
+        }
+        _deep_update(res, overrides)
+        return res
+
+
+@attr.s
 class RowPanel(Panel):
     """
     Generates Row panel json structure.
@@ -2809,6 +2888,7 @@ class Stat(Panel):
     fields = attr.ib(default="")
     textMode = attr.ib(default='auto')
     thresholds = attr.ib(default="")
+    transformations = attr.ib(default=attr.Factory(list), validator=instance_of(list))
 
     def to_json_data(self):
         return self.panel_json(
@@ -2838,6 +2918,7 @@ class Stat(Panel):
                         'values': False
                     }
                 },
+                'transformations': self.transformations,
                 'type': STAT_TYPE,
             }
         )
@@ -3358,6 +3439,7 @@ class BarGauge(Panel):
 
     :param allValue: If All values should be shown or a Calculation
     :param calc: Calculation to perform on metrics
+    :param color: color mode
     :param dataLinks: list of data links hooked to datapoints on the graph
     :param decimals: override automatic decimal precision for legend/tooltips
     :param displayMode: style to display bar gauge in
@@ -3377,6 +3459,7 @@ class BarGauge(Panel):
 
     allValues = attr.ib(default=False, validator=instance_of(bool))
     calc = attr.ib(default=GAUGE_CALC_MEAN)
+    color = attr.ib(default=None)
     dataLinks = attr.ib(default=attr.Factory(list))
     decimals = attr.ib(default=None)
     displayMode = attr.ib(
@@ -3417,27 +3500,27 @@ class BarGauge(Panel):
     def to_json_data(self):
         return self.panel_json(
             {
-                'options': {
-                    'displayMode': self.displayMode,
-                    'fieldOptions': {
+                'fieldConfig': {
+                    'defaults': {
                         'calcs': [self.calc],
-                        'defaults': {
-                            'decimals': self.decimals,
-                            'max': self.max,
-                            'min': self.min,
-                            'title': self.label,
-                            'unit': self.format,
-                            'links': self.dataLinks,
-                        },
+                        'color': self.color,
+                        'decimals': self.decimals,
+                        'max': self.max,
+                        'min': self.min,
+                        'title': self.label,
+                        'unit': self.format,
+                        'links': self.dataLinks,
                         'limit': self.limit,
                         'mappings': self.valueMaps,
                         'override': {},
-                        'thresholds': self.thresholds,
                         'values': self.allValues,
                     },
-                    'orientation': self.orientation,
                     'showThresholdLabels': self.thresholdLabels,
                     'showThresholdMarkers': self.thresholdMarkers,
+                },
+                'options': {
+                    'displayMode': self.displayMode,
+                    'orientation': self.orientation,
                 },
                 'type': BARGAUGE_TYPE,
             }
@@ -3450,8 +3533,10 @@ class GaugePanel(Panel):
 
     :param allValue: If All values should be shown or a Calculation
     :param calc: Calculation to perform on metrics
+    :param color: color mode
     :param dataLinks: list of data links hooked to datapoints on the graph
     :param decimals: override automatic decimal precision for legend/tooltips
+    :param fieldMinMax: force disable/enable min max values
     :param format: defines value units
     :param labels: option to show gauge level labels
     :param limit: limit of number of values to show when not Calculating
@@ -3461,6 +3546,7 @@ class GaugePanel(Panel):
     :param thresholdLabel: label for gauge. Template Variables:
         "$__series_namei" "$__field_name" "$__cell_{N} / $__calc"
     :param thresholdMarkers: option to show marker of level on gauge
+    :param thresholdType: threshold mode
     :param thresholds: single stat thresholds
     :param valueMaps: the list of value to text mappings
     :param neutral: neutral point of gauge, leave empty to use Min as neutral point
@@ -3468,8 +3554,10 @@ class GaugePanel(Panel):
 
     allValues = attr.ib(default=False, validator=instance_of(bool))
     calc = attr.ib(default=GAUGE_CALC_MEAN)
+    color = attr.ib(default=None)
     dataLinks = attr.ib(default=attr.Factory(list))
     decimals = attr.ib(default=None)
+    fieldMinMax = attr.ib(default=None)
     format = attr.ib(default='none')
     label = attr.ib(default=None)
     limit = attr.ib(default=None)
@@ -3478,6 +3566,7 @@ class GaugePanel(Panel):
     rangeMaps = attr.ib(default=attr.Factory(list))
     thresholdLabels = attr.ib(default=False, validator=instance_of(bool))
     thresholdMarkers = attr.ib(default=True, validator=instance_of(bool))
+    thresholdType = attr.ib(default='absolute')
     thresholds = attr.ib(
         default=attr.Factory(
             lambda: [
@@ -3496,7 +3585,9 @@ class GaugePanel(Panel):
                 'fieldConfig': {
                     'defaults': {
                         'calcs': [self.calc],
+                        'color': self.color,
                         'decimals': self.decimals,
+                        'fieldMinMax': self.fieldMinMax,
                         'max': self.max,
                         'min': self.min,
                         'title': self.label,
@@ -3505,6 +3596,7 @@ class GaugePanel(Panel):
                         'limit': self.limit,
                         'mappings': self.valueMaps,
                         'override': {},
+                        'thresholdType': self.thresholdType,
                         'values': self.allValues,
                         'custom': {
                             'neutral': self.neutral,
