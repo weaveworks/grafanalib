@@ -908,6 +908,47 @@ def test_alertrulev9():
     assert data['grafana_alert']['condition'] == condition
 
 
+def test_alertrulev10():
+    title = "My Important Alert!"
+    annotations = {"summary": "this alert fires when prod is down!!!"}
+    labels = {"severity": "serious"}
+    condition = 'C'
+    rule = G.AlertRulev10(
+        title=title,
+        uid='alert1',
+        condition=condition,
+        triggers=[
+            G.Target(
+                expr='query',
+                refId='A',
+                datasource='Prometheus',
+            ),
+            G.AlertExpression(
+                refId='B',
+                expressionType=G.EXP_TYPE_CLASSIC,
+                expression='A',
+                conditions=[
+                    G.AlertCondition(
+                        evaluator=G.GreaterThan(3),
+                        operator=G.OP_AND,
+                        reducerType=G.RTYPE_LAST
+                    )
+                ]
+            ),
+        ],
+        annotations=annotations,
+        labels=labels,
+        evaluateFor="3m",
+    )
+
+    data = rule.to_json_data()
+    assert data['annotations'] == annotations
+    assert data['labels'] == labels
+    assert data['for'] == "3m"
+    assert data['title'] == title
+    assert data['condition'] == condition
+
+
 def test_alertexpression():
     refId = 'D'
     expression = 'C'
