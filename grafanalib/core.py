@@ -2360,6 +2360,7 @@ class TimeSeries(Panel):
     valueDecimals = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
     axisSoftMin = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
     axisSoftMax = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
+    axisGridShow = attr.ib(default=False, validator=instance_of(bool))
 
     def to_json_data(self):
         return self.panel_json(
@@ -2370,6 +2371,7 @@ class TimeSeries(Panel):
                             'mode': self.colorMode
                         },
                         'custom': {
+                            'axisGridShow': self.axisGridShow,
                             'axisPlacement': self.axisPlacement,
                             'axisLabel': self.axisLabel,
                             'drawStyle': self.drawStyle,
