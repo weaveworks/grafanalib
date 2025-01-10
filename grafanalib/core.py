@@ -15,7 +15,7 @@ from numbers import Number
 from typing import Literal
 
 import attr
-from attr.validators import in_, instance_of
+from attr.validators import in_, instance_of, optional
 
 
 @attr.s
@@ -1274,9 +1274,9 @@ class AlertCondition(object):
     :param type: CTYPE_*
     """
 
-    target = attr.ib(default=None, validator=attr.validators.optional(is_valid_target))
+    target = attr.ib(default=None, validator=optional(is_valid_target))
     evaluator = attr.ib(default=None, validator=instance_of(Evaluator))
-    timeRange = attr.ib(default=None, validator=attr.validators.optional(attr.validators.instance_of(TimeRange)))
+    timeRange = attr.ib(default=None, validator=optional(attr.validators.instance_of(TimeRange)))
     operator = attr.ib(default=OP_AND)
     reducerType = attr.ib(default=RTYPE_LAST)
     useNewAlerts = attr.ib(default=False)
@@ -1590,7 +1590,7 @@ class AlertRulev8(object):
     )
     timeRangeFrom = attr.ib(default=300, validator=instance_of(int))
     timeRangeTo = attr.ib(default=0, validator=instance_of(int))
-    uid = attr.ib(default=None, validator=attr.validators.optional(instance_of(str)))
+    uid = attr.ib(default=None, validator=optional(instance_of(str)))
     dashboard_uid = attr.ib(default="", validator=instance_of(str))
     panel_id = attr.ib(default=0, validator=instance_of(int))
 
@@ -1699,7 +1699,7 @@ class AlertRulev9(object):
     condition = attr.ib(default='B')
     timeRangeFrom = attr.ib(default=300, validator=instance_of(int))
     timeRangeTo = attr.ib(default=0, validator=instance_of(int))
-    uid = attr.ib(default=None, validator=attr.validators.optional(instance_of(str)))
+    uid = attr.ib(default=None, validator=optional(instance_of(str)))
     dashboard_uid = attr.ib(default="", validator=instance_of(str))
     panel_id = attr.ib(default=0, validator=instance_of(int))
 
@@ -1952,7 +1952,7 @@ class Panel(object):
     timeShift = attr.ib(default=None)
     transparent = attr.ib(default=False, validator=instance_of(bool))
     transformations = attr.ib(default=attr.Factory(list), validator=instance_of(list))
-    extraJson = attr.ib(default=None, validator=attr.validators.optional(instance_of(dict)))
+    extraJson = attr.ib(default=None, validator=optional(instance_of(dict)))
 
     def _map_panels(self, f):
         return f(self)
@@ -2355,11 +2355,11 @@ class TimeSeries(Panel):
     unit = attr.ib(default='', validator=instance_of(str))
     thresholdsStyleMode = attr.ib(default='off', validator=instance_of(str))
 
-    valueMin = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
-    valueMax = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
-    valueDecimals = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
-    axisSoftMin = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
-    axisSoftMax = attr.ib(default=None, validator=attr.validators.optional(instance_of(int)))
+    valueMin = attr.ib(default=None, validator=optional(instance_of(int)))
+    valueMax = attr.ib(default=None, validator=optional(instance_of(int)))
+    valueDecimals = attr.ib(default=None, validator=optional(instance_of(int)))
+    axisSoftMin = attr.ib(default=None, validator=optional(instance_of(int)))
+    axisSoftMax = attr.ib(default=None, validator=optional(instance_of(int)))
 
     def to_json_data(self):
         return self.panel_json(
@@ -2727,7 +2727,7 @@ class AlertList(object):
             iterable_validator=attr.validators.instance_of(list)))
     description = attr.ib(default="", validator=instance_of(str))
     gridPos = attr.ib(
-        default=None, validator=attr.validators.optional(attr.validators.instance_of(GridPos)))
+        default=None, validator=optional(attr.validators.instance_of(GridPos)))
     id = attr.ib(default=None)
     limit = attr.ib(default=DEFAULT_LIMIT)
     links = attr.ib(
@@ -3932,6 +3932,7 @@ class DashboardList(Panel):
     :param searchQuery: Enter the query you want to search by
     :param searchTags: List of tags you want to search by
     :param overrides: To override the base characteristics of certain data
+    :param folderUID: Display dashboards from the specified folder only
     """
     showHeadings = attr.ib(default=True, validator=instance_of(bool))
     showSearch = attr.ib(default=False, validator=instance_of(bool))
@@ -3941,26 +3942,34 @@ class DashboardList(Panel):
     searchQuery = attr.ib(default='', validator=instance_of(str))
     searchTags = attr.ib(default=attr.Factory(list), validator=instance_of(list))
     overrides = attr.ib(default=attr.Factory(list))
+    folderUID = attr.ib(default=None, validator=optional(instance_of(str)))
+
+    def __attrs_post_init__(self):
+        if self.folderUID is not None:
+            self.showSearch = True
 
     def to_json_data(self):
-        return self.panel_json(
-            {
-                'fieldConfig': {
-                    'defaults': {
-                        'custom': {},
-                    },
-                    'overrides': self.overrides
+        panel_data = {
+            'fieldConfig': {
+                'defaults': {
+                    'custom': {},
                 },
-                'headings': self.showHeadings,
-                'search': self.showSearch,
+                'overrides': self.overrides
+            },
+            'options': {
+                'showHeadings': self.showHeadings,
+                'showSearch': self.showSearch,
                 'recent': self.showRecent,
-                'starred': self.showStarred,
-                'limit': self.maxItems,
+                'showStarred': self.showStarred,
+                'maxItems': self.maxItems,
                 'query': self.searchQuery,
                 'tags': self.searchTags,
-                'type': DASHBOARDLIST_TYPE,
-            }
-        )
+            },
+            'type': DASHBOARDLIST_TYPE,
+        }
+        if self.folderUID is not None:
+            panel_data['options']['folderUID'] = self.folderUID
+        return self.panel_json(panel_data)
 
 
 @attr.s
