@@ -999,6 +999,7 @@ class Template(object):
 
     :param default: the default value for the variable
     :param dataSource: where to fetch the values for the variable from
+    :param description: Optional description for the template variable.
     :param label: the variable's human label
     :param name: the variable's name
     :param query: the query users to fetch the valid values of the variable
@@ -1057,6 +1058,7 @@ class Template(object):
         validator=instance_of(int)
     )
     autoMin = attr.ib(default=DEFAULT_MIN_AUTO_INTERVAL)
+    description = attr.ib(default=None)
 
     def __attrs_post_init__(self):
         if self.type == 'custom':
@@ -1089,6 +1091,7 @@ class Template(object):
             'allValue': self.allValue,
             'current': self._current,
             'datasource': self.dataSource,
+            'description': self.description,
             'hide': self.hide,
             'includeAll': self.includeAll,
             'label': self.label,
