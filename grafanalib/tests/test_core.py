@@ -96,6 +96,25 @@ def test_custom_template_dont_override_options():
     assert t.to_json_data()['current']['value'] == '1'
 
 
+def test_template_description():
+    # Test that description is None by default
+    t = G.Template(
+        name='test',
+        query='1m,5m,10m',
+        type='interval',
+    )
+    assert t.to_json_data()['description'] is None
+
+    # Test that description is included when set
+    t = G.Template(
+        name='test',
+        query='1m,5m,10m',
+        type='interval',
+        description='This is a test description',
+    )
+    assert t.to_json_data()['description'] == 'This is a test description'
+
+
 def test_table():
     t = G.Table(
         dataSource='some data source',
