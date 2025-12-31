@@ -2,6 +2,7 @@ import attr
 import pytest
 
 import grafanalib.validators as validators
+from grafanalib.core import TimeSeries
 
 
 def create_attribute():
@@ -73,3 +74,14 @@ def test_list_of_raises():
     with pytest.raises(ValueError):
         val = validators.is_list_of(etype)
         val(None, create_attribute(), check)
+
+
+def test_invalid_tooltip_sort_raises():
+    with pytest.raises(ValueError):
+        TimeSeries(tooltipSort="invalid").to_json_data()
+
+
+@pytest.mark.parametrize("valid", ('none', 'asc', 'desc'))
+def test_valid_tooltip_sort_values(valid):
+    # Should NOT raise any errors
+    TimeSeries(tooltipSort=valid).to_json_data()

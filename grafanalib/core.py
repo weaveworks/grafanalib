@@ -689,6 +689,10 @@ def is_valid_xaxis_mode(instance, attribute, value):
         raise ValueError("{attr} should be one of {choice}".format(
             attr=attribute, choice=XAXIS_MODES))
 
+def is_valid_tooltip_sort(instance, attribute, value):
+    allowed = ('none', 'asc', 'desc')
+    if value not in allowed:
+        raise ValueError(f"{attribute.name} must be one of {allowed}")
 
 @attr.s
 class XAxis(object):
@@ -2354,7 +2358,7 @@ class TimeSeries(Panel):
     showPoints = attr.ib(default='auto', validator=instance_of(str))
     stacking = attr.ib(factory=dict, validator=instance_of(dict))
     tooltipMode = attr.ib(default='single', validator=instance_of(str))
-    tooltipSort = attr.ib(default='none', validator=instance_of(str))
+    tooltipSort = attr.ib(default='none', validator=is_valid_tooltip_sort)
     unit = attr.ib(default='', validator=instance_of(str))
     thresholdsStyleMode = attr.ib(default='off', validator=instance_of(str))
 
@@ -3882,7 +3886,7 @@ class PieChartv2(Panel):
     reduceOptionsFields = attr.ib(default='', validator=instance_of(str))
     reduceOptionsValues = attr.ib(default=False, validator=instance_of(bool))
     tooltipMode = attr.ib(default='single', validator=instance_of(str))
-    tooltipSort = attr.ib(default='none', validator=instance_of(str))
+    tooltipSort = attr.ib(default='none', validator=is_valid_tooltip_sort)
     unit = attr.ib(default='', validator=instance_of(str))
 
     def to_json_data(self):
@@ -4490,7 +4494,7 @@ class BarChart(Panel):
     barWidth = attr.ib(default=0.97, validator=instance_of(float))
     barRadius = attr.ib(default=0.0, validator=instance_of(float))
     tooltipMode = attr.ib(default='single', validator=instance_of(str))
-    tooltipSort = attr.ib(default='none', validator=instance_of(str))
+    tooltipSort = attr.ib(default='none', validator=is_valid_tooltip_sort)
     showLegend = attr.ib(default=True, validator=instance_of(bool))
     legendDisplayMode = attr.ib(default='list', validator=instance_of(str))
     legendPlacement = attr.ib(default='bottom', validator=instance_of(str))

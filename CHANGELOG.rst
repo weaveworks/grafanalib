@@ -4,7 +4,7 @@ Changelog
 
 x.x.x ?
 =======
-
+* Added validation and tests for tooltipSort parameter in TimeSeries panel
 * Add `QueryMode` parameter in CloudwatchMetricsTarget
 * Added support `alias` via the `legendFormat` option for `Target`
 * Added `neutral` option for `GaugePanel` (supported by Grafana 9.3.0 - https://github.com/grafana/grafana/discussions/38273)
