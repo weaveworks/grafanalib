@@ -4502,6 +4502,7 @@ class BarChart(Panel):
     axisLabel = attr.ib(default='', validator=instance_of(str))
     axisColorMode = attr.ib(default='text', validator=instance_of(str))
     scaleDistributionType = attr.ib(default='linear', validator=instance_of(str))
+    scaleDistributionLog = attr.ib(default=2, validator=instance_of(int))
     axisCenteredZero = attr.ib(default=False, validator=instance_of(bool))
     hideFromTooltip = attr.ib(default=False, validator=instance_of(bool))
     hideFromViz = attr.ib(default=False, validator=instance_of(bool))
@@ -4524,6 +4525,7 @@ class BarChart(Panel):
         validator=instance_of(list)
     )
     overrides = attr.ib(factory=list, validator=instance_of(list))
+    unit = attr.ib(default='', validator=instance_of(str))
 
     def to_json_data(self):
         bar_chart = self.panel_json(
@@ -4558,7 +4560,8 @@ class BarChart(Panel):
                             'axisLabel': self.axisLabel,
                             'axisColorMode': self.axisColorMode,
                             'scaleDistribution': {
-                                'type': self.scaleDistributionType
+                                'type': self.scaleDistributionType,
+                                'log': self.scaleDistributionLog
                             },
                             'axisCenteredZero': self.axisCenteredZero,
                             'hideFrom': {
@@ -4575,7 +4578,8 @@ class BarChart(Panel):
                         'thresholds': {
                             'mode': self.thresholdsMode,
                             'steps': self.thresholdSteps
-                        }
+                        },
+                        'unit': self.unit
                     },
                     'overrides': self.overrides
                 },
